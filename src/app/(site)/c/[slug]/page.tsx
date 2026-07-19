@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CompanyProfile } from "@/components/company/company-profile";
+import { NetworkMapSection } from "@/components/network/network-map-section";
+import { logProfileEvent } from "@/features/analytics/log";
+import { parseProfileSource } from "@/features/analytics/sources";
+import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
+import { getConfirmedGroupForCompany } from "@/features/groups/queries";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
 import { getCaseStudiesForCompany } from "@/data/mock/case-studies";
@@ -18,6 +23,8 @@ type Props = {
     refAdded?: string;
     inquirySent?: string;
     error?: string;
+    src?: string;
+    domainVerified?: string;
   }>;
 };
 
@@ -43,7 +50,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CompanyPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { claimSent, claimError, inquirySent, error } = await searchParams;
+  const { claimSent, claimError, inquirySent, error, src, domainVerified } =
+    await searchParams;
   const company = await getCompanyForPage(slug);
   if (!company) notFound();
 
@@ -51,15 +59,32 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     (p) => p.status === "accepted",
   );
   const caseStudies = getCaseStudiesForCompany(slug);
-  const [references, trust, isOwner] = await Promise.all([
-    getReferencesForCompany(company.id),
-    getTrustProfile(company.id, company.slug),
-    company.claimed !== false
-      ? isCompanyOwnerSlug(slug)
-      : Promise.resolve(false),
-  ]);
+  const [references, trust, assessmentSummary, isOwner, groupBadge] =
+    await Promise.all([
+      getReferencesForCompany(company.id),
+      getTrustProfile(company.id, company.slug),
+      getClientAssessmentSummary(company.id),
+      company.claimed !== false
+        ? isCompanyOwnerSlug(slug)
+        : Promise.resolve(false),
+      getConfirmedGroupForCompany(company.id),
+    ]);
   const editable = isOwner;
   const siteUrl = getSiteUrl();
+  const confirmedLinks =
+    trust.breakdown.confirmedPartners +
+    trust.breakdown.confirmedReferences +
+    trust.breakdown.ongoingReferences +
+    (groupBadge ? 1 : 0);
+
+  if (!isOwner && company.claimed !== false) {
+    const source = parseProfileSource(src);
+    await logProfileEvent(
+      company.slug,
+      source === "qr" ? "qr_scan" : "profile_view",
+      source,
+    );
+  }
 
   const confirmedClientRels =
     trust.breakdown.confirmedReferences + trust.breakdown.ongoingReferences;
@@ -97,11 +122,24 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         caseStudies={caseStudies}
         references={references}
         trust={trust}
+        assessmentSummary={assessmentSummary}
         editable={editable}
         claimSent={claimSent === "1"}
         claimError={claimError}
         inquirySent={inquirySent === "1"}
         error={error}
+        siteUrl={siteUrl}
+        domainVerifiedJustNow={domainVerified === "1"}
+        groupBadge={groupBadge}
+        networkMap={
+          confirmedLinks >= 2 ? (
+            <NetworkMapSection
+              scope={{ type: "company", slug: company.slug }}
+              title="Network"
+              minHeightClass="h-[60vh]"
+            />
+          ) : null
+        }
       />
     </>
   );

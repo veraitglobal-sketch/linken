@@ -1,8 +1,45 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { tryEmailDomainVerificationAfterOnboarding } from "@/features/verification/actions";
 import { createClient } from "@/lib/supabase/server";
 import { toSlug } from "@/lib/slug";
+
+export async function setAcceptingClients(formData: FormData) {
+  const accepting = String(formData.get("accepting_clients") ?? "") === "true";
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard")}`);
+
+  const { data: company } = await supabase
+    .from("companies")
+    .select("id, slug")
+    .eq("owner_id", user.id)
+    .eq("claimed", true)
+    .maybeSingle();
+
+  if (!company) redirect("/onboarding");
+
+  const { error } = await supabase
+    .from("companies")
+    .update({ accepting_clients: accepting })
+    .eq("id", company.id);
+
+  if (error) {
+    redirect(
+      `/dashboard?error=${encodeURIComponent(error.message ?? "Update failed")}`,
+    );
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${company.slug}`);
+  revalidatePath(`/c/${company.slug}/one-pager`);
+  redirect("/dashboard");
+}
 
 export async function createCompany(formData: FormData) {
   const supabase = await createClient();
@@ -25,22 +62,41 @@ export async function createCompany(formData: FormData) {
     redirect("/onboarding?error=Company%20name%20is%20required");
   }
 
-  const { error } = await supabase.from("companies").insert({
-    owner_id: user.id,
-    claimed: true,
-    claim_token: null,
-    name,
-    slug,
-    category,
-    city,
-    website,
-    description,
-    tagline: description.slice(0, 120),
-  });
+  const { data: created, error } = await supabase
+    .from("companies")
+    .insert({
+      owner_id: user.id,
+      claimed: true,
+      claim_token: null,
+      name,
+      slug,
+      category,
+      city,
+      website,
+      description,
+      tagline: description.slice(0, 120),
+    })
+    .select("id, slug")
+    .single();
 
-  if (error) {
-    redirect(`/onboarding?error=${encodeURIComponent(error.message)}`);
+  if (error || !created) {
+    redirect(
+      `/onboarding?error=${encodeURIComponent(error?.message ?? "Could not create company.")}`,
+    );
   }
 
-  redirect(`/c/${slug}`);
+  // Automatic email-domain verification when website matches work email
+  let verifiedHint = "";
+  if (website && user.email) {
+    const result = await tryEmailDomainVerificationAfterOnboarding({
+      companyId: created.id,
+      website,
+      ownerEmail: user.email,
+      slug: created.slug,
+    });
+    if (result.ok) verifiedHint = "?domainVerified=1";
+  }
+
+  revalidatePath(`/c/${created.slug}`);
+  redirect(`/c/${created.slug}${verifiedHint}`);
 }

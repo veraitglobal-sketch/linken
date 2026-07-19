@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { ClientHighlights } from "@/components/assessments/client-highlights";
 import { CaseStudyList } from "@/components/case-studies/case-study-list";
 import { CompanyAbout } from "@/components/company/company-about";
 import { CompanyHeroBand } from "@/components/company/company-hero-band";
@@ -8,6 +10,8 @@ import { PartnerSidebar } from "@/components/partners/partner-sidebar";
 import { ReferencesSection } from "@/components/references/references-section";
 import { TrustProgressCard } from "@/components/trust/trust-progress-card";
 import { TrustWhyCard } from "@/components/trust/trust-why-card";
+import type { ClientAssessmentSummary } from "@/features/assessments/queries";
+import type { ConfirmedGroupBadge } from "@/features/groups/types";
 import type { TrustProfile } from "@/features/trust/queries";
 import type { CaseStudy } from "@/types/case-study";
 import type { Company } from "@/types/company";
@@ -20,11 +24,16 @@ type Props = {
   caseStudies: CaseStudy[];
   references: ServiceReference[];
   trust: TrustProfile;
+  assessmentSummary: ClientAssessmentSummary;
   editable?: boolean;
   claimSent?: boolean;
   claimError?: string;
   inquirySent?: boolean;
   error?: string;
+  siteUrl?: string;
+  groupBadge?: ConfirmedGroupBadge | null;
+  networkMap?: ReactNode;
+  domainVerifiedJustNow?: boolean;
 };
 
 export function CompanyProfile({
@@ -33,11 +42,16 @@ export function CompanyProfile({
   caseStudies,
   references,
   trust,
+  assessmentSummary,
   editable = false,
   claimSent,
   claimError,
   inquirySent = false,
   error,
+  siteUrl = "",
+  groupBadge = null,
+  networkMap = null,
+  domainVerifiedJustNow = false,
 }: Props) {
   const isUnclaimed = company.claimed === false;
   const confirmedRefs = references.filter((r) => r.status === "confirmed").length;
@@ -55,8 +69,20 @@ export function CompanyProfile({
         company={company}
         trustLevel={trust.level}
         showContact={!isUnclaimed}
+        showOnePager={editable && !isUnclaimed}
+        showEmbed={editable && !isUnclaimed}
+        siteUrl={siteUrl}
+        groupBadge={groupBadge}
       />
       {inquirySent ? <InquirySentBanner companyName={company.name} /> : null}
+      {domainVerifiedJustNow ? (
+        <div className="mx-auto mt-4 max-w-6xl px-4">
+          <p className="rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
+            Domain verified — your email matches your website. The Verified badge
+            is live on this profile.
+          </p>
+        </div>
+      ) : null}
       {error ? (
         <div className="mx-auto mt-4 max-w-6xl px-4">
           <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
@@ -83,6 +109,7 @@ export function CompanyProfile({
       <div className="mx-auto mt-4 grid max-w-6xl gap-4 px-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-5">
         <div className="flex flex-col gap-4">
           <CompanyAbout company={company} />
+          <ClientHighlights summary={assessmentSummary} />
           {showRefs ? (
             <ReferencesSection references={references} editable={editable} />
           ) : null}
@@ -109,6 +136,8 @@ export function CompanyProfile({
           </div>
         ) : null}
       </div>
+
+      {networkMap}
     </div>
   );
 }

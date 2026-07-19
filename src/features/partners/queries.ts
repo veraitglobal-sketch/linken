@@ -1,3 +1,4 @@
+import { parsePlan } from "@/features/plan/entitlements";
 import { createClient } from "@/lib/supabase/server";
 
 export type ClaimPreview = {
@@ -52,12 +53,23 @@ export async function viewerOwnsClaimedCompany() {
 
     const { data: company } = await supabase
       .from("companies")
-      .select("id, name, slug")
+      .select("id, name, slug, accepting_clients, plan")
       .eq("owner_id", user.id)
       .eq("claimed", true)
       .maybeSingle();
 
-    return { user, company };
+    return {
+      user,
+      company: company
+        ? {
+            id: company.id,
+            name: company.name,
+            slug: company.slug,
+            acceptingClients: company.accepting_clients !== false,
+            plan: parsePlan(company.plan),
+          }
+        : null,
+    };
   } catch {
     return { user: null, company: null };
   }

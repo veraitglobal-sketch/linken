@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { companies } from "@/data/mock/companies";
 import { getCaseStudiesForCompany } from "@/data/mock/case-studies";
+import { listGroupSlugs } from "@/features/groups/queries";
 import { getSiteUrl } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -25,5 +26,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   );
 
-  return [...staticRoutes, ...companyRoutes, ...caseStudyRoutes];
+  const groupSlugs = await listGroupSlugs();
+  const groupRoutes: MetadataRoute.Sitemap = groupSlugs.map((slug) => ({
+    url: `${siteUrl}/g/${slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.75,
+  }));
+
+  return [
+    ...staticRoutes,
+    ...companyRoutes,
+    ...caseStudyRoutes,
+    ...groupRoutes,
+  ];
 }

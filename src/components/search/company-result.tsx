@@ -17,7 +17,7 @@ export function CompanyResult({ company, action }: Props) {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <Link
-            href={`/c/${company.slug}`}
+            href={`/c/${company.slug}?src=search`}
             className="truncate font-display text-[15px] font-semibold tracking-[-0.02em] text-ink hover:text-accent"
           >
             {company.name}

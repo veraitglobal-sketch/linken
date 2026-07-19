@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ConfirmReferencePanel } from "@/components/references/confirm-reference-panel";
+import { hasAssessmentForSource } from "@/features/assessments/queries";
 import { getReferencePreview } from "@/features/references/queries";
 import { viewerOwnsClaimedCompany } from "@/features/partners/queries";
 
@@ -11,7 +12,12 @@ export const metadata: Metadata = {
 
 type Props = {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ error?: string; done?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    done?: string;
+    assessed?: string;
+    skipped?: string;
+  }>;
 };
 
 export default async function ConfirmReferencePage({
@@ -19,7 +25,7 @@ export default async function ConfirmReferencePage({
   searchParams,
 }: Props) {
   const { token } = await params;
-  const { error, done } = await searchParams;
+  const { error, done, assessed, skipped } = await searchParams;
   const preview = await getReferencePreview(token);
   const { user, company } = await viewerOwnsClaimedCompany();
 
@@ -38,6 +44,11 @@ export default async function ConfirmReferencePage({
       </section>
     );
   }
+
+  const alreadyAssessed =
+    preview.status === "confirmed" || done === "confirmed"
+      ? await hasAssessmentForSource("reference", preview.id)
+      : false;
 
   return (
     <section className="mx-auto max-w-xl px-4 py-10 sm:py-14">
@@ -58,6 +69,9 @@ export default async function ConfirmReferencePage({
           companyName={company?.name ?? null}
           error={error}
           done={done}
+          assessed={assessed === "1"}
+          skipped={skipped === "1"}
+          alreadyAssessed={alreadyAssessed}
         />
       </div>
     </section>

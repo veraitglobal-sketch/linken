@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ConfirmPanel } from "@/components/confirm/confirm-panel";
+import { hasAssessmentForSource } from "@/features/assessments/queries";
 import {
   getClientConfirmationByToken,
   getViewerCompany,
@@ -13,12 +14,17 @@ export const metadata: Metadata = {
 
 type Props = {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ error?: string; done?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    done?: string;
+    assessed?: string;
+    skipped?: string;
+  }>;
 };
 
 export default async function ConfirmTokenPage({ params, searchParams }: Props) {
   const { token } = await params;
-  const { error, done } = await searchParams;
+  const { error, done, assessed, skipped } = await searchParams;
   const view = await getClientConfirmationByToken(token);
   const { user, company } = await getViewerCompany();
 
@@ -37,6 +43,11 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
       </section>
     );
   }
+
+  const alreadyAssessed =
+    view.status === "confirmed" || done === "confirmed"
+      ? await hasAssessmentForSource("confirmation", view.id)
+      : false;
 
   return (
     <section className="mx-auto max-w-xl px-4 py-10 sm:py-14">
@@ -57,6 +68,9 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
           company={company}
           error={error}
           done={done}
+          assessed={assessed === "1"}
+          skipped={skipped === "1"}
+          alreadyAssessed={alreadyAssessed}
         />
       </div>
     </section>

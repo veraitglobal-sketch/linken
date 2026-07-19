@@ -173,3 +173,76 @@ export async function sendInquiryNotifyEmail({
     linkForLog: dashboardUrl,
   });
 }
+
+export async function sendGroupInviteEmail(input: {
+  to: string;
+  groupName: string;
+  companyName: string;
+  groupSlug: string;
+}) {
+  const dashboardUrl = `${getSiteUrl()}/dashboard`;
+  const groupUrl = `${getSiteUrl()}/g/${input.groupSlug}`;
+  return sendTextEmail({
+    to: input.to,
+    subject: `${input.groupName} invited ${input.companyName} to join on Linken`,
+    body: [
+      `${input.groupName} invited ${input.companyName} to join their company group on Linken.`,
+      "",
+      "Confirm or decline in your dashboard:",
+      dashboardUrl,
+      "",
+      `Group page (after confirmation): ${groupUrl}`,
+      "",
+      "Membership is only public once you confirm.",
+    ].join("\n"),
+    logLabel: "group-invite",
+    linkForLog: dashboardUrl,
+  });
+}
+
+export async function sendOwnershipTransferEmail(input: {
+  to: string;
+  companyName: string;
+  token: string;
+}) {
+  const url = `${getSiteUrl()}/transfer/${input.token}`;
+  return sendTextEmail({
+    to: input.to,
+    subject: `Accept ownership of ${input.companyName} on Linken`,
+    body: [
+      `You have been invited to become the owner of ${input.companyName} on Linken.`,
+      "",
+      "Sign in (or create an account), then open this link to accept:",
+      url,
+      "",
+      "References and confirmations stay with the company. Group membership is unchanged unless someone ends it.",
+      "",
+      "If you were not expecting this, ignore the email.",
+    ].join("\n"),
+    logLabel: "ownership-transfer",
+    linkForLog: url,
+  });
+}
+
+export async function sendTeamInviteEmail(input: {
+  to: string;
+  companyName: string;
+  inviterHint: string;
+}) {
+  const loginUrl = `${getSiteUrl()}/login?next=/dashboard`;
+  return sendTextEmail({
+    to: input.to,
+    subject: `You're invited to ${input.companyName} on Linken`,
+    body: [
+      `${input.inviterHint} invited you to help manage ${input.companyName} on Linken.`,
+      "",
+      "Create an account (or sign in) with this email:",
+      loginUrl,
+      "",
+      // TODO: auto-link membership on registration for this email.
+      "After you register, ask the company owner to add you again if access is not linked yet.",
+    ].join("\n"),
+    logLabel: "team-invite",
+    linkForLog: loginUrl,
+  });
+}

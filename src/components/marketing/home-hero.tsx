@@ -9,7 +9,7 @@ export function HomeHero() {
 
         <div className="relative z-10 flex flex-col justify-between px-7 py-9 sm:px-11 sm:py-12">
           <div className="animate-rise flex items-center gap-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#c4783a]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#5ec4a8]" />
             <p className="text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase">
               Mutually confirmed project networks
             </p>
@@ -53,7 +53,7 @@ export function HomeHero() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 lg:bg-gradient-to-l lg:from-transparent lg:via-transparent lg:to-[rgba(10,20,18,0.45)]" />
           <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/15 bg-black/35 px-4 py-3 backdrop-blur-md">
-            <p className="text-[11px] font-semibold tracking-[0.12em] text-[#c4783a] uppercase">
+            <p className="text-[11px] font-semibold tracking-[0.12em] text-[#5ec4a8] uppercase">
               On this network
             </p>
             <p className="mt-1 text-sm font-medium text-white">

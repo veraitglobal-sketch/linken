@@ -114,21 +114,40 @@ a {
 
 .mesh-stage {
   background:
-    radial-gradient(ellipse 70% 55% at 12% 20%, rgba(196, 120, 58, 0.28), transparent 52%),
+    radial-gradient(ellipse 70% 55% at 12% 20%, rgba(94, 196, 168, 0.22), transparent 52%),
     radial-gradient(ellipse 75% 60% at 85% 30%, rgba(31, 107, 92, 0.55), transparent 55%),
     radial-gradient(ellipse 55% 45% at 45% 90%, rgba(16, 50, 44, 0.7), transparent 50%),
     linear-gradient(155deg, #0a1412 0%, #122822 42%, #163a32 100%);
 }
 
 .glass-nav {
-  background: rgba(255, 255, 255, 0.78);
+  background: #ffffff;
   border: 1px solid rgba(16, 35, 31, 0.08);
   box-shadow: 0 10px 36px rgba(10, 20, 18, 0.07);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
 }
 
 .link-pulse {
   transform-origin: center;
   animation: orbit 18s linear infinite;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .one-pager {
+    max-width: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
 }

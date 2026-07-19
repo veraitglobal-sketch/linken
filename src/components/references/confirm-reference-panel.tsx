@@ -1,3 +1,4 @@
+import { PostConfirmAssessment } from "@/components/assessments/post-confirm-assessment";
 import { InviteAuth } from "@/components/auth/invite-auth";
 import {
   confirmServiceReference,
@@ -13,6 +14,9 @@ type Props = {
   companyName: string | null;
   error?: string;
   done?: string;
+  assessed?: boolean;
+  skipped?: boolean;
+  alreadyAssessed?: boolean;
 };
 
 export function ConfirmReferencePanel({
@@ -22,12 +26,35 @@ export function ConfirmReferencePanel({
   companyName,
   error,
   done,
+  assessed = false,
+  skipped = false,
+  alreadyAssessed = false,
 }: Props) {
   const next = `/confirm-reference/${token}`;
+  const confirmed = done === "confirmed" || preview.status === "confirmed";
 
-  if (done === "confirmed" || preview.status === "confirmed") {
-    return <Status title="Confirmed" body="This service relationship is now confirmed on Linken." />;
+  if (confirmed) {
+    return (
+      <div className="space-y-4">
+        {error ? (
+          <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+            {error}
+          </p>
+        ) : null}
+        <PostConfirmAssessment
+          sourceType="reference"
+          sourceId={preview.id}
+          providerName={preview.providerName}
+          providerSlug={preview.providerSlug}
+          returnTo={next}
+          alreadyAssessed={alreadyAssessed}
+          assessedJustNow={assessed}
+          skipped={skipped}
+        />
+      </div>
+    );
   }
+
   if (done === "declined" || preview.status === "declined") {
     return <Status title="Declined" body="This confirmation request was declined." />;
   }

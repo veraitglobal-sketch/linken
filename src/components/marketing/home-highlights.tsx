@@ -13,7 +13,7 @@ export function HomeHighlights() {
     <section className="px-4 pb-24">
       <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <p className="text-[13px] font-medium text-ember">Highlights</p>
+          <p className="text-[13px] font-medium text-[#1f6b5c]">Highlights</p>
           <h2 className="mt-3 font-display text-4xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
             One link firms are proud to send.
           </h2>

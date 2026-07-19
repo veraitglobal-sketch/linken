@@ -20,7 +20,7 @@ export function ClientConfirmedBadge({ confirmation }: Props) {
         <PartnerMark initials={firm.logoInitials} />
         <div className="min-w-0">
           <Link
-            href={`/c/${firm.slug}`}
+            href={`/c/${firm.slug}?src=partner`}
             className="font-display text-lg font-medium tracking-[-0.03em] text-ink hover:underline"
           >
             {firm.name}

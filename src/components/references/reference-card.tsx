@@ -28,7 +28,7 @@ export function ReferenceCard({ reference, editable = false }: Props) {
         <div className="min-w-0">
           {reference.clientSlug ? (
             <Link
-              href={`/c/${reference.clientSlug}`}
+              href={`/c/${reference.clientSlug}?src=partner`}
               className="font-display text-[1.1rem] font-medium tracking-[-0.03em] text-ink hover:underline"
             >
               {reference.clientName}

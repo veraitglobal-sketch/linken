@@ -1,10 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AnalyticsCard } from "@/components/analytics/analytics-card";
+import { PrivateFeedbackCard } from "@/components/assessments/private-feedback-card";
+import { AvailabilityToggle } from "@/components/company/availability-toggle";
+import { PendingGroupInvites } from "@/components/groups/pending-group-invites";
 import { DashboardInquiries } from "@/components/inquiries/dashboard-inquiries";
+import { VerificationCard } from "@/components/verification/verification-card";
 import { Button } from "@/components/ui/button";
 import { SectionTitle } from "@/components/ui/section-title";
+import { getAnalytics } from "@/features/analytics/queries";
+import { getPrivateFeedbackForOwner } from "@/features/assessments/queries";
+import { getPendingGroupInvitesForOwner } from "@/features/groups/queries";
 import { getInquiriesForOwnerCompany } from "@/features/inquiries/queries";
 import { viewerOwnsClaimedCompany } from "@/features/partners/queries";
+import { getCompanyVerification } from "@/features/verification/queries";
+import { createClient } from "@/lib/supabase/server";
+import { getSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -17,9 +28,42 @@ type Props = {
 export default async function DashboardPage({ searchParams }: Props) {
   const { error } = await searchParams;
   const { user, company } = await viewerOwnsClaimedCompany();
-  const inquiryData = company
-    ? await getInquiriesForOwnerCompany(company.id)
-    : { inquiries: [], newCount: 0, monthCount: 0 };
+  const siteUrl = getSiteUrl();
+
+  let website = "";
+  let verifyToken: string | null = null;
+  let verification = null as Awaited<
+    ReturnType<typeof getCompanyVerification>
+  >;
+
+  if (company) {
+    const supabase = await createClient();
+    const [{ data: full }, tokenRes] = await Promise.all([
+      supabase
+        .from("companies")
+        .select("website")
+        .eq("id", company.id)
+        .maybeSingle(),
+      supabase.rpc("get_verify_token", { p_company_id: company.id }),
+    ]);
+    website = full?.website ?? "";
+    verifyToken = (tokenRes.data as string | null) ?? null;
+    verification = await getCompanyVerification(company.id);
+  }
+
+  const [inquiryData, privateFeedback, analytics, groupInvites] = company
+    ? await Promise.all([
+        getInquiriesForOwnerCompany(company.id),
+        getPrivateFeedbackForOwner(company.id),
+        getAnalytics(company.id, 30),
+        getPendingGroupInvitesForOwner(),
+      ])
+    : [
+        { inquiries: [], newCount: 0, monthCount: 0 },
+        [] as Awaited<ReturnType<typeof getPrivateFeedbackForOwner>>,
+        null,
+        user ? await getPendingGroupInvitesForOwner() : [],
+      ];
 
   const items = [
     {
@@ -28,9 +72,24 @@ export default async function DashboardPage({ searchParams }: Props) {
       body: "Preview how visitors see your company and partners.",
     },
     {
+      href: company ? `/c/${company.slug}/one-pager` : "/onboarding",
+      title: "Verified one-pager",
+      body: "Printable page with only confirmed evidence — attach to every proposal.",
+    },
+    {
       href: "/dashboard/partners",
       title: "Partner requests",
       body: "Search companies and send mutual partnership invites.",
+    },
+    {
+      href: "/dashboard/group",
+      title: "Company group",
+      body: "Branches, subsidiaries, and confirmed group membership.",
+    },
+    {
+      href: "/dashboard/team",
+      title: "Team members",
+      body: "Invite colleagues to help manage this company.",
     },
     {
       href: "/onboarding",
@@ -62,13 +121,34 @@ export default async function DashboardPage({ searchParams }: Props) {
         </p>
       ) : null}
 
-      {user && company ? (
+      {user ? (
         <div className="mt-8">
+          <PendingGroupInvites invites={groupInvites} />
+        </div>
+      ) : null}
+
+      {user && company ? (
+        <div className="mt-4 flex flex-col gap-4">
+          {analytics ? (
+            <AnalyticsCard analytics={analytics} plan={company.plan} />
+          ) : null}
+          {verification ? (
+            <VerificationCard
+              verification={verification}
+              website={website}
+              ownerEmail={user.email ?? ""}
+              token={verifyToken}
+              companySlug={company.slug}
+              siteUrl={siteUrl}
+            />
+          ) : null}
+          <AvailabilityToggle acceptingClients={company.acceptingClients} />
           <DashboardInquiries
             inquiries={inquiryData.inquiries}
             newCount={inquiryData.newCount}
             monthCount={inquiryData.monthCount}
           />
+          <PrivateFeedbackCard items={privateFeedback} />
         </div>
       ) : null}
 

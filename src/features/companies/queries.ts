@@ -1,4 +1,5 @@
 import { getCompanyBySlug as getMockCompany } from "@/data/mock/companies";
+import { parsePlan } from "@/features/plan/entitlements";
 import { createClient } from "@/lib/supabase/server";
 import type { Company } from "@/types/company";
 
@@ -24,6 +25,8 @@ function mapRow(row: {
   services: string[] | null;
   verified: boolean | null;
   claimed: boolean | null;
+  accepting_clients?: boolean | null;
+  plan?: string | null;
   invite_email?: string | null;
   created_by?: { slug: string; name: string } | { slug: string; name: string }[] | null;
 }): Company {
@@ -43,8 +46,12 @@ function mapRow(row: {
     website: row.website ?? "",
     services: row.services ?? [],
     verified: Boolean(row.verified) && row.claimed !== false,
+    verifiedAt: null,
+    websiteLinked: false,
     logoInitials: initials(row.name),
     claimed: row.claimed !== false,
+    acceptingClients: row.accepting_clients !== false,
+    plan: parsePlan(row.plan),
     inviteEmail: row.invite_email ?? null,
     createdBySlug: createdBy?.slug ?? null,
     createdByName: createdBy?.name ?? null,
@@ -58,20 +65,32 @@ export async function getCompanyForPage(slug: string): Promise<Company | null> {
     const { data } = await supabase
       .from("companies")
       .select(
-        "id, slug, name, tagline, description, category, city, country, website, services, verified, claimed, created_by:companies!created_by_company_id(slug, name)",
+        "id, slug, name, tagline, description, category, city, country, website, services, verified, claimed, accepting_clients, plan, created_by:companies!created_by_company_id(slug, name)",
       )
       .eq("slug", slug)
       .maybeSingle();
 
     // Never select claim_token or invite_email for public page payloads
-    if (data) return mapRow({ ...data, invite_email: null });
+    if (data) {
+      const company = mapRow({ ...data, invite_email: null });
+      const { data: ver } = await supabase
+        .from("company_verifications")
+        .select("verified_at, website_linked")
+        .eq("company_id", company.id)
+        .maybeSingle();
+      if (ver) {
+        company.verifiedAt = ver.verified_at ?? null;
+        company.websiteLinked = Boolean(ver.website_linked);
+      }
+      return company;
+    }
   } catch {
     // fall through to mock
   }
 
   const mock = getMockCompany(slug);
   if (!mock) return null;
-  return { ...mock, claimed: true };
+  return { ...mock, claimed: true, acceptingClients: true, plan: "free" };
 }
 
 export async function searchCompanies(query: string): Promise<Company[]> {
@@ -82,7 +101,7 @@ export async function searchCompanies(query: string): Promise<Company[]> {
     let req = supabase
       .from("companies")
       .select(
-        "id, slug, name, tagline, description, category, city, country, website, services, verified, claimed",
+        "id, slug, name, tagline, description, category, city, country, website, services, verified, claimed, accepting_clients, plan",
       )
       .order("name")
       .limit(40);
@@ -111,5 +130,5 @@ export async function searchCompanies(query: string): Promise<Company[]> {
         c.city.toLowerCase().includes(q)
       );
     })
-    .map((c) => ({ ...c, claimed: true }));
+    .map((c) => ({ ...c, claimed: true, acceptingClients: true, plan: "free" as const }));
 }

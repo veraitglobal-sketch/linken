@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { logProfileEvent } from "@/features/analytics/log";
+import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import { sendInquiryNotifyEmail } from "@/lib/email";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 function isValidEmail(value: string) {
@@ -58,20 +61,44 @@ export async function sendInquiry(formData: FormData) {
     inquiry_id: string;
     company_name: string;
     company_slug: string;
-    notify_email: string | null;
   };
 
-  if (row.notify_email) {
-    await sendInquiryNotifyEmail({
-      to: row.notify_email,
-      senderName,
-      senderEmail,
-      senderCompany,
-      serviceInterest,
-      message,
-      companyName: row.company_name,
-      companySlug: row.company_slug,
-    });
+  await logProfileEvent(companySlug, "inquiry", "direct");
+
+  const { data: companyPlan } = await supabase
+    .from("companies")
+    .select("plan")
+    .eq("slug", companySlug)
+    .maybeSingle();
+
+  const entitlements = getEntitlements(parsePlan(companyPlan?.plan));
+
+  // Instant email only for Pro/Founding. Free sees inquiries in the dashboard.
+  // TODO: daily digest email for free plans via cron (separate topic).
+  if (entitlements.instantInquiryNotifications) {
+    const admin = createAdminClient();
+    if (admin) {
+      const { data: notifyEmail } = await admin.rpc("get_inquiry_notify_email", {
+        p_inquiry_id: row.inquiry_id,
+      });
+
+      if (notifyEmail) {
+        await sendInquiryNotifyEmail({
+          to: notifyEmail as string,
+          senderName,
+          senderEmail,
+          senderCompany,
+          serviceInterest,
+          message,
+          companyName: row.company_name,
+          companySlug: row.company_slug,
+        });
+      }
+    } else {
+      console.warn(
+        "SUPABASE_SERVICE_ROLE_KEY not configured — inquiry notification email skipped.",
+      );
+    }
   }
 
   revalidatePath(`/c/${companySlug}`);

@@ -32,7 +32,7 @@ export function HomeContrast() {
           </article>
         ))}
         <article className="relative flex min-h-[280px] flex-col overflow-hidden rounded-[28px] bg-navy px-6 py-8 text-white">
-          <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-ember/20 blur-2xl" />
+          <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-[#5ec4a8]/20 blur-2xl" />
           <p className="text-[12px] font-semibold tracking-[0.14em] text-blue-soft">
             03 · Linken
           </p>

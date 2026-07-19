@@ -1,0 +1,120 @@
+/** Realistic JSON / snippet examples — URLs from getSiteUrl(), never hardcoded localhost. */
+
+export function companyExample(siteUrl: string) {
+  return `{
+  "slug": "acme-architecture",
+  "name": "Acme Architecture",
+  "category": "Architecture",
+  "city": "Berlin",
+  "country": "Germany",
+  "website": "https://example.com",
+  "verified": true,
+  "claimed": true,
+  "accepting_clients": true,
+  "trust_level": "established",
+  "stats": {
+    "confirmed_partners": 6,
+    "confirmed_references": 4,
+    "ongoing_references": 2,
+    "confirmed_case_studies": 3
+  },
+  "assessment": {
+    "would_work_again_yes": 9,
+    "would_work_again_total": 10,
+    "top_strengths": [
+      { "key": "reliability", "label": "Reliability", "count": 8 },
+      { "key": "deadlines", "label": "Deadlines", "count": 6 }
+    ]
+  },
+  "profile_url": "${siteUrl}/c/acme-architecture",
+  "generated_at": "2026-07-19T18:00:00.000Z"
+}`;
+}
+
+export function referencesExample() {
+  return `{
+  "references": [
+    {
+      "client_name": "Nordwerk Holding",
+      "client_slug": "nordwerk-holding",
+      "service": "Shell construction",
+      "started_year": "2023",
+      "ongoing": true,
+      "ended_year": null,
+      "confirmed_at": "2024-11-02T09:14:00.000Z"
+    },
+    {
+      "client_name": "Stadtwerke Spandau",
+      "client_slug": null,
+      "service": "Electrical fit-out",
+      "started_year": "2021",
+      "ongoing": false,
+      "ended_year": "2022",
+      "confirmed_at": "2023-03-18T14:22:00.000Z"
+    }
+  ],
+  "count": 2
+}`;
+}
+
+export function caseStudiesExample(siteUrl: string) {
+  return `{
+  "case_studies": [
+    {
+      "slug": "residence-berlin",
+      "title": "Residence Berlin",
+      "summary": "Private residence delivered with confirmed build and electrical partners.",
+      "year": "2024",
+      "location": "Berlin, Germany",
+      "url": "${siteUrl}/c/acme-architecture/case-studies/residence-berlin",
+      "client_confirmed": true,
+      "confirmed_partners": [
+        { "name": "BauPro GmbH", "slug": "baupro" },
+        { "name": "Beta Elektro", "slug": "beta-elektro" }
+      ]
+    }
+  ],
+  "count": 1
+}`;
+}
+
+export function errorExample() {
+  return `{
+  "error": {
+    "code": "not_found",
+    "message": "Company not found."
+  }
+}`;
+}
+
+export function curlGet(url: string) {
+  return `curl -sS "${url}" \\
+  -H "Accept: application/json"`;
+}
+
+export function jsFetch(url: string) {
+  return `const res = await fetch("${url}", {
+  headers: { Accept: "application/json" },
+});
+
+if (!res.ok) {
+  const err = await res.json();
+  throw new Error(err.error?.message ?? res.statusText);
+}
+
+const data = await res.json();
+console.log(data);`;
+}
+
+export function embedSnippet(
+  siteUrl: string,
+  slug: string,
+  variant: "badge" | "assessment" | "references",
+  height: number,
+) {
+  const src =
+    variant === "badge"
+      ? `${siteUrl}/embed/${slug}`
+      : `${siteUrl}/embed/${slug}?variant=${variant}`;
+  return `<iframe src="${src}" width="320" height="${height}" style="border:0" title="Verified on Linken" loading="lazy"></iframe>`;
+}

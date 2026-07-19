@@ -19,7 +19,7 @@ export function LoginPanel({ error }: Props) {
   return (
     <div className="relative flex flex-col justify-center border-t border-line bg-[#fbfbfc] px-6 py-8 sm:px-9 sm:py-10 lg:border-t-0 lg:border-l lg:border-white/10">
       <div className="animate-rise">
-        <p className="text-[11px] font-semibold tracking-[0.16em] text-ember uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.16em] text-[#1f6b5c] uppercase">
           {isCreate ? "New account" : "Welcome back"}
         </p>
         <h1 className="mt-3 font-display text-[clamp(1.7rem,2.4vw,2.15rem)] font-medium tracking-[-0.035em] text-ink">

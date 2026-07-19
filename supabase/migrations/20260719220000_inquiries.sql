@@ -24,19 +24,9 @@ on public.inquiries for select
 to authenticated
 using (public.is_company_owner(company_id));
 
--- Visitors (anon + auth) may submit; only status=new and claimed targets
-create policy "inquiries_public_insert"
-on public.inquiries for insert
-to anon, authenticated
-with check (
-  status = 'new'
-  and exists (
-    select 1
-    from public.companies c
-    where c.id = company_id
-      and c.claimed = true
-  )
-);
+-- No direct INSERT for anyone: a direct REST insert would bypass the
+-- rate limit in create_inquiry. The security definer function below is
+-- the only write path (it does not need caller privileges).
 
 create policy "inquiries_owner_update"
 on public.inquiries for update
@@ -58,11 +48,6 @@ grant select (
   message, service_interest, status, created_at
 ) on table public.inquiries to authenticated;
 
-grant insert (
-  company_id, sender_name, sender_email, sender_company,
-  message, service_interest, status
-) on table public.inquiries to anon, authenticated;
-
 grant update (status) on table public.inquiries to authenticated;
 
 grant delete on table public.inquiries to authenticated;
@@ -79,8 +64,7 @@ create or replace function public.create_inquiry(
 returns table (
   inquiry_id uuid,
   company_name text,
-  company_slug text,
-  notify_email text
+  company_slug text
 )
 language plpgsql
 security definer
@@ -94,7 +78,6 @@ declare
   v_message text := trim(p_message);
   v_interest text := coalesce(trim(p_service_interest), '');
   v_id uuid;
-  v_notify text;
   v_recent int;
 begin
   if v_name = '' then
@@ -152,22 +135,38 @@ begin
   )
   returning id into v_id;
 
-  select u.email into v_notify
-  from auth.users u
-  where u.id = v_company.owner_id;
-
-  if v_notify is null or trim(v_notify) = '' then
-    v_notify := nullif(trim(v_company.invite_email), '');
-  end if;
-
   return query
   select
     v_id,
     v_company.name,
-    v_company.slug,
-    v_notify;
+    v_company.slug;
 end;
 $$;
 
 revoke all on function public.create_inquiry(text, text, text, text, text, text) from public;
 grant execute on function public.create_inquiry(text, text, text, text, text, text) to anon, authenticated;
+
+-- Owner notify email: NEVER returned to browser-facing roles — the anon key
+-- is public, so returning it from create_inquiry would let anyone harvest
+-- company owners' private emails. Service role only; the server action
+-- fetches it via the admin client to send the notification.
+create or replace function public.get_inquiry_notify_email(p_inquiry_id uuid)
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(
+    nullif(trim(u.email), ''),
+    nullif(trim(c.invite_email), '')
+  )
+  from public.inquiries i
+  join public.companies c on c.id = i.company_id
+  left join auth.users u on u.id = c.owner_id
+  where i.id = p_inquiry_id;
+$$;
+
+revoke all on function public.get_inquiry_notify_email(uuid) from public;
+revoke all on function public.get_inquiry_notify_email(uuid) from anon, authenticated;
+grant execute on function public.get_inquiry_notify_email(uuid) to service_role;

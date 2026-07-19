@@ -9,12 +9,14 @@ type Props = {
   companySlug: string;
   companyName: string;
   defaultOpen?: boolean;
+  fullyBooked?: boolean;
 };
 
 export function InquiryForm({
   companySlug,
   companyName,
   defaultOpen = false,
+  fullyBooked = false,
 }: Props) {
   const [open, setOpen] = useState(defaultOpen);
 
@@ -52,6 +54,12 @@ export function InquiryForm({
       <p className="mt-1 text-[13px] text-white/65">
         Your message goes to the company — not published on Linken.
       </p>
+      {fullyBooked ? (
+        <p className="mt-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-[12px] text-white/70">
+          This company is currently fully booked. You can still send an inquiry
+          for a future opening.
+        </p>
+      ) : null}
 
       <div className="mt-3 grid gap-2.5">
         <Input

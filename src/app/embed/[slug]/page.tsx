@@ -1,58 +1,122 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
-import { LogoMark } from "@/components/ui/logo-mark";
-import { getCaseStudiesForCompany } from "@/data/mock/case-studies";
-import { getCompanyBySlug } from "@/data/mock/companies";
-import { getPartnersForCompany } from "@/data/mock/partners";
+import { EmbedAssessment } from "@/components/embed/embed-assessment";
+import { EmbedBadge } from "@/components/embed/embed-badge";
+import { EmbedReferences } from "@/components/embed/embed-references";
+import { logProfileEvent } from "@/features/analytics/log";
+import { getClientAssessmentSummary } from "@/features/assessments/queries";
+import { getCompanyForPage } from "@/features/companies/queries";
+import { getReferencesForCompany } from "@/features/references/queries";
+import { getTrustProfile } from "@/features/trust/queries";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ variant?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const company = getCompanyBySlug(slug);
+  const company = await getCompanyForPage(slug);
   return {
     title: company ? `${company.name} · Verified on Linken` : "Linken badge",
     robots: { index: false, follow: true },
   };
 }
 
-export default async function EmbedBadgePage({ params }: Props) {
+function periodLabel(ref: {
+  ongoing: boolean;
+  startedYear: string;
+  endedYear: string | null;
+}) {
+  if (ref.ongoing) return `since ${ref.startedYear || "—"}`;
+  if (ref.endedYear) return `${ref.startedYear || "—"}–${ref.endedYear}`;
+  return ref.startedYear || "—";
+}
+
+export default async function EmbedBadgePage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const company = getCompanyBySlug(slug);
+  const { variant = "badge" } = await searchParams;
+  const company = await getCompanyForPage(slug);
   if (!company) notFound();
 
-  const siteUrl = getSiteUrl();
-  const profileUrl = `${siteUrl}/c/${company.slug}`;
-  const partnerCount = getPartnersForCompany(slug).filter(
-    (partner) => partner.status === "accepted",
-  ).length;
-  const caseStudyCount = getCaseStudiesForCompany(slug).length;
+  await logProfileEvent(company.slug, "embed_view", "embed");
 
+  const siteUrl = getSiteUrl();
+  const profileUrl = `${siteUrl}/c/${company.slug}?src=embed`;
+  const claimed = company.claimed !== false;
+
+  if (!claimed) {
+    return (
+      <EmbedBadge
+        name={company.name}
+        initials={company.logoInitials}
+        verified={false}
+        claimed={false}
+        partnerCount={0}
+        caseStudyCount={0}
+        profileUrl={profileUrl}
+      />
+    );
+  }
+
+  const [trust, assessment, references] = await Promise.all([
+    getTrustProfile(company.id, company.slug),
+    getClientAssessmentSummary(company.id),
+    getReferencesForCompany(company.id),
+  ]);
+
+  const confirmedRefs = references
+    .filter((r) => r.status === "confirmed")
+    .sort((a, b) => {
+      if (a.ongoing !== b.ongoing) return a.ongoing ? -1 : 1;
+      return (a.startedYear || "").localeCompare(b.startedYear || "");
+    });
+
+  const partnerCount = trust.breakdown.confirmedPartners;
+  const caseStudyCount =
+    trust.breakdown.clientConfirmedCaseStudies +
+    trust.breakdown.partnerConfirmedCaseStudies;
+
+  if (
+    variant === "assessment" &&
+    assessment.wouldWorkAgainTotal >= 3
+  ) {
+    return (
+      <EmbedAssessment
+        name={company.name}
+        wouldYes={assessment.wouldWorkAgainYes}
+        wouldTotal={assessment.wouldWorkAgainTotal}
+        topStrengths={assessment.topStrengths.slice(0, 3)}
+        profileUrl={profileUrl}
+      />
+    );
+  }
+
+  if (variant === "references" && confirmedRefs.length > 0) {
+    return (
+      <EmbedReferences
+        name={company.name}
+        references={confirmedRefs.slice(0, 5).map((r) => ({
+          clientName: r.clientName,
+          service: r.service,
+          period: periodLabel(r),
+        }))}
+        profileUrl={profileUrl}
+      />
+    );
+  }
+
+  // badge (default) — also fallback when assessment/references lack data
   return (
-    <a
-      href={profileUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center gap-3 border border-line bg-white px-4 py-3 no-underline transition-colors hover:bg-paper"
-    >
-      <LogoMark initials={company.logoInitials} size="md" />
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5">
-          <p className="truncate text-sm font-semibold text-ink">{company.name}</p>
-          {company.verified ? <Badge tone="success">Verified</Badge> : null}
-        </div>
-        <p className="mt-0.5 text-[12px] text-muted">
-          {partnerCount} verified partner{partnerCount === 1 ? "" : "s"} ·{" "}
-          {caseStudyCount} case stud{caseStudyCount === 1 ? "y" : "ies"}
-        </p>
-      </div>
-      <span className="shrink-0 text-[11px] font-semibold tracking-[0.1em] text-muted uppercase">
-        Linken
-      </span>
-    </a>
+    <EmbedBadge
+      name={company.name}
+      initials={company.logoInitials}
+      verified={company.verified}
+      claimed
+      partnerCount={partnerCount}
+      caseStudyCount={caseStudyCount}
+      profileUrl={profileUrl}
+    />
   );
 }

@@ -14,7 +14,7 @@ export function PartnerCard({ partner }: Props) {
 
   return (
     <Link
-      href={`/c/${partner.slug}`}
+      href={`/c/${partner.slug}?src=partner`}
       className="block rounded-2xl bg-[#f7f8fa] px-3.5 py-3.5 transition-colors hover:bg-[#eef1f3]"
     >
       <div className="flex items-center gap-3.5">

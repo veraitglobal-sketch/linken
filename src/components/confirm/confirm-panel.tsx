@@ -1,3 +1,4 @@
+import { PostConfirmAssessment } from "@/components/assessments/post-confirm-assessment";
 import { ConfirmAuth } from "@/components/confirm/confirm-auth";
 import { ConfirmCompanyForm } from "@/components/confirm/confirm-company-form";
 import { ConfirmDecision } from "@/components/confirm/confirm-decision";
@@ -15,17 +16,43 @@ type Props = {
   company: ViewerCompany;
   error?: string;
   done?: string;
+  assessed?: boolean;
+  skipped?: boolean;
+  alreadyAssessed?: boolean;
 };
 
-export function ConfirmPanel({ view, userId, company, error, done }: Props) {
+export function ConfirmPanel({
+  view,
+  userId,
+  company,
+  error,
+  done,
+  assessed = false,
+  skipped = false,
+  alreadyAssessed = false,
+}: Props) {
   const next = `/confirm/${view.token}`;
+  const confirmed = done === "confirmed" || view.status === "confirmed";
 
-  if (done === "confirmed" || view.status === "confirmed") {
+  if (confirmed) {
     return (
-      <StatusCard
-        title="Already confirmed"
-        body={`${view.confirmerName ?? "A client company"} confirmed this project on Linken.`}
-      />
+      <div className="space-y-4">
+        {error ? (
+          <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+            {error}
+          </p>
+        ) : null}
+        <PostConfirmAssessment
+          sourceType="confirmation"
+          sourceId={view.id}
+          providerName={view.requesterName}
+          providerSlug={view.requesterSlug}
+          returnTo={next}
+          alreadyAssessed={alreadyAssessed}
+          assessedJustNow={assessed}
+          skipped={skipped}
+        />
+      </div>
     );
   }
 

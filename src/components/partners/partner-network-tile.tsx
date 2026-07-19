@@ -14,7 +14,7 @@ export function PartnerNetworkTile({ partner }: Props) {
 
   return (
     <Link
-      href={`/c/${partner.slug}`}
+      href={`/c/${partner.slug}?src=partner`}
       className="group flex h-full flex-col rounded-[24px] border border-line bg-surface p-5 transition-colors hover:border-[#10231f]/20 hover:bg-white"
     >
       <div className="flex items-start justify-between gap-3">
