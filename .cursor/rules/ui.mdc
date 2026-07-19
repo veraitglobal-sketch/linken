@@ -1,0 +1,14 @@
+---
+description: Premium Linken UI — high craft, original product content
+globs: src/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# UI standards
+
+- Stay in the premium direction: glass nav, atmospheric stages, serif moments, large rounded chapters, human photos, generous space.
+- Refine inside that direction. Do not throw it away for a totally different theme.
+- Content must be Linken (partners, confirmation, case studies) — not AI-platform copy.
+- Fonts: Newsreader + Plus Jakarta Sans.
+- Every major section should feel like its own premium composition.
+---

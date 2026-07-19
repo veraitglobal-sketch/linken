@@ -1,0 +1,43 @@
+---
+description: Linken architecture, file size limits, and cost discipline
+alwaysApply: true
+---
+
+# Linken engineering rules
+
+## Language
+- Product UI and copy: English only.
+
+## File size (hard)
+- Prefer ≤120 lines per file.
+- Soft max 150. Never exceed 200 lines in one file.
+- If approaching the limit: split by responsibility (UI / data / actions / types).
+- Route files (`page.tsx`, `layout.tsx`) stay thin — compose only.
+
+## Architecture
+- App Router routes are shells. Logic lives in `src/components`, `src/features`, `src/lib`.
+- One concern per file. No god components.
+- Shared primitives in `src/components/ui`.
+- Domain UI in `src/components/{company,partners,layout}`.
+- Types in `src/types`. Mock data in `src/data/mock` until backend is connected.
+- No backend/Supabase wiring until the correct account is linked.
+
+## Scalability & cost
+- Prefer Server Components. Mark `"use client"` only when needed.
+- No heavy UI kits, animation libraries, or chart libs unless explicitly requested.
+- Avoid client-side data fetching for static/mock pages.
+- Keep dependencies minimal. Optimize for Vercel free/hobby until scale requires more.
+
+## Egress (critical)
+- Never burn egress without a clear product need.
+- No polling, no speculative prefetch storms, no downloading large assets "just in case".
+- Prefer local mock data and Server Components until the correct backend is connected.
+- Do not call external APIs, Supabase, or remote storage unless explicitly required for the task.
+- Images: local/static first; never hotlink large remote media in loops.
+- When backend exists: fetch only required fields, cache where safe, avoid N+1 client waterfalls.
+
+## Design
+- Enterprise B2B: calm, precise, trustworthy. Not playful SaaS kitsch.
+- Follow tokens in `globals.css`. Do not invent one-off colors in components.
+- Partners live in a right-hand rail on company profiles.
+---
