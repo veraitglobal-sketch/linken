@@ -2,8 +2,8 @@ import dns from "node:dns/promises";
 import net from "node:net";
 import { extractDomain } from "@/features/verification/domain";
 
-const MAX_BYTES = 500 * 1024;
-const TIMEOUT_MS = 10_000;
+const DEFAULT_MAX_BYTES = 500 * 1024;
+const DEFAULT_TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 3;
 
 function isPrivateIp(ip: string): boolean {
@@ -29,18 +29,48 @@ async function assertPublicHost(hostname: string) {
   }
 }
 
+type FetchOk = {
+  ok: true;
+  body: ArrayBuffer;
+  contentType: string;
+  finalUrl: string;
+};
+
+type FetchFail = { ok: false; error: string };
+
 /**
- * Fetch https://{expectedDomain}{path} with SSRF guards.
- * expectedDomain must already be extractDomain(company.website).
+ * Fetch a URL on the company domain with SSRF guards:
+ * https only, host must stay on expectedDomain, private IPs blocked, max 3 redirects.
  */
-export async function fetchCompanySite(
+export async function fetchCompanyResource(
   expectedDomain: string,
-  path = "/",
-): Promise<{ ok: true; body: string; finalUrl: string } | { ok: false; error: string }> {
+  pathOrUrl: string,
+  options?: {
+    maxBytes?: number;
+    timeoutMs?: number;
+    accept?: string;
+    userAgent?: string;
+  },
+): Promise<FetchOk | FetchFail> {
   const domain = extractDomain(expectedDomain) ?? expectedDomain.toLowerCase();
   if (!domain) return { ok: false, error: "Invalid domain." };
 
-  let url = `https://${domain}${path.startsWith("/") ? path : `/${path}`}`;
+  const maxBytes = options?.maxBytes ?? DEFAULT_MAX_BYTES;
+  const timeoutMs = options?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const accept = options?.accept ?? "text/html,text/plain,*/*";
+  const userAgent = options?.userAgent ?? "LinkenDomainVerify/1.0";
+
+  let url: string;
+  try {
+    if (pathOrUrl.startsWith("https://") || pathOrUrl.startsWith("http://")) {
+      url = pathOrUrl;
+    } else {
+      const path = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
+      url = `https://${domain}${path}`;
+    }
+  } catch {
+    return { ok: false, error: "Invalid URL." };
+  }
 
   try {
     for (let i = 0; i <= MAX_REDIRECTS; i++) {
@@ -49,7 +79,9 @@ export async function fetchCompanySite(
         return { ok: false, error: "Only HTTPS is allowed." };
       }
 
-      const host = extractDomain(parsed.hostname) ?? parsed.hostname.replace(/^www\./, "");
+      const host =
+        extractDomain(parsed.hostname) ??
+        parsed.hostname.replace(/^www\./, "");
       if (host !== domain) {
         return { ok: false, error: "Redirect left the company domain." };
       }
@@ -57,7 +89,7 @@ export async function fetchCompanySite(
       await assertPublicHost(parsed.hostname);
 
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
       let res: Response;
       try {
         res = await fetch(url, {
@@ -65,8 +97,8 @@ export async function fetchCompanySite(
           redirect: "manual",
           signal: controller.signal,
           headers: {
-            "User-Agent": "LinkenDomainVerify/1.0",
-            Accept: "text/html,text/plain,*/*",
+            "User-Agent": userAgent,
+            Accept: accept,
           },
         });
       } finally {
@@ -88,11 +120,19 @@ export async function fetchCompanySite(
       }
 
       const buf = await res.arrayBuffer();
-      if (buf.byteLength > MAX_BYTES) {
-        return { ok: false, error: "Response exceeds 500KB limit." };
+      if (buf.byteLength > maxBytes) {
+        return {
+          ok: false,
+          error: `Response exceeds ${Math.round(maxBytes / 1024)}KB limit.`,
+        };
       }
-      const body = new TextDecoder("utf-8", { fatal: false }).decode(buf);
-      return { ok: true, body, finalUrl: url };
+
+      const contentType = (res.headers.get("content-type") ?? "")
+        .split(";")[0]
+        ?.trim()
+        .toLowerCase() ?? "";
+
+      return { ok: true, body: buf, contentType, finalUrl: url };
     }
 
     return { ok: false, error: "Too many redirects." };
@@ -100,6 +140,41 @@ export async function fetchCompanySite(
     const message = err instanceof Error ? err.message : "Fetch failed.";
     return { ok: false, error: message };
   }
+}
+
+/**
+ * Fetch https://{expectedDomain}{path} as UTF-8 text (domain verification).
+ */
+export async function fetchCompanySite(
+  expectedDomain: string,
+  path = "/",
+): Promise<{ ok: true; body: string; finalUrl: string } | { ok: false; error: string }> {
+  const result = await fetchCompanyResource(expectedDomain, path, {
+    maxBytes: DEFAULT_MAX_BYTES,
+    timeoutMs: DEFAULT_TIMEOUT_MS,
+    accept: "text/html,text/plain,*/*",
+    userAgent: "LinkenDomainVerify/1.0",
+  });
+  if (!result.ok) return result;
+  const body = new TextDecoder("utf-8", { fatal: false }).decode(result.body);
+  return { ok: true, body, finalUrl: result.finalUrl };
+}
+
+/** Binary fetch for favicons / logos — same SSRF guard. */
+export async function fetchCompanyBinary(
+  expectedDomain: string,
+  pathOrUrl: string,
+  options?: { maxBytes?: number; timeoutMs?: number },
+): Promise<
+  | { ok: true; body: ArrayBuffer; contentType: string; finalUrl: string }
+  | { ok: false; error: string }
+> {
+  return fetchCompanyResource(expectedDomain, pathOrUrl, {
+    maxBytes: options?.maxBytes ?? 1024 * 1024,
+    timeoutMs: options?.timeoutMs ?? 8_000,
+    accept: "image/*,*/*",
+    userAgent: "LinkenLogoFetch/1.0",
+  });
 }
 
 export async function resolveTxtRecords(domain: string): Promise<string[]> {

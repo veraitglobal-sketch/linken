@@ -51,6 +51,7 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
       <EmbedBadge
         name={company.name}
         initials={company.logoInitials}
+        logoUrl={company.logoUrl}
         verified={false}
         claimed={false}
         partnerCount={0}
@@ -112,6 +113,7 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
     <EmbedBadge
       name={company.name}
       initials={company.logoInitials}
+      logoUrl={company.logoUrl}
       verified={company.verified}
       claimed
       partnerCount={partnerCount}

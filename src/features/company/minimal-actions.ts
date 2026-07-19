@@ -45,6 +45,7 @@ export async function createMinimalCompany(formData: FormData) {
     name,
     slug,
     logo_url: logoUrl,
+    logo_source: logoUrl ? "manual" : null,
     tagline: "",
     description: "",
     category: "Client",

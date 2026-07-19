@@ -22,6 +22,7 @@ function mapRow(row: {
   city: string | null;
   country: string | null;
   website: string | null;
+  logo_url?: string | null;
   services: string[] | null;
   verified: boolean | null;
   claimed: boolean | null;
@@ -49,6 +50,7 @@ function mapRow(row: {
     verifiedAt: null,
     websiteLinked: false,
     logoInitials: initials(row.name),
+    logoUrl: row.logo_url ?? null,
     claimed: row.claimed !== false,
     acceptingClients: row.accepting_clients !== false,
     plan: parsePlan(row.plan),
@@ -65,7 +67,7 @@ export async function getCompanyForPage(slug: string): Promise<Company | null> {
     const { data } = await supabase
       .from("companies")
       .select(
-        "id, slug, name, tagline, description, category, city, country, website, services, verified, claimed, accepting_clients, plan, created_by:companies!created_by_company_id(slug, name)",
+        "id, slug, name, tagline, description, category, city, country, website, logo_url, services, verified, claimed, accepting_clients, plan, created_by:companies!created_by_company_id(slug, name)",
       )
       .eq("slug", slug)
       .maybeSingle();
@@ -101,7 +103,7 @@ export async function searchCompanies(query: string): Promise<Company[]> {
     let req = supabase
       .from("companies")
       .select(
-        "id, slug, name, tagline, description, category, city, country, website, services, verified, claimed, accepting_clients, plan",
+        "id, slug, name, tagline, description, category, city, country, website, logo_url, services, verified, claimed, accepting_clients, plan",
       )
       .order("name")
       .limit(40);

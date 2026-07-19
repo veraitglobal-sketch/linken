@@ -17,7 +17,7 @@ export function ClientConfirmedBadge({ confirmation }: Props) {
         Confirmed by client
       </p>
       <div className="mt-3 flex items-center gap-3">
-        <PartnerMark initials={firm.logoInitials} />
+        <PartnerMark initials={firm.logoInitials} logoUrl={firm.logoUrl} />
         <div className="min-w-0">
           <Link
             href={`/c/${firm.slug}?src=partner`}

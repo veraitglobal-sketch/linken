@@ -16,7 +16,8 @@ import {
   type FlowNodeData,
 } from "@/components/network/network-company-node";
 import { Button } from "@/components/ui/button";
-import { layoutRadial } from "@/features/network/layout";
+import { LogoMark } from "@/components/ui/logo-mark";
+import { layoutRadial, layoutTree } from "@/features/network/layout";
 import type {
   NetworkEdge,
   NetworkGraph,
@@ -32,12 +33,14 @@ type Props = {
 function edgeStyle(type: NetworkEdge["type"]): Partial<Edge> {
   if (type === "member_of") {
     return {
+      type: "default",
       style: { stroke: "#5ec4a8", strokeWidth: 2 },
       animated: false,
     };
   }
   if (type === "partner") {
     return {
+      type: "default",
       style: {
         stroke: "#5ec4a8",
         strokeWidth: 1.5,
@@ -47,6 +50,7 @@ function edgeStyle(type: NetworkEdge["type"]): Partial<Edge> {
     };
   }
   return {
+    type: "default",
     style: { stroke: "rgba(94,196,168,0.55)", strokeWidth: 1.25 },
     markerEnd: {
       type: MarkerType.ArrowClosed,
@@ -59,17 +63,21 @@ function edgeStyle(type: NetworkEdge["type"]): Partial<Edge> {
 }
 
 export function NetworkMap({ graph }: Props) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selected, setSelected] = useState<NetworkNodeData | null>(null);
 
-  const onSelect = useCallback((data: NetworkNodeData) => {
+  const onSelect = useCallback((id: string, data: NetworkNodeData) => {
     if (data.moreCount) return;
+    setSelectedId(id);
     setSelected(data);
   }, []);
 
-  const positioned = useMemo(
-    () => layoutRadial(graph.nodes, graph.edges),
-    [graph.edges, graph.nodes],
-  );
+  const positioned = useMemo(() => {
+    const isGroupHub = graph.nodes.some((n) => n.data.kind === "group");
+    return isGroupHub
+      ? layoutTree(graph.nodes, graph.edges)
+      : layoutRadial(graph.nodes, graph.edges);
+  }, [graph.edges, graph.nodes]);
 
   const nodes: Node[] = useMemo(
     () =>
@@ -77,10 +85,15 @@ export function NetworkMap({ graph }: Props) {
         id: n.id,
         type: "company",
         position: n.position,
-        data: { ...n.data, onSelect } satisfies FlowNodeData,
+        data: {
+          ...n.data,
+          onSelect,
+          selected: selectedId === n.id,
+          nodeId: n.id,
+        } satisfies FlowNodeData,
         draggable: false,
       })),
-    [onSelect, positioned],
+    [onSelect, positioned, selectedId],
   );
 
   const edges: Edge[] = useMemo(
@@ -111,7 +124,10 @@ export function NetworkMap({ graph }: Props) {
         elementsSelectable={false}
         panOnScroll
         proOptions={{ hideAttribution: true }}
-        onPaneClick={() => setSelected(null)}
+        onPaneClick={() => {
+          setSelected(null);
+          setSelectedId(null);
+        }}
       >
         <Background
           variant={BackgroundVariant.Dots}
@@ -150,13 +166,22 @@ export function NetworkMap({ graph }: Props) {
 
       {selected ? (
         <div className="absolute top-3 right-3 z-10 w-[min(100%-1.5rem,16rem)] rounded-2xl border border-line bg-white p-4 shadow-[0_18px_50px_rgba(10,20,18,0.25)]">
-          <p className="font-display text-lg font-medium tracking-[-0.03em] text-ink">
-            {selected.name}
-          </p>
-          <p className="mt-1 text-[12px] text-ink-soft">
-            {[selected.category, selected.city].filter(Boolean).join(" · ") ||
-              selected.kind}
-          </p>
+          <div className="flex items-start gap-3">
+            <LogoMark
+              initials={selected.logoInitials}
+              logoUrl={selected.logoUrl}
+              size="md"
+            />
+            <div className="min-w-0">
+              <p className="font-display text-lg font-medium tracking-[-0.03em] text-ink">
+                {selected.name}
+              </p>
+              <p className="mt-1 text-[12px] text-ink-soft">
+                {[selected.category, selected.city].filter(Boolean).join(" · ") ||
+                  selected.kind}
+              </p>
+            </div>
+          </div>
           {selected.trustLevel ? (
             <p className="mt-2 text-[12px] text-ink">
               Level: {selected.trustLevel}
@@ -179,7 +204,10 @@ export function NetworkMap({ graph }: Props) {
           ) : null}
           <button
             type="button"
-            onClick={() => setSelected(null)}
+            onClick={() => {
+              setSelected(null);
+              setSelectedId(null);
+            }}
             className="mt-2 w-full text-center text-[12px] font-medium text-muted hover:text-ink"
           >
             Close

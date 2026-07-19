@@ -2,8 +2,10 @@ import Link from "next/link";
 import {
   createGroup,
   createSubsidiary,
+  endGroupMembership,
   inviteCompanyToGroup,
 } from "@/features/groups/actions";
+import { flattenMemberTree } from "@/features/groups/tree";
 import type { DashboardGroup } from "@/features/groups/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,8 +25,7 @@ export function DashboardGroupPanel({ data }: Props) {
           Create a group for your branches
         </h2>
         <p className="mt-2 max-w-md text-[14px] leading-relaxed text-ink-soft">
-          One group, separate country profiles. Evidence stays on each company —
-          only confirmed membership is public.
+          One group, nested country profiles. Evidence stays on each company.
         </p>
         <form action={createGroup} className="mt-5 space-y-3">
           <label className="block">
@@ -53,7 +54,8 @@ export function DashboardGroupPanel({ data }: Props) {
     );
   }
 
-  const { group, confirmed, pending } = data;
+  const { group, confirmed, tree, pending } = data;
+  const flat = flattenMemberTree(tree);
 
   return (
     <div className="space-y-4">
@@ -75,11 +77,12 @@ export function DashboardGroupPanel({ data }: Props) {
           </Button>
         </div>
 
-        {confirmed.length > 0 ? (
+        {flat.length > 0 ? (
           <ul className="mt-5 space-y-2">
-            {confirmed.map((m) => (
+            {flat.map((m) => (
               <li
                 key={m.companyId}
+                style={{ marginLeft: `${m.depth}rem` }}
                 className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-line px-3 py-2.5"
               >
                 <div>
@@ -87,14 +90,29 @@ export function DashboardGroupPanel({ data }: Props) {
                   <p className="text-[12px] text-ink-soft">
                     {m.city}
                     {m.country ? `, ${m.country}` : ""}
+                    {m.depth > 0 ? " · subsidiary" : ""}
                   </p>
                 </div>
-                <Link
-                  href={`/c/${m.slug}`}
-                  className="text-[12px] font-semibold text-[#1f6b5c] underline-offset-2 hover:underline"
-                >
-                  Profile
-                </Link>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link
+                    href={`/c/${m.slug}`}
+                    className="text-[12px] font-semibold text-[#1f6b5c] underline-offset-2 hover:underline"
+                  >
+                    Profile
+                  </Link>
+                  <form action={endGroupMembership}>
+                    <input type="hidden" name="group_id" value={group.id} />
+                    <input type="hidden" name="company_id" value={m.companyId} />
+                    <input type="hidden" name="back" value="/dashboard/group" />
+                    <Button
+                      type="submit"
+                      variant="ghost"
+                      className="h-9 px-3 text-[12px]"
+                    >
+                      Remove
+                    </Button>
+                  </form>
+                </div>
               </li>
             ))}
           </ul>
@@ -112,7 +130,7 @@ export function DashboardGroupPanel({ data }: Props) {
                   className="rounded-2xl border border-line bg-paper/60 px-3 py-2.5 text-[13px] text-ink-soft"
                 >
                   {p.name}
-                  {p.city ? ` · ${p.city}` : ""} — awaiting their confirmation
+                  {p.city ? ` · ${p.city}` : ""} — awaiting confirmation
                 </li>
               ))}
             </ul>
@@ -125,11 +143,12 @@ export function DashboardGroupPanel({ data }: Props) {
           Add subsidiary
         </h3>
         <p className="mt-1 text-[13px] text-ink-soft">
-          Creates an unclaimed branch profile and auto-confirms group membership
-          (your own structure).
+          Unclaimed branch, auto-confirmed. Optionally nest under a parent in
+          the tree.
         </p>
         <form action={createSubsidiary} className="mt-4 grid gap-3 sm:grid-cols-2">
           <input type="hidden" name="group_id" value={group.id} />
+          <input type="hidden" name="back" value="/dashboard/group" />
           <label className="block sm:col-span-2">
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               Name
@@ -154,6 +173,29 @@ export function DashboardGroupPanel({ data }: Props) {
             </span>
             <Input name="country" placeholder="Austria" />
           </label>
+          <label className="block sm:col-span-2">
+            <span className="mb-1.5 block text-[13px] font-medium text-ink">
+              Website (optional)
+            </span>
+            <Input name="website" type="url" placeholder="https://" />
+          </label>
+          <label className="block sm:col-span-2">
+            <span className="mb-1.5 block text-[13px] font-medium text-ink">
+              Parent in group (optional)
+            </span>
+            <select
+              name="parent_company_id"
+              className="h-11 w-full rounded-xl border border-line bg-white px-3 text-[13px] text-ink"
+              defaultValue=""
+            >
+              <option value="">Directly under group</option>
+              {confirmed.map((m) => (
+                <option key={m.companyId} value={m.companyId}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="sm:col-span-2">
             <Button type="submit" className="h-11">
               Create subsidiary
@@ -167,21 +209,36 @@ export function DashboardGroupPanel({ data }: Props) {
           Invite existing company
         </h3>
         <p className="mt-1 text-[13px] text-ink-soft">
-          They must confirm — the group cannot confirm for them.
+          They must confirm. Optional parent nests them after confirmation.
         </p>
-        <form action={inviteCompanyToGroup} className="mt-4 flex flex-col gap-3 sm:flex-row">
+        <form action={inviteCompanyToGroup} className="mt-4 space-y-3">
           <input type="hidden" name="group_id" value={group.id} />
-          <label className="block min-w-0 flex-1">
+          <label className="block">
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               Company slug
             </span>
             <Input name="company_slug" required placeholder="acme-architecture" />
           </label>
-          <div className="flex items-end">
-            <Button type="submit" variant="secondary" className="h-11">
-              Send invite
-            </Button>
-          </div>
+          <label className="block">
+            <span className="mb-1.5 block text-[13px] font-medium text-ink">
+              Parent in group (optional)
+            </span>
+            <select
+              name="parent_company_id"
+              className="h-11 w-full rounded-xl border border-line bg-white px-3 text-[13px] text-ink"
+              defaultValue=""
+            >
+              <option value="">Directly under group</option>
+              {confirmed.map((m) => (
+                <option key={m.companyId} value={m.companyId}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <Button type="submit" variant="secondary" className="h-11">
+            Send invite
+          </Button>
         </form>
       </section>
     </div>

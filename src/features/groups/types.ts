@@ -19,6 +19,7 @@ export type GroupMemberCard = {
   city: string;
   country: string;
   logoInitials: string;
+  logoUrl?: string | null;
   claimed: boolean;
   trustLevel: TrustLevel;
   confirmedReferences: number;

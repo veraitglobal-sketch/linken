@@ -27,8 +27,13 @@ export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
         <div className="flex items-start gap-4">
           <LogoMark
             initials={company.logoInitials}
+            logoUrl={company.logoUrl}
             size="lg"
-            className="rounded-xl border-[#10231f]/15 bg-[#10231f] text-white"
+            className={
+              company.logoUrl
+                ? "rounded-xl border-[#10231f]/15"
+                : "rounded-xl border-[#10231f]/15 bg-[#10231f] text-white"
+            }
           />
           <div>
             <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">

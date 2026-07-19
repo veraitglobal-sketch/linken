@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { GroupProfile } from "@/components/groups/group-profile";
 import { NetworkMapSection } from "@/components/network/network-map-section";
 import { getGroupBySlug } from "@/features/groups/queries";
+import { memberTreeToJsonLd } from "@/features/groups/tree";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
@@ -42,11 +43,7 @@ export default async function GroupPage({ params }: Props) {
     url: `${siteUrl}/g/${page.group.slug}`,
     description: page.group.description || undefined,
     sameAs: page.group.website || undefined,
-    subOrganization: page.members.map((m) => ({
-      "@type": "Organization",
-      name: m.name,
-      url: `${siteUrl}/c/${m.slug}`,
-    })),
+    subOrganization: memberTreeToJsonLd(page.tree, siteUrl),
   };
 
   return (

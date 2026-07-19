@@ -3,15 +3,22 @@ import Link from "next/link";
 import { AnalyticsCard } from "@/components/analytics/analytics-card";
 import { PrivateFeedbackCard } from "@/components/assessments/private-feedback-card";
 import { AvailabilityToggle } from "@/components/company/availability-toggle";
+import { OwnedGroupPanel } from "@/components/groups/owned-group-panel";
 import { PendingGroupInvites } from "@/components/groups/pending-group-invites";
 import { DashboardInquiries } from "@/components/inquiries/dashboard-inquiries";
+import { TransferOwnershipCard } from "@/components/ownership/transfer-ownership-card";
 import { VerificationCard } from "@/components/verification/verification-card";
 import { Button } from "@/components/ui/button";
 import { SectionTitle } from "@/components/ui/section-title";
 import { getAnalytics } from "@/features/analytics/queries";
 import { getPrivateFeedbackForOwner } from "@/features/assessments/queries";
-import { getPendingGroupInvitesForOwner } from "@/features/groups/queries";
+import {
+  getOwnedGroupMemberships,
+  getPendingGroupInvitesForOwner,
+  getPendingParentProposalsForOwner,
+} from "@/features/groups/queries";
 import { getInquiriesForOwnerCompany } from "@/features/inquiries/queries";
+import { getPendingOwnershipTransfer } from "@/features/ownership/queries";
 import { viewerOwnsClaimedCompany } from "@/features/partners/queries";
 import { getCompanyVerification } from "@/features/verification/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -51,18 +58,32 @@ export default async function DashboardPage({ searchParams }: Props) {
     verification = await getCompanyVerification(company.id);
   }
 
-  const [inquiryData, privateFeedback, analytics, groupInvites] = company
+  const [
+    inquiryData,
+    privateFeedback,
+    analytics,
+    groupInvites,
+    parentProposals,
+    ownedMemberships,
+    pendingTransfer,
+  ] = company
     ? await Promise.all([
         getInquiriesForOwnerCompany(company.id),
         getPrivateFeedbackForOwner(company.id),
         getAnalytics(company.id, 30),
         getPendingGroupInvitesForOwner(),
+        getPendingParentProposalsForOwner(),
+        getOwnedGroupMemberships(),
+        getPendingOwnershipTransfer(company.id),
       ])
     : [
         { inquiries: [], newCount: 0, monthCount: 0 },
         [] as Awaited<ReturnType<typeof getPrivateFeedbackForOwner>>,
         null,
         user ? await getPendingGroupInvitesForOwner() : [],
+        user ? await getPendingParentProposalsForOwner() : [],
+        user ? await getOwnedGroupMemberships() : [],
+        null,
       ];
 
   const items = [
@@ -123,7 +144,10 @@ export default async function DashboardPage({ searchParams }: Props) {
 
       {user ? (
         <div className="mt-8">
-          <PendingGroupInvites invites={groupInvites} />
+          <PendingGroupInvites
+            invites={groupInvites}
+            parentProposals={parentProposals}
+          />
         </div>
       ) : null}
 
@@ -142,6 +166,12 @@ export default async function DashboardPage({ searchParams }: Props) {
               siteUrl={siteUrl}
             />
           ) : null}
+          <OwnedGroupPanel memberships={ownedMemberships} />
+          <TransferOwnershipCard
+            companyId={company.id}
+            companyName={company.name}
+            pending={pendingTransfer}
+          />
           <AvailabilityToggle acceptingClients={company.acceptingClients} />
           <DashboardInquiries
             inquiries={inquiryData.inquiries}

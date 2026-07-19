@@ -1,20 +1,7 @@
-import dynamic from "next/dynamic";
 import Link from "next/link";
+import { NetworkMapLazy } from "@/components/network/network-map-lazy";
 import { getNetworkGraph } from "@/features/network/queries";
 import type { NetworkScope } from "@/features/network/types";
-
-const NetworkMap = dynamic(
-  () =>
-    import("@/components/network/network-map").then((m) => m.NetworkMap),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex h-full items-center justify-center bg-[#0a1714] text-[13px] text-white/45">
-        Loading map…
-      </div>
-    ),
-  },
-);
 
 type Props = {
   scope: NetworkScope;
@@ -87,7 +74,7 @@ export async function NetworkMapSection({
 
         {/* Desktop / tablet canvas */}
         <div className={`hidden sm:block ${minHeightClass}`}>
-          <NetworkMap graph={graph} />
+          <NetworkMapLazy graph={graph} />
         </div>
       </div>
     </section>

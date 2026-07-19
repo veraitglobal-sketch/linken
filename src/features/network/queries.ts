@@ -27,6 +27,7 @@ type CompanyRow = {
   category: string | null;
   city: string | null;
   claimed: boolean | null;
+  logo_url?: string | null;
 };
 
 async function companyNode(
@@ -38,6 +39,7 @@ async function companyNode(
     slug: row.slug,
     name: row.name,
     logoInitials: initials(row.name),
+    logoUrl: row.logo_url ?? null,
     category: row.category ?? "",
     city: row.city ?? "",
     trustLevel: row.claimed === false ? null : trust.level,
@@ -56,7 +58,7 @@ async function fetchCompany(id: string): Promise<CompanyRow | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("companies")
-    .select("id, slug, name, category, city, claimed")
+    .select("id, slug, name, category, city, claimed, logo_url")
     .eq("id", id)
     .maybeSingle();
   return data;
@@ -145,6 +147,7 @@ function trimGraph(
         slug: "",
         name: `+${omitted} more`,
         logoInitials: "+",
+        logoUrl: null,
         category: "Network",
         city: "",
         trustLevel: null,
@@ -187,16 +190,27 @@ async function graphForGroup(slug: string): Promise<NetworkGraph> {
   const { data: memberships } = await supabase
     .from("company_group_members")
     .select(
-      "company:companies!company_id(id, slug, name, category, city, country, claimed)",
+      "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, logo_url)",
     )
     .eq("group_id", group.id)
     .eq("status", "confirmed");
 
-  type MemberRow = CompanyRow & { country: string | null };
+  type MemberRow = CompanyRow & {
+    country: string | null;
+    parentCompanyId: string | null;
+  };
   const members = (memberships ?? [])
     .map((m) => {
-      const c = m.company as MemberRow | MemberRow[] | null;
-      return Array.isArray(c) ? c[0] : c;
+      const c = m.company as
+        | (CompanyRow & { country: string | null })
+        | (CompanyRow & { country: string | null })[]
+        | null;
+      const row = Array.isArray(c) ? c[0] : c;
+      if (!row) return null;
+      return {
+        ...row,
+        parentCompanyId: (m.parent_company_id as string | null) ?? null,
+      };
     })
     .filter(Boolean) as MemberRow[];
 
@@ -212,6 +226,7 @@ async function graphForGroup(slug: string): Promise<NetworkGraph> {
         slug: group.slug,
         name: group.name,
         logoInitials: initials(group.name),
+        logoUrl: null,
         category: "Group",
         city: "",
         trustLevel: null,
@@ -228,6 +243,7 @@ async function graphForGroup(slug: string): Promise<NetworkGraph> {
   ];
   const edges: NetworkEdge[] = [];
   const seen = new Set<string>([hubId]);
+  const memberIdSet = new Set(members.map((m) => m.id));
 
   for (const member of members) {
     const node = await companyNode(member, "company");
@@ -235,7 +251,12 @@ async function graphForGroup(slug: string): Promise<NetworkGraph> {
       nodes.push(node);
       seen.add(node.id);
     }
-    edges.push(edge("member_of", hubId, node.id));
+    // Tree edges: group → root members; parent → child otherwise
+    if (member.parentCompanyId && memberIdSet.has(member.parentCompanyId)) {
+      edges.push(edge("member_of", `company:${member.parentCompanyId}`, node.id));
+    } else {
+      edges.push(edge("member_of", hubId, node.id));
+    }
 
     const partnerIds = await acceptedPartnerIds(member.id);
     for (const pid of partnerIds) {
@@ -279,7 +300,7 @@ async function graphForCompany(slug: string): Promise<NetworkGraph> {
   const supabase = await createClient();
   const { data: company } = await supabase
     .from("companies")
-    .select("id, slug, name, category, city, claimed")
+    .select("id, slug, name, category, city, claimed, logo_url")
     .eq("slug", slug)
     .maybeSingle();
   if (!company) return { nodes: [], edges: [] };
@@ -309,6 +330,7 @@ async function graphForCompany(slug: string): Promise<NetworkGraph> {
           slug: g.slug,
           name: g.name,
           logoInitials: initials(g.name),
+          logoUrl: null,
           category: "Group",
           city: "",
           trustLevel: null as TrustLevel | null,

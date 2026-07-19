@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { GroupMemberCard } from "@/components/groups/group-member-card";
 import { Button } from "@/components/ui/button";
+import { flattenMemberTree } from "@/features/groups/tree";
 import type { GroupPublicPage } from "@/features/groups/types";
 
 type Props = {
@@ -9,8 +10,9 @@ type Props = {
 };
 
 export function GroupProfile({ page, networkMap }: Props) {
-  const { group, members, companyCount, countryCount } = page;
-  const showMembers = members.length > 0;
+  const { group, tree, companyCount, countryCount } = page;
+  const flat = flattenMemberTree(tree);
+  const showMembers = flat.length > 0;
 
   return (
     <div className="pb-10">
@@ -38,18 +40,14 @@ export function GroupProfile({ page, networkMap }: Props) {
                 : ""}
             </p>
             {group.website ? (
-              <Button
-                href={group.website}
-                variant="onDark"
-                className="h-10 px-4"
-              >
+              <Button href={group.website} variant="onDark" className="h-10 px-4">
                 Website
               </Button>
             ) : null}
           </div>
           <p className="mt-4 max-w-lg text-[12px] leading-relaxed text-white/40">
-            Totals count confirmed members only. Each company keeps its own
-            confirmed evidence — nothing is merged onto a branch profile.
+            Totals count confirmed members only. Evidence stays on each company
+            — the tree shows ownership structure, not merged proof.
           </p>
         </div>
       </section>
@@ -61,11 +59,17 @@ export function GroupProfile({ page, networkMap }: Props) {
               Confirmed members
             </p>
             <h2 className="mt-2 font-display text-[clamp(1.5rem,2.4vw,1.9rem)] font-medium tracking-[-0.035em] text-ink">
-              Companies in this group
+              Structure
             </h2>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {members.map((m) => (
-                <GroupMemberCard key={m.companyId} member={m} />
+            <div className="mt-6 space-y-3">
+              {flat.map((m) => (
+                <div
+                  key={m.companyId}
+                  style={{ marginLeft: `${m.depth * 1.25}rem` }}
+                  className="min-w-0"
+                >
+                  <GroupMemberCard member={m} />
+                </div>
               ))}
             </div>
           </div>

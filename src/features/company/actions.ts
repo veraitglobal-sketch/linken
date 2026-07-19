@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
 import { tryEmailDomainVerificationAfterOnboarding } from "@/features/verification/actions";
 import { createClient } from "@/lib/supabase/server";
 import { toSlug } from "@/lib/slug";
@@ -95,6 +96,10 @@ export async function createCompany(formData: FormData) {
       slug: created.slug,
     });
     if (result.ok) verifiedHint = "?domainVerified=1";
+  }
+
+  if (website) {
+    scheduleCompanyLogoFetch(created.id);
   }
 
   revalidatePath(`/c/${created.slug}`);

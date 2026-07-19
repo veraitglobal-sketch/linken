@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { refreshLogo } from "@/features/logo/actions";
 import {
   checkEmailDomainVerification,
   runBacklinkCheck,
@@ -192,6 +193,22 @@ export function VerificationCard({
       </div>
 
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line px-4 py-3">
+        <div>
+          <p className="text-[13px] font-medium text-ink">Company logo</p>
+          <p className="mt-0.5 text-[12px] text-ink-soft">
+            Pulled from your website favicon / apple-touch-icon. Manual uploads
+            are never overwritten. Max 3 refreshes per day.
+          </p>
+        </div>
+        <form action={refreshLogo}>
+          <input type="hidden" name="back" value="/dashboard#verification" />
+          <Button type="submit" variant="secondary" className="h-10">
+            Refresh logo
+          </Button>
+        </form>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line px-4 py-3">
         <div>
           <p className="text-[13px] font-medium text-ink">Website linked</p>
           <p className="mt-0.5 text-[12px] text-ink-soft">

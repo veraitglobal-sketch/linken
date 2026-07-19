@@ -8,6 +8,7 @@ export type NetworkNodeData = {
   slug: string;
   name: string;
   logoInitials: string;
+  logoUrl?: string | null;
   category: string;
   city: string;
   trustLevel: TrustLevel | null;

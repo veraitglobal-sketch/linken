@@ -36,7 +36,10 @@ export function PartnerCard({ partner }: Props) {
             <p className="mt-1 text-[12px] text-muted">{casesLabel}</p>
           ) : null}
         </div>
-        <PartnerMark initials={partner.logoInitials} />
+        <PartnerMark
+          initials={partner.logoInitials}
+          logoUrl={partner.logoUrl}
+        />
       </div>
     </Link>
   );

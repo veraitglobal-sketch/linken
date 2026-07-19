@@ -18,7 +18,11 @@ export function PartnerNetworkTile({ partner }: Props) {
       className="group flex h-full flex-col rounded-[24px] border border-line bg-surface p-5 transition-colors hover:border-[#10231f]/20 hover:bg-white"
     >
       <div className="flex items-start justify-between gap-3">
-        <PartnerMark initials={partner.logoInitials} className="h-16 w-16 rounded-2xl text-lg" />
+        <PartnerMark
+          initials={partner.logoInitials}
+          logoUrl={partner.logoUrl}
+          className="h-16 w-16 rounded-2xl text-lg"
+        />
         <span
           className={
             partner.verified

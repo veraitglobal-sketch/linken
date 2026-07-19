@@ -4,6 +4,7 @@ import { EmbedSnippetButton } from "@/components/company/embed-snippet-button";
 import { InquiryForm } from "@/components/inquiries/inquiry-form";
 import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
 import { Button } from "@/components/ui/button";
+import { LogoMark } from "@/components/ui/logo-mark";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
 import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
@@ -73,6 +74,16 @@ export function CompanyHeroBand({
               Public company page
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-3">
+              <LogoMark
+                initials={company.logoInitials}
+                logoUrl={company.logoUrl}
+                size="lg"
+                className={
+                  company.logoUrl
+                    ? "rounded-xl border-white/20"
+                    : "rounded-xl border-white/20 bg-white/10 text-white"
+                }
+              />
               <h1 className="font-display text-[clamp(2.4rem,5.5vw,4rem)] leading-[0.94] font-medium tracking-[-0.045em]">
                 {company.name}
               </h1>

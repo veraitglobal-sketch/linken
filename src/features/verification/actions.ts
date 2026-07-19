@@ -6,6 +6,7 @@ import {
   domainsMatch,
   extractDomain,
 } from "@/features/verification/domain";
+import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
 import {
   fetchCompanySite,
   resolveTxtRecords,
@@ -97,6 +98,7 @@ export async function checkEmailDomainVerification(formData: FormData) {
     redirect(dash(e instanceof Error ? e.message : "Verification failed."));
   }
 
+  scheduleCompanyLogoFetch(company.id);
   revalidatePath("/dashboard");
   revalidatePath(`/c/${company.slug}`);
   redirect("/dashboard?verified=email#verification");
@@ -114,6 +116,7 @@ export async function tryEmailDomainVerificationAfterOnboarding(input: {
 
   try {
     await markVerified(input.companyId, "email_domain");
+    scheduleCompanyLogoFetch(input.companyId);
     revalidatePath(`/c/${input.slug}`);
     return { ok: true as const };
   } catch (e) {
@@ -175,6 +178,7 @@ export async function runDnsCheck() {
     redirect(dash(e instanceof Error ? e.message : "DNS check failed."));
   }
 
+  scheduleCompanyLogoFetch(company.id);
   revalidatePath("/dashboard");
   revalidatePath(`/c/${company.slug}`);
   redirect("/dashboard?verified=dns#verification");
@@ -208,6 +212,7 @@ export async function runMetaCheck() {
     } catch (e) {
       redirect(dash(e instanceof Error ? e.message : "Verification failed."));
     }
+    scheduleCompanyLogoFetch(company.id);
     revalidatePath("/dashboard");
     revalidatePath(`/c/${company.slug}`);
     redirect("/dashboard?verified=meta#verification");
@@ -253,6 +258,7 @@ export async function runMetaCheck() {
     redirect(dash(e instanceof Error ? e.message : "Verification failed."));
   }
 
+  scheduleCompanyLogoFetch(company.id);
   revalidatePath("/dashboard");
   revalidatePath(`/c/${company.slug}`);
   redirect("/dashboard?verified=meta#verification");

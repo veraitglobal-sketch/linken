@@ -4,11 +4,14 @@ export type PositionedNode = NetworkNode & {
   position: { x: number; y: number };
 };
 
+const LEVEL_GAP_Y = 160;
+const SIBLING_GAP_X = 220;
+
 /**
- * Deterministic radial layout — hub center, members ring 1, others ring 2.
- * Slight seeded jitter so edges do not perfectly overlap.
+ * Layered tree for group scope: hub on top, ownership levels below.
+ * Width distributed by leaf count. No external layout library.
  */
-export function layoutRadial(
+export function layoutTree(
   nodes: NetworkNode[],
   edges: NetworkEdge[],
 ): PositionedNode[] {
@@ -17,6 +20,106 @@ export function layoutRadial(
   const hub =
     nodes.find((n) => n.data.kind === "group") ??
     nodes.find((n) => n.data.kind === "company") ??
+    nodes[0];
+
+  const hubId = hub.id;
+  const memberOf = edges.filter((e) => e.type === "member_of");
+  const childrenOf = new Map<string, string[]>();
+
+  for (const e of memberOf) {
+    const list = childrenOf.get(e.source) ?? [];
+    list.push(e.target);
+    childrenOf.set(e.source, list);
+  }
+
+  const memberIds = new Set(
+    memberOf.flatMap((e) => [e.source, e.target]).filter((id) => id !== hubId),
+  );
+
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const positions = new Map<string, { x: number; y: number }>();
+  positions.set(hubId, { x: 0, y: 0 });
+
+  function leafCount(id: string): number {
+    const kids = (childrenOf.get(id) ?? []).filter((c) => byId.has(c));
+    if (kids.length === 0) return 1;
+    return kids.reduce((sum, c) => sum + leafCount(c), 0);
+  }
+
+  function place(id: string, left: number, right: number, depth: number) {
+    const kids = (childrenOf.get(id) ?? []).filter((c) => byId.has(c));
+    const mid = (left + right) / 2;
+    if (id !== hubId) {
+      positions.set(id, { x: mid, y: depth * LEVEL_GAP_Y });
+    }
+    if (kids.length === 0) return;
+
+    let cursor = left;
+    for (const child of kids) {
+      const w = leafCount(child) * SIBLING_GAP_X;
+      place(child, cursor, cursor + w, depth + 1);
+      cursor += w;
+    }
+  }
+
+  const roots = (childrenOf.get(hubId) ?? []).filter((c) => byId.has(c));
+  const totalWidth = Math.max(
+    SIBLING_GAP_X,
+    roots.reduce((s, r) => s + leafCount(r) * SIBLING_GAP_X, 0),
+  );
+  place(hubId, -totalWidth / 2, totalWidth / 2, 0);
+
+  // Partners / clients / externals: orbit near their company
+  const extras = nodes.filter(
+    (n) => n.id !== hubId && !memberIds.has(n.id) && !positions.has(n.id),
+  );
+
+  const result: PositionedNode[] = [];
+  for (const n of nodes) {
+    if (positions.has(n.id)) {
+      result.push({ ...n, position: positions.get(n.id)! });
+    }
+  }
+
+  let extraI = 0;
+  for (const n of extras) {
+    const link = edges.find(
+      (e) =>
+        (e.type === "partner" || e.type === "client") &&
+        (e.source === n.id || e.target === n.id),
+    );
+    const anchorId = link
+      ? link.source === n.id
+        ? link.target
+        : link.source
+      : hubId;
+    const anchor = positions.get(anchorId) ?? { x: 0, y: 0 };
+    const angle = (extraI / Math.max(extras.length, 1)) * Math.PI * 2;
+    result.push({
+      ...n,
+      position: {
+        x: anchor.x + Math.cos(angle) * 140,
+        y: anchor.y + Math.sin(angle) * 90 + 40,
+      },
+    });
+    extraI += 1;
+  }
+
+  return result;
+}
+
+/**
+ * Deterministic radial layout — company scope (hub center).
+ */
+export function layoutRadial(
+  nodes: NetworkNode[],
+  edges: NetworkEdge[],
+): PositionedNode[] {
+  if (nodes.length === 0) return [];
+
+  const hub =
+    nodes.find((n) => n.data.kind === "company") ??
+    nodes.find((n) => n.data.kind === "group") ??
     nodes[0];
 
   const hubId = hub.id;
@@ -32,38 +135,16 @@ export function layoutRadial(
 
   for (const n of nodes) {
     if (n.id === hubId) continue;
-    if (memberIds.has(n.id) || n.data.kind === "company") {
-      // For company-scope graphs, partners/clients are ring1 (no members)
-      if (hub.data.kind === "group" && memberIds.has(n.id)) {
-        ring1.push(n);
-      } else if (hub.data.kind === "company") {
-        ring1.push(n);
-      } else {
-        ring2.push(n);
-      }
+    if (memberIds.has(n.id) || n.data.kind !== "external") {
+      ring1.push(n);
     } else {
       ring2.push(n);
     }
   }
 
-  // If group hub: members in ring1, rest in ring2 (reclassify)
-  if (hub.data.kind === "group") {
-    ring1.length = 0;
-    ring2.length = 0;
-    for (const n of nodes) {
-      if (n.id === hubId) continue;
-      if (memberIds.has(n.id)) ring1.push(n);
-      else ring2.push(n);
-    }
-  }
-
-  const result: PositionedNode[] = [
-    { ...hub, position: { x: 0, y: 0 } },
-  ];
-
+  const result: PositionedNode[] = [{ ...hub, position: { x: 0, y: 0 } }];
   placeRing(ring1, 280, result);
   placeRing(ring2, 480, result);
-
   return result;
 }
 

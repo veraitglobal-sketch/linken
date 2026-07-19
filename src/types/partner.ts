@@ -9,5 +9,6 @@ export type Partner = {
   verified: boolean;
   sharedProjects: number;
   logoInitials: string;
+  logoUrl?: string | null;
   status: PartnerStatus;
 };

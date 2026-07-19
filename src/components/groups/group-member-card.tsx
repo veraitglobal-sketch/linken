@@ -14,7 +14,11 @@ export function GroupMemberCard({ member }: Props) {
       className="flex h-full flex-col rounded-[24px] border border-line bg-surface p-5 transition-colors hover:border-[#10231f]/20 hover:bg-white"
     >
       <div className="flex items-start gap-3">
-        <LogoMark initials={member.logoInitials} size="md" />
+        <LogoMark
+          initials={member.logoInitials}
+          logoUrl={member.logoUrl}
+          size="md"
+        />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-display text-lg font-medium tracking-[-0.03em] text-ink">

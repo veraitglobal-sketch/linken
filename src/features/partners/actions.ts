@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendClaimInviteEmail } from "@/lib/email";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -95,6 +96,10 @@ export async function createUnclaimedPartner(formData: FormData) {
       companyName: ghost.name,
       claimToken,
     });
+  }
+
+  if (website) {
+    scheduleCompanyLogoFetch(ghost.id);
   }
 
   revalidatePath(back);

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendGroupInviteEmail, sendTeamInviteEmail } from "@/lib/email";
 import { toSlug } from "@/lib/slug";
@@ -226,6 +227,7 @@ export async function createSubsidiary(formData: FormData) {
   const category = String(formData.get("category") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
   const country = String(formData.get("country") ?? "").trim();
+  const website = String(formData.get("website") ?? "").trim();
   const parentCompanyId = String(formData.get("parent_company_id") ?? "").trim();
   const backRaw = String(formData.get("back") ?? "").trim();
   const back = backRaw.startsWith("/dashboard") ? backRaw : "/dashboard/group";
@@ -264,6 +266,7 @@ export async function createSubsidiary(formData: FormData) {
     p_slug: slug,
     p_claim_token: claimToken,
     p_parent_company_id: parentCompanyId || null,
+    p_website: website || null,
   });
 
   if (error) {
@@ -272,6 +275,11 @@ export async function createSubsidiary(formData: FormData) {
 
   const row = Array.isArray(data) ? data[0] : data;
   const companySlug = (row?.company_slug as string | undefined) ?? slug;
+  const companyId = row?.company_id as string | undefined;
+
+  if (website && companyId) {
+    scheduleCompanyLogoFetch(companyId);
+  }
 
   revalidatePath(back);
   revalidatePath("/dashboard/group");

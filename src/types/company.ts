@@ -15,6 +15,7 @@ export type Company = {
   /** Optional “Website linked” signal — not the same as verified. */
   websiteLinked?: boolean;
   logoInitials: string;
+  logoUrl?: string | null;
   /** false = ghost / unclaimed draft profile. Never includes claim_token. */
   claimed?: boolean;
   /** Public availability — default true when unset. */

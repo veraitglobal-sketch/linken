@@ -28,6 +28,7 @@ async function toMemberCard(row: {
   city: string | null;
   country: string | null;
   claimed: boolean | null;
+  logo_url?: string | null;
   parentCompanyId?: string | null;
 }): Promise<GroupMemberCard> {
   const trust = await getTrustProfile(row.id, row.slug);
@@ -39,6 +40,7 @@ async function toMemberCard(row: {
     city: row.city ?? "",
     country: row.country ?? "",
     logoInitials: initials(row.name),
+    logoUrl: row.logo_url ?? null,
     claimed: row.claimed !== false,
     trustLevel: trust.level,
     confirmedReferences:
@@ -55,6 +57,7 @@ type CompanyJoin = {
   city: string | null;
   country: string | null;
   claimed: boolean | null;
+  logo_url?: string | null;
 };
 
 function unwrapCompany(c: CompanyJoin | CompanyJoin[] | null) {
@@ -78,7 +81,7 @@ export async function getGroupBySlug(
     const { data: memberships } = await supabase
       .from("company_group_members")
       .select(
-        "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed)",
+        "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, logo_url)",
       )
       .eq("group_id", group.id)
       .eq("status", "confirmed");
@@ -165,7 +168,7 @@ export async function getDashboardGroupForCreator(): Promise<DashboardGroup | nu
     const { data: rows } = await supabase
       .from("company_group_members")
       .select(
-        "status, parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed)",
+        "status, parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, logo_url)",
       )
       .eq("group_id", group.id);
 

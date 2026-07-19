@@ -4,6 +4,7 @@ import { LogoMark } from "@/components/ui/logo-mark";
 type Props = {
   name: string;
   initials: string;
+  logoUrl?: string | null;
   verified: boolean;
   claimed: boolean;
   partnerCount: number;
@@ -15,6 +16,7 @@ type Props = {
 export function EmbedBadge({
   name,
   initials,
+  logoUrl,
   verified,
   claimed,
   partnerCount,
@@ -28,7 +30,7 @@ export function EmbedBadge({
       rel="noopener noreferrer"
       className="flex items-center gap-3 border border-line bg-white px-4 py-3 no-underline transition-colors hover:bg-paper"
     >
-      <LogoMark initials={initials} size="md" />
+      <LogoMark initials={initials} logoUrl={logoUrl} size="md" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <p className="truncate text-sm font-semibold text-ink">{name}</p>
