@@ -10,8 +10,8 @@ const links = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4">
-      <div className="glass-nav mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 rounded-2xl px-4">
+    <header className="sticky top-0 z-50 px-4 pt-3">
+      <div className="glass-nav mx-auto flex h-12 max-w-6xl items-center justify-between gap-4 rounded-2xl px-4">
         <Link href="/" className="inline-flex items-center gap-2.5 text-[#141210]">
           <NetworkMark size={26} className="text-[#10231f]" />
           <span className="font-display text-[1.2rem] leading-none font-semibold tracking-[-0.03em]">

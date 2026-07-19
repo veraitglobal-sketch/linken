@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { signIn, signUp } from "@/features/auth/actions";
+import { signIn, signInWithGoogle, signUp } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionTitle } from "@/components/ui/section-title";
@@ -26,7 +26,17 @@ export default async function LoginPage({ searchParams }: Props) {
           {error}
         </p>
       ) : null}
-      <form action={signIn} className="mt-8 flex flex-col gap-3 border border-line bg-panel p-5">
+      <form action={signInWithGoogle} className="mt-8">
+        <Button type="submit" variant="secondary" className="w-full">
+          Continue with Google
+        </Button>
+      </form>
+      <div className="mt-4 flex items-center gap-3 text-xs text-ink/50">
+        <span className="h-px flex-1 bg-line" />
+        or
+        <span className="h-px flex-1 bg-line" />
+      </div>
+      <form action={signIn} className="mt-4 flex flex-col gap-3 border border-line bg-panel p-5">
         <Input type="email" name="email" placeholder="Email" required />
         <Input type="password" name="password" placeholder="Password" required minLength={6} />
         <Button type="submit" className="mt-2">
