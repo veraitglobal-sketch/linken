@@ -24,16 +24,24 @@ export async function refreshLogo(formData: FormData) {
 
   if (!company) redirect("/onboarding");
 
+  const dash = (query: string) => {
+    const hashIdx = back.indexOf("#");
+    const path = (hashIdx >= 0 ? back.slice(0, hashIdx) : back) || "/dashboard";
+    const hash = hashIdx >= 0 ? back.slice(hashIdx) : "";
+    const sep = path.includes("?") ? "&" : "?";
+    return `${path}${sep}${query}${hash}`;
+  };
+
   if (company.logo_source === "manual") {
     redirect(
-      `${back}?error=${encodeURIComponent("Your uploaded logo is not replaced automatically.")}`,
+      dash(
+        `error=${encodeURIComponent("Your uploaded logo is not replaced automatically.")}`,
+      ),
     );
   }
 
   if (!company.website) {
-    redirect(
-      `${back}?error=${encodeURIComponent("Add a company website first.")}`,
-    );
+    redirect(dash(`error=${encodeURIComponent("Add a company website first.")}`));
   }
 
   const { data: allowed, error: rateError } = await supabase.rpc(
@@ -42,24 +50,25 @@ export async function refreshLogo(formData: FormData) {
   );
 
   if (rateError) {
-    redirect(`${back}?error=${encodeURIComponent(rateError.message)}`);
+    redirect(dash(`error=${encodeURIComponent(rateError.message)}`));
   }
   if (allowed === false) {
     redirect(
-      `${back}?error=${encodeURIComponent("Rate limit: max 3 logo refreshes per day.")}`,
+      dash(
+        `error=${encodeURIComponent("Rate limit: max 3 logo refreshes per day.")}`,
+      ),
     );
   }
 
   const result = await fetchAndStoreCompanyLogo(company.id);
   if (!result.ok) {
-    redirect(
-      `${back}?error=${encodeURIComponent(result.error)}`,
-    );
+    redirect(dash(`error=${encodeURIComponent(result.error)}`));
   }
 
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/verification");
   revalidatePath(`/c/${company.slug}`);
   revalidatePath(`/c/${company.slug}/one-pager`);
   revalidatePath(`/embed/${company.slug}`);
-  redirect(`${back}?logoRefreshed=1`);
+  redirect(dash("ok=logo"));
 }

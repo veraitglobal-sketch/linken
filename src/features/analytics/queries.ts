@@ -1,8 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 
-export type DayCount = {
+export type DaySeries = {
   day: string;
   count: number;
+  visits: number;
+  inquiries: number;
+  onePager: number;
+  embed: number;
 };
 
 export type AnalyticsSummary = {
@@ -13,7 +17,7 @@ export type AnalyticsSummary = {
   inquiries: number;
   byType: Record<string, number>;
   bySource: Record<string, number>;
-  byDay: DayCount[];
+  byDay: DaySeries[];
 };
 
 const EMPTY: AnalyticsSummary = {
@@ -26,6 +30,57 @@ const EMPTY: AnalyticsSummary = {
   bySource: {},
   byDay: [],
 };
+
+function mapDay(raw: {
+  day: string;
+  count?: number;
+  visits?: number;
+  inquiries?: number;
+  one_pager?: number;
+  embed?: number;
+}): DaySeries {
+  const visits = Number(raw.visits ?? raw.count ?? 0);
+  const inquiries = Number(raw.inquiries ?? 0);
+  const onePager = Number(raw.one_pager ?? 0);
+  const embed = Number(raw.embed ?? 0);
+  return {
+    day: raw.day,
+    visits,
+    inquiries,
+    onePager,
+    embed,
+    count: Number(raw.count ?? visits + onePager + embed),
+  };
+}
+
+/** Fill missing calendar days so charts stay continuous. */
+export function fillDaySeries(
+  byDay: DaySeries[],
+  days: number,
+): DaySeries[] {
+  const map = new Map(byDay.map((d) => [d.day.slice(0, 10), d]));
+  const out: DaySeries[] = [];
+  const end = new Date();
+  end.setHours(12, 0, 0, 0);
+
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const d = new Date(end);
+    d.setDate(end.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    const hit = map.get(key);
+    out.push(
+      hit ?? {
+        day: key,
+        count: 0,
+        visits: 0,
+        inquiries: 0,
+        onePager: 0,
+        embed: 0,
+      },
+    );
+  }
+  return out;
+}
 
 export async function getAnalytics(
   companyId: string,
@@ -50,21 +105,30 @@ export async function getAnalytics(
       inquiries?: number;
       by_type?: Record<string, number>;
       by_source?: Record<string, number>;
-      by_day?: { day: string; count: number }[] | null;
+      by_day?:
+        | {
+            day: string;
+            count?: number;
+            visits?: number;
+            inquiries?: number;
+            one_pager?: number;
+            embed?: number;
+          }[]
+        | null;
     };
 
+    const mappedDays = (row.by_day ?? []).map(mapDay);
+    const span = row.days ?? days;
+
     return {
-      days: row.days ?? days,
+      days: span,
       profileViews: Number(row.profile_views ?? 0),
       onePagerViews: Number(row.one_pager_views ?? 0),
       embedViews: Number(row.embed_views ?? 0),
       inquiries: Number(row.inquiries ?? 0),
       byType: row.by_type ?? {},
       bySource: row.by_source ?? {},
-      byDay: (row.by_day ?? []).map((d) => ({
-        day: d.day,
-        count: Number(d.count ?? 0),
-      })),
+      byDay: fillDaySeries(mappedDays, span),
     };
   } catch {
     return { ...EMPTY, days };

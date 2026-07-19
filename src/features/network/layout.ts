@@ -23,17 +23,19 @@ export function layoutTree(
     nodes[0];
 
   const hubId = hub.id;
-  const memberOf = edges.filter((e) => e.type === "member_of");
+  const structure = edges.filter(
+    (e) => e.type === "member_of" || e.type === "subsidiary",
+  );
   const childrenOf = new Map<string, string[]>();
 
-  for (const e of memberOf) {
+  for (const e of structure) {
     const list = childrenOf.get(e.source) ?? [];
     list.push(e.target);
     childrenOf.set(e.source, list);
   }
 
   const memberIds = new Set(
-    memberOf.flatMap((e) => [e.source, e.target]).filter((id) => id !== hubId),
+    structure.flatMap((e) => [e.source, e.target]).filter((id) => id !== hubId),
   );
 
   const byId = new Map(nodes.map((n) => [n.id, n]));
@@ -125,7 +127,7 @@ export function layoutRadial(
   const hubId = hub.id;
   const memberIds = new Set(
     edges
-      .filter((e) => e.type === "member_of")
+      .filter((e) => e.type === "member_of" || e.type === "subsidiary")
       .flatMap((e) => [e.source, e.target])
       .filter((id) => id !== hubId),
   );
@@ -135,7 +137,11 @@ export function layoutRadial(
 
   for (const n of nodes) {
     if (n.id === hubId) continue;
-    if (memberIds.has(n.id) || n.data.kind !== "external") {
+    if (
+      memberIds.has(n.id) ||
+      n.data.kind === "company" ||
+      n.data.kind === "subsidiary"
+    ) {
       ring1.push(n);
     } else {
       ring2.push(n);

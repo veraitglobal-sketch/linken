@@ -1,18 +1,31 @@
 import type { TrustLevel } from "@/features/trust/score";
 
-export type NetworkNodeKind = "group" | "company" | "external";
+/** Visual / semantic role of a node on the map. */
+export type NetworkNodeKind =
+  | "group"
+  | "company"
+  | "subsidiary"
+  | "partner"
+  | "client";
 
-export type NetworkEdgeType = "member_of" | "partner" | "client";
+export type NetworkEdgeType =
+  | "member_of"
+  | "subsidiary"
+  | "partner"
+  | "client";
 
 export type NetworkNodeData = {
   slug: string;
   name: string;
   logoInitials: string;
   logoUrl?: string | null;
+  website?: string | null;
   category: string;
   city: string;
   trustLevel: TrustLevel | null;
   kind: NetworkNodeKind;
+  /** Raw company uuid when kind is a company node. */
+  companyId?: string;
   stats: {
     confirmedPartners: number;
     confirmedReferences: number;
@@ -20,7 +33,6 @@ export type NetworkNodeData = {
     countryCount?: number;
   };
   href: string;
-  /** Overflow marker */
   moreCount?: number;
 };
 
@@ -29,18 +41,48 @@ export type NetworkNode = {
   data: NetworkNodeData;
 };
 
+export type NetworkEdgeMeta = {
+  partnershipId?: string;
+  groupId?: string;
+  /** Company removed when ending a group / subsidiary link. */
+  memberCompanyId?: string;
+  label?: string;
+};
+
 export type NetworkEdge = {
   id: string;
   source: string;
   target: string;
   type: NetworkEdgeType;
+  detachable?: boolean;
+  meta?: NetworkEdgeMeta;
+};
+
+export type NetworkGraphSummary = {
+  companies: number;
+  subsidiaries: number;
+  partners: number;
+  clients: number;
+};
+
+export type NetworkGraphContext = {
+  groupId?: string | null;
+  groupSlug?: string | null;
+  viewerCompanyId?: string | null;
 };
 
 export type NetworkGraph = {
   nodes: NetworkNode[];
   edges: NetworkEdge[];
+  summary: NetworkGraphSummary;
+  context?: NetworkGraphContext;
 };
 
+/**
+ * - group: full group tree + every member’s partners & clients
+ * - company local: focus firm + its subsidiaries + its partners & clients
+ * - company full: if in a group → entire group network; else same as local
+ */
 export type NetworkScope =
   | { type: "group"; slug: string }
-  | { type: "company"; slug: string };
+  | { type: "company"; slug: string; expand?: "local" | "full" };

@@ -134,7 +134,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         networkMap={
           confirmedLinks >= 2 ? (
             <NetworkMapSection
-              scope={{ type: "company", slug: company.slug }}
+              scope={{ type: "company", slug: company.slug, expand: "full" }}
               title="Network"
               minHeightClass="h-[60vh]"
             />

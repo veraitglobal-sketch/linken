@@ -12,9 +12,14 @@ import { Input } from "@/components/ui/input";
 
 type Props = {
   data: DashboardGroup | null;
+  /** Where forms redirect after success/error. */
+  backPath?: string;
 };
 
-export function DashboardGroupPanel({ data }: Props) {
+export function DashboardGroupPanel({
+  data,
+  backPath = "/dashboard/group",
+}: Props) {
   if (!data) {
     return (
       <section className="rounded-[24px] border border-line bg-surface px-5 py-6">
@@ -28,6 +33,7 @@ export function DashboardGroupPanel({ data }: Props) {
           One group, nested country profiles. Evidence stays on each company.
         </p>
         <form action={createGroup} className="mt-5 space-y-3">
+          <input type="hidden" name="back" value={backPath} />
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               Group name
@@ -103,7 +109,7 @@ export function DashboardGroupPanel({ data }: Props) {
                   <form action={endGroupMembership}>
                     <input type="hidden" name="group_id" value={group.id} />
                     <input type="hidden" name="company_id" value={m.companyId} />
-                    <input type="hidden" name="back" value="/dashboard/group" />
+                    <input type="hidden" name="back" value={backPath} />
                     <Button
                       type="submit"
                       variant="ghost"
@@ -148,7 +154,7 @@ export function DashboardGroupPanel({ data }: Props) {
         </p>
         <form action={createSubsidiary} className="mt-4 grid gap-3 sm:grid-cols-2">
           <input type="hidden" name="group_id" value={group.id} />
-          <input type="hidden" name="back" value="/dashboard/group" />
+          <input type="hidden" name="back" value={backPath} />
           <label className="block sm:col-span-2">
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               Name
@@ -213,6 +219,7 @@ export function DashboardGroupPanel({ data }: Props) {
         </p>
         <form action={inviteCompanyToGroup} className="mt-4 space-y-3">
           <input type="hidden" name="group_id" value={group.id} />
+          <input type="hidden" name="back" value={backPath} />
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               Company slug

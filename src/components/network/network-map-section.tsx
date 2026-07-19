@@ -36,9 +36,33 @@ export async function NetworkMapSection({
             {title}
           </h2>
           <p className="mt-2 max-w-[42rem] text-[14px] leading-relaxed text-ink-soft">
-            Confirmed relationships only — group membership, partners, and
-            clients. Evidence is never merged across branches.
+            Confirmed relationships only — subsidiaries, partners, and clients.
+            Evidence stays on each company; the map shows how they connect.
           </p>
+          {graph.summary.companies +
+            graph.summary.subsidiaries +
+            graph.summary.partners +
+            graph.summary.clients >
+          0 ? (
+            <p className="mt-2 text-[12px] text-muted">
+              {[
+                graph.summary.companies
+                  ? `${graph.summary.companies} companies`
+                  : null,
+                graph.summary.subsidiaries
+                  ? `${graph.summary.subsidiaries} subsidiaries`
+                  : null,
+                graph.summary.partners
+                  ? `${graph.summary.partners} partners`
+                  : null,
+                graph.summary.clients
+                  ? `${graph.summary.clients} clients`
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          ) : null}
         </div>
 
         {/* Mobile: compact list */}

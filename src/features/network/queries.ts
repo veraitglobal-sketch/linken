@@ -1,15 +1,19 @@
+import { companyDisplayLogoUrl } from "@/features/logo/display-url";
 import { getTrustProfile } from "@/features/trust/queries";
 import type {
   NetworkEdge,
+  NetworkEdgeMeta,
   NetworkGraph,
+  NetworkGraphContext,
+  NetworkGraphSummary,
   NetworkNode,
   NetworkNodeData,
+  NetworkNodeKind,
   NetworkScope,
 } from "@/features/network/types";
-import type { TrustLevel } from "@/features/trust/score";
 import { createClient } from "@/lib/supabase/server";
 
-const MAX_NODES = 60;
+const MAX_NODES = 120;
 
 function initials(name: string) {
   return name
@@ -28,22 +32,64 @@ type CompanyRow = {
   city: string | null;
   claimed: boolean | null;
   logo_url?: string | null;
+  website?: string | null;
 };
+
+type MemberRow = CompanyRow & {
+  country: string | null;
+  parentCompanyId: string | null;
+};
+
+const emptySummary = (): NetworkGraphSummary => ({
+  companies: 0,
+  subsidiaries: 0,
+  partners: 0,
+  clients: 0,
+});
+
+function summarize(nodes: NetworkNode[]): NetworkGraphSummary {
+  const s = emptySummary();
+  for (const n of nodes) {
+    if (n.data.moreCount) continue;
+    switch (n.data.kind) {
+      case "company":
+        s.companies += 1;
+        break;
+      case "subsidiary":
+        s.subsidiaries += 1;
+        break;
+      case "partner":
+        s.partners += 1;
+        break;
+      case "client":
+        s.clients += 1;
+        break;
+      default:
+        break;
+    }
+  }
+  return s;
+}
 
 async function companyNode(
   row: CompanyRow,
-  kind: "company" | "external",
+  kind: NetworkNodeKind,
 ): Promise<NetworkNode> {
   const trust = await getTrustProfile(row.id, row.slug);
   const data: NetworkNodeData = {
     slug: row.slug,
     name: row.name,
     logoInitials: initials(row.name),
-    logoUrl: row.logo_url ?? null,
+    logoUrl: companyDisplayLogoUrl({
+      logoUrl: row.logo_url,
+      website: row.website,
+    }),
+    website: row.website ?? null,
     category: row.category ?? "",
     city: row.city ?? "",
     trustLevel: row.claimed === false ? null : trust.level,
     kind,
+    companyId: row.id,
     stats: {
       confirmedPartners: trust.breakdown.confirmedPartners,
       confirmedReferences:
@@ -54,67 +100,118 @@ async function companyNode(
   return { id: `company:${row.id}`, data };
 }
 
-async function fetchCompany(id: string): Promise<CompanyRow | null> {
+async function fetchCompaniesByIds(
+  ids: string[],
+): Promise<Map<string, CompanyRow>> {
+  const unique = [...new Set(ids)].filter(Boolean);
+  const map = new Map<string, CompanyRow>();
+  if (unique.length === 0) return map;
+
   const supabase = await createClient();
   const { data } = await supabase
     .from("companies")
-    .select("id, slug, name, category, city, claimed, logo_url")
-    .eq("id", id)
-    .maybeSingle();
-  return data;
+    .select("id, slug, name, category, city, claimed, logo_url, website")
+    .in("id", unique);
+
+  for (const row of data ?? []) {
+    map.set(row.id, row);
+  }
+  return map;
 }
 
-async function acceptedPartnerIds(companyId: string): Promise<string[]> {
+type PartnerLink = { partnerId: string; partnershipId: string };
+
+async function acceptedPartnershipsForMany(
+  companyIds: string[],
+): Promise<Map<string, PartnerLink[]>> {
+  const result = new Map<string, PartnerLink[]>();
+  if (companyIds.length === 0) return result;
+
   const supabase = await createClient();
   const [asReq, asRec] = await Promise.all([
     supabase
       .from("partnerships")
-      .select("recipient_id")
+      .select("id, requester_id, recipient_id")
       .eq("status", "accepted")
-      .eq("requester_id", companyId),
+      .in("requester_id", companyIds),
     supabase
       .from("partnerships")
-      .select("requester_id")
+      .select("id, requester_id, recipient_id")
       .eq("status", "accepted")
-      .eq("recipient_id", companyId),
+      .in("recipient_id", companyIds),
   ]);
-  const ids = [
-    ...(asReq.data ?? []).map((r) => r.recipient_id as string),
-    ...(asRec.data ?? []).map((r) => r.requester_id as string),
-  ];
-  return [...new Set(ids)];
+
+  const add = (from: string, partnerId: string, partnershipId: string) => {
+    const list = result.get(from) ?? [];
+    if (list.some((l) => l.partnershipId === partnershipId)) return;
+    list.push({ partnerId, partnershipId });
+    result.set(from, list);
+  };
+
+  for (const r of asReq.data ?? []) {
+    add(
+      r.requester_id as string,
+      r.recipient_id as string,
+      r.id as string,
+    );
+  }
+  for (const r of asRec.data ?? []) {
+    add(
+      r.recipient_id as string,
+      r.requester_id as string,
+      r.id as string,
+    );
+  }
+
+  return result;
 }
 
-async function confirmedClientCompanies(
-  providerId: string,
-): Promise<{ id: string; ongoing: boolean }[]> {
+async function confirmedClientsForMany(
+  providerIds: string[],
+): Promise<Map<string, { id: string; ongoing: boolean }[]>> {
+  const result = new Map<string, { id: string; ongoing: boolean }[]>();
+  if (providerIds.length === 0) return result;
+
   const supabase = await createClient();
   const { data } = await supabase
     .from("service_references")
-    .select("client_company_id, ongoing")
-    .eq("provider_company_id", providerId)
+    .select("provider_company_id, client_company_id, ongoing")
+    .in("provider_company_id", providerIds)
     .eq("status", "confirmed")
     .not("client_company_id", "is", null);
 
-  const map = new Map<string, boolean>();
+  const nested = new Map<string, Map<string, boolean>>();
   for (const row of data ?? []) {
-    const id = row.client_company_id as string;
-    if (!id) continue;
-    map.set(id, map.get(id) === true || Boolean(row.ongoing));
+    const provider = row.provider_company_id as string;
+    const client = row.client_company_id as string;
+    if (!provider || !client) continue;
+    const map = nested.get(provider) ?? new Map();
+    map.set(client, map.get(client) === true || Boolean(row.ongoing));
+    nested.set(provider, map);
   }
-  return [...map.entries()].map(([id, ongoing]) => ({ id, ongoing }));
+
+  for (const [provider, clients] of nested) {
+    const list = [...clients.entries()]
+      .map(([id, ongoing]) => ({ id, ongoing }))
+      .sort((a, b) => Number(b.ongoing) - Number(a.ongoing));
+    result.set(provider, list);
+  }
+  return result;
 }
 
 function edge(
   type: NetworkEdge["type"],
   source: string,
   target: string,
+  opts?: { detachable?: boolean; meta?: NetworkEdgeMeta },
 ): NetworkEdge {
   return {
     id: `${type}:${source}->${target}`,
     source,
     target,
     type,
+    detachable: opts?.detachable,
+    meta: opts?.meta,
   };
 }
 
@@ -122,17 +219,21 @@ function trimGraph(
   nodes: NetworkNode[],
   edges: NetworkEdge[],
   hubId: string,
+  context?: NetworkGraphContext,
 ): NetworkGraph {
-  if (nodes.length <= MAX_NODES) return { nodes, edges };
+  if (nodes.length <= MAX_NODES) {
+    return { nodes, edges, summary: summarize(nodes), context };
+  }
 
   const keep = new Set<string>([hubId]);
+  const priority = [
+    ...edges.filter((e) => e.type === "subsidiary"),
+    ...edges.filter((e) => e.type === "member_of"),
+    ...edges.filter((e) => e.type === "client"),
+    ...edges.filter((e) => e.type === "partner"),
+  ];
 
-  // Priority: member_of, then ongoing clients (via edge type client), then partners
-  const memberEdges = edges.filter((e) => e.type === "member_of");
-  const clientEdges = edges.filter((e) => e.type === "client");
-  const partnerEdges = edges.filter((e) => e.type === "partner");
-
-  for (const e of [...memberEdges, ...clientEdges, ...partnerEdges]) {
+  for (const e of priority) {
     if (keep.size >= MAX_NODES - 1) break;
     keep.add(e.source);
     keep.add(e.target);
@@ -151,7 +252,7 @@ function trimGraph(
         category: "Network",
         city: "",
         trustLevel: null,
-        kind: "external",
+        kind: "partner",
         stats: { confirmedPartners: 0, confirmedReferences: 0 },
         href: "#",
         moreCount: omitted,
@@ -162,44 +263,25 @@ function trimGraph(
   const keptEdges = edges.filter(
     (e) => keep.has(e.source) && keep.has(e.target),
   );
-  return { nodes: keptNodes, edges: keptEdges };
+  return {
+    nodes: keptNodes,
+    edges: keptEdges,
+    summary: summarize(keptNodes),
+    context,
+  };
 }
 
-export async function getNetworkGraph(
-  scope: NetworkScope,
-): Promise<NetworkGraph> {
-  try {
-    if (scope.type === "group") {
-      return await graphForGroup(scope.slug);
-    }
-    return await graphForCompany(scope.slug);
-  } catch {
-    return { nodes: [], edges: [] };
-  }
-}
-
-async function graphForGroup(slug: string): Promise<NetworkGraph> {
+async function loadGroupMembers(groupId: string): Promise<MemberRow[]> {
   const supabase = await createClient();
-  const { data: group } = await supabase
-    .from("company_groups")
-    .select("id, name, slug")
-    .eq("slug", slug)
-    .maybeSingle();
-  if (!group) return { nodes: [], edges: [] };
-
   const { data: memberships } = await supabase
     .from("company_group_members")
     .select(
-      "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, logo_url)",
+      "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, logo_url, website)",
     )
-    .eq("group_id", group.id)
+    .eq("group_id", groupId)
     .eq("status", "confirmed");
 
-  type MemberRow = CompanyRow & {
-    country: string | null;
-    parentCompanyId: string | null;
-  };
-  const members = (memberships ?? [])
+  return (memberships ?? [])
     .map((m) => {
       const c = m.company as
         | (CompanyRow & { country: string | null })
@@ -213,7 +295,89 @@ async function graphForGroup(slug: string): Promise<NetworkGraph> {
       };
     })
     .filter(Boolean) as MemberRow[];
+}
 
+async function attachPartnersAndClients(
+  memberIds: string[],
+  memberIdSet: Set<string>,
+  nodes: NetworkNode[],
+  edges: NetworkEdge[],
+  seen: Set<string>,
+) {
+  const [partnerMap, clientMap] = await Promise.all([
+    acceptedPartnershipsForMany(memberIds),
+    confirmedClientsForMany(memberIds),
+  ]);
+
+  const missingIds = new Set<string>();
+  for (const id of memberIds) {
+    for (const link of partnerMap.get(id) ?? []) {
+      if (!seen.has(`company:${link.partnerId}`)) missingIds.add(link.partnerId);
+    }
+    for (const c of clientMap.get(id) ?? []) {
+      if (!seen.has(`company:${c.id}`)) missingIds.add(c.id);
+    }
+  }
+
+  const companyCache = await fetchCompaniesByIds([...missingIds]);
+  const partnerEdgeSeen = new Set<string>();
+
+  for (const memberId of memberIds) {
+    const sourceId = `company:${memberId}`;
+
+    for (const link of partnerMap.get(memberId) ?? []) {
+      if (partnerEdgeSeen.has(link.partnershipId)) continue;
+      partnerEdgeSeen.add(link.partnershipId);
+
+      const targetId = `company:${link.partnerId}`;
+      if (!seen.has(targetId)) {
+        const row = companyCache.get(link.partnerId);
+        if (!row) continue;
+        const kind: NetworkNodeKind = memberIdSet.has(link.partnerId)
+          ? "company"
+          : "partner";
+        const pNode = await companyNode(row, kind);
+        nodes.push(pNode);
+        seen.add(pNode.id);
+      }
+
+      edges.push(
+        edge("partner", sourceId, targetId, {
+          detachable: true,
+          meta: {
+            partnershipId: link.partnershipId,
+            label: "Partnership",
+          },
+        }),
+      );
+    }
+
+    for (const client of clientMap.get(memberId) ?? []) {
+      const targetId = `company:${client.id}`;
+      if (!seen.has(targetId)) {
+        const row = companyCache.get(client.id);
+        if (!row) continue;
+        const kind: NetworkNodeKind = memberIdSet.has(client.id)
+          ? "company"
+          : "client";
+        const cNode = await companyNode(row, kind);
+        nodes.push(cNode);
+        seen.add(cNode.id);
+      }
+      edges.push(
+        edge("client", sourceId, targetId, {
+          detachable: false,
+          meta: { label: "Client (confirmed reference)" },
+        }),
+      );
+    }
+  }
+}
+
+async function buildGroupGraph(
+  group: { id: string; name: string; slug: string },
+  members: MemberRow[],
+): Promise<NetworkGraph> {
   const countryCount = new Set(
     members.map((m) => m.country).filter(Boolean),
   ).size;
@@ -246,131 +410,293 @@ async function graphForGroup(slug: string): Promise<NetworkGraph> {
   const memberIdSet = new Set(members.map((m) => m.id));
 
   for (const member of members) {
-    const node = await companyNode(member, "company");
+    const kind: NetworkNodeKind = member.parentCompanyId
+      ? "subsidiary"
+      : "company";
+    const node = await companyNode(member, kind);
     if (!seen.has(node.id)) {
       nodes.push(node);
       seen.add(node.id);
     }
-    // Tree edges: group → root members; parent → child otherwise
+
     if (member.parentCompanyId && memberIdSet.has(member.parentCompanyId)) {
-      edges.push(edge("member_of", `company:${member.parentCompanyId}`, node.id));
+      edges.push(
+        edge("subsidiary", `company:${member.parentCompanyId}`, node.id, {
+          detachable: true,
+          meta: {
+            groupId: group.id,
+            memberCompanyId: member.id,
+            label: "Subsidiary",
+          },
+        }),
+      );
     } else {
-      edges.push(edge("member_of", hubId, node.id));
-    }
-
-    const partnerIds = await acceptedPartnerIds(member.id);
-    for (const pid of partnerIds) {
-      if (seen.has(`company:${pid}`)) {
-        edges.push(edge("partner", node.id, `company:${pid}`));
-        continue;
-      }
-      const row = await fetchCompany(pid);
-      if (!row) continue;
-      const pNode = await companyNode(row, "external");
-      if (!seen.has(pNode.id)) {
-        nodes.push(pNode);
-        seen.add(pNode.id);
-      }
-      edges.push(edge("partner", node.id, pNode.id));
-    }
-
-    const clients = await confirmedClientCompanies(member.id);
-    // Prefer ongoing first for later trim
-    clients.sort((a, b) => Number(b.ongoing) - Number(a.ongoing));
-    for (const client of clients) {
-      if (seen.has(`company:${client.id}`)) {
-        edges.push(edge("client", node.id, `company:${client.id}`));
-        continue;
-      }
-      const row = await fetchCompany(client.id);
-      if (!row) continue;
-      const cNode = await companyNode(row, "external");
-      if (!seen.has(cNode.id)) {
-        nodes.push(cNode);
-        seen.add(cNode.id);
-      }
-      edges.push(edge("client", node.id, cNode.id));
+      edges.push(
+        edge("member_of", hubId, node.id, {
+          detachable: true,
+          meta: {
+            groupId: group.id,
+            memberCompanyId: member.id,
+            label: "Group membership",
+          },
+        }),
+      );
     }
   }
 
-  return trimGraph(nodes, edges, hubId);
+  await attachPartnersAndClients(
+    members.map((m) => m.id),
+    memberIdSet,
+    nodes,
+    edges,
+    seen,
+  );
+
+  return trimGraph(nodes, edges, hubId, {
+    groupId: group.id,
+    groupSlug: group.slug,
+  });
 }
 
-async function graphForCompany(slug: string): Promise<NetworkGraph> {
-  const supabase = await createClient();
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug, name, category, city, claimed, logo_url")
-    .eq("slug", slug)
-    .maybeSingle();
-  if (!company) return { nodes: [], edges: [] };
-
+async function buildLocalCompanyGraph(
+  company: CompanyRow,
+  options: {
+    descendants: MemberRow[];
+    parent: CompanyRow | null;
+    group: { id: string; name: string; slug: string } | null;
+  },
+): Promise<NetworkGraph> {
   const hub = await companyNode(company, "company");
   const nodes: NetworkNode[] = [hub];
   const edges: NetworkEdge[] = [];
   const seen = new Set<string>([hub.id]);
+  const memberIdSet = new Set<string>([
+    company.id,
+    ...options.descendants.map((d) => d.id),
+  ]);
+
+  if (options.group) {
+    const groupId = `group:${options.group.id}`;
+    nodes.push({
+      id: groupId,
+      data: {
+        slug: options.group.slug,
+        name: options.group.name,
+        logoInitials: initials(options.group.name),
+        logoUrl: null,
+        category: "Group",
+        city: "",
+        trustLevel: null,
+        kind: "group",
+        stats: {
+          confirmedPartners: 0,
+          confirmedReferences: 0,
+        },
+        href: `/g/${options.group.slug}`,
+      },
+    });
+    seen.add(groupId);
+    edges.push(
+      edge("member_of", groupId, hub.id, {
+        detachable: true,
+        meta: {
+          groupId: options.group.id,
+          memberCompanyId: company.id,
+          label: "Group membership",
+        },
+      }),
+    );
+  }
+
+  if (options.parent && options.group) {
+    const parentNode = await companyNode(options.parent, "company");
+    if (!seen.has(parentNode.id)) {
+      nodes.push(parentNode);
+      seen.add(parentNode.id);
+    }
+    edges.push(
+      edge("subsidiary", parentNode.id, hub.id, {
+        detachable: true,
+        meta: {
+          groupId: options.group.id,
+          memberCompanyId: company.id,
+          label: "Subsidiary",
+        },
+      }),
+    );
+  }
+
+  for (const child of options.descendants) {
+    const node = await companyNode(child, "subsidiary");
+    if (!seen.has(node.id)) {
+      nodes.push(node);
+      seen.add(node.id);
+    }
+    const parentId = child.parentCompanyId
+      ? `company:${child.parentCompanyId}`
+      : hub.id;
+    const source = seen.has(parentId) ? parentId : hub.id;
+    edges.push(
+      edge("subsidiary", source, node.id, {
+        detachable: Boolean(options.group),
+        meta: options.group
+          ? {
+              groupId: options.group.id,
+              memberCompanyId: child.id,
+              label: "Subsidiary",
+            }
+          : undefined,
+      }),
+    );
+  }
+
+  await attachPartnersAndClients(
+    [company.id, ...options.descendants.map((d) => d.id)],
+    memberIdSet,
+    nodes,
+    edges,
+    seen,
+  );
+
+  return trimGraph(nodes, edges, hub.id, {
+    groupId: options.group?.id ?? null,
+    groupSlug: options.group?.slug ?? null,
+    viewerCompanyId: company.id,
+  });
+}
+
+function collectDescendants(
+  rootId: string,
+  members: MemberRow[],
+): MemberRow[] {
+  const byParent = new Map<string, MemberRow[]>();
+  for (const m of members) {
+    if (!m.parentCompanyId) continue;
+    const list = byParent.get(m.parentCompanyId) ?? [];
+    list.push(m);
+    byParent.set(m.parentCompanyId, list);
+  }
+
+  const out: MemberRow[] = [];
+  const stack = [...(byParent.get(rootId) ?? [])];
+  const visited = new Set<string>();
+  while (stack.length) {
+    const next = stack.pop()!;
+    if (visited.has(next.id)) continue;
+    visited.add(next.id);
+    out.push(next);
+    stack.push(...(byParent.get(next.id) ?? []));
+  }
+  return out;
+}
+
+export async function getNetworkGraph(
+  scope: NetworkScope,
+  opts?: { viewerCompanyId?: string | null },
+): Promise<NetworkGraph> {
+  try {
+    const graph =
+      scope.type === "group"
+        ? await graphForGroup(scope.slug)
+        : await graphForCompany(scope.slug, scope.expand ?? "full");
+
+    if (opts?.viewerCompanyId) {
+      return {
+        ...graph,
+        context: {
+          ...graph.context,
+          viewerCompanyId: opts.viewerCompanyId,
+        },
+      };
+    }
+    return graph;
+  } catch {
+    return { nodes: [], edges: [], summary: emptySummary() };
+  }
+}
+
+/**
+ * Prefer the group graph for the main workspace account (group creator
+ * or any owned company that sits in a group).
+ */
+export async function resolveWorkspaceGraphScope(input: {
+  companySlug: string;
+  groupSlug?: string | null;
+}): Promise<NetworkScope> {
+  if (input.groupSlug) {
+    return { type: "group", slug: input.groupSlug };
+  }
+  return { type: "company", slug: input.companySlug, expand: "full" };
+}
+
+async function graphForGroup(slug: string): Promise<NetworkGraph> {
+  const supabase = await createClient();
+  const { data: group } = await supabase
+    .from("company_groups")
+    .select("id, name, slug")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (!group) return { nodes: [], edges: [], summary: emptySummary() };
+
+  const members = await loadGroupMembers(group.id);
+  return buildGroupGraph(group, members);
+}
+
+async function graphForCompany(
+  slug: string,
+  expand: "local" | "full",
+): Promise<NetworkGraph> {
+  const supabase = await createClient();
+  const { data: company } = await supabase
+    .from("companies")
+    .select("id, slug, name, category, city, claimed, logo_url, website")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (!company) return { nodes: [], edges: [], summary: emptySummary() };
 
   const { data: membership } = await supabase
     .from("company_group_members")
-    .select("group:company_groups!group_id(id, name, slug)")
+    .select(
+      "parent_company_id, group:company_groups!group_id(id, name, slug, created_by)",
+    )
     .eq("company_id", company.id)
     .eq("status", "confirmed")
     .limit(1)
     .maybeSingle();
 
-  if (membership?.group) {
-    const g = Array.isArray(membership.group)
-      ? membership.group[0]
-      : membership.group;
-    if (g) {
-      const groupId = `group:${g.id}`;
-      nodes.push({
-        id: groupId,
-        data: {
-          slug: g.slug,
-          name: g.name,
-          logoInitials: initials(g.name),
-          logoUrl: null,
-          category: "Group",
-          city: "",
-          trustLevel: null as TrustLevel | null,
-          kind: "group",
-          stats: {
-            confirmedPartners: 0,
-            confirmedReferences: 0,
-          },
-          href: `/g/${g.slug}`,
-        },
-      });
-      seen.add(groupId);
-      edges.push(edge("member_of", groupId, hub.id));
+  const groupRaw = membership?.group;
+  const group = groupRaw
+    ? Array.isArray(groupRaw)
+      ? groupRaw[0]
+      : groupRaw
+    : null;
+
+  if (group && expand === "full") {
+    const members = await loadGroupMembers(group.id);
+    return buildGroupGraph(
+      { id: group.id, name: group.name, slug: group.slug },
+      members,
+    );
+  }
+
+  let descendants: MemberRow[] = [];
+  let parent: CompanyRow | null = null;
+
+  if (group) {
+    const members = await loadGroupMembers(group.id);
+    descendants = collectDescendants(company.id, members);
+    const parentId = (membership?.parent_company_id as string | null) ?? null;
+    if (parentId) {
+      const map = await fetchCompaniesByIds([parentId]);
+      parent = map.get(parentId) ?? null;
     }
   }
 
-  const partnerIds = await acceptedPartnerIds(company.id);
-  for (const pid of partnerIds) {
-    const row = await fetchCompany(pid);
-    if (!row) continue;
-    const pNode = await companyNode(row, "external");
-    if (!seen.has(pNode.id)) {
-      nodes.push(pNode);
-      seen.add(pNode.id);
-    }
-    edges.push(edge("partner", hub.id, pNode.id));
-  }
-
-  const clients = await confirmedClientCompanies(company.id);
-  clients.sort((a, b) => Number(b.ongoing) - Number(a.ongoing));
-  for (const client of clients) {
-    const row = await fetchCompany(client.id);
-    if (!row) continue;
-    const cNode = await companyNode(row, "external");
-    if (!seen.has(cNode.id)) {
-      nodes.push(cNode);
-      seen.add(cNode.id);
-    }
-    edges.push(edge("client", hub.id, cNode.id));
-  }
-
-  return trimGraph(nodes, edges, hub.id);
+  return buildLocalCompanyGraph(company, {
+    descendants,
+    parent,
+    group: group
+      ? { id: group.id, name: group.name, slug: group.slug }
+      : null,
+  });
 }

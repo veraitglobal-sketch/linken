@@ -39,9 +39,9 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-12">
+    <div className="max-w-3xl space-y-2 pb-8">
       <SectionTitle
-        eyebrow="Owner"
+        eyebrow="Network"
         title="Team members"
         description="Invite colleagues to the company dashboard. Ownership stays with you."
       />

@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { faviconFallbackUrls } from "@/features/logo/display-url";
 import { cn } from "@/lib/cn";
 
 type Props = {
   initials: string;
   logoUrl?: string | null;
+  /** When logo_url is missing/broken, try favicons from this website. */
+  website?: string | null;
   size?: "sm" | "md" | "lg";
   className?: string;
 };
@@ -25,11 +28,28 @@ const imgPad = {
 export function LogoMark({
   initials,
   logoUrl,
+  website,
   size = "md",
   className,
 }: Props) {
-  const [failed, setFailed] = useState(false);
-  const showImg = Boolean(logoUrl) && !failed;
+  const candidates = useMemo(() => {
+    const list: string[] = [];
+    const primary = logoUrl?.trim();
+    if (primary) list.push(primary);
+    for (const url of faviconFallbackUrls(website)) {
+      if (!list.includes(url)) list.push(url);
+    }
+    return list;
+  }, [logoUrl, website]);
+
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [candidates.join("|")]);
+
+  const src = candidates[index] ?? null;
+  const showImg = Boolean(src);
 
   return (
     <div
@@ -44,10 +64,12 @@ export function LogoMark({
       {showImg ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={logoUrl!}
+          src={src!}
           alt=""
           className="h-full w-full object-contain"
-          onError={() => setFailed(true)}
+          onError={() => {
+            setIndex((i) => i + 1);
+          }}
         />
       ) : (
         initials

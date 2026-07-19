@@ -5,6 +5,7 @@ import { InquiryForm } from "@/components/inquiries/inquiry-form";
 import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/ui/logo-mark";
+import { SocialIcons } from "@/components/ui/social-icons";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
 import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
@@ -114,6 +115,12 @@ export function CompanyHeroBand({
             <p className="mt-5 max-w-md text-[16px] leading-relaxed text-white/70">
               {company.tagline}
             </p>
+            <SocialIcons
+              linkedinUrl={company.linkedinUrl}
+              facebookUrl={company.facebookUrl}
+              tone="dark"
+              className="mt-5"
+            />
           </div>
 
           <div className="animate-rise-late space-y-4">

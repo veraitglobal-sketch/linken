@@ -19,11 +19,11 @@ export default async function DashboardGroupPage({ searchParams }: Props) {
   const data = user ? await getDashboardGroupForCreator() : null;
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-12">
+    <div className="max-w-3xl space-y-2 pb-8">
       <SectionTitle
-        eyebrow="Owner"
+        eyebrow="Network"
         title="Company group"
-        description="Organize country branches under one group. Evidence stays on each company profile."
+        description="Organize country branches under one group. Evidence stays on each company profile. Prefer Structure for the tree view."
       />
 
       {error ? (

@@ -29,11 +29,16 @@ async function uniqueGroupSlug(
   return `${base}-${Date.now().toString(36)}`;
 }
 
+function safeBack(formData: FormData, fallback = "/dashboard/group") {
+  const raw = String(formData.get("back") ?? "").trim();
+  return raw.startsWith("/dashboard") ? raw : fallback;
+}
+
 export async function createGroup(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const website = String(formData.get("website") ?? "").trim();
-  const back = "/dashboard/group";
+  const back = safeBack(formData);
 
   if (!name) {
     redirect(`${back}?error=${encodeURIComponent("Group name is required.")}`);
@@ -75,7 +80,7 @@ export async function inviteCompanyToGroup(formData: FormData) {
     .trim()
     .toLowerCase();
   const parentCompanyId = String(formData.get("parent_company_id") ?? "").trim();
-  const back = "/dashboard/group";
+  const back = safeBack(formData);
 
   if (!groupId || !companySlug) {
     redirect(`${back}?error=${encodeURIComponent("Group and company slug are required.")}`);
@@ -282,6 +287,8 @@ export async function createSubsidiary(formData: FormData) {
   }
 
   revalidatePath(back);
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/structure");
   revalidatePath("/dashboard/group");
   revalidatePath(`/g/${group.slug}`);
   revalidatePath(`/c/${companySlug}`);

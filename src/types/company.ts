@@ -8,6 +8,8 @@ export type Company = {
   city: string;
   country: string;
   website: string;
+  linkedinUrl?: string | null;
+  facebookUrl?: string | null;
   services: string[];
   verified: boolean;
   /** Domain verification timestamp — public. */

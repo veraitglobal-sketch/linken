@@ -29,9 +29,9 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
   const emptySearch = Boolean(q.trim()) && results.length === 0;
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-12">
+    <div className="max-w-3xl space-y-2 pb-8">
       <SectionTitle
-        eyebrow="Partners"
+        eyebrow="Network"
         title="Search and invite"
         description="Invite registered firms, or create a draft profile for a partner who is not on Linken yet. Nothing shows as verified until they claim and confirm."
       />

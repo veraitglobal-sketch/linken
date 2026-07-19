@@ -131,6 +131,41 @@ a {
   animation: orbit 18s linear infinite;
 }
 
+/* Network graph — n8n-inspired interaction polish (light) */
+.linken-flow .react-flow__node {
+  overflow: visible !important;
+  transition: filter 0.12s ease;
+}
+
+.linken-flow .react-flow__node:hover {
+  z-index: 5;
+}
+
+.linken-flow .react-flow__node.selected {
+  z-index: 10;
+}
+
+.linken-flow .react-flow__edge-path {
+  transition: stroke 0.12s ease, stroke-width 0.12s ease;
+}
+
+.linken-flow .react-flow__handle.linken-handle {
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.linken-flow .react-flow__handle.linken-handle:hover {
+  transform: scale(1.35);
+  background: #3b82f6 !important;
+}
+
+.linken-flow .react-flow__controls-button:hover {
+  background: #f8fafc !important;
+}
+
+.linken-flow .react-flow__minimap-mask {
+  fill: rgba(15, 23, 42, 0.06);
+}
+
 @media print {
   @page {
     size: A4;

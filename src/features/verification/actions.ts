@@ -75,14 +75,14 @@ async function markWebsiteLinked(companyId: string, linked: boolean) {
 
 function dash(msg?: string) {
   const q = msg ? `?error=${encodeURIComponent(msg)}` : "";
-  return `/dashboard${q}#verification`;
+  return `/dashboard/verification${q}`;
 }
 
 export async function checkEmailDomainVerification(formData: FormData) {
   void formData;
   const { supabase, user, company } = await requireOwnedCompany();
   if (!user) {
-    redirect(`/login?next=${encodeURIComponent("/dashboard#verification")}`);
+    redirect(`/login?next=${encodeURIComponent("/dashboard/verification")}`);
   }
   if (!company) redirect("/onboarding");
 
@@ -100,8 +100,9 @@ export async function checkEmailDomainVerification(formData: FormData) {
 
   scheduleCompanyLogoFetch(company.id);
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/verification");
   revalidatePath(`/c/${company.slug}`);
-  redirect("/dashboard?verified=email#verification");
+  redirect("/dashboard/verification?verified=email");
 }
 
 /** Called from createCompany after insert — no redirect, no rate limit burn if no website. */
@@ -145,7 +146,7 @@ export async function getOwnerVerifyToken(): Promise<{
 
 export async function runDnsCheck() {
   const { supabase, user, company } = await requireOwnedCompany();
-  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard#verification")}`);
+  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard/verification")}`);
   if (!company) redirect("/onboarding");
 
   const domain = extractDomain(company.website ?? "");
@@ -181,12 +182,12 @@ export async function runDnsCheck() {
   scheduleCompanyLogoFetch(company.id);
   revalidatePath("/dashboard");
   revalidatePath(`/c/${company.slug}`);
-  redirect("/dashboard?verified=dns#verification");
+  redirect("/dashboard/verification?verified=dns");
 }
 
 export async function runMetaCheck() {
   const { supabase, user, company } = await requireOwnedCompany();
-  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard#verification")}`);
+  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard/verification")}`);
   if (!company) redirect("/onboarding");
 
   const domain = extractDomain(company.website ?? "");
@@ -215,7 +216,7 @@ export async function runMetaCheck() {
     scheduleCompanyLogoFetch(company.id);
     revalidatePath("/dashboard");
     revalidatePath(`/c/${company.slug}`);
-    redirect("/dashboard?verified=meta#verification");
+    redirect("/dashboard/verification?verified=meta");
   }
 
   const home = await fetchCompanySite(domain, "/");
@@ -261,12 +262,12 @@ export async function runMetaCheck() {
   scheduleCompanyLogoFetch(company.id);
   revalidatePath("/dashboard");
   revalidatePath(`/c/${company.slug}`);
-  redirect("/dashboard?verified=meta#verification");
+  redirect("/dashboard/verification?verified=meta");
 }
 
 export async function runBacklinkCheck() {
   const { supabase, user, company } = await requireOwnedCompany();
-  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard#verification")}`);
+  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard/verification")}`);
   if (!company) redirect("/onboarding");
 
   const domain = extractDomain(company.website ?? "");
@@ -301,7 +302,7 @@ export async function runBacklinkCheck() {
   revalidatePath(`/c/${company.slug}`);
   redirect(
     linked
-      ? "/dashboard?linked=1#verification"
+      ? "/dashboard/verification?linked=1"
       : dash(
           `No Linken link found. Add a link to ${siteUrl}${profilePath} or an embed iframe.`,
         ),

@@ -51,14 +51,13 @@ function StatusActions({ id, status }: { id: string; status: InquiryStatus }) {
 
 export function DashboardInquiries({ inquiries, newCount, monthCount }: Props) {
   return (
-    <section className="rounded-[24px] border border-line bg-surface px-5 py-5">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+    <section className="rounded-[28px] border border-line bg-white px-5 py-6 sm:px-7 sm:py-7">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
         Inquiries
         {newCount > 0 ? ` · ${newCount} new` : ""}
       </p>
       <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">
-        {monthCount} inquir{monthCount === 1 ? "y" : "ies"} this month via your
-        Linken profile
+        {monthCount} inquir{monthCount === 1 ? "y" : "ies"} this month
       </p>
       <p className="mt-1.5 text-[13px] text-ink-soft">
         Leads from visitors who requested a quote on your public page. Reply by

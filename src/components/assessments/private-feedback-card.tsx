@@ -13,8 +13,8 @@ function formatMonth(iso: string) {
 
 export function PrivateFeedbackCard({ items }: Props) {
   return (
-    <section className="rounded-[24px] border border-line bg-surface px-5 py-5">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+    <section className="rounded-[28px] border border-line bg-white px-5 py-6 sm:px-7 sm:py-7">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
         Client feedback (private)
       </p>
       <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">

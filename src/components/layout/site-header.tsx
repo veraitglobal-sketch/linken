@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { signOut } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { NetworkMark } from "@/components/marketing/network-mark";
+import { createClient } from "@/lib/supabase/server";
 
 const links = [
   { href: "/search", label: "Directory" },
@@ -8,7 +10,12 @@ const links = [
   { href: "/dashboard", label: "Workspace" },
 ];
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <header className="sticky top-0 z-50 px-4 pt-3">
       <div className="mx-auto flex h-12 max-w-6xl items-center justify-between gap-4 rounded-2xl border border-[#e6eaf0] bg-white px-4 shadow-[0_10px_36px_rgba(10,20,18,0.07)]">
@@ -32,16 +39,35 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            href="/login"
-            className="hidden h-9 px-3 sm:inline-flex"
-          >
-            Sign in
-          </Button>
-          <Button href="/onboarding" className="h-9 px-4 text-[12px]">
-            Create company
-          </Button>
+          {user ? (
+            <>
+              <Button
+                variant="ghost"
+                href="/dashboard"
+                className="hidden h-9 px-3 sm:inline-flex"
+              >
+                Dashboard
+              </Button>
+              <form action={signOut}>
+                <Button type="submit" variant="secondary" className="h-9 px-4 text-[12px]">
+                  Sign out
+                </Button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                href="/login"
+                className="hidden h-9 px-3 sm:inline-flex"
+              >
+                Sign in
+              </Button>
+              <Button href="/onboarding" className="h-9 px-4 text-[12px]">
+                Create company
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

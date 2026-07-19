@@ -22,7 +22,7 @@ export function AnalyticsCard({ analytics, plan }: Props) {
   const maxDay = Math.max(1, ...analytics.byDay.map((d) => d.count));
 
   return (
-    <section className="rounded-[24px] border border-line bg-surface px-5 py-5">
+    <section className="rounded-[28px] border border-line bg-white px-5 py-6 sm:px-7 sm:py-7">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
         What Linken brings you
       </p>
@@ -72,13 +72,15 @@ export function AnalyticsCard({ analytics, plan }: Props) {
             {analytics.byDay.length === 0 ? (
               <p className="mt-2 text-[13px] text-muted">No visits yet.</p>
             ) : (
-              <div className="mt-3 flex h-24 items-end gap-1">
+              <div className="mt-3 flex h-24 items-end justify-start gap-1.5">
                 {analytics.byDay.map((d) => (
                   <div
                     key={d.day}
                     title={`${d.day}: ${d.count}`}
-                    className="min-w-[6px] flex-1 rounded-t-sm bg-[#1f6b5c]/80"
-                    style={{ height: `${Math.max(8, (d.count / maxDay) * 100)}%` }}
+                    className="w-2.5 shrink-0 rounded-t-sm bg-[#1f6b5c]/80"
+                    style={{
+                      height: `${Math.max(10, (d.count / maxDay) * 100)}%`,
+                    }}
                   />
                 ))}
               </div>

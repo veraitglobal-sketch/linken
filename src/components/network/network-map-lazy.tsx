@@ -9,7 +9,7 @@ const NetworkMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full items-center justify-center bg-[#0a1714] text-[13px] text-white/45">
+      <div className="flex h-full items-center justify-center bg-[#fafbfc] text-[13px] text-[#9aa3af]">
         Loading map…
       </div>
     ),
@@ -18,9 +18,9 @@ const NetworkMap = dynamic(
 
 type Props = {
   graph: NetworkGraph;
+  editable?: boolean;
 };
 
-/** Client wrapper — Next.js disallows ssr:false dynamic() in Server Components. */
-export function NetworkMapLazy({ graph }: Props) {
-  return <NetworkMap graph={graph} />;
+export function NetworkMapLazy({ graph, editable }: Props) {
+  return <NetworkMap graph={graph} editable={editable} />;
 }

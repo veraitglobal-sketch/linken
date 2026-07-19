@@ -113,7 +113,7 @@ export async function updateInquiryStatus(formData: FormData) {
   const status = String(formData.get("status") ?? "").trim();
 
   if (!inquiryId || !ALLOWED_STATUS.has(status)) {
-    redirect("/dashboard?error=Invalid%20inquiry%20update");
+    redirect("/dashboard/inbox?error=Invalid%20inquiry%20update");
   }
 
   const supabase = await createClient();
@@ -129,7 +129,7 @@ export async function updateInquiryStatus(formData: FormData) {
 
   if (error) {
     redirect(
-      `/dashboard?error=${encodeURIComponent(error.message ?? "Update failed")}`,
+      `/dashboard/inbox?error=${encodeURIComponent(error.message ?? "Update failed")}`,
     );
   }
 
