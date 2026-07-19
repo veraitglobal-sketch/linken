@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CompanyProfile } from "@/components/company/company-profile";
+import { getCompanyForPage } from "@/features/companies/queries";
+import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getCaseStudiesForCompany } from "@/data/mock/case-studies";
-import { getCompanyBySlug } from "@/data/mock/companies";
 import { getPartnersForCompany } from "@/data/mock/partners";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{
+    claimSent?: string;
+    claimError?: string;
+    claimed?: string;
+  }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const company = getCompanyBySlug(slug);
+  const company = await getCompanyForPage(slug);
   if (!company) return { title: "Company not found" };
 
   const url = `${getSiteUrl()}/c/${company.slug}`;
@@ -27,21 +33,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: company.tagline,
       url,
     },
-    twitter: {
-      card: "summary",
-      title: `${company.name} · Linken`,
-      description: company.tagline,
-    },
   };
 }
 
-export default async function CompanyPage({ params }: Props) {
+export default async function CompanyPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const company = getCompanyBySlug(slug);
+  const { claimSent, claimError } = await searchParams;
+  const company = await getCompanyForPage(slug);
   if (!company) notFound();
 
-  const partners = getPartnersForCompany(slug);
+  const partners = getPartnersForCompany(slug).filter(
+    (p) => p.status === "accepted",
+  );
   const caseStudies = getCaseStudiesForCompany(slug);
+  const editable =
+    company.claimed !== false && (await isCompanyOwnerSlug(slug));
   const siteUrl = getSiteUrl();
 
   const jsonLd = {
@@ -57,9 +63,7 @@ export default async function CompanyPage({ params }: Props) {
     },
     sameAs: [
       company.website,
-      ...partners
-        .filter((partner) => partner.status === "accepted")
-        .map((partner) => `${siteUrl}/c/${partner.slug}`),
+      ...partners.map((partner) => `${siteUrl}/c/${partner.slug}`),
     ].filter(Boolean),
   };
 
@@ -73,7 +77,9 @@ export default async function CompanyPage({ params }: Props) {
         company={company}
         partners={partners}
         caseStudies={caseStudies}
-        editable
+        editable={editable}
+        claimSent={claimSent === "1"}
+        claimError={claimError}
       />
     </>
   );

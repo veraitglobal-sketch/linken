@@ -18,7 +18,11 @@ export function CompanyHeroBand({ company }: Props) {
             <p className="text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase">
               {company.category} · {company.city}, {company.country}
             </p>
-            {company.verified ? (
+            {company.claimed === false ? (
+              <span className="rounded-full border border-ember/40 bg-ember/15 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-ember uppercase">
+                Unclaimed profile
+              </span>
+            ) : company.verified ? (
               <span className="rounded-full border border-[#5ec4a8]/35 bg-[#5ec4a8]/12 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-[#5ec4a8] uppercase">
                 Verified company
               </span>

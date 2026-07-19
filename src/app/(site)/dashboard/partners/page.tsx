@@ -1,40 +1,57 @@
 import type { Metadata } from "next";
+import { CreateUnclaimedForm } from "@/components/partners/create-unclaimed-form";
 import { PartnerInviteButton } from "@/components/partners/partner-invite-button";
 import { CompanyResult } from "@/components/search/company-result";
 import { Input } from "@/components/ui/input";
 import { SectionTitle } from "@/components/ui/section-title";
-import { companies } from "@/data/mock/companies";
+import { searchCompanies } from "@/features/companies/queries";
+import { viewerOwnsClaimedCompany } from "@/features/partners/queries";
 
 export const metadata: Metadata = {
   title: "Add partners",
 };
 
 type Props = {
-  searchParams: Promise<{ q?: string; from?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    error?: string;
+    created?: string;
+  }>;
 };
 
 export default async function DashboardPartnersPage({ searchParams }: Props) {
-  const { q = "", from = "acme-architecture" } = await searchParams;
-  const query = q.trim().toLowerCase();
-  const results = companies.filter((c) => {
-    if (c.slug === from) return false;
-    if (!query) return true;
-    return (
-      c.name.toLowerCase().includes(query) ||
-      c.category.toLowerCase().includes(query) ||
-      c.city.toLowerCase().includes(query)
-    );
-  });
+  const { q = "", error, created } = await searchParams;
+  const { company: mine } = await viewerOwnsClaimedCompany();
+  const from = mine?.slug;
+  const results = (await searchCompanies(q)).filter((c) =>
+    from ? c.slug !== from : true,
+  );
+  const emptySearch = Boolean(q.trim()) && results.length === 0;
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
       <SectionTitle
         eyebrow="Partners"
         title="Search and invite"
-        description="Grey + sends a partnership request. It becomes public only after the other company confirms."
+        description="Invite registered firms, or create a draft profile for a partner who is not on Linken yet. Nothing shows as verified until they claim and confirm."
       />
+
+      {error ? (
+        <p className="mt-6 rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+          {error}
+        </p>
+      ) : null}
+      {created ? (
+        <p className="mt-6 rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
+          Draft profile created for{" "}
+          <a href={`/c/${created}`} className="font-semibold underline">
+            {created}
+          </a>
+          . Partnership stays pending until they claim and confirm.
+        </p>
+      ) : null}
+
       <form className="mt-8" action="/dashboard/partners" method="get">
-        <input type="hidden" name="from" value={from} />
         <Input
           name="q"
           defaultValue={q}
@@ -42,14 +59,28 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
           aria-label="Search partners"
         />
       </form>
+
       <div className="mt-6 flex flex-col gap-2.5">
         {results.map((company) => (
           <CompanyResult
             key={company.id}
             company={company}
-            action={<PartnerInviteButton companyName={company.name} />}
+            action={
+              company.claimed === false ? null : (
+                <PartnerInviteButton companyName={company.name} />
+              )
+            }
           />
         ))}
+        {emptySearch ? (
+          <p className="text-sm text-muted">
+            No registered company matches “{q.trim()}”.
+          </p>
+        ) : null}
+      </div>
+
+      <div className="mt-10">
+        <CreateUnclaimedForm defaultName={emptySearch ? q.trim() : ""} />
       </div>
     </div>
   );

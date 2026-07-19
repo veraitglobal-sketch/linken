@@ -9,8 +9,10 @@ type Props = {
 };
 
 export function CompanyResult({ company, action }: Props) {
+  const unclaimed = company.claimed === false;
+
   return (
-    <div className="flex items-center gap-3 border border-line bg-panel px-3.5 py-3.5">
+    <div className="flex items-center gap-3 rounded-2xl border border-line bg-panel px-3.5 py-3.5">
       <LogoMark initials={company.logoInitials} size="sm" />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
@@ -20,7 +22,11 @@ export function CompanyResult({ company, action }: Props) {
           >
             {company.name}
           </Link>
-          {company.verified ? (
+          {unclaimed ? (
+            <span className="rounded-md border border-ember/30 bg-ember/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.08em] text-ember uppercase">
+              Unclaimed
+            </span>
+          ) : company.verified ? (
             <span className="text-[11px] font-semibold tracking-[0.12em] text-success uppercase">
               Verified
             </span>

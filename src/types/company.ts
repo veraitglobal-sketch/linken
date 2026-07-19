@@ -11,4 +11,9 @@ export type Company = {
   services: string[];
   verified: boolean;
   logoInitials: string;
+  /** false = ghost / unclaimed draft profile. Never includes claim_token. */
+  claimed?: boolean;
+  inviteEmail?: string | null;
+  createdBySlug?: string | null;
+  createdByName?: string | null;
 };

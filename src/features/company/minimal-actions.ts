@@ -40,6 +40,8 @@ export async function createMinimalCompany(formData: FormData) {
 
   const { error } = await supabase.from("companies").insert({
     owner_id: user.id,
+    claimed: true,
+    claim_token: null,
     name,
     slug,
     logo_url: logoUrl,
