@@ -1,0 +1,140 @@
+import "server-only";
+import { getPartnersForCompany } from "@/features/partners/public-queries";
+import {
+  getPublicCaseStudiesApi,
+  getPublicCompanyApi,
+  getPublicReferencesApi,
+} from "@/features/public-api/v1/queries";
+import { getTrustProfile } from "@/features/trust/queries";
+import { getCompanyForPage } from "@/features/companies/queries";
+import { createClient } from "@/lib/supabase/server";
+import { getSiteUrl } from "@/lib/site";
+
+/**
+ * Markdown profile snapshot for LLMs — same confirmed-only rules as Public API.
+ */
+export async function buildCompanyLlmMarkdown(
+  slug: string,
+): Promise<string | null> {
+  const company = await getCompanyForPage(slug);
+  if (!company) return null;
+
+  const siteUrl = getSiteUrl();
+  const api = await getPublicCompanyApi(company.slug);
+  if (!api) return null;
+
+  const lines: string[] = [];
+  lines.push(`# ${company.name}`);
+  if (company.tagline.trim()) {
+    lines.push(company.tagline.trim());
+  }
+  lines.push("");
+  lines.push(
+    `- Category: ${company.category || "—"} · City: ${company.city || "—"} · Country: ${company.country || "—"} · Website: ${company.website || "—"}`,
+  );
+
+  const supabase = await createClient();
+  const { data: ver } = await supabase
+    .from("company_verifications")
+    .select("verification_method, verified_at")
+    .eq("company_id", company.id)
+    .maybeSingle();
+
+  if (api.verified) {
+    const method = (ver?.verification_method as string | null) ?? "domain";
+    const since = ver?.verified_at
+      ? new Date(ver.verified_at as string).toISOString().slice(0, 10)
+      : "unknown";
+    lines.push(`- Verified: yes (domain, ${method}, since ${since})`);
+  } else {
+    lines.push("- Verified: no");
+  }
+
+  if (company.claimed === false) {
+    lines.push("- Trust level: — (unclaimed profile)");
+    lines.push("");
+    lines.push(
+      "> Unclaimed profile — draft listing. No confirmed evidence is attributed until the company claims and confirms relationships.",
+    );
+    lines.push("");
+    lines.push(
+      `Data source: Linken — every item above was confirmed by the counterparty. Verify live: ${siteUrl}/api/v1/companies/${company.slug}`,
+    );
+    return `${lines.join("\n")}\n`;
+  }
+
+  const trust = await getTrustProfile(company.id, company.slug);
+  const b = trust.breakdown;
+  lines.push(
+    `- Trust level: ${trust.level} — ${trust.points} pts (partners ${b.confirmedPartners}, finished refs ${b.confirmedReferences}, ongoing refs ${b.ongoingReferences}, client-confirmed cases ${b.clientConfirmedCaseStudies}, partner-confirmed cases ${b.partnerConfirmedCaseStudies})`,
+  );
+  lines.push(
+    `- Accepting new clients: ${api.accepting_clients ? "yes" : "no"}`,
+  );
+  lines.push("");
+
+  const [refsApi, casesApi, partners] = await Promise.all([
+    getPublicReferencesApi(company.slug),
+    getPublicCaseStudiesApi(company.slug),
+    getPartnersForCompany(company.id),
+  ]);
+
+  const refs = refsApi?.references ?? [];
+  if (refs.length > 0) {
+    lines.push(`## Confirmed clients (${refs.length})`);
+    for (const r of refs) {
+      const client = r.client_slug
+        ? `[${r.client_name}](${siteUrl}/c/${r.client_slug})`
+        : r.client_name;
+      const period = r.ongoing
+        ? `${r.started_year || "?"}–present (ongoing)`
+        : `${r.started_year || "?"}${r.ended_year ? `–${r.ended_year}` : ""}`;
+      lines.push(`- ${client} · ${r.service} · ${period}`);
+    }
+    lines.push("");
+  }
+
+  if (partners.length > 0) {
+    lines.push(`## Confirmed partners (${partners.length})`);
+    for (const p of partners) {
+      lines.push(`- [${p.name}](${siteUrl}/c/${p.slug})`);
+    }
+    lines.push("");
+  }
+
+  const cases = casesApi?.case_studies ?? [];
+  if (cases.length > 0) {
+    lines.push(`## Case studies (${cases.length}, confirmed only)`);
+    for (const c of cases) {
+      const summary = c.summary.trim()
+        ? c.summary.trim().replace(/\s+/g, " ")
+        : "—";
+      const oneLine =
+        summary.length > 160 ? `${summary.slice(0, 157)}…` : summary;
+      lines.push(
+        `- [${c.title}](${c.url})${c.year ? ` · ${c.year}` : ""} — ${oneLine}`,
+      );
+    }
+    lines.push("");
+  }
+
+  if (api.assessment) {
+    const a = api.assessment;
+    lines.push("## Client assessment");
+    lines.push(
+      `- ${a.would_work_again_yes} of ${a.would_work_again_total} would work again`,
+    );
+    if (a.top_strengths.length > 0) {
+      lines.push(
+        `- Top strengths: ${a.top_strengths.map((s) => `${s.label} (${s.count})`).join(", ")}`,
+      );
+    }
+    lines.push("");
+  }
+
+  lines.push(
+    `Data source: Linken — every item above was confirmed by the counterparty. Verify live: ${siteUrl}/api/v1/companies/${company.slug}`,
+  );
+
+  return `${lines.join("\n")}\n`;
+}

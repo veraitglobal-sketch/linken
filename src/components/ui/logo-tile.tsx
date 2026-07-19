@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { faviconFallbackUrls } from "@/features/logo/display-url";
 import { cn } from "@/lib/cn";
 
-export type LogoTileSize = "sm" | "md";
+export type LogoTileSize = "xs" | "sm" | "md";
 
 type Props = {
   name: string;
@@ -27,16 +27,25 @@ type Props = {
 };
 
 const BOX: Record<LogoTileSize, string> = {
+  xs: "h-6 w-6", // 24px — proof-row stack
   sm: "h-9 w-9", // 36px
   md: "h-11 w-11", // 44px
 };
 
 const PAD: Record<LogoTileSize, string> = {
+  xs: "p-0.5",
   sm: "p-1",
   md: "p-1.5", // ~6px
 };
 
+const RADIUS: Record<LogoTileSize, string> = {
+  xs: "rounded-lg",
+  sm: "rounded-xl",
+  md: "rounded-xl",
+};
+
 const INITIALS: Record<LogoTileSize, string> = {
+  xs: "text-[8px]",
   sm: "text-[10px]",
   md: "text-[11px]",
 };
@@ -89,9 +98,10 @@ export function LogoTile({
     >
       <span
         className={cn(
-          "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white",
+          "inline-flex shrink-0 items-center justify-center overflow-hidden bg-white",
           BOX[size],
           PAD[size],
+          RADIUS[size],
           frameTone === "dark"
             ? "border border-black/15 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
             : "border border-line",

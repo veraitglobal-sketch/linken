@@ -2,9 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
-import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
-import { uniqueCompanySlug } from "@/features/partners/unique-slug";
+import { createUnclaimedPartnerCore } from "@/features/partners/core";
 import { mergeLogoWallExcluded } from "@/features/widgets/settings";
 import { sendClaimInviteEmail } from "@/lib/email";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -145,71 +143,23 @@ export async function createUnclaimedPartnerFromWidgets(formData: FormData) {
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
   }
-  if (!company.verified) {
-    redirect(
-      `${back}?error=${encodeURIComponent("Verify your domain first, then invite partners.")}`,
-    );
-  }
 
-  const quota = await assertGhostDailyQuota(supabase, company.id);
-  if (!quota.ok) {
-    redirect(`${back}?error=${encodeURIComponent(quota.error)}`);
-  }
-
-  const slug = await uniqueCompanySlug(supabase, name);
-  const claimToken = crypto.randomUUID();
-
-  const { data: ghost, error: insertError } = await supabase
-    .from("companies")
-    .insert({
-      owner_id: null,
-      claimed: false,
-      claim_token: claimToken,
-      created_by_company_id: company.id,
-      invite_email: inviteEmail || null,
-      name,
-      slug,
-      category,
-      city,
-      website,
-      tagline: `${category} company · ${city}`,
-      description: `Draft profile created when ${company.name} listed this firm as a partner.`,
-      services: [],
-      verified: false,
-    })
-    .select("id, slug, name")
-    .single();
-
-  if (insertError || !ghost) {
-    redirect(
-      `${back}?error=${encodeURIComponent(insertError?.message ?? "Could not create draft.")}`,
-    );
-  }
-
-  const { error: partnershipError } = await supabase.from("partnerships").insert({
-    requester_id: company.id,
-    recipient_id: ghost.id,
-    status: "pending",
+  const result = await createUnclaimedPartnerCore(supabase, {
+    companyId: company.id,
+    companyName: company.name,
+    companyVerified: Boolean(company.verified),
+    name,
+    category,
+    city,
+    website,
+    email: inviteEmail || null,
   });
 
-  if (partnershipError) {
-    redirect(`${back}?error=${encodeURIComponent(partnershipError.message)}`);
-  }
-
-  if (inviteEmail) {
-    await sendClaimInviteEmail({
-      to: inviteEmail,
-      inviterName: company.name,
-      companyName: ghost.name,
-      claimToken,
-    });
-  }
-
-  if (website) {
-    scheduleCompanyLogoFetch(ghost.id);
+  if (!result.ok) {
+    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
   }
 
   revalidatePath(back);
-  revalidatePath(`/c/${ghost.slug}`);
-  redirect(`${back}?wallInvited=${encodeURIComponent(ghost.slug)}`);
+  revalidatePath(`/c/${result.data.slug}`);
+  redirect(`${back}?wallInvited=${encodeURIComponent(result.data.slug)}`);
 }

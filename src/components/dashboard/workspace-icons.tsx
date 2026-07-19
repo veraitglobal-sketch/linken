@@ -60,6 +60,18 @@ export function IconInbox({ className }: { className?: string }) {
   );
 }
 
+/** Concentric rings — Linken Radar (dashboard only). */
+export function IconRadar({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="12" cy="12" r="5.25" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M12 12 16.2 7.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function IconGroup({ className }: { className?: string }) {
   return (
     <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -87,6 +99,21 @@ export function IconWidgets({ className }: { className?: string }) {
       <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
       <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
       <path d="M14.5 17h5M17 14.5v5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconKey({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="8" cy="14" r="3.25" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M10.8 11.8 19 3.5M16.5 6l2 2M14 8.5l2 2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

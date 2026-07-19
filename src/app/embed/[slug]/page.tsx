@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
+import type { EmbedProofCompany } from "@/components/embed/embed-brand";
 import { EmbedAssessment } from "@/components/embed/embed-assessment";
 import { EmbedBadge } from "@/components/embed/embed-badge";
 import { EmbedCompact } from "@/components/embed/embed-compact";
@@ -57,6 +58,15 @@ function periodLabel(ref: {
   if (ref.ongoing) return `since ${ref.startedYear || "—"}`;
   if (ref.endedYear) return `${ref.startedYear || "—"}–${ref.endedYear}`;
   return ref.startedYear || "—";
+}
+
+function initialsFrom(name: string) {
+  return name
+    .split(/\s+/)
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 function wrapEmbed(node: ReactNode, theme: EmbedTheme, w?: string) {
@@ -132,10 +142,9 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
       return wrapEmbed(
         <EmbedCompact
           name={company.name}
-          initials={company.logoInitials}
-          logoUrl={company.logoUrl}
           verified={company.verified}
           claimed={claimed}
+          confirmedCount={0}
           profileUrl={profileUrl}
           theme={theme}
         />,
@@ -165,10 +174,9 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
       variant === "compact" ? (
         <EmbedCompact
           name={company.name}
-          initials={company.logoInitials}
-          logoUrl={company.logoUrl}
           verified={false}
           claimed={false}
+          confirmedCount={0}
           profileUrl={profileUrl}
           theme={theme}
         />
@@ -177,10 +185,10 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
           name={company.name}
           initials={company.logoInitials}
           logoUrl={company.logoUrl}
+          website={company.website}
           verified={false}
           claimed={false}
-          partnerCount={0}
-          caseStudyCount={0}
+          confirmedCount={0}
           profileUrl={profileUrl}
           theme={theme}
         />
@@ -188,10 +196,11 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
     return wrapEmbed(node, theme, w);
   }
 
-  const [trust, assessment, references] = await Promise.all([
+  const [trust, assessment, references, wallEntries] = await Promise.all([
     getTrustProfile(company.id, company.slug),
     getClientAssessmentSummary(company.id),
     getReferencesForCompany(company.id),
+    getLogoWallEntries(company.id, { applySelection: false }),
   ]);
 
   const confirmedRefs = references
@@ -201,19 +210,25 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
       return (a.startedYear || "").localeCompare(b.startedYear || "");
     });
 
-  const partnerCount = trust.breakdown.confirmedPartners;
-  const caseStudyCount =
-    trust.breakdown.clientConfirmedCaseStudies +
-    trust.breakdown.partnerConfirmedCaseStudies;
+  const confirmedCount =
+    trust.breakdown.confirmedPartners +
+    trust.breakdown.confirmedReferences +
+    trust.breakdown.ongoingReferences;
+
+  const proofCompanies: EmbedProofCompany[] = wallEntries.slice(0, 5).map((e) => ({
+    name: e.name,
+    initials: e.initials,
+    logoUrl: e.logoUrl,
+    website: e.website,
+  }));
 
   if (variant === "compact") {
     return wrapEmbed(
       <EmbedCompact
         name={company.name}
-        initials={company.logoInitials}
-        logoUrl={company.logoUrl}
         verified={company.verified}
         claimed
+        confirmedCount={confirmedCount}
         profileUrl={profileUrl}
         theme={theme}
       />,
@@ -229,6 +244,8 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
         wouldYes={assessment.wouldWorkAgainYes}
         wouldTotal={assessment.wouldWorkAgainTotal}
         topStrengths={assessment.topStrengths.slice(0, 3)}
+        confirmedCount={confirmedCount}
+        proofCompanies={proofCompanies}
         profileUrl={profileUrl}
         theme={theme}
       />,
@@ -241,10 +258,15 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
     return wrapEmbed(
       <EmbedReferences
         name={company.name}
+        totalCount={confirmedRefs.length}
         references={confirmedRefs.slice(0, 5).map((r) => ({
           clientName: r.clientName,
           service: r.service,
           period: periodLabel(r),
+          ongoing: r.ongoing,
+          initials: initialsFrom(r.clientName),
+          logoUrl: r.clientLogoUrl,
+          website: r.clientWebsite,
         }))}
         profileUrl={profileUrl}
         theme={theme}
@@ -259,10 +281,11 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
       name={company.name}
       initials={company.logoInitials}
       logoUrl={company.logoUrl}
+      website={company.website}
       verified={company.verified}
       claimed
-      partnerCount={partnerCount}
-      caseStudyCount={caseStudyCount}
+      confirmedCount={confirmedCount}
+      proofCompanies={proofCompanies}
       profileUrl={profileUrl}
       theme={theme}
     />,

@@ -6,6 +6,7 @@ import { logProfileEvent } from "@/features/analytics/log";
 import { parseProfileSource } from "@/features/analytics/sources";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
+import { getActivationChecklist } from "@/features/activation/checklist";
 import { getCaseStudiesForCompany } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { getConfirmedGroupForCompany } from "@/features/groups/queries";
@@ -35,11 +36,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!company) return { title: "Company not found" };
 
   const url = `${getSiteUrl()}/c/${company.slug}`;
+  const llmMd = `${url}/llm.md`;
 
   return {
     title: company.name,
     description: company.tagline,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: {
+        "text/markdown": llmMd,
+      },
+    },
     openGraph: {
       type: "profile",
       title: `${company.name} · Linken`,
@@ -78,6 +85,9 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     getPublicTeam(company.id),
   ]);
   const editable = isOwner;
+  const checklist = editable
+    ? await getActivationChecklist(company.id)
+    : null;
   const siteUrl = getSiteUrl();
   const confirmedLinks =
     trust.breakdown.confirmedPartners +
@@ -140,6 +150,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         domainVerifiedJustNow={domainVerified === "1"}
         groupBadge={groupBadge}
         teamMembers={teamMembers}
+        nextActivationStep={checklist?.next ?? null}
         networkMap={
           confirmedLinks >= 2 ? (
             <NetworkMapSection

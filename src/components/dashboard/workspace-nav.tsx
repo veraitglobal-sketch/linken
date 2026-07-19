@@ -9,6 +9,8 @@ import {
   IconGraph,
   IconGroup,
   IconInbox,
+  IconKey,
+  IconRadar,
   IconPartners,
   IconShield,
   IconStructure,
@@ -33,8 +35,10 @@ const build: Item[] = [
 const operate: Item[] = [
   { href: "/dashboard/verification", label: "Verification", icon: IconShield },
   { href: "/dashboard/widgets", label: "Widgets", icon: IconWidgets },
+  { href: "/dashboard/api", label: "API", icon: IconKey },
   { href: "/dashboard/insights", label: "Insights", icon: IconChart },
   { href: "/dashboard/inbox", label: "Inquiries", icon: IconInbox },
+  { href: "/dashboard/radar", label: "Radar", icon: IconRadar },
   { href: "/dashboard/group", label: "Company group", icon: IconGroup },
   { href: "/dashboard/team", label: "Team", icon: IconTeam },
 ];

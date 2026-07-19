@@ -11,14 +11,27 @@ export const DOCS_NAV: NavItem[] = [
   { id: "quickstart", label: "Quickstart" },
   {
     id: "endpoints",
-    label: "Endpoints",
+    label: "Public endpoints",
     children: [
       { id: "endpoint-company", label: "Company" },
       { id: "endpoint-references", label: "References" },
       { id: "endpoint-case-studies", label: "Case studies" },
+      { id: "endpoint-verify", label: "Verify (oracle)" },
     ],
   },
   { id: "embeds", label: "Embeds" },
+  { id: "llms", label: "llms.txt & llm.md" },
+  {
+    id: "agent-api",
+    label: "Agent API",
+    children: [
+      { id: "agent-auth", label: "Auth & scopes" },
+      { id: "agent-parity", label: "Owner → API map" },
+      { id: "agent-setup", label: "Setup script" },
+      { id: "agent-endpoints", label: "Endpoints" },
+      { id: "agent-cannot", label: "What agents cannot do" },
+    ],
+  },
   { id: "errors", label: "Errors" },
   { id: "versioning", label: "Versioning" },
 ];
@@ -185,6 +198,59 @@ export const CASE_STUDY_FIELDS: FieldRow[] = [
     name: "case_studies[].confirmed_partners[].slug",
     type: "string",
     description: "Partner public slug.",
+  },
+];
+
+export const VERIFY_FIELDS: FieldRow[] = [
+  {
+    name: "found",
+    type: "boolean",
+    description: "Whether a claimed company matched the domain. false is still HTTP 200.",
+  },
+  {
+    name: "company",
+    type: "{ name, slug, profile_url } | null",
+    description: "Matched firm when found.",
+  },
+  {
+    name: "verified",
+    type: "boolean",
+    description: "Domain verification flag.",
+  },
+  {
+    name: "verification_method",
+    type: '"email_domain" | "dns_txt" | "meta_tag" | null',
+    description: "How the domain was verified; null if not verified.",
+  },
+  {
+    name: "verified_since",
+    type: "string | null",
+    description: "ISO-8601 timestamp of domain verification.",
+  },
+  {
+    name: "trust_level",
+    type: "ApiTrustLevel | null",
+    description: "Public trust level from confirmed evidence only.",
+  },
+  {
+    name: "stats",
+    type: "ApiCompanyStats | null",
+    description: "Confirmed counts; null when not found.",
+  },
+  {
+    name: "assessment",
+    type: "ApiAssessment | null",
+    description: "Null until ≥3 client assessment answers.",
+  },
+  {
+    name: "llm_md_url",
+    type: "string | null",
+    description: "Markdown snapshot URL for LLMs.",
+  },
+  {
+    name: "api_url",
+    type: "string | null",
+    description: "Canonical Public API company URL.",
   },
 ];
 

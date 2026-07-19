@@ -104,6 +104,32 @@ export type ApiCaseStudiesResponse = {
   count: number;
 };
 
+/**
+ * GET /api/v1/verify?domain={domain}
+ * Trust oracle — domain → claimed company snapshot (confirmed evidence only).
+ * `found: false` is still HTTP 200 so agents can branch without treating absence as an error.
+ */
+export type ApiVerifyResponse = {
+  found: boolean;
+  company: {
+    name: string;
+    slug: string;
+    profile_url: string;
+  } | null;
+  verified: boolean;
+  verification_method: "email_domain" | "dns_txt" | "meta_tag" | null;
+  /** ISO-8601 when domain was verified; null if not verified. */
+  verified_since: string | null;
+  trust_level: ApiTrustLevel | null;
+  stats: ApiCompanyStats | null;
+  assessment: ApiAssessment | null;
+  /** Absolute URL to the markdown snapshot for LLMs. */
+  llm_md_url: string | null;
+  /** Absolute URL to GET /api/v1/companies/{slug}. */
+  api_url: string | null;
+  generated_at: string;
+};
+
 export type ApiErrorCode =
   | "not_found"
   | "invalid_request"

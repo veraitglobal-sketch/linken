@@ -1,3 +1,4 @@
+import { companyDisplayLogoUrl } from "@/features/logo/display-url";
 import { createClient } from "@/lib/supabase/server";
 import type { ServiceReference } from "@/types/service-reference";
 
@@ -23,7 +24,7 @@ export async function getReferencesForCompany(
     const { data, error } = await supabase
       .from("service_references")
       .select(
-        "id, client_name, client_company_id, service, started_year, ongoing, ended_year, status, confirmed_at, client:companies!client_company_id(slug)",
+        "id, client_name, client_company_id, service, started_year, ongoing, ended_year, status, confirmed_at, client:companies!client_company_id(slug, name, logo_url, website)",
       )
       .eq("provider_company_id", companyId)
       .in("status", ["confirmed", "pending"])
@@ -34,11 +35,18 @@ export async function getReferencesForCompany(
 
     const mapped = data.map((row) => {
       const client = Array.isArray(row.client) ? row.client[0] : row.client;
+      const website = (client?.website as string | null) ?? null;
+      const logoUrl = companyDisplayLogoUrl({
+        logoUrl: (client?.logo_url as string | null) ?? null,
+        website,
+      });
       return {
         id: row.id,
         clientName: row.client_name,
         clientCompanyId: row.client_company_id,
         clientSlug: client?.slug ?? null,
+        clientLogoUrl: logoUrl,
+        clientWebsite: website,
         service: row.service,
         startedYear: row.started_year ?? "",
         ongoing: Boolean(row.ongoing),

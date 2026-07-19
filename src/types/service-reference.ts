@@ -5,6 +5,8 @@ export type ServiceReference = {
   clientName: string;
   clientCompanyId: string | null;
   clientSlug: string | null;
+  clientLogoUrl: string | null;
+  clientWebsite: string | null;
   service: string;
   startedYear: string;
   ongoing: boolean;

@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
-import { uniqueCompanySlug } from "@/features/partners/unique-slug";
+import {
+  createReferenceCore,
+  deleteReferenceCore,
+} from "@/features/references/core";
 import { sendReferenceConfirmEmail } from "@/lib/email";
 import { createClient } from "@/lib/supabase/server";
 
@@ -42,67 +44,21 @@ export async function addReference(formData: FormData) {
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
   }
-  if (!clientName || !service || !startedYear) {
-    redirect(
-      `${back}?error=${encodeURIComponent("Client, service, and start year are required.")}`,
-    );
-  }
 
-  let clientCompanyId: string | null = null;
+  const result = await createReferenceCore(supabase, {
+    companyId: company.id,
+    companyName: company.name,
+    clientName,
+    service,
+    startedYear,
+    ongoing,
+    endedYear: endedYear || null,
+    inviteEmail: inviteEmail || null,
+    createGhost,
+  });
 
-  if (createGhost && inviteEmail) {
-    const quota = await assertGhostDailyQuota(supabase, company.id);
-    if (!quota.ok) {
-      redirect(`${back}?error=${encodeURIComponent(quota.error)}`);
-    }
-
-    const slug = await uniqueCompanySlug(supabase, clientName);
-    const claimToken = crypto.randomUUID();
-    const { data: ghost } = await supabase
-      .from("companies")
-      .insert({
-        owner_id: null,
-        claimed: false,
-        claim_token: claimToken,
-        created_by_company_id: company.id,
-        invite_email: inviteEmail,
-        name: clientName,
-        slug,
-        category: "Client",
-        city: "",
-        tagline: `Client of ${company.name}`,
-        description: `Draft profile created from a service reference by ${company.name}.`,
-        services: [],
-        verified: false,
-      })
-      .select("id")
-      .single();
-    clientCompanyId = ghost?.id ?? null;
-  }
-
-  const confirmToken = crypto.randomUUID();
-
-  const { data: ref, error } = await supabase
-    .from("service_references")
-    .insert({
-      provider_company_id: company.id,
-      client_company_id: clientCompanyId,
-      client_name: clientName,
-      service,
-      started_year: startedYear,
-      ongoing,
-      ended_year: ongoing ? null : endedYear || null,
-      status: "pending",
-      confirm_token: confirmToken,
-      invite_email: inviteEmail || null,
-    })
-    .select("id")
-    .single();
-
-  if (error || !ref) {
-    redirect(
-      `${back}?error=${encodeURIComponent(error?.message ?? "Could not add reference.")}`,
-    );
+  if (!result.ok) {
+    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
   }
 
   if (inviteEmail) {
@@ -112,7 +68,7 @@ export async function addReference(formData: FormData) {
       clientName,
       service,
       startedYear,
-      token: confirmToken,
+      token: result.data.confirmToken,
     });
   }
 
@@ -153,6 +109,10 @@ async function respondServiceReference(
 
   revalidatePath(path);
   revalidatePath(`/c/${company.slug}`);
+  revalidatePath("/welcome");
+  if (decision === "confirmed") {
+    redirect("/welcome?from=confirm");
+  }
   redirect(`${path}?done=${decision}`);
 }
 
@@ -164,11 +124,7 @@ export async function deleteReference(formData: FormData) {
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company || !id) redirect(back);
 
-  await supabase
-    .from("service_references")
-    .delete()
-    .eq("id", id)
-    .eq("provider_company_id", company.id);
+  await deleteReferenceCore(supabase, company.id, id);
 
   revalidatePath(back);
   redirect(back);

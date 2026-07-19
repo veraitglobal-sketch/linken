@@ -1,4 +1,8 @@
 import {
+  EmbedLinkenMark,
+  EmbedVerifiedMark,
+} from "@/components/embed/embed-brand";
+import {
   embedAccentClass,
   embedInkClass,
   embedMutedClass,
@@ -37,11 +41,11 @@ export function EmbedLogoWall({
   return (
     <div
       className={cn(
-        "box-border w-full border px-3 py-2.5",
+        "relative box-border w-full border px-3 py-2.5",
         embedShellClass(theme),
       )}
     >
-      <div className="flex min-h-[56px] items-center gap-3">
+      <div className="flex min-h-[56px] items-center gap-3 pr-16">
         {label ? (
           <p
             className={cn(
@@ -52,7 +56,7 @@ export function EmbedLogoWall({
             {label}
           </p>
         ) : null}
-        <ul className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2">
+        <ul className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2.5 gap-y-2">
           {entries.map((e) => {
             const href = `${siteUrl}/c/${e.slug}?src=embed`;
             return (
@@ -94,19 +98,16 @@ export function EmbedLogoWall({
             );
           })}
         </ul>
-        <a
-          href={ownerProfileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            "shrink-0 text-[9px] font-semibold tracking-[0.08em] uppercase no-underline",
-            embedMutedClass(theme),
-          )}
-          title={`${ownerName} on Linken`}
-        >
-          Verified on Linken
-        </a>
       </div>
+      <a
+        href={ownerProfileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute right-3 bottom-2.5 no-underline"
+        title={`${ownerName} on Linken`}
+      >
+        <EmbedLinkenMark theme={theme} />
+      </a>
     </div>
   );
 }
@@ -134,11 +135,11 @@ export function EmbedLogoWallProFallback({
   return (
     <div
       className={cn(
-        "box-border w-full border px-3 py-2",
+        "relative box-border w-full border px-3 py-2.5",
         embedShellClass(theme),
       )}
     >
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5 pr-16">
         <LogoTile
           name={name}
           initials={initials}
@@ -148,35 +149,30 @@ export function EmbedLogoWallProFallback({
           frameTone={theme === "dark" ? "dark" : "light"}
         />
         <div className="min-w-0 flex-1">
-          <p
-            className={cn(
-              "truncate text-[13px] font-semibold",
-              embedInkClass(theme),
-            )}
-          >
-            {name}
-            {verified ? (
-              <span className={cn("ml-1.5 text-[10px]", embedAccentClass(theme))}>
-                Verified
-              </span>
-            ) : null}
-          </p>
-          <p className={cn("text-[11px]", embedMutedClass(theme))}>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <p
+              className={cn(
+                "truncate font-display text-[1rem] font-medium tracking-[-0.03em]",
+                embedInkClass(theme),
+              )}
+            >
+              {name}
+            </p>
+            {verified ? <EmbedVerifiedMark theme={theme} /> : null}
+          </div>
+          <p className={cn("mt-0.5 text-[11px]", embedMutedClass(theme))}>
             Partner logo wall is a Linken Pro feature
           </p>
         </div>
-        <a
-          href={profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            "shrink-0 text-[10px] font-semibold tracking-[0.1em] uppercase no-underline",
-            embedAccentClass(theme),
-          )}
-        >
-          Linken
-        </a>
       </div>
+      <a
+        href={profileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute right-3 bottom-2.5 no-underline"
+      >
+        <EmbedLinkenMark theme={theme} />
+      </a>
     </div>
   );
 }

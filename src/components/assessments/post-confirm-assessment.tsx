@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AssessmentForm } from "@/components/assessments/assessment-form";
 import type { AssessmentSourceType } from "@/features/assessments/catalog";
 
@@ -37,6 +38,12 @@ export function PostConfirmAssessment({
           {title}
         </h2>
         <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-soft">{body}</p>
+        <Link
+          href="/welcome?from=confirm"
+          className="mt-5 inline-block text-[13px] font-semibold text-ink underline-offset-4 hover:underline"
+        >
+          Continue setup →
+        </Link>
       </div>
     );
   }

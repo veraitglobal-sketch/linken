@@ -125,7 +125,7 @@ export async function createCompany(formData: FormData) {
   }
 
   // Automatic email-domain verification when website matches work email
-  let verifiedHint = "";
+  let autoVerified = false;
   if (website && user.email) {
     const result = await tryEmailDomainVerificationAfterOnboarding({
       companyId: created.id,
@@ -133,7 +133,7 @@ export async function createCompany(formData: FormData) {
       ownerEmail: user.email,
       slug: created.slug,
     });
-    if (result.ok) verifiedHint = "?domainVerified=1";
+    autoVerified = result.ok;
   }
 
   if (website) {
@@ -141,5 +141,12 @@ export async function createCompany(formData: FormData) {
   }
 
   revalidatePath(`/c/${created.slug}`);
-  redirect(`/c/${created.slug}${verifiedHint}`);
+  revalidatePath("/dashboard");
+
+  // Mid-step when auto-verify did not pass — non-blocking “Do it later” on that page
+  if (!autoVerified) {
+    redirect("/onboarding/verify");
+  }
+
+  redirect(`/c/${created.slug}?domainVerified=1`);
 }

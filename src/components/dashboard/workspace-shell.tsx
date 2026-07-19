@@ -56,6 +56,10 @@ const PAGE_META: Record<
     title: "Inquiries",
     description: "Leads from your public company page.",
   },
+  "/dashboard/radar": {
+    title: "Radar",
+    description: "Project requests and signals for your market.",
+  },
   "/dashboard/partners": {
     title: "Partners",
     description: "Invite firms and grow confirmed relationships.",
@@ -71,6 +75,10 @@ const PAGE_META: Record<
   "/dashboard/widgets": {
     title: "Widgets",
     description: "Embed Linken on your website.",
+  },
+  "/dashboard/api": {
+    title: "API",
+    description: "Agent keys and activity for your company.",
   },
 };
 

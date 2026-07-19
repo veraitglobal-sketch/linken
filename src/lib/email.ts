@@ -308,3 +308,85 @@ export async function sendTeamJoinInviteEmail({
     linkForLog: joinUrl,
   });
 }
+
+export async function sendProjectRequestManageEmail(input: {
+  to: string;
+  requesterName: string;
+  title: string;
+  manageToken: string;
+}) {
+  const manageUrl = `${getSiteUrl()}/requests/manage/${input.manageToken}`;
+  return sendTextEmail({
+    to: input.to,
+    subject: `Your project request on Linken: ${input.title}`,
+    body: [
+      `Hi ${input.requesterName},`,
+      "",
+      `Your request “${input.title}” is live. Verified firms in your category and city can respond.`,
+      "",
+      "Track replies and close the request here (bookmark this link):",
+      manageUrl,
+      "",
+      "We will email you when a firm responds.",
+    ].join("\n"),
+    logLabel: "project-request-manage",
+    linkForLog: manageUrl,
+  });
+}
+
+export async function sendProjectRequestDigestEmail(input: {
+  to: string;
+  companyName: string;
+  requestTitles: string[];
+}) {
+  const radarUrl = `${getSiteUrl()}/dashboard/radar`;
+  const list = input.requestTitles.map((t) => `• ${t}`).join("\n");
+  return sendTextEmail({
+    to: input.to,
+    subject: `New project request${input.requestTitles.length > 1 ? "s" : ""} via Linken Radar`,
+    body: [
+      `New project request${input.requestTitles.length > 1 ? "s" : ""} match ${input.companyName} via Linken Radar:`,
+      "",
+      list,
+      "",
+      "Respond from Radar (1 credit each, verified firms only):",
+      radarUrl,
+      "",
+      "You receive at most one of these digests per day.",
+    ].join("\n"),
+    logLabel: "radar-digest",
+    linkForLog: radarUrl,
+  });
+}
+
+export async function sendProjectResponseBuyerEmail(input: {
+  to: string;
+  requesterName: string;
+  companyName: string;
+  companySlug: string;
+  requestTitle: string;
+  message: string;
+  manageToken: string;
+}) {
+  const manageUrl = `${getSiteUrl()}/requests/manage/${input.manageToken}`;
+  const profileUrl = `${getSiteUrl()}/c/${input.companySlug}`;
+  return sendTextEmail({
+    to: input.to,
+    subject: `${input.companyName} responded to “${input.requestTitle}”`,
+    body: [
+      `Hi ${input.requesterName},`,
+      "",
+      `${input.companyName} responded to your project request on Linken.`,
+      "",
+      "Message:",
+      input.message,
+      "",
+      `Company profile: ${profileUrl}`,
+      "",
+      "Review all responses and close the request here:",
+      manageUrl,
+    ].join("\n"),
+    logLabel: "project-response-buyer",
+    linkForLog: manageUrl,
+  });
+}

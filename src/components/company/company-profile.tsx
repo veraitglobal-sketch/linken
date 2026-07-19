@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { NextStepStrip } from "@/components/activation/next-step-strip";
 import { ClientHighlights } from "@/components/assessments/client-highlights";
 import { CaseStudyList } from "@/components/case-studies/case-study-list";
 import { CompanyAbout } from "@/components/company/company-about";
@@ -12,6 +13,7 @@ import { PartnerSidebar } from "@/components/partners/partner-sidebar";
 import { ReferencesSection } from "@/components/references/references-section";
 import { TrustProgressCard } from "@/components/trust/trust-progress-card";
 import { TrustWhyCard } from "@/components/trust/trust-why-card";
+import type { ActivationStep } from "@/features/activation/checklist";
 import type { ClientAssessmentSummary } from "@/features/assessments/queries";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
 import type { TrustProfile } from "@/features/trust/queries";
@@ -37,6 +39,8 @@ type Props = {
   networkMap?: ReactNode;
   domainVerifiedJustNow?: boolean;
   teamMembers?: PublicTeamMember[];
+  /** Owner-only — next incomplete activation step. */
+  nextActivationStep?: ActivationStep | null;
 };
 
 export function CompanyProfile({
@@ -56,6 +60,7 @@ export function CompanyProfile({
   networkMap = null,
   domainVerifiedJustNow = false,
   teamMembers = [],
+  nextActivationStep = null,
 }: Props) {
   const isUnclaimed = company.claimed === false;
   const confirmedRefs = references.filter((r) => r.status === "confirmed").length;
@@ -79,6 +84,9 @@ export function CompanyProfile({
         siteUrl={siteUrl}
         groupBadge={groupBadge}
       />
+      {editable && !isUnclaimed && nextActivationStep ? (
+        <NextStepStrip step={nextActivationStep} />
+      ) : null}
       {inquirySent ? <InquirySentBanner companyName={company.name} /> : null}
       {domainVerifiedJustNow ? (
         <div className="mx-auto mt-4 max-w-6xl px-4">

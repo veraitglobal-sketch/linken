@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { GettingStartedCard } from "@/components/activation/getting-started-card";
 import { PendingGroupInvites } from "@/components/groups/pending-group-invites";
 import { NetworkMapCanvas } from "@/components/network/network-map-canvas";
 import { Button } from "@/components/ui/button";
+import { getActivationChecklist } from "@/features/activation/checklist";
 import { getDashboardSession } from "@/features/dashboard/session";
 import {
   getDashboardGroupForCreator,
@@ -48,13 +50,19 @@ export default async function DashboardOverviewPage() {
     );
   }
 
-  const [groupInvites, parentProposals, ownedMemberships, groupData] =
-    await Promise.all([
-      getPendingGroupInvitesForOwner(),
-      getPendingParentProposalsForOwner(),
-      getOwnedGroupMemberships(),
-      getDashboardGroupForCreator(),
-    ]);
+  const [
+    groupInvites,
+    parentProposals,
+    ownedMemberships,
+    groupData,
+    checklist,
+  ] = await Promise.all([
+    getPendingGroupInvitesForOwner(),
+    getPendingParentProposalsForOwner(),
+    getOwnedGroupMemberships(),
+    getDashboardGroupForCreator(),
+    getActivationChecklist(company.id),
+  ]);
 
   const groupSlug =
     groupData?.group.slug ?? ownedMemberships[0]?.groupSlug ?? null;
@@ -63,16 +71,26 @@ export default async function DashboardOverviewPage() {
     groupSlug,
   });
 
+  const showGettingStarted = checklist && !checklist.complete;
+  const showInvites =
+    groupInvites.length > 0 || parentProposals.length > 0;
+
   return (
     <div className="relative flex h-full min-h-0 flex-col">
-      {(groupInvites.length > 0 || parentProposals.length > 0) && (
+      {showGettingStarted ? (
+        <div className="absolute top-3 left-3 z-30 w-[min(100%-1.5rem,22rem)]">
+          <GettingStartedCard checklist={checklist} variant="overlay" />
+        </div>
+      ) : null}
+
+      {showInvites ? (
         <div className="absolute top-3 left-1/2 z-30 w-[min(100%-1.5rem,28rem)] -translate-x-1/2">
           <PendingGroupInvites
             invites={groupInvites}
             parentProposals={parentProposals}
           />
         </div>
-      )}
+      ) : null}
 
       <NetworkMapCanvas
         scope={graphScope}

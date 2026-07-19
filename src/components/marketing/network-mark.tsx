@@ -1,10 +1,12 @@
 type Props = {
   size?: number;
   className?: string;
+  /** Site header keeps the slow orbit; embeds stay static. */
+  animate?: boolean;
 };
 
 /** Two nodes + a link — Linken's mark, not an orbit logo. */
-export function NetworkMark({ size = 54, className }: Props) {
+export function NetworkMark({ size = 54, className, animate = true }: Props) {
   const s = size;
   return (
     <svg
@@ -14,7 +16,10 @@ export function NetworkMark({ size = 54, className }: Props) {
       className={className}
       aria-hidden
     >
-      <g className="link-pulse" style={{ transformOrigin: "24px 24px" }}>
+      <g
+        className={animate ? "link-pulse" : undefined}
+        style={{ transformOrigin: "24px 24px" }}
+      >
         <line
           x1="14"
           y1="24"

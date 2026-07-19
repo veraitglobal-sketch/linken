@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
-import { requestTabs, responseTab } from "@/components/developers/build-tabs";
+import {
+  agentRequestTabs,
+  requestTabs,
+  responseTab,
+} from "@/components/developers/build-tabs";
 import {
   CASE_STUDY_FIELDS,
   COMPANY_FIELDS,
   ERROR_FIELDS,
   REFERENCE_FIELDS,
+  VERIFY_FIELDS,
 } from "@/components/developers/docs-content";
 import { CodePanel } from "@/components/developers/code-panel";
 import { DocsHero } from "@/components/developers/docs-hero";
@@ -19,6 +24,7 @@ import {
   embedSnippet,
   errorExample,
   referencesExample,
+  verifyExample,
 } from "@/components/developers/examples";
 import { FieldTable } from "@/components/developers/field-table";
 import { tokenizeJson, tokenizeShell } from "@/components/developers/highlight";
@@ -40,10 +46,12 @@ export default function DevelopersPage() {
   const companyUrl = `${siteUrl}${basePath}/companies/${EXAMPLE_SLUG}`;
   const referencesUrl = `${companyUrl}/references`;
   const caseStudiesUrl = `${companyUrl}/case-studies`;
+  const verifyUrl = `${siteUrl}${basePath}/verify?domain=example.com`;
 
   const companyJson = companyExample(siteUrl);
   const referencesJson = referencesExample();
   const caseStudiesJson = caseStudiesExample(siteUrl);
+  const verifyJson = verifyExample(siteUrl);
   const errorJson = errorExample();
 
   const embeds = [
@@ -211,11 +219,55 @@ export default function DevelopersPage() {
               requestTabs={requestTabs(caseStudiesUrl)}
               responseTabs={responseTab(caseStudiesJson)}
             />
+
+            <EndpointSection
+              id="endpoint-verify"
+              index="03.4"
+              path={`/api/v1/verify?domain={domain}`}
+              title="Verify (trust oracle)"
+              description="One call to check a firm by website domain before you work with them. No API key. Unknown domains return found:false with HTTP 200."
+              notes={
+                <p>
+                  Domain matching uses the same normalization as verification
+                  (exact host, www stripped). Only claimed companies are
+                  returned. Confirmed evidence only — never tokens or private
+                  fields.
+                </p>
+              }
+              fields={VERIFY_FIELDS}
+              requestTabs={requestTabs(verifyUrl)}
+              responseTabs={responseTab(verifyJson)}
+            />
           </div>
+
+          <section id="llms" className="scroll-mt-28">
+            <DocsSectionHeading
+              index="04"
+              title="llms.txt & llm.md"
+              description="Machine-readable entry points for AI agents that cite Linken."
+            />
+            <ul className="mt-5 space-y-2 text-[14px] leading-relaxed text-ink-soft">
+              <li>
+                <a
+                  href="/llms.txt"
+                  className="font-semibold text-ink underline underline-offset-2"
+                >
+                  /llms.txt
+                </a>{" "}
+                — site index: docs, API, profiles, trust model.
+              </li>
+              <li>
+                <code className="text-[12px]">/c/{"{slug}"}/llm.md</code> —
+                markdown snapshot of a profile (same confirmed facts as the
+                Public API). Linked from the HTML profile via{" "}
+                <code className="text-[12px]">rel=&quot;alternate&quot;</code>.
+              </li>
+            </ul>
+          </section>
 
           <section id="embeds" className="scroll-mt-28">
             <DocsSectionHeading
-              index="04"
+              index="05"
               title="Embeds"
               description="Drop an iframe on your site. Variants via ?variant=compact|badge|assessment|references and ?theme=light|dark. Links back with ?src=embed."
             />
@@ -231,9 +283,228 @@ export default function DevelopersPage() {
             <EmbedsSection variants={embeds} />
           </section>
 
+          <section id="agent-api" className="scroll-mt-28">
+            <DocsSectionHeading
+              index="06"
+              title="Agent API"
+              description="Authenticated write surface for AI agents and integrations acting as your company. Create keys in Workspace → API."
+            />
+
+            <div
+              id="agent-cannot"
+              className="mt-7 rounded-[28px] border border-[#10231f]/15 bg-[#10231f] px-5 py-6 text-white sm:px-7"
+            >
+              <p className="text-[11px] font-semibold tracking-[0.14em] text-[#5ec4a8] uppercase">
+                What agents cannot do
+              </p>
+              <p className="mt-3 font-display text-[clamp(1.35rem,2.4vw,1.75rem)] font-medium tracking-[-0.03em]">
+                Human confirmation is the product.
+              </p>
+              <ul className="mt-4 space-y-2 text-[14px] leading-relaxed text-white/75">
+                <li>
+                  No confirm / accept / claim / respond endpoints — ever. An
+                  agent may build and invite; only a person with an email link
+                  may confirm.
+                </li>
+                <li>
+                  No ownership transfer — blast radius stays human-only in the
+                  dashboard.
+                </li>
+                <li>
+                  Keys are scoped to one company. Foreign company ids in the
+                  body are ignored or rejected. Public third-party reads use
+                  the Public API, not Agent routes.
+                </li>
+                <li>
+                  Tokens for other parties, private_feedback, and foreign
+                  inquiries are never returned. Your own verify_token is
+                  available under verification:run.
+                </li>
+                <li>
+                  Fields like verified, plan, slug, and claimed are not
+                  writable via PATCH /company.
+                </li>
+              </ul>
+            </div>
+
+            <div id="agent-auth" className="mt-10 scroll-mt-28">
+              <h3 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
+                Auth & scopes
+              </h3>
+              <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">
+                Send{" "}
+                <code className="text-[12px]">Authorization: Bearer lk_…</code>.
+                The raw key is shown once at creation; we store only a SHA-256
+                hash. Revoke instantly from the dashboard.
+              </p>
+              <div className="mt-4 overflow-x-auto rounded-2xl border border-line">
+                <table className="w-full min-w-[28rem] text-left text-[13px]">
+                  <thead className="border-b border-line bg-[#fafbfc] text-[11px] tracking-[0.08em] text-[#94a3b8] uppercase">
+                    <tr>
+                      <th className="px-4 py-2.5 font-semibold">Scope</th>
+                      <th className="px-4 py-2.5 font-semibold">Allows</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line text-ink-soft">
+                    {[
+                      ["read", "Company, refs, cases, partnerships, inquiries, analytics, audit"],
+                      ["content:write", "Content, logo, profile fields, case-study partner tags"],
+                      ["invites:send", "Send confirmation / claim invites (never confirm)"],
+                      ["team:manage", "Team list, invites, remove members (accept via /join)"],
+                      ["structure:manage", "Groups, subsidiaries, parent proposals, leave"],
+                      ["settings:write", "Widget settings, embed catalog, accepting clients"],
+                      ["inquiries:manage", "Patch inquiry status"],
+                      ["verification:run", "Verify token/instructions + run checks"],
+                    ].map(([scope, allows]) => (
+                      <tr key={scope}>
+                        <td className="px-4 py-2.5 font-mono text-[12px] text-ink">
+                          {scope}
+                        </td>
+                        <td className="px-4 py-2.5">{allows}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-3 text-[13px] text-ink-soft">
+                Presets in Workspace → API: Read only, Content manager, Full
+                access. Rate limits: 120/min per key; invites 20/day per key.
+              </p>
+            </div>
+
+            <div id="agent-parity" className="mt-10 scroll-mt-28">
+              <h3 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
+                Owner action → API endpoint
+              </h3>
+              <p className="mt-2 text-[14px] text-ink-soft">
+                Everything an owner can click — except confirmations and
+                ownership transfer — maps to Agent API.
+              </p>
+              <div className="mt-4 overflow-x-auto rounded-2xl border border-line">
+                <table className="w-full min-w-[36rem] text-left text-[12px]">
+                  <thead className="border-b border-line bg-[#fafbfc] text-[11px] tracking-[0.08em] text-[#94a3b8] uppercase">
+                    <tr>
+                      <th className="px-3 py-2.5 font-semibold">Owner action</th>
+                      <th className="px-3 py-2.5 font-semibold">Endpoint</th>
+                      <th className="px-3 py-2.5 font-semibold">Scope</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line text-ink-soft">
+                    {[
+                      ["Edit profile fields", "PATCH /company", "content:write"],
+                      ["Refresh / upload logo", "POST /logo/refresh · PUT /logo", "content:write"],
+                      ["Add / edit / delete reference", "POST|PATCH|DELETE /references", "content:write"],
+                      ["Send reference invite", "POST /references/{id}/invite", "invites:send"],
+                      ["Case studies + partner tags", "…/case-studies · …/partners", "content:write"],
+                      ["Client confirmation request", "POST /client-confirmations", "invites:send"],
+                      ["Invite partner (ghost)", "POST /partner-invites", "invites:send"],
+                      ["Verify domain / backlink", "GET|POST /verification…", "verification:run"],
+                      ["Team invite / remove", "…/team…", "team:manage"],
+                      ["Group / subsidiary / hierarchy", "…/group…", "structure:manage"],
+                      ["Widgets & logo wall", "GET|PATCH /widget-settings · GET /widgets", "settings:write"],
+                      ["Triage inquiries", "GET /inquiries · PATCH /inquiries/{id}", "read · inquiries:manage"],
+                      ["Analytics / audit", "GET /analytics · GET /audit-log", "read"],
+                    ].map(([action, endpoint, scope]) => (
+                      <tr key={action}>
+                        <td className="px-3 py-2 text-ink">{action}</td>
+                        <td className="px-3 py-2 font-mono text-[11px]">{endpoint}</td>
+                        <td className="px-3 py-2 font-mono text-[11px]">{scope}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div id="agent-setup" className="mt-10 scroll-mt-28 space-y-4">
+              <h3 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
+                Agent setup script
+              </h3>
+              <p className="text-[14px] text-ink-soft">
+                Full lifecycle in six calls — create content, invite humans to
+                confirm, configure the badge.
+              </p>
+              <CodePanel
+                tabs={agentRequestTabs(
+                  "PATCH",
+                  `${siteUrl}/api/v1/agent/company`,
+                  {
+                    tagline: "Verified B2B network",
+                    city: "Berlin",
+                  },
+                )}
+              />
+              <ul className="space-y-1.5 rounded-2xl border border-line bg-[#fafbfc] px-5 py-4 text-[13px] text-ink-soft">
+                <li>1. <code className="text-ink">PATCH /company</code> — tagline & city</li>
+                <li>2. <code className="text-ink">POST /logo/refresh</code> — pull logo from domain</li>
+                <li>3. <code className="text-ink">POST /references</code> ×3 — pending evidence</li>
+                <li>4. <code className="text-ink">POST /references/{"{id}"}/invite</code> — send confirms</li>
+                <li>5. <code className="text-ink">GET /widgets</code> — pick embed snippet</li>
+                <li>6. <code className="text-ink">PATCH /widget-settings</code> — logo wall exclusions</li>
+              </ul>
+            </div>
+
+            <div id="agent-endpoints" className="mt-10 scroll-mt-28 space-y-6">
+              <h3 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
+                Endpoints
+              </h3>
+              <p className="text-[14px] text-ink-soft">
+                Base path{" "}
+                <code className="text-[12px]">
+                  {siteUrl}/api/v1/agent
+                </code>
+                . Successes return{" "}
+                <code className="text-[12px]">{"{ data: … }"}</code>. Mutations
+                are audit-logged. Team members expose opaque{" "}
+                <code className="text-[12px]">member_id</code> (sha256 hex
+                prefix) — never <code className="text-[12px]">user_id</code>.
+              </p>
+
+              <div className="overflow-hidden rounded-[28px] border border-line bg-surface">
+                <div className="border-b border-line px-5 py-4 sm:px-7">
+                  <Badge tone="success">GET</Badge>
+                  <code className="ml-2 text-[13px] text-ink">
+                    /api/v1/agent/company
+                  </code>
+                </div>
+                <div className="px-4 py-4 sm:px-6">
+                  <CodePanel
+                    tabs={agentRequestTabs(
+                      "GET",
+                      `${siteUrl}/api/v1/agent/company`,
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="overflow-hidden rounded-[28px] border border-line bg-surface">
+                <div className="border-b border-line px-5 py-4 sm:px-7">
+                  <Badge tone="accent">POST</Badge>
+                  <code className="ml-2 text-[13px] text-ink">
+                    /api/v1/agent/references
+                  </code>
+                </div>
+                <div className="px-4 py-4 sm:px-6">
+                  <CodePanel
+                    tabs={agentRequestTabs(
+                      "POST",
+                      `${siteUrl}/api/v1/agent/references`,
+                      {
+                        client_name: "CleanCo",
+                        service: "Office cleaning",
+                        started_year: "2024",
+                        ongoing: true,
+                      },
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section id="errors" className="scroll-mt-28">
             <DocsSectionHeading
-              index="05"
+              index="07"
               title="Errors"
               description="Failures use a consistent envelope. HTTP status matches the machine-readable code."
             />
@@ -246,11 +517,31 @@ export default function DevelopersPage() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   <StatusPill status="200" label="OK" tone="success" />
                   <StatusPill
-                    status="400"
-                    label="invalid_request"
+                    status="401"
+                    label="unauthorized / invalid_key"
+                    tone="neutral"
+                  />
+                  <StatusPill
+                    status="403"
+                    label="insufficient_scope"
                     tone="neutral"
                   />
                   <StatusPill status="404" label="not_found" tone="neutral" />
+                  <StatusPill
+                    status="422"
+                    label="invalid_request"
+                    tone="neutral"
+                  />
+                  <StatusPill
+                    status="429"
+                    label="rate_limited"
+                    tone="neutral"
+                  />
+                  <StatusPill
+                    status="503"
+                    label="service_unavailable"
+                    tone="ember"
+                  />
                   <StatusPill status="500" label="internal" tone="ember" />
                 </div>
               </div>
@@ -280,7 +571,7 @@ export default function DevelopersPage() {
 
           <section id="versioning" className="scroll-mt-28">
             <DocsSectionHeading
-              index="06"
+              index="08"
               title="Versioning"
               description="A stable contract you can ship against."
             />

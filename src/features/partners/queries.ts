@@ -53,7 +53,9 @@ export async function viewerOwnsClaimedCompany() {
 
     const { data: company } = await supabase
       .from("companies")
-      .select("id, name, slug, accepting_clients, plan")
+      .select(
+        "id, name, slug, category, city, verified, accepting_clients, plan, radar",
+      )
       .eq("owner_id", user.id)
       .eq("claimed", true)
       .maybeSingle();
@@ -65,8 +67,13 @@ export async function viewerOwnsClaimedCompany() {
             id: company.id,
             name: company.name,
             slug: company.slug,
+            category: (company.category as string) ?? "",
+            city: (company.city as string) ?? "",
+            verified: Boolean(company.verified),
             acceptingClients: company.accepting_clients !== false,
             plan: parsePlan(company.plan),
+            /** Dashboard-only — never select on public profile queries. */
+            radar: Boolean(company.radar),
           }
         : null,
     };

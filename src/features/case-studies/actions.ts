@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ensureCaseStudyRow } from "@/features/case-studies/ensure-case-study";
-import { sendClientConfirmationEmail } from "@/lib/email";
+import { requestClientConfirmationCore } from "@/features/case-studies/core";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireUserCompany(supabase: Awaited<ReturnType<typeof createClient>>) {
@@ -39,47 +38,17 @@ export async function requestClientConfirmation(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Only the company owner can request confirmation.")}`);
   }
 
-  const caseStudyId = await ensureCaseStudyRow(
-    supabase,
-    company.id,
-    companySlug,
-    caseSlug,
-  );
-
-  if (!caseStudyId) {
-    redirect(`${back}?error=${encodeURIComponent("Case study could not be prepared.")}`);
-  }
-
-  const { data: caseMeta } = await supabase
-    .from("case_studies")
-    .select("title")
-    .eq("id", caseStudyId)
-    .single();
-
-  // Token is generated here and never read back — the token column is not
-  // selectable through the table API (bearer credential).
-  const token = crypto.randomUUID();
-
-  const { error } = await supabase
-    .from("case_study_client_confirmation_requests")
-    .insert({
-      case_study_id: caseStudyId,
-      requested_by_company_id: company.id,
-      email,
-      token,
-      status: "pending",
-    });
-
-  if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
-  }
-
-  await sendClientConfirmationEmail({
-    to: email,
-    requesterName: company.name,
-    caseTitle: caseMeta?.title ?? caseSlug,
-    token,
+  const result = await requestClientConfirmationCore(supabase, {
+    companyId: company.id,
+    companyName: company.name,
+    companySlug: company.slug,
+    caseStudySlug: caseSlug,
+    email,
   });
+
+  if (!result.ok) {
+    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
+  }
 
   revalidatePath(back);
   redirect(`${back}?requested=1`);
@@ -119,5 +88,9 @@ async function respondClientRequest(
   }
 
   revalidatePath(path);
+  revalidatePath("/welcome");
+  if (response === "confirmed") {
+    redirect("/welcome?from=confirm");
+  }
   redirect(`${path}?done=${response}`);
 }

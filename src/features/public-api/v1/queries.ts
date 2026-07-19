@@ -12,9 +12,11 @@ import type {
   ApiCompanyResponse,
   ApiCompanyStats,
   ApiReferencesResponse,
+  ApiVerifyResponse,
 } from "@/features/public-api/v1/types";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
+import { extractDomain } from "@/features/verification/domain";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/site";
 
@@ -163,4 +165,91 @@ export async function getPublicCaseStudiesApi(
     rows,
     (caseSlug) => `${siteUrl}/c/${company.slug}/case-studies/${caseSlug}`,
   );
+}
+
+/**
+ * Trust oracle: resolve a claimed company by website domain (exact / www-normalized).
+ * Confirmed-evidence fields only — never tokens or private columns.
+ */
+export async function getPublicVerifyByDomain(
+  domainInput: string,
+): Promise<ApiVerifyResponse> {
+  const generated_at = new Date().toISOString();
+  const empty: ApiVerifyResponse = {
+    found: false,
+    company: null,
+    verified: false,
+    verification_method: null,
+    verified_since: null,
+    trust_level: null,
+    stats: null,
+    assessment: null,
+    llm_md_url: null,
+    api_url: null,
+    generated_at,
+  };
+
+  const domain = extractDomain(domainInput);
+  if (!domain) return empty;
+
+  const supabase = await createClient();
+  // Broad candidates — extractDomain equality is the source of truth (www stripped).
+  const { data: rows, error } = await supabase
+    .from("companies")
+    .select("id, slug, name, website, verified, claimed")
+    .eq("claimed", true)
+    .not("website", "eq", "")
+    .or(
+      `website.ilike.%${domain}%,website.ilike.%www.${domain}%`,
+    )
+    .limit(40);
+
+  if (error) {
+    console.error("[getPublicVerifyByDomain]", error.message);
+    return empty;
+  }
+
+  const hit = (rows ?? []).find((row) => {
+    const d = extractDomain((row.website as string) ?? "");
+    return d === domain;
+  });
+
+  if (!hit) return empty;
+
+  const siteUrl = getSiteUrl();
+  const slug = hit.slug as string;
+  const api = await getPublicCompanyApi(slug);
+  if (!api) return empty;
+
+  const { data: ver } = await supabase
+    .from("company_verifications")
+    .select("verification_method, verified_at")
+    .eq("company_id", hit.id)
+    .maybeSingle();
+
+  const method = ver?.verification_method as
+    | "email_domain"
+    | "dns_txt"
+    | "meta_tag"
+    | null;
+
+  return {
+    found: true,
+    company: {
+      name: api.name,
+      slug: api.slug,
+      profile_url: api.profile_url,
+    },
+    verified: api.verified,
+    verification_method: api.verified ? method ?? null : null,
+    verified_since: api.verified
+      ? ((ver?.verified_at as string | null) ?? null)
+      : null,
+    trust_level: api.trust_level,
+    stats: api.stats,
+    assessment: api.assessment,
+    llm_md_url: `${siteUrl}/c/${slug}/llm.md`,
+    api_url: `${siteUrl}/api/v1/companies/${slug}`,
+    generated_at,
+  };
 }
