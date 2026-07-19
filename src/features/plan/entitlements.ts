@@ -4,18 +4,22 @@ export type Entitlements = {
   instantInquiryNotifications: boolean;
   fullAnalytics: boolean;
   onePagerBranding: boolean;
+  /** Website logo-wall embed — presentation paid, evidence stays free on profile. */
+  logoWallWidget: boolean;
 };
 
 const FREE: Entitlements = {
   instantInquiryNotifications: false,
   fullAnalytics: false,
   onePagerBranding: false,
+  logoWallWidget: false,
 };
 
 const PRO: Entitlements = {
   instantInquiryNotifications: true,
   fullAnalytics: true,
   onePagerBranding: true,
+  logoWallWidget: true,
 };
 
 /** Single map from plan → product capabilities. */

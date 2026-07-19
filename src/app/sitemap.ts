@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
-import { companies } from "@/data/mock/companies";
-import { getCaseStudiesForCompany } from "@/data/mock/case-studies";
+import { listSitemapEntries } from "@/features/companies/queries";
 import { listGroupSlugs } from "@/features/groups/queries";
 import { getSiteUrl } from "@/lib/site";
+
+/** Uses Supabase auth cookies via server client — must not be statically prerendered. */
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
@@ -12,19 +14,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/search`, changeFrequency: "weekly", priority: 0.6 },
   ];
 
+  const { companies, caseStudies } = await listSitemapEntries();
+
   const companyRoutes: MetadataRoute.Sitemap = companies.map((company) => ({
     url: `${siteUrl}/c/${company.slug}`,
     changeFrequency: "weekly",
     priority: 0.8,
   }));
 
-  const caseStudyRoutes: MetadataRoute.Sitemap = companies.flatMap((company) =>
-    getCaseStudiesForCompany(company.slug).map((caseStudy) => ({
-      url: `${siteUrl}/c/${company.slug}/case-studies/${caseStudy.slug}`,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    })),
-  );
+  const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((cs) => ({
+    url: `${siteUrl}/c/${cs.companySlug}/case-studies/${cs.caseSlug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
 
   const groupSlugs = await listGroupSlugs();
   const groupRoutes: MetadataRoute.Sitemap = groupSlugs.map((slug) => ({

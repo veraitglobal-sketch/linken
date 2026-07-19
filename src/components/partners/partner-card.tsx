@@ -37,6 +37,7 @@ export function PartnerCard({ partner }: Props) {
           ) : null}
         </div>
         <PartnerMark
+          name={partner.name}
           initials={partner.logoInitials}
           logoUrl={partner.logoUrl}
         />

@@ -131,6 +131,11 @@ a {
   animation: orbit 18s linear infinite;
 }
 
+/* Workspace — quiet motion, Retell-like craft */
+.workspace-fade {
+  animation: fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Network graph — n8n-inspired interaction polish (light) */
 .linken-flow .react-flow__node {
   overflow: visible !important;
@@ -146,7 +151,16 @@ a {
 }
 
 .linken-flow .react-flow__edge-path {
-  transition: stroke 0.12s ease, stroke-width 0.12s ease;
+  transition: stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
+}
+
+.linken-flow .react-flow__edge.selected .react-flow__edge-path,
+.linken-flow .react-flow__edge:focus .react-flow__edge-path {
+  stroke: #3b82f6 !important;
+}
+
+.linken-flow .react-flow__connection-line {
+  stroke: #3b82f6 !important;
 }
 
 .linken-flow .react-flow__handle.linken-handle {

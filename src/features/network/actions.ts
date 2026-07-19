@@ -2,11 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { sendPartnershipRequestEmail } from "@/lib/email";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 function safeBack(raw: string, fallback = "/dashboard") {
   const back = raw.trim();
-  return back.startsWith("/dashboard") ? back : fallback;
+  if (
+    back.startsWith("/dashboard") ||
+    back.startsWith("/search") ||
+    back.startsWith("/c/")
+  ) {
+    return back;
+  }
+  return fallback;
 }
 
 function revalidateNetwork(paths: string[]) {
@@ -104,12 +113,12 @@ export async function detachGraphLink(formData: FormData) {
   );
 }
 
-/** Invite an existing claimed company as a pending partner. */
+/** Invite an existing claimed company as a pending partner (not on graph until they accept). */
 export async function requestPartnership(formData: FormData) {
   const slug = String(formData.get("company_slug") ?? "")
     .trim()
     .toLowerCase();
-  const back = safeBack(String(formData.get("back") ?? "/dashboard"));
+  const back = safeBack(String(formData.get("back") ?? "/dashboard/partners"));
 
   if (!slug) {
     redirect(`${back}?error=${encodeURIComponent("Company slug is required.")}`);
@@ -123,7 +132,7 @@ export async function requestPartnership(formData: FormData) {
 
   const { data: mine } = await supabase
     .from("companies")
-    .select("id, slug")
+    .select("id, slug, name, verified")
     .eq("owner_id", user.id)
     .eq("claimed", true)
     .maybeSingle();
@@ -131,16 +140,21 @@ export async function requestPartnership(formData: FormData) {
   if (!mine) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
   }
+  if (!mine.verified) {
+    redirect(
+      `${back}?error=${encodeURIComponent("Verify your domain first, then send partner requests.")}`,
+    );
+  }
 
   const { data: target } = await supabase
     .from("companies")
-    .select("id, slug, claimed")
+    .select("id, slug, name, claimed, owner_id")
     .eq("slug", slug)
     .maybeSingle();
 
   if (!target || target.claimed === false) {
     redirect(
-      `${back}?error=${encodeURIComponent("Company not found or not claimed yet.")}`,
+      `${back}?error=${encodeURIComponent("Company not found or not claimed yet — create a draft invite below.")}`,
     );
   }
 
@@ -157,12 +171,12 @@ export async function requestPartnership(formData: FormData) {
     .maybeSingle();
 
   if (existing?.status === "accepted") {
-    redirect(`${back}?error=${encodeURIComponent("Already partners.")}`);
+    redirect(`${back}?error=${encodeURIComponent("Already official partners.")}`);
   }
 
   if (existing?.status === "pending") {
     redirect(
-      `${back}?error=${encodeURIComponent("A partnership request already exists.")}`,
+      `${back}?error=${encodeURIComponent("A partnership request is already pending.")}`,
     );
   }
 
@@ -190,6 +204,87 @@ export async function requestPartnership(formData: FormData) {
     }
   }
 
+  const admin = createAdminClient();
+  if (admin && target.owner_id) {
+    const { data: ownerData } = await admin.auth.admin.getUserById(
+      target.owner_id,
+    );
+    const email = ownerData.user?.email;
+    if (email) {
+      await sendPartnershipRequestEmail({
+        to: email,
+        requesterName: mine.name,
+        recipientName: target.name,
+      });
+    }
+  }
+
   revalidateNetwork([back, `/c/${mine.slug}`, `/c/${target.slug}`]);
   redirect(`${back}?invited=${encodeURIComponent(target.slug)}`);
+}
+
+/** Accept or decline an incoming partnership request. */
+export async function respondPartnership(formData: FormData) {
+  const partnershipId = String(formData.get("partnership_id") ?? "").trim();
+  const decision = String(formData.get("decision") ?? "").trim();
+  const back = safeBack(String(formData.get("back") ?? "/dashboard/partners"));
+
+  if (!partnershipId || !["accepted", "declined"].includes(decision)) {
+    redirect(`${back}?error=${encodeURIComponent("Invalid response.")}`);
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
+
+  const { data: mine } = await supabase
+    .from("companies")
+    .select("id, slug, verified")
+    .eq("owner_id", user.id)
+    .eq("claimed", true)
+    .maybeSingle();
+
+  if (!mine) {
+    redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
+  }
+
+  if (decision === "accepted" && !mine.verified) {
+    redirect(
+      `${back}?error=${encodeURIComponent("Verify your domain before accepting partnerships.")}`,
+    );
+  }
+
+  const { data: row } = await supabase
+    .from("partnerships")
+    .select("id, status, requester_id, recipient_id")
+    .eq("id", partnershipId)
+    .maybeSingle();
+
+  if (!row || row.status !== "pending") {
+    redirect(`${back}?error=${encodeURIComponent("Request not found or already closed.")}`);
+  }
+  if (row.recipient_id !== mine.id) {
+    redirect(`${back}?error=${encodeURIComponent("Only the recipient can respond.")}`);
+  }
+
+  const { error } = await supabase
+    .from("partnerships")
+    .update({
+      status: decision,
+      responded_at: new Date().toISOString(),
+    })
+    .eq("id", partnershipId);
+
+  if (error) {
+    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidateNetwork([back, `/c/${mine.slug}`, "/dashboard"]);
+  redirect(
+    decision === "accepted"
+      ? `${back}?accepted=1`
+      : `${back}?declined=1`,
+  );
 }

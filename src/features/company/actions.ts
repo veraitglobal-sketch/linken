@@ -42,6 +42,44 @@ export async function setAcceptingClients(formData: FormData) {
   redirect("/dashboard");
 }
 
+/** Opt-out of appearing as a logo (vs name text) in partners' Logo wall embeds. */
+export async function setAllowLogoInPartnerWidgets(formData: FormData) {
+  const allow =
+    String(formData.get("allow_logo_in_partner_widgets") ?? "") === "true";
+  const back = String(formData.get("back") ?? "/dashboard/widgets").trim();
+  const safeBack = back.startsWith("/dashboard") ? back : "/dashboard/widgets";
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect(`/login?next=${encodeURIComponent(safeBack)}`);
+
+  const { data: company } = await supabase
+    .from("companies")
+    .select("id, slug")
+    .eq("owner_id", user.id)
+    .eq("claimed", true)
+    .maybeSingle();
+
+  if (!company) redirect("/onboarding");
+
+  const { error } = await supabase
+    .from("companies")
+    .update({ allow_logo_in_partner_widgets: allow })
+    .eq("id", company.id);
+
+  if (error) {
+    redirect(
+      `${safeBack}?error=${encodeURIComponent(error.message ?? "Update failed")}`,
+    );
+  }
+
+  revalidatePath(safeBack);
+  revalidatePath(`/c/${company.slug}`);
+  redirect(`${safeBack}?logoOpt=${allow ? "on" : "off"}`);
+}
+
 export async function createCompany(formData: FormData) {
   const supabase = await createClient();
   const {

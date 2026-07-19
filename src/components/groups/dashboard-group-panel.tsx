@@ -224,7 +224,7 @@ export function DashboardGroupPanel({
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               Company slug
             </span>
-            <Input name="company_slug" required placeholder="acme-architecture" />
+            <Input name="company_slug" required placeholder="company-slug" />
           </label>
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-medium text-ink">

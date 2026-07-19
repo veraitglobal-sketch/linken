@@ -1,4 +1,3 @@
-import { getCompanyBySlug as getMockCompany } from "@/data/mock/companies";
 import { parsePlan } from "@/features/plan/entitlements";
 import { createClient } from "@/lib/supabase/server";
 import type { Company } from "@/types/company";
@@ -64,11 +63,12 @@ function mapRow(row: {
   };
 }
 
-/** Public company fetch — never selects claim_token. */
+/** Public company fetch — never selects claim_token. DB only; never mock. */
 export async function getCompanyForPage(slug: string): Promise<Company | null> {
+  if (!slug) return null;
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("companies")
       .select(
         "id, slug, name, tagline, description, category, city, country, website, logo_url, linkedin_url, facebook_url, services, verified, claimed, accepting_clients, plan, created_by:companies!created_by_company_id(slug, name)",
@@ -76,27 +76,27 @@ export async function getCompanyForPage(slug: string): Promise<Company | null> {
       .eq("slug", slug)
       .maybeSingle();
 
-    // Never select claim_token or invite_email for public page payloads
-    if (data) {
-      const company = mapRow({ ...data, invite_email: null });
-      const { data: ver } = await supabase
-        .from("company_verifications")
-        .select("verified_at, website_linked")
-        .eq("company_id", company.id)
-        .maybeSingle();
-      if (ver) {
-        company.verifiedAt = ver.verified_at ?? null;
-        company.websiteLinked = Boolean(ver.website_linked);
-      }
-      return company;
+    if (error) {
+      console.error("[getCompanyForPage]", error.message);
+      return null;
     }
-  } catch {
-    // fall through to mock
-  }
+    if (!data) return null;
 
-  const mock = getMockCompany(slug);
-  if (!mock) return null;
-  return { ...mock, claimed: true, acceptingClients: true, plan: "free" };
+    const company = mapRow({ ...data, invite_email: null });
+    const { data: ver } = await supabase
+      .from("company_verifications")
+      .select("verified_at, website_linked")
+      .eq("company_id", company.id)
+      .maybeSingle();
+    if (ver) {
+      company.verifiedAt = ver.verified_at ?? null;
+      company.websiteLinked = Boolean(ver.website_linked);
+    }
+    return company;
+  } catch (err) {
+    console.error("[getCompanyForPage]", err);
+    return null;
+  }
 }
 
 export async function searchCompanies(query: string): Promise<Company[]> {
@@ -119,22 +119,76 @@ export async function searchCompanies(query: string): Promise<Company[]> {
     }
 
     const { data, error } = await req;
-    if (!error && data) {
-      return data.map((row) => mapRow({ ...row, invite_email: null, created_by: null }));
+    if (error) {
+      console.error("[searchCompanies]", error.message);
+      return [];
     }
-  } catch {
-    // mock fallback
+    return (data ?? []).map((row) =>
+      mapRow({ ...row, invite_email: null, created_by: null }),
+    );
+  } catch (err) {
+    console.error("[searchCompanies]", err);
+    return [];
   }
+}
 
-  const { companies } = await import("@/data/mock/companies");
-  return companies
-    .filter((c) => {
-      if (!q) return true;
-      return (
-        c.name.toLowerCase().includes(q) ||
-        c.category.toLowerCase().includes(q) ||
-        c.city.toLowerCase().includes(q)
+/** Claimed company + case-study paths for sitemap (DB only). */
+export async function listSitemapEntries(): Promise<{
+  companies: { slug: string }[];
+  caseStudies: { companySlug: string; caseSlug: string }[];
+}> {
+  const empty = {
+    companies: [] as { slug: string }[],
+    caseStudies: [] as { companySlug: string; caseSlug: string }[],
+  };
+  try {
+    const supabase = await createClient();
+    const { data: companies, error } = await supabase
+      .from("companies")
+      .select("id, slug")
+      .eq("claimed", true)
+      .order("name");
+
+    if (error) {
+      console.error("[listSitemapEntries]", error.message);
+      return empty;
+    }
+    if (!companies?.length) return empty;
+
+    const companySlugs = companies.map((c) => ({
+      slug: c.slug as string,
+    }));
+    const idToSlug = new Map(
+      companies.map((c) => [c.id as string, c.slug as string]),
+    );
+
+    const { data: cases, error: caseError } = await supabase
+      .from("case_studies")
+      .select("slug, company_id")
+      .in(
+        "company_id",
+        companies.map((c) => c.id as string),
       );
-    })
-    .map((c) => ({ ...c, claimed: true, acceptingClients: true, plan: "free" as const }));
+
+    if (caseError) {
+      console.error("[listSitemapEntries] cases", caseError.message);
+      return { companies: companySlugs, caseStudies: [] };
+    }
+
+    const caseStudies = (cases ?? [])
+      .map((row) => {
+        const companySlug = idToSlug.get(row.company_id as string);
+        if (!companySlug) return null;
+        return {
+          companySlug,
+          caseSlug: row.slug as string,
+        };
+      })
+      .filter((x): x is { companySlug: string; caseSlug: string } => Boolean(x));
+
+    return { companies: companySlugs, caseStudies };
+  } catch (err) {
+    console.error("[listSitemapEntries]", err);
+    return empty;
+  }
 }

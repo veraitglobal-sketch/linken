@@ -1,16 +1,18 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
   ChannelDonut,
   IntertwinedActivityChart,
   MetricAreaChart,
-  MetricCard,
   SourceSegmentBar,
   type ChartPoint,
 } from "@/components/analytics/charts";
+import { WorkspaceCard, WorkspacePage } from "@/components/dashboard/workspace-page";
 import type { AnalyticsSummary } from "@/features/analytics/queries";
 import type { CompanyPlan } from "@/features/plan/entitlements";
 import { getEntitlements } from "@/features/plan/entitlements";
+import { cn } from "@/lib/cn";
 
 const SOURCE_META: {
   key: string;
@@ -93,92 +95,107 @@ export function InsightsDashboard({ analytics, plan }: Props) {
     ? `${Math.round((topChannel.value / channelSum) * 100)}%`
     : "0%";
 
+  const engagement =
+    visitTotal > 0
+      ? Math.min(100, Math.round((inquiryTotal / visitTotal) * 100))
+      : 0;
+
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-[12px] font-medium text-[#64748b]">
-            Profile traffic & inquiries · last {analytics.days} days
-          </p>
-          <h2 className="mt-1 text-[22px] font-semibold tracking-[-0.03em] text-ink">
-            Insights
-          </h2>
+    <WorkspacePage
+      wide
+      title="Insights"
+      description="How your public profile performs — visits, inquiries, and where traffic comes from."
+    >
+      <WorkspaceCard className="overflow-hidden !p-0">
+        <div className="flex items-center gap-1 border-b border-[#f1f5f9] px-2 pt-2">
+          <span className="rounded-t-lg border border-b-0 border-[#e8eaee] bg-white px-3.5 py-2 text-[12px] font-semibold text-ink">
+            Overview
+          </span>
+          <span className="px-3.5 py-2 text-[12px] font-medium text-[#94a3b8]">
+            Last {analytics.days} days
+          </span>
         </div>
-        <p className="rounded-full border border-[#e2e8f0] bg-white px-3 py-1 text-[11px] font-medium text-[#64748b]">
-          Confirmed events only
-        </p>
-      </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {[
-          { label: "Profile visits", value: visitTotal },
-          { label: "Inquiries", value: inquiryTotal },
-          { label: "Inquiry rate", value: `${inquiryRate}%` },
-          {
-            label: "Channels",
-            value:
-              analytics.onePagerViews +
-              analytics.embedViews +
-              analytics.profileViews,
-          },
-        ].map((m) => (
-          <div
-            key={m.label}
-            className="rounded-2xl border border-[#e2e8f0] bg-white px-4 py-3.5"
-          >
-            <p className="text-[11px] font-medium text-[#94a3b8]">{m.label}</p>
-            <p className="mt-1 text-[24px] font-semibold tracking-[-0.03em] tabular-nums text-ink">
-              {m.value}
+        <div className="grid gap-0 lg:grid-cols-[1.1fr_1.4fr]">
+          <div className="border-b border-[#f1f5f9] p-5 lg:border-r lg:border-b-0">
+            <p className="text-[12px] font-medium text-[#64748b]">
+              Profile visits analysed
             </p>
-          </div>
-        ))}
-      </div>
+            <p className="mt-2 text-[28px] font-semibold tracking-[-0.03em] text-ink">
+              <span className="text-[#16a34a]">Completed: {visitTotal}</span>
+              <span className="mx-2 text-[#cbd5e1]">·</span>
+              <span className="text-[#64748b]">
+                Inquiries: {inquiryTotal}
+              </span>
+            </p>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#f1f5f9]">
+              <div
+                className="h-full rounded-full bg-[#22c55e] transition-[width] duration-500"
+                style={{ width: `${Math.max(engagement, visitTotal ? 4 : 0)}%` }}
+              />
+            </div>
+            <p className="mt-2 text-[11px] text-[#94a3b8]">
+              Inquiry rate {inquiryRate}% of visits
+            </p>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <MetricCard label="Site visits" value={visitTotal}>
-          <MetricAreaChart
-            data={points}
-            dataKey="visits"
-            name="Visits"
-            color="#0b1220"
-            gradientId="visitsGrad"
-          />
-        </MetricCard>
-        <MetricCard
-          label="Inquiries"
-          value={inquiryTotal}
-          suffix={visitTotal ? `· ${inquiryRate}%` : undefined}
-        >
-          <MetricAreaChart
-            data={points}
-            dataKey="inquiries"
-            name="Inquiries"
-            color="#3b82f6"
-            gradientId="inqGrad"
-          />
-        </MetricCard>
-      </div>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <MiniStat label="Transfer → inquiry" value={`${inquiryRate}%`} />
+              <MiniStat
+                label="Channels"
+                value={String(
+                  analytics.profileViews +
+                    analytics.onePagerViews +
+                    analytics.embedViews,
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-0 sm:grid-cols-2">
+            <ChartPane label="Site visits" value={visitTotal}>
+              <MetricAreaChart
+                data={points}
+                dataKey="visits"
+                name="Visits"
+                color="#0b1220"
+                gradientId="visitsGrad"
+              />
+            </ChartPane>
+            <ChartPane
+              label="Inquiries"
+              value={inquiryTotal}
+              className="border-t border-[#f1f5f9] sm:border-t-0 sm:border-l"
+            >
+              <MetricAreaChart
+                data={points}
+                dataKey="inquiries"
+                name="Inquiries"
+                color="#3b82f6"
+                gradientId="inqGrad"
+              />
+            </ChartPane>
+          </div>
+        </div>
+      </WorkspaceCard>
 
       {full ? (
-        <>
-          <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-            <div className="mb-1 flex flex-wrap items-end justify-between gap-2">
-              <div>
-                <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
-                  Activity over time
-                </h3>
-                <p className="mt-0.5 text-[12px] text-[#64748b]">
-                  Visits, inquiries, one-pager and embed — intertwined
-                </p>
-              </div>
+        <div className="mt-5 space-y-5">
+          <WorkspaceCard>
+            <div className="mb-1">
+              <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
+                Activity over time
+              </h3>
+              <p className="mt-0.5 text-[12px] text-[#64748b]">
+                Visits, inquiries, one-pager and embed intertwined
+              </p>
             </div>
-            <div className="mt-2 h-[280px]">
+            <div className="mt-3 h-[280px]">
               <IntertwinedActivityChart data={points} />
             </div>
-          </section>
+          </WorkspaceCard>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5">
+          <div className="grid gap-5 lg:grid-cols-2">
+            <WorkspaceCard>
               <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
                 Traffic sources
               </h3>
@@ -192,9 +209,9 @@ export function InsightsDashboard({ analytics, plan }: Props) {
                   <SourceSegmentBar segments={sourceSegments} />
                 )}
               </div>
-            </section>
+            </WorkspaceCard>
 
-            <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5">
+            <WorkspaceCard>
               <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
                 Channel mix
               </h3>
@@ -208,28 +225,65 @@ export function InsightsDashboard({ analytics, plan }: Props) {
                   centerLabel={topChannel?.label ?? "—"}
                 />
               </div>
-            </section>
+            </WorkspaceCard>
           </div>
-        </>
+        </div>
       ) : (
-        <div className="relative overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-6">
+        <WorkspaceCard className="relative mt-5 overflow-hidden">
           <div className="pointer-events-none select-none blur-[2.5px]" aria-hidden>
-            <div className="h-[220px]">
+            <div className="h-[200px]">
               <IntertwinedActivityChart data={points} />
             </div>
           </div>
-          <div className="absolute inset-0 flex items-center justify-center bg-white/70 px-6 text-center">
+          <div className="absolute inset-0 flex items-center justify-center bg-white/75 px-6 text-center">
             <div>
               <p className="text-[15px] font-semibold text-ink">
                 Full trends & source mix
               </p>
               <p className="mt-1 text-[13px] text-[#64748b]">
-                Intertwined activity and source breakdown — Pro
+                Intertwined activity and breakdown — Pro
               </p>
             </div>
           </div>
-        </div>
+        </WorkspaceCard>
       )}
+    </WorkspacePage>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-[#eef1f6] bg-[#fafbfc] px-3 py-2.5">
+      <p className="text-[11px] text-[#94a3b8]">{label}</p>
+      <p className="mt-0.5 text-[18px] font-semibold tracking-[-0.02em] tabular-nums text-ink">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function ChartPane({
+  label,
+  value,
+  children,
+  className,
+}: {
+  label: string;
+  value: number;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("p-5", className)}>
+      <p className="text-[12px] font-medium text-[#64748b]">{label}</p>
+      <p className="mt-1 text-[24px] font-semibold tracking-[-0.03em] tabular-nums text-ink">
+        {value}
+      </p>
+      <div className="mt-3 h-[160px]">{children}</div>
+      <p className="mt-1 flex items-center gap-1.5 text-[11px] text-[#94a3b8]">
+        <span className="inline-block h-2 w-2 rounded-sm bg-[#94a3b8]" />
+        Trend
+      </p>
     </div>
   );
 }

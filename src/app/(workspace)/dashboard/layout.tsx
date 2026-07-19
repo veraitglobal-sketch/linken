@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { WorkspaceShell } from "@/components/dashboard/workspace-shell";
 import { getDashboardSession } from "@/features/dashboard/session";
 import { companyDisplayLogoUrl } from "@/features/logo/display-url";
+import { viewerCompanyMembership } from "@/features/team/queries";
 import { getCompanyVerification } from "@/features/verification/queries";
 import { createClient } from "@/lib/supabase/server";
 
@@ -10,7 +11,12 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  const { company } = await getDashboardSession();
+  const { company: owned } = await getDashboardSession();
+  // Non-owners (admin/member) still need shell branding on Team.
+  const membership = !owned ? await viewerCompanyMembership() : null;
+  const company = owned
+    ? { id: owned.id, name: owned.name, slug: owned.slug }
+    : membership?.company;
 
   let logoUrl: string | null = null;
   let website: string | null = null;

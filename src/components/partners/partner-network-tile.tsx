@@ -19,9 +19,9 @@ export function PartnerNetworkTile({ partner }: Props) {
     >
       <div className="flex items-start justify-between gap-3">
         <PartnerMark
+          name={partner.name}
           initials={partner.logoInitials}
           logoUrl={partner.logoUrl}
-          className="h-16 w-16 rounded-2xl text-lg"
         />
         <span
           className={

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendReferenceConfirmEmail } from "@/lib/email";
 import { createClient } from "@/lib/supabase/server";
@@ -50,6 +51,11 @@ export async function addReference(formData: FormData) {
   let clientCompanyId: string | null = null;
 
   if (createGhost && inviteEmail) {
+    const quota = await assertGhostDailyQuota(supabase, company.id);
+    if (!quota.ok) {
+      redirect(`${back}?error=${encodeURIComponent(quota.error)}`);
+    }
+
     const slug = await uniqueCompanySlug(supabase, clientName);
     const claimToken = crypto.randomUUID();
     const { data: ghost } = await supabase

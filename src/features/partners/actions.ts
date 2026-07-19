@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendClaimInviteEmail } from "@/lib/email";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -18,7 +19,7 @@ async function requireOwnedCompany() {
 
   const { data: company } = await supabase
     .from("companies")
-    .select("id, name, slug")
+    .select("id, name, slug, verified")
     .eq("owner_id", user.id)
     .eq("claimed", true)
     .maybeSingle();
@@ -44,6 +45,16 @@ export async function createUnclaimedPartner(formData: FormData) {
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company profile first.")}`);
+  }
+  if (!company.verified) {
+    redirect(
+      `${back}?error=${encodeURIComponent("Verify your domain first, then invite partners.")}`,
+    );
+  }
+
+  const quota = await assertGhostDailyQuota(supabase, company.id);
+  if (!quota.ok) {
+    redirect(`${back}?error=${encodeURIComponent(quota.error)}`);
   }
 
   const slug = await uniqueCompanySlug(supabase, name);

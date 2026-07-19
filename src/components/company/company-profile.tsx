@@ -4,7 +4,9 @@ import { CaseStudyList } from "@/components/case-studies/case-study-list";
 import { CompanyAbout } from "@/components/company/company-about";
 import { CompanyHeroBand } from "@/components/company/company-hero-band";
 import { CompanySignal } from "@/components/company/company-signal";
+import { CompanyTeamSection } from "@/components/company/company-team-section";
 import { UnclaimedBanner } from "@/components/company/unclaimed-banner";
+import type { PublicTeamMember } from "@/features/team/types";
 import { InquirySentBanner } from "@/components/inquiries/inquiry-sent-banner";
 import { PartnerSidebar } from "@/components/partners/partner-sidebar";
 import { ReferencesSection } from "@/components/references/references-section";
@@ -34,6 +36,7 @@ type Props = {
   groupBadge?: ConfirmedGroupBadge | null;
   networkMap?: ReactNode;
   domainVerifiedJustNow?: boolean;
+  teamMembers?: PublicTeamMember[];
 };
 
 export function CompanyProfile({
@@ -52,12 +55,14 @@ export function CompanyProfile({
   groupBadge = null,
   networkMap = null,
   domainVerifiedJustNow = false,
+  teamMembers = [],
 }: Props) {
   const isUnclaimed = company.claimed === false;
   const confirmedRefs = references.filter((r) => r.status === "confirmed").length;
   const showPartners = partners.length > 0 || editable;
   const showCases = caseStudies.length > 0 || editable;
   const showRefs = references.length > 0 || editable;
+  const showTeam = teamMembers.length > 0;
   const showWhyPublic = trust.points > 0;
   const showOwnerProgress = editable && !isUnclaimed;
   const showSidebar =
@@ -109,6 +114,7 @@ export function CompanyProfile({
       <div className="mx-auto mt-4 grid max-w-6xl gap-4 px-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-5">
         <div className="flex flex-col gap-4">
           <CompanyAbout company={company} />
+          {showTeam ? <CompanyTeamSection members={teamMembers} /> : null}
           <ClientHighlights summary={assessmentSummary} />
           {showRefs ? (
             <ReferencesSection references={references} editable={editable} />

@@ -86,16 +86,17 @@ export async function getAnalytics(
   companyId: string,
   days = 30,
 ): Promise<AnalyticsSummary> {
-  if (!companyId) return { ...EMPTY, days };
+  const cappedDays = Math.min(Math.max(days, 1), 365);
+  if (!companyId) return { ...EMPTY, days: cappedDays };
 
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.rpc("get_profile_analytics", {
       p_company_id: companyId,
-      p_days: days,
+      p_days: cappedDays,
     });
 
-    if (error || !data) return { ...EMPTY, days };
+    if (error || !data) return { ...EMPTY, days: cappedDays };
 
     const row = data as {
       days?: number;

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PartnerNetwork } from "@/components/partners/partner-network";
-import { getCompanyBySlug } from "@/data/mock/companies";
-import { getPartnersForCompany } from "@/data/mock/partners";
+import { getCompanyForPage } from "@/features/companies/queries";
+import { getPartnersForCompany } from "@/features/partners/public-queries";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -10,7 +10,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const company = getCompanyBySlug(slug);
+  const company = await getCompanyForPage(slug);
   if (!company) return { title: "Network not found" };
 
   return {
@@ -21,10 +21,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CompanyPartnersPage({ params }: Props) {
   const { slug } = await params;
-  const company = getCompanyBySlug(slug);
+  const company = await getCompanyForPage(slug);
   if (!company) notFound();
 
-  const partners = getPartnersForCompany(slug);
+  const partners = await getPartnersForCompany(company.id);
 
   return <PartnerNetwork company={company} partners={partners} />;
 }

@@ -33,11 +33,11 @@ export function HomeHero() {
               Create company link
             </Button>
             <Button
-              href="/c/acme-architecture"
+              href="/search"
               variant="onDark"
               className="h-12 min-w-[180px] px-6"
             >
-              Open example profile
+              Browse directory
             </Button>
           </div>
         </div>

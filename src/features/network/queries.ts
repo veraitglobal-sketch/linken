@@ -11,6 +11,8 @@ import type {
   NetworkNodeKind,
   NetworkScope,
 } from "@/features/network/types";
+import { getPublicTeam } from "@/features/team/queries";
+import { initialsFromName } from "@/features/team/types";
 import { createClient } from "@/lib/supabase/server";
 
 const MAX_NODES = 120;
@@ -31,6 +33,7 @@ type CompanyRow = {
   category: string | null;
   city: string | null;
   claimed: boolean | null;
+  verified?: boolean | null;
   logo_url?: string | null;
   website?: string | null;
 };
@@ -90,6 +93,7 @@ async function companyNode(
     trustLevel: row.claimed === false ? null : trust.level,
     kind,
     companyId: row.id,
+    domainVerified: row.claimed !== false && Boolean(row.verified),
     stats: {
       confirmedPartners: trust.breakdown.confirmedPartners,
       confirmedReferences:
@@ -110,7 +114,7 @@ async function fetchCompaniesByIds(
   const supabase = await createClient();
   const { data } = await supabase
     .from("companies")
-    .select("id, slug, name, category, city, claimed, logo_url, website")
+    .select("id, slug, name, category, city, claimed, verified, logo_url, website")
     .in("id", unique);
 
   for (const row of data ?? []) {
@@ -276,7 +280,7 @@ async function loadGroupMembers(groupId: string): Promise<MemberRow[]> {
   const { data: memberships } = await supabase
     .from("company_group_members")
     .select(
-      "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, logo_url, website)",
+      "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, verified, logo_url, website)",
     )
     .eq("group_id", groupId)
     .eq("status", "confirmed");
@@ -590,15 +594,63 @@ function collectDescendants(
   return out;
 }
 
+/** Attach public team counts/avatars (no names) to company nodes. */
+async function withPublicTeamPreviews(graph: NetworkGraph): Promise<NetworkGraph> {
+  const companyIds = [
+    ...new Set(
+      graph.nodes
+        .filter((n) => n.data.companyId && !n.data.moreCount)
+        .map((n) => n.data.companyId as string),
+    ),
+  ];
+
+  if (companyIds.length === 0) return graph;
+
+  const previews = await Promise.all(
+    companyIds.map(async (id) => {
+      const team = await getPublicTeam(id);
+      return {
+        id,
+        count: team.length,
+        avatars: team.slice(0, 3).map((m) => ({
+          photoUrl: m.photoUrl,
+          initials: initialsFromName(m.displayName),
+        })),
+      };
+    }),
+  );
+  const byId = new Map(previews.map((p) => [p.id, p]));
+
+  return {
+    ...graph,
+    nodes: graph.nodes.map((n) => {
+      const id = n.data.companyId;
+      if (!id || n.data.moreCount) return n;
+      const p = byId.get(id);
+      if (!p || p.count === 0) return n;
+      return {
+        ...n,
+        data: {
+          ...n.data,
+          publicTeamCount: p.count,
+          publicTeamAvatars: p.avatars,
+        },
+      };
+    }),
+  };
+}
+
 export async function getNetworkGraph(
   scope: NetworkScope,
   opts?: { viewerCompanyId?: string | null },
 ): Promise<NetworkGraph> {
   try {
-    const graph =
+    const raw =
       scope.type === "group"
         ? await graphForGroup(scope.slug)
         : await graphForCompany(scope.slug, scope.expand ?? "full");
+
+    const graph = await withPublicTeamPreviews(raw);
 
     if (opts?.viewerCompanyId) {
       return {
@@ -649,7 +701,7 @@ async function graphForCompany(
   const supabase = await createClient();
   const { data: company } = await supabase
     .from("companies")
-    .select("id, slug, name, category, city, claimed, logo_url, website")
+    .select("id, slug, name, category, city, claimed, verified, logo_url, website")
     .eq("slug", slug)
     .maybeSingle();
   if (!company) return { nodes: [], edges: [], summary: emptySummary() };

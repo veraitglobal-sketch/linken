@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { addTeamMember } from "@/features/groups/actions";
-import { viewerOwnsClaimedCompany } from "@/features/partners/queries";
+import {
+  WorkspaceCard,
+  WorkspacePage,
+} from "@/components/dashboard/workspace-page";
+import { EditMyTeamProfile } from "@/components/team/edit-my-team-profile";
+import { InviteTeamForm } from "@/components/team/invite-team-form";
+import { TeamMemberRow } from "@/components/team/team-member-row";
+import { cancelTeamInvitation } from "@/features/team/actions";
+import {
+  listCompanyTeam,
+  viewerCompanyMembership,
+} from "@/features/team/queries";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SectionTitle } from "@/components/ui/section-title";
-import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Team",
@@ -14,122 +21,169 @@ export const metadata: Metadata = {
 type Props = {
   searchParams: Promise<{
     error?: string;
-    added?: string;
-    invitedEmail?: string;
+    invited?: string;
+    cancelled?: string;
+    joined?: string;
+    profileUpdated?: string;
   }>;
 };
 
 export default async function DashboardTeamPage({ searchParams }: Props) {
-  const { error, added, invitedEmail } = await searchParams;
-  const { user, company } = await viewerOwnsClaimedCompany();
+  const {
+    error,
+    invited,
+    cancelled,
+    joined,
+    profileUpdated,
+  } = await searchParams;
+  const { user, membership, company } = await viewerCompanyMembership();
 
-  let members: { user_id: string; role: string; created_at: string }[] = [];
-  if (company) {
-    try {
-      const supabase = await createClient();
-      const { data } = await supabase
-        .from("company_members")
-        .select("user_id, role, created_at")
-        .eq("company_id", company.id)
-        .order("created_at", { ascending: true });
-      members = data ?? [];
-    } catch {
-      members = [];
-    }
-  }
+  const canManage =
+    membership?.role === "owner" || membership?.role === "admin";
+
+  const { members, pendingInvites } =
+    company && membership
+      ? await listCompanyTeam(company.id)
+      : { members: [], pendingInvites: [] };
+
+  const me = members.find((m) => m.userId === user?.id) ?? null;
+  const needsSetup = Boolean(
+    me && (!me.displayName.trim() || !me.displayTitle.trim()),
+  );
 
   return (
-    <div className="max-w-3xl space-y-2 pb-8">
-      <SectionTitle
-        eyebrow="Network"
-        title="Team members"
-        description="Invite colleagues to the company dashboard. Ownership stays with you."
-      />
+    <WorkspacePage
+      title="Team"
+      description="Invite colleagues by email. They join only after accepting — and appear on the public profile only if they opt in."
+    >
+      <div className="space-y-5">
+        {error ? (
+          <p className="rounded-xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+            {error}
+          </p>
+        ) : null}
+        {invited ? (
+          <p className="rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm text-ink">
+            Invite sent. They become a member only after accepting the link.
+          </p>
+        ) : null}
+        {cancelled ? (
+          <p className="rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm text-ink">
+            Invite cancelled.
+          </p>
+        ) : null}
+        {joined ? (
+          <p className="rounded-xl border border-[#bbf7d0] bg-[#f0fdf4] px-4 py-3 text-sm text-ink">
+            You joined the team. Edit your card below anytime.
+          </p>
+        ) : null}
+        {profileUpdated ? (
+          <p className="rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm text-ink">
+            Profile updated.
+          </p>
+        ) : null}
 
-      {error ? (
-        <p className="mt-6 rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-          {error}
-        </p>
-      ) : null}
-      {added ? (
-        <p className="mt-6 rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
-          Teammate added.
-        </p>
-      ) : null}
-      {invitedEmail ? (
-        <p className="mt-6 rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
-          Invite email sent. Auto-link on registration is still TODO — re-add
-          after they sign up if needed.
-        </p>
-      ) : null}
+        {!user ? (
+          <p className="text-sm text-[#64748b]">
+            <Link
+              href="/login?next=/dashboard/team"
+              className="font-semibold underline"
+            >
+              Sign in
+            </Link>{" "}
+            to manage teammates.
+          </p>
+        ) : null}
 
-      {!user ? (
-        <p className="mt-8 text-sm text-ink-soft">
-          <Link href="/login?next=/dashboard/team" className="font-semibold underline">
-            Sign in
-          </Link>{" "}
-          to manage teammates.
-        </p>
-      ) : null}
+        {user && !membership ? (
+          <p className="text-sm text-[#64748b]">
+            <Link href="/onboarding" className="font-semibold underline">
+              Create your company
+            </Link>{" "}
+            first, or accept a team invite from email.
+          </p>
+        ) : null}
 
-      {user && !company ? (
-        <p className="mt-8 text-sm text-ink-soft">
-          <Link href="/onboarding" className="font-semibold underline">
-            Create your company
-          </Link>{" "}
-          first.
-        </p>
-      ) : null}
+        {company && me ? (
+          <>
+            <EditMyTeamProfile
+              companyId={company.id}
+              me={me}
+              needsSetup={needsSetup}
+            />
 
-      {company ? (
-        <div className="mt-8 space-y-4">
-          <section className="rounded-[24px] border border-line bg-surface px-5 py-5">
-            <p className="text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">
-              Current members
-            </p>
-            <ul className="mt-3 space-y-2">
-              {members.map((m) => (
-                <li
-                  key={m.user_id}
-                  className="flex items-center justify-between rounded-2xl border border-line px-3 py-2.5 text-[13px]"
-                >
-                  <span className="font-mono text-[12px] text-ink-soft">
-                    {m.user_id.slice(0, 8)}…
-                  </span>
-                  <span className="font-medium tracking-[0.06em] text-ink uppercase">
-                    {m.role}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
+            <WorkspaceCard>
+              <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
+                Members
+              </h3>
+              <ul className="mt-4 space-y-2">
+                {members.map((m) => (
+                  <TeamMemberRow
+                    key={m.userId}
+                    member={m}
+                    isYou={m.userId === user?.id}
+                  />
+                ))}
+                {members.length === 0 ? (
+                  <li className="text-sm text-[#94a3b8]">No members yet.</li>
+                ) : null}
+              </ul>
+            </WorkspaceCard>
 
-          <section className="rounded-[24px] border border-line bg-surface px-5 py-6">
-            <h2 className="font-display text-lg font-medium tracking-[-0.03em] text-ink">
-              Invite by email
-            </h2>
-            <form action={addTeamMember} className="mt-4 flex flex-col gap-3 sm:flex-row">
-              <input type="hidden" name="company_id" value={company.id} />
-              <label className="block min-w-0 flex-1">
-                <span className="mb-1.5 block text-[13px] font-medium text-ink">
-                  Email
-                </span>
-                <Input
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="colleague@company.com"
-                />
-              </label>
-              <div className="flex items-end">
-                <Button type="submit" className="h-11">
-                  Add member
-                </Button>
-              </div>
-            </form>
-          </section>
-        </div>
-      ) : null}
-    </div>
+            {canManage && pendingInvites.length > 0 ? (
+              <WorkspaceCard>
+                <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
+                  Pending invites
+                </h3>
+                <ul className="mt-4 space-y-2">
+                  {pendingInvites.map((inv) => (
+                    <li
+                      key={inv.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e8eaee] px-3 py-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-semibold text-ink">
+                          {inv.inviteName}
+                          {inv.inviteTitle ? (
+                            <span className="font-normal text-[#64748b]">
+                              {" "}
+                              · {inv.inviteTitle}
+                            </span>
+                          ) : null}
+                        </p>
+                        <p className="text-[11px] text-[#94a3b8]">
+                          {inv.inviteEmail} · {inv.role} · Pending
+                        </p>
+                      </div>
+                      <form action={cancelTeamInvitation}>
+                        <input
+                          type="hidden"
+                          name="invitation_id"
+                          value={inv.id}
+                        />
+                        <input
+                          type="hidden"
+                          name="back"
+                          value="/dashboard/team"
+                        />
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          className="h-8 px-3 text-[11px]"
+                        >
+                          Cancel
+                        </Button>
+                      </form>
+                    </li>
+                  ))}
+                </ul>
+              </WorkspaceCard>
+            ) : null}
+
+            {canManage ? <InviteTeamForm companyId={company.id} /> : null}
+          </>
+        ) : null}
+      </div>
+    </WorkspacePage>
   );
 }

@@ -19,6 +19,29 @@ function companyIdFromNodeId(nodeId: string): string | null {
   return nodeId.slice("company:".length);
 }
 
+type ViewerGate =
+  | { ok: true; companyId: string }
+  | { ok: false; error: string };
+
+async function requireViewerDomainVerified(userId: string): Promise<ViewerGate> {
+  const supabase = await createClient();
+  const { data: mine } = await supabase
+    .from("companies")
+    .select("id, verified")
+    .eq("owner_id", userId)
+    .eq("claimed", true)
+    .maybeSingle();
+
+  if (!mine) return { ok: false, error: "Create your company first." };
+  if (!mine.verified) {
+    return {
+      ok: false,
+      error: "Verify your domain first — then you can link firms on the graph.",
+    };
+  }
+  return { ok: true, companyId: mine.id };
+}
+
 /**
  * Wire two company nodes on the graph.
  * - structure: child hangs under parent (set_group_parent)
@@ -46,11 +69,14 @@ export async function connectGraphNodes(input: {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Sign in required." };
 
+  const viewer = await requireViewerDomainVerified(user.id);
+  if (!viewer.ok) return viewer;
+
   if (input.mode === "structure") {
     if (!input.groupId) {
       return {
         ok: false,
-        error: "Create a company group first, then drag structure links.",
+        error: "Create a company group first, then drag ownership links.",
       };
     }
 
@@ -62,20 +88,11 @@ export async function connectGraphNodes(input: {
 
     if (error) return { ok: false, error: error.message };
     revalidateGraph();
-    return { ok: true, message: "Subsidiary attached under parent." };
+    return { ok: true, message: "Child firm attached under parent." };
   }
 
-  // Partner mode
-  const { data: mine } = await supabase
-    .from("companies")
-    .select("id")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!mine) return { ok: false, error: "Create your company first." };
-
-  // Prefer viewer company as requester when it is one of the endpoints
+  // Partner mode — prefer viewer company as requester when it is an endpoint
+  const mine = { id: viewer.companyId };
   const requesterId =
     mine.id === parentId || mine.id === childId ? mine.id : parentId;
   const recipientId = requesterId === parentId ? childId : parentId;
@@ -229,9 +246,12 @@ export async function addExistingCompanyToWorkspace(input: {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Sign in required." };
 
+  const viewer = await requireViewerDomainVerified(user.id);
+  if (!viewer.ok) return viewer;
+
   const { data: target } = await supabase
     .from("companies")
-    .select("id, slug, name, claimed")
+    .select("id, slug, name, claimed, verified")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -239,31 +259,23 @@ export async function addExistingCompanyToWorkspace(input: {
   if (target.claimed === false) {
     return {
       ok: false,
-      error: "That profile is unclaimed — use Create subsidiary, or wait until they claim.",
+      error: "That profile is unclaimed — use Create child firm, or wait until they claim.",
     };
   }
 
   if (input.intent === "partner") {
-    const { data: mine } = await supabase
-      .from("companies")
-      .select("id")
-      .eq("owner_id", user.id)
-      .eq("claimed", true)
-      .maybeSingle();
-
-    if (!mine) return { ok: false, error: "Create your company first." };
-    if (mine.id === target.id) {
+    if (viewer.companyId === target.id) {
       return { ok: false, error: "That is already your company." };
     }
 
     return connectGraphNodes({
       mode: "partner",
-      sourceNodeId: `company:${mine.id}`,
+      sourceNodeId: `company:${viewer.companyId}`,
       targetNodeId: `company:${target.id}`,
     });
   }
 
-  // Group invite
+  // Group invite — can invite before they verify; they stay muted until domain verify
   if (!input.groupId) {
     return {
       ok: false,
@@ -291,6 +303,8 @@ export async function addExistingCompanyToWorkspace(input: {
   revalidateGraph();
   return {
     ok: true,
-    message: `Invite sent to ${target.name}. They must confirm before it shows on the graph.`,
+    message: target.verified
+      ? `Invite sent to ${target.name}. They must confirm before it shows.`
+      : `Invite sent to ${target.name}. After they confirm, domain verify is still required for full trust.`,
   };
 }

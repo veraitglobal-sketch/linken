@@ -1,9 +1,9 @@
-/** Realistic JSON / snippet examples — URLs from getSiteUrl(), never hardcoded localhost. */
+/** Illustrative JSON / snippet examples — not live data. */
 
 export function companyExample(siteUrl: string) {
   return `{
-  "slug": "acme-architecture",
-  "name": "Acme Architecture",
+  "slug": "example-architecture",
+  "name": "Example Architecture",
   "category": "Architecture",
   "city": "Berlin",
   "country": "Germany",
@@ -26,7 +26,7 @@ export function companyExample(siteUrl: string) {
       { "key": "deadlines", "label": "Deadlines", "count": 6 }
     ]
   },
-  "profile_url": "${siteUrl}/c/acme-architecture",
+  "profile_url": "${siteUrl}/c/example-architecture",
   "generated_at": "2026-07-19T18:00:00.000Z"
 }`;
 }
@@ -66,11 +66,11 @@ export function caseStudiesExample(siteUrl: string) {
       "summary": "Private residence delivered with confirmed build and electrical partners.",
       "year": "2024",
       "location": "Berlin, Germany",
-      "url": "${siteUrl}/c/acme-architecture/case-studies/residence-berlin",
+      "url": "${siteUrl}/c/example-architecture/case-studies/residence-berlin",
       "client_confirmed": true,
       "confirmed_partners": [
-        { "name": "BauPro GmbH", "slug": "baupro" },
-        { "name": "Beta Elektro", "slug": "beta-elektro" }
+        { "name": "Example Build GmbH", "slug": "example-build" },
+        { "name": "Example Elektro", "slug": "example-elektro" }
       ]
     }
   ],

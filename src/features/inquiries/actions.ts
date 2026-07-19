@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { logProfileEvent } from "@/features/analytics/log";
-import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import { sendInquiryNotifyEmail } from "@/lib/email";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -19,27 +18,45 @@ export async function sendInquiry(formData: FormData) {
     .trim()
     .toLowerCase();
   const senderCompany = String(formData.get("sender_company") ?? "").trim();
-  const serviceInterest = String(formData.get("service_interest") ?? "").trim();
-  const message = String(formData.get("message") ?? "").trim();
+  const serviceInterestRaw = String(
+    formData.get("service_interest") ?? "",
+  ).trim();
+  const forMember = String(formData.get("for_member") ?? "").trim();
+  const messageRaw = String(formData.get("message") ?? "").trim();
   const honeypot = String(formData.get("company_website") ?? "").trim();
-
-  const back = companySlug ? `/c/${companySlug}` : "/";
+  const backRaw = String(formData.get("back") ?? "").trim();
+  const back =
+    backRaw.startsWith("/") && !backRaw.startsWith("//")
+      ? backRaw
+      : companySlug
+        ? `/c/${companySlug}`
+        : "/";
 
   // Honeypot: bots fill hidden fields — silently succeed
   if (honeypot) {
-    redirect(`${back}?inquirySent=1`);
+    redirect(`${back}${back.includes("?") ? "&" : "?"}inquirySent=1`);
   }
 
   if (!companySlug || !senderName || !isValidEmail(senderEmail)) {
     redirect(
-      `${back}?error=${encodeURIComponent("Name and a valid email are required.")}`,
+      `${back}${back.includes("?") ? "&" : "?"}error=${encodeURIComponent("Name and a valid email are required.")}`,
     );
   }
-  if (message.length < 10) {
+  if (messageRaw.length < 10) {
     redirect(
-      `${back}?error=${encodeURIComponent("Message must be at least 10 characters.")}`,
+      `${back}${back.includes("?") ? "&" : "?"}error=${encodeURIComponent("Message must be at least 10 characters.")}`,
     );
   }
+
+  // Optional "For: Name, title" — never personal contact data, company inbox only.
+  const serviceInterest =
+    serviceInterestRaw ||
+    (forMember.startsWith("For:") ? forMember : "") ||
+    "";
+  const message =
+    forMember && !messageRaw.startsWith("For:")
+      ? `${forMember}\n\n${messageRaw}`
+      : messageRaw;
 
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("create_inquiry", {
@@ -53,7 +70,7 @@ export async function sendInquiry(formData: FormData) {
 
   if (error || !data?.[0]) {
     redirect(
-      `${back}?error=${encodeURIComponent(error?.message ?? "Could not send inquiry.")}`,
+      `${back}${back.includes("?") ? "&" : "?"}error=${encodeURIComponent(error?.message ?? "Could not send inquiry.")}`,
     );
   }
 
@@ -65,45 +82,37 @@ export async function sendInquiry(formData: FormData) {
 
   await logProfileEvent(companySlug, "inquiry", "direct");
 
-  const { data: companyPlan } = await supabase
-    .from("companies")
-    .select("plan")
-    .eq("slug", companySlug)
-    .maybeSingle();
+  // Instant email for ALL plans — a firm must not miss inbound work.
+  // TODO: when daily digest ships, restore plan gating
+  // (instant = Pro/Founding; Free = digest only) via entitlements.instantInquiryNotifications.
+  const admin = createAdminClient();
+  if (admin) {
+    const { data: notifyEmail } = await admin.rpc("get_inquiry_notify_email", {
+      p_inquiry_id: row.inquiry_id,
+    });
 
-  const entitlements = getEntitlements(parsePlan(companyPlan?.plan));
-
-  // Instant email only for Pro/Founding. Free sees inquiries in the dashboard.
-  // TODO: daily digest email for free plans via cron (separate topic).
-  if (entitlements.instantInquiryNotifications) {
-    const admin = createAdminClient();
-    if (admin) {
-      const { data: notifyEmail } = await admin.rpc("get_inquiry_notify_email", {
-        p_inquiry_id: row.inquiry_id,
+    if (notifyEmail) {
+      await sendInquiryNotifyEmail({
+        to: notifyEmail as string,
+        senderName,
+        senderEmail,
+        senderCompany,
+        serviceInterest,
+        message,
+        companyName: row.company_name,
+        companySlug: row.company_slug,
       });
-
-      if (notifyEmail) {
-        await sendInquiryNotifyEmail({
-          to: notifyEmail as string,
-          senderName,
-          senderEmail,
-          senderCompany,
-          serviceInterest,
-          message,
-          companyName: row.company_name,
-          companySlug: row.company_slug,
-        });
-      }
-    } else {
-      console.warn(
-        "SUPABASE_SERVICE_ROLE_KEY not configured — inquiry notification email skipped.",
-      );
     }
+  } else {
+    console.warn(
+      "SUPABASE_SERVICE_ROLE_KEY not configured — inquiry notification email skipped.",
+    );
   }
 
   revalidatePath(`/c/${companySlug}`);
   revalidatePath("/dashboard");
-  redirect(`${back}?inquirySent=1`);
+  revalidatePath("/dashboard/inbox");
+  redirect(`${back}${back.includes("?") ? "&" : "?"}inquirySent=1`);
 }
 
 const ALLOWED_STATUS = new Set(["new", "read", "replied", "archived"]);

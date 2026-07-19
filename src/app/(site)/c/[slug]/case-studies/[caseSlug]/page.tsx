@@ -5,7 +5,7 @@ import {
   getCaseStudyForPage,
   isCompanyOwnerSlug,
 } from "@/features/case-studies/queries";
-import { getCompanyBySlug } from "@/data/mock/companies";
+import { getCompanyForPage } from "@/features/companies/queries";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
@@ -36,8 +36,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CaseStudyPage({ params, searchParams }: Props) {
   const { slug, caseSlug } = await params;
   const { error, requested } = await searchParams;
-  const company = getCompanyBySlug(slug);
-  const caseStudy = await getCaseStudyForPage(slug, caseSlug);
+  const [company, caseStudy] = await Promise.all([
+    getCompanyForPage(slug),
+    getCaseStudyForPage(slug, caseSlug),
+  ]);
   if (!company || !caseStudy) notFound();
 
   const editable = await isCompanyOwnerSlug(slug);

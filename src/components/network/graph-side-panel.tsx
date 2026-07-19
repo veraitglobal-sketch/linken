@@ -7,13 +7,20 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { LogoMark } from "@/components/ui/logo-mark";
+import { LogoTile } from "@/components/ui/logo-tile";
+import { GraphInviteTeamForm } from "@/components/network/graph-invite-team-form";
+import { GraphPendingInvites } from "@/components/network/graph-pending-invites";
+import { GraphTeamSection } from "@/components/network/graph-team-section";
 import {
   searchCompaniesForGraph,
   type CompanySearchHit,
 } from "@/features/companies/search-action";
 import { createSubsidiary } from "@/features/groups/actions";
 import { addExistingCompanyToWorkspace } from "@/features/network/graph-actions";
+import {
+  fetchTeamManageAccess,
+  type TeamManageAccess,
+} from "@/features/team/panel-actions";
 import type {
   NetworkGraphContext,
   NetworkNodeData,
@@ -23,7 +30,7 @@ import { cn } from "@/lib/cn";
 const ROLE_LABEL = {
   group: "Group",
   company: "Company",
-  subsidiary: "Subsidiary",
+  subsidiary: "Child firm",
   partner: "Partner",
   client: "Client",
 } as const;
@@ -58,12 +65,41 @@ export function GraphSidePanel({
   const [searching, setSearching] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [activeHit, setActiveHit] = useState<string | null>(null);
+  const [teamAccess, setTeamAccess] = useState<TeamManageAccess | null>(null);
+  const [showInviteTeam, setShowInviteTeam] = useState(false);
+  const [inviteFlash, setInviteFlash] = useState<string | null>(null);
+  const [pendingRefresh, setPendingRefresh] = useState(0);
 
   const parentCompanyId =
     selected?.kind !== "group" ? selected?.companyId ?? null : null;
   const canInviteToGroup = Boolean(context?.groupId) && editable;
   const canCreateUnder =
     canInviteToGroup && Boolean(parentCompanyId || selected?.kind === "group");
+  const manageCompanyId =
+    mode === "inspect" && selected?.kind !== "group"
+      ? selected?.companyId ?? null
+      : null;
+
+  const accessKey =
+    open && manageCompanyId ? manageCompanyId : "";
+  const [trackedAccessKey, setTrackedAccessKey] = useState(accessKey);
+  if (trackedAccessKey !== accessKey) {
+    setTrackedAccessKey(accessKey);
+    setTeamAccess(null);
+    setShowInviteTeam(false);
+    setInviteFlash(null);
+  }
+
+  useEffect(() => {
+    if (!accessKey) return;
+    let cancelled = false;
+    void fetchTeamManageAccess(accessKey).then((access) => {
+      if (!cancelled) setTeamAccess(access);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [accessKey]);
 
   useEffect(() => {
     if (!open || mode !== "add") return;
@@ -83,13 +119,17 @@ export function GraphSidePanel({
     };
   }, [open, mode, query]);
 
-  useEffect(() => {
+  const [trackedOpen, setTrackedOpen] = useState(open);
+  if (trackedOpen !== open) {
+    setTrackedOpen(open);
     if (!open) {
       setQuery("");
       setShowCreate(false);
       setActiveHit(null);
+      setShowInviteTeam(false);
+      setInviteFlash(null);
     }
-  }, [open]);
+  }
 
   function addCompany(hit: CompanySearchHit, intent: "partner" | "group") {
     setActiveHit(hit.id);
@@ -149,12 +189,12 @@ export function GraphSidePanel({
         <div className="flex-1 overflow-y-auto px-2 py-2">
           <div className="px-3 py-3">
             <div className="flex items-start gap-3">
-              <LogoMark
+              <LogoTile
+                name={selected.name}
                 initials={selected.logoInitials}
                 logoUrl={selected.logoUrl}
                 website={selected.website}
                 size="md"
-                className="rounded-xl"
               />
               <div className="min-w-0">
                 <p className="text-[10px] font-semibold tracking-[0.1em] text-[#9aa3af] uppercase">
@@ -169,23 +209,119 @@ export function GraphSidePanel({
                 </p>
               </div>
             </div>
-            {selected.kind !== "group" ? (
+            {selected.kind !== "group" && selected.domainVerified === false ? (
+              selected.companyId &&
+              selected.companyId === context?.viewerCompanyId ? (
+                <a
+                  href="/dashboard/verification"
+                  className="mt-3 block rounded-xl border border-[#fde68a] bg-[#fffbeb] px-3 py-2.5 transition-colors hover:border-[#fbbf24] hover:bg-[#fff7ed]"
+                >
+                  <p className="text-[12px] font-semibold text-[#92400e]">
+                    Domain not verified
+                  </p>
+                  <p className="mt-0.5 text-[11px] leading-relaxed text-[#a16207]">
+                    Verify ownership (DNS, meta tag, or email) to unlock linking
+                    — open verification →
+                  </p>
+                </a>
+              ) : (
+                <div className="mt-3 rounded-xl border border-[#fde68a] bg-[#fffbeb] px-3 py-2.5">
+                  <p className="text-[12px] font-semibold text-[#92400e]">
+                    Domain not verified
+                  </p>
+                  <p className="mt-0.5 text-[11px] leading-relaxed text-[#a16207]">
+                    Links stay limited until this firm verifies ownership of its
+                    website domain (DNS, meta tag, or email).
+                  </p>
+                </div>
+              )
+            ) : null}
+            {selected.kind !== "group" && selected.domainVerified !== false ? (
               <p className="mt-3 text-[12px] text-[#5b6472]">
                 {selected.stats.confirmedPartners} partners ·{" "}
                 {selected.stats.confirmedReferences} references
+                {selected.domainVerified ? " · Domain verified" : ""}
               </p>
             ) : null}
           </div>
 
+          {selected.kind !== "group" && selected.companyId ? (
+            <GraphTeamSection
+              key={selected.companyId}
+              companyId={selected.companyId}
+              companySlug={selected.slug}
+              companyName={selected.name}
+              publicTeamCount={selected.publicTeamCount}
+              inquiryBack="/dashboard"
+            />
+          ) : null}
+
+          {teamAccess?.canManage && selected.companyId ? (
+            <GraphPendingInvites
+              key={`pending-${selected.companyId}`}
+              companyId={selected.companyId}
+              refreshKey={pendingRefresh}
+            />
+          ) : null}
+
+          {inviteFlash ? (
+            <p className="mx-3 mt-2 rounded-xl border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[12px] font-medium text-ink">
+              Invitation sent to {inviteFlash}
+            </p>
+          ) : null}
+
+          {showInviteTeam &&
+          teamAccess?.canManage &&
+          selected.companyId ? (
+            <div className="px-3 pt-2">
+              <GraphInviteTeamForm
+                companyId={selected.companyId}
+                canInviteAdmin={teamAccess.canInviteAdmin}
+                onCancel={() => setShowInviteTeam(false)}
+                onSent={(email) => {
+                  setShowInviteTeam(false);
+                  setInviteFlash(email);
+                  setPendingRefresh((n) => n + 1);
+                }}
+              />
+            </div>
+          ) : null}
+
           <ul className="mt-1">
+            {selected.kind !== "group" &&
+            selected.domainVerified === false &&
+            selected.companyId &&
+            selected.companyId === context?.viewerCompanyId ? (
+              <PanelRow
+                icon={<ShieldIcon />}
+                title="Verify domain"
+                description="DNS TXT, meta tag, or matching email — required to link firms"
+                href="/dashboard/verification"
+                chevron
+                accent
+              />
+            ) : null}
+            {teamAccess?.canManage && !showInviteTeam ? (
+              <PanelRow
+                icon={<PersonPlusIcon />}
+                title="Add team member"
+                description="Invite by email — they join after accepting"
+                onClick={() => {
+                  setInviteFlash(null);
+                  setShowInviteTeam(true);
+                }}
+                chevron
+                accent
+              />
+            ) : null}
             {editable ? (
               <PanelRow
                 icon={<PlusIcon />}
                 title="Add company"
-                description="Search an existing firm to partner with or invite into the group"
+                description="Partner (dashed) or child firm under ownership (solid arrow)"
                 onClick={onOpenAdd}
                 chevron
-                accent
+                accent={selected.domainVerified !== false}
               />
             ) : null}
             {selected.href && selected.href !== "#" ? (
@@ -231,11 +367,11 @@ export function GraphSidePanel({
                 >
                   <div className="pointer-events-none absolute top-2 bottom-2 left-0 w-[3px] rounded-full bg-transparent group-hover:bg-[#f59e0b]" />
                   <div className="flex items-start gap-3">
-                    <LogoMark
+                    <LogoTile
+                      name={hit.name}
                       initials={hit.logoInitials}
                       logoUrl={hit.logoUrl}
                       size="sm"
-                      className="rounded-lg"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-[13px] font-semibold text-ink">
@@ -251,18 +387,20 @@ export function GraphSidePanel({
                           type="button"
                           disabled={pending || !hit.claimed}
                           onClick={() => addCompany(hit, "partner")}
-                          className="h-7 rounded-lg bg-ink px-2.5 text-[11px] font-semibold text-white disabled:opacity-40"
+                          className="h-7 rounded-lg border border-[#e8eaee] bg-white px-2.5 text-[11px] font-semibold text-ink disabled:opacity-40"
+                          title="Mutual partnership (dashed link)"
                         >
-                          {busy ? "…" : "Partner"}
+                          {busy ? "…" : "As partner"}
                         </button>
                         {canInviteToGroup ? (
                           <button
                             type="button"
                             disabled={pending || !hit.claimed}
                             onClick={() => addCompany(hit, "group")}
-                            className="h-7 rounded-lg border border-[#e8eaee] bg-white px-2.5 text-[11px] font-semibold text-ink disabled:opacity-40"
+                            className="h-7 rounded-lg bg-ink px-2.5 text-[11px] font-semibold text-white disabled:opacity-40"
+                            title="Invite into group — can hang under a parent as child firm"
                           >
-                            Invite to group
+                            As child firm
                           </button>
                         ) : null}
                       </div>
@@ -282,8 +420,8 @@ export function GraphSidePanel({
               <li className="mt-2 border-t border-[#eef0f3] pt-2">
                 <PanelRow
                   icon={<BuildingIcon />}
-                  title="Create new subsidiary"
-                  description="Draft a new firm under this group (not an existing profile)"
+                  title="Create child firm"
+                  description="New company owned under this parent (ćerka firma)"
                   onClick={() => setShowCreate((v) => !v)}
                   chevron
                 />
@@ -438,6 +576,26 @@ function PlusIcon() {
   );
 }
 
+function PersonPlusIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M15 19a4.5 4.5 0 0 0-9 0"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <circle cx="10.5" cy="8.5" r="3" stroke="currentColor" strokeWidth="1.75" />
+      <path
+        d="M18 8v6M15 11h6"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function ExternalIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -482,6 +640,26 @@ function ChevronIcon() {
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M9 6l6 6-6 6"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M12 3.5 19 6.5v5.2c0 4.4-2.9 7.4-7 8.8-4.1-1.4-7-4.4-7-8.8V6.5L12 3.5Z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+      />
+      <path
+        d="m9.2 12 1.9 1.9 3.7-3.8"
         stroke="currentColor"
         strokeWidth="1.75"
         strokeLinecap="round"

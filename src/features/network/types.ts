@@ -26,6 +26,8 @@ export type NetworkNodeData = {
   kind: NetworkNodeKind;
   /** Raw company uuid when kind is a company node. */
   companyId?: string;
+  /** Domain verification (DNS / meta / email-domain). Required for trust. */
+  domainVerified?: boolean;
   stats: {
     confirmedPartners: number;
     confirmedReferences: number;
@@ -34,6 +36,10 @@ export type NetworkNodeData = {
   };
   href: string;
   moreCount?: number;
+  /** Public-visible team size (no PII). Omit / 0 → no node indicator. */
+  publicTeamCount?: number;
+  /** Up to 3 avatars for node stack — photo or initials only, never names. */
+  publicTeamAvatars?: { photoUrl: string | null; initials: string }[];
 };
 
 export type NetworkNode = {

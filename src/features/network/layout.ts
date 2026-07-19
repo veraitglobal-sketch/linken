@@ -4,8 +4,8 @@ export type PositionedNode = NetworkNode & {
   position: { x: number; y: number };
 };
 
-const LEVEL_GAP_Y = 160;
-const SIBLING_GAP_X = 220;
+const LEVEL_GAP_Y = 170;
+const SIBLING_GAP_X = 240;
 
 /**
  * Layered tree for group scope: hub on top, ownership levels below.
@@ -111,7 +111,8 @@ export function layoutTree(
 }
 
 /**
- * Deterministic radial layout — company scope (hub center).
+ * Hub on the left, others fanned to the right — cleaner partner maps,
+ * fewer crossed edges than a full circle.
  */
 export function layoutRadial(
   nodes: NetworkNode[],
@@ -132,8 +133,8 @@ export function layoutRadial(
       .filter((id) => id !== hubId),
   );
 
-  const ring1: NetworkNode[] = [];
-  const ring2: NetworkNode[] = [];
+  const structure: NetworkNode[] = [];
+  const partners: NetworkNode[] = [];
 
   for (const n of nodes) {
     if (n.id === hubId) continue;
@@ -142,42 +143,41 @@ export function layoutRadial(
       n.data.kind === "company" ||
       n.data.kind === "subsidiary"
     ) {
-      ring1.push(n);
+      structure.push(n);
     } else {
-      ring2.push(n);
+      partners.push(n);
     }
   }
 
   const result: PositionedNode[] = [{ ...hub, position: { x: 0, y: 0 } }];
-  placeRing(ring1, 280, result);
-  placeRing(ring2, 480, result);
+  placeFan(structure, 300, result);
+  // Partners slightly further, offset arc so rings don't collide
+  placeFan(partners, structure.length ? 480 : 340, result, 0.12);
   return result;
 }
 
-function placeRing(
+/** Place nodes in a right-side fan (about 150° arc). */
+function placeFan(
   items: NetworkNode[],
   radius: number,
   out: PositionedNode[],
+  phase = 0,
 ) {
   const n = items.length;
   if (n === 0) return;
+
+  const span = Math.PI * 0.85;
+  const start = -span / 2 + phase;
+
   for (let i = 0; i < n; i++) {
-    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
-    const jitter = seededJitter(items[i].id);
+    const t = n === 1 ? 0.5 : i / (n - 1);
+    const angle = start + t * span;
     out.push({
       ...items[i],
       position: {
-        x: Math.cos(angle) * radius + jitter.x,
-        y: Math.sin(angle) * radius + jitter.y,
+        x: Math.cos(angle) * radius,
+        y: Math.sin(angle) * radius * 0.92,
       },
     });
   }
-}
-
-function seededJitter(id: string) {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
-  const a = ((h % 17) - 8) * 3;
-  const b = (((h >> 4) % 17) - 8) * 3;
-  return { x: a, y: b };
 }

@@ -50,7 +50,7 @@ export async function requestClientConfirmation(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Case study could not be prepared.")}`);
   }
 
-  const { data: mockMeta } = await supabase
+  const { data: caseMeta } = await supabase
     .from("case_studies")
     .select("title")
     .eq("id", caseStudyId)
@@ -77,7 +77,7 @@ export async function requestClientConfirmation(formData: FormData) {
   await sendClientConfirmationEmail({
     to: email,
     requesterName: company.name,
-    caseTitle: mockMeta?.title ?? caseSlug,
+    caseTitle: caseMeta?.title ?? caseSlug,
     token,
   });
 

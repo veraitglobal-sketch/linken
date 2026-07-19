@@ -6,12 +6,13 @@ import { logProfileEvent } from "@/features/analytics/log";
 import { parseProfileSource } from "@/features/analytics/sources";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
+import { getCaseStudiesForCompany } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { getConfirmedGroupForCompany } from "@/features/groups/queries";
+import { getPartnersForCompany } from "@/features/partners/public-queries";
 import { getReferencesForCompany } from "@/features/references/queries";
+import { getPublicTeam } from "@/features/team/queries";
 import { getTrustProfile } from "@/features/trust/queries";
-import { getCaseStudiesForCompany } from "@/data/mock/case-studies";
-import { getPartnersForCompany } from "@/data/mock/partners";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
@@ -55,20 +56,27 @@ export default async function CompanyPage({ params, searchParams }: Props) {
   const company = await getCompanyForPage(slug);
   if (!company) notFound();
 
-  const partners = getPartnersForCompany(slug).filter(
-    (p) => p.status === "accepted",
-  );
-  const caseStudies = getCaseStudiesForCompany(slug);
-  const [references, trust, assessmentSummary, isOwner, groupBadge] =
-    await Promise.all([
-      getReferencesForCompany(company.id),
-      getTrustProfile(company.id, company.slug),
-      getClientAssessmentSummary(company.id),
-      company.claimed !== false
-        ? isCompanyOwnerSlug(slug)
-        : Promise.resolve(false),
-      getConfirmedGroupForCompany(company.id),
-    ]);
+  const [
+    partners,
+    caseStudies,
+    references,
+    trust,
+    assessmentSummary,
+    isOwner,
+    groupBadge,
+    teamMembers,
+  ] = await Promise.all([
+    getPartnersForCompany(company.id),
+    getCaseStudiesForCompany(company.id),
+    getReferencesForCompany(company.id),
+    getTrustProfile(company.id, company.slug),
+    getClientAssessmentSummary(company.id),
+    company.claimed !== false
+      ? isCompanyOwnerSlug(slug)
+      : Promise.resolve(false),
+    getConfirmedGroupForCompany(company.id),
+    getPublicTeam(company.id),
+  ]);
   const editable = isOwner;
   const siteUrl = getSiteUrl();
   const confirmedLinks =
@@ -131,6 +139,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         siteUrl={siteUrl}
         domainVerifiedJustNow={domainVerified === "1"}
         groupBadge={groupBadge}
+        teamMembers={teamMembers}
         networkMap={
           confirmedLinks >= 2 ? (
             <NetworkMapSection

@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import {
+  IconHome,
+  IconSearch,
+} from "@/components/dashboard/workspace-icons";
 import { WorkspaceNav } from "@/components/dashboard/workspace-nav";
 import { NetworkMark } from "@/components/marketing/network-mark";
 import { LogoMark } from "@/components/ui/logo-mark";
@@ -28,68 +32,97 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-const PAGE_TITLES: Record<string, string> = {
-  "/dashboard": "Network graph",
-  "/dashboard/structure": "Structure",
-  "/dashboard/verification": "Verification",
-  "/dashboard/insights": "Insights",
-  "/dashboard/inbox": "Inquiries",
-  "/dashboard/partners": "Partners",
-  "/dashboard/group": "Company group",
-  "/dashboard/team": "Team",
+const PAGE_META: Record<
+  string,
+  { title: string; description?: string; actionHref?: string; actionLabel?: string }
+> = {
+  "/dashboard": {
+    title: "Network",
+    description: "Map firms, subsidiaries, and partners.",
+  },
+  "/dashboard/structure": {
+    title: "Structure",
+    description: "Ownership tree for your company group.",
+  },
+  "/dashboard/verification": {
+    title: "Verification",
+    description: "Evidence that backs public trust.",
+  },
+  "/dashboard/insights": {
+    title: "Insights",
+    description: "Visits and inquiries on your public profile.",
+  },
+  "/dashboard/inbox": {
+    title: "Inquiries",
+    description: "Leads from your public company page.",
+  },
+  "/dashboard/partners": {
+    title: "Partners",
+    description: "Invite firms and grow confirmed relationships.",
+  },
+  "/dashboard/group": {
+    title: "Company group",
+    description: "Members, invites, and hierarchy.",
+  },
+  "/dashboard/team": {
+    title: "Team",
+    description: "People who can operate this workspace.",
+  },
+  "/dashboard/widgets": {
+    title: "Widgets",
+    description: "Embed Linken on your website.",
+  },
 };
 
 export function WorkspaceShell({ children, company }: Props) {
   const pathname = usePathname();
   const isGraph = pathname === "/dashboard";
-  const title =
-    PAGE_TITLES[pathname] ??
-    Object.entries(PAGE_TITLES).find(
+  const meta =
+    PAGE_META[pathname] ??
+    Object.entries(PAGE_META).find(
       ([href]) => href !== "/dashboard" && pathname.startsWith(href),
     )?.[1] ??
-    "Workspace";
+    { title: "Workspace" };
 
   return (
     <div className="flex min-h-0 flex-1">
-      <aside className="hidden w-[240px] shrink-0 flex-col border-r border-[#e7e9ee] bg-[#f3f4f7] lg:flex">
-        <div className="flex h-14 items-center gap-2.5 px-4">
-          <Link href="/" className="inline-flex items-center gap-2.5 text-ink">
-            <NetworkMark size={22} className="text-ink" />
-            <span className="font-display text-[1.15rem] font-semibold tracking-[-0.03em]">
+      <aside className="hidden w-[248px] shrink-0 flex-col border-r border-[#e8eaee] bg-white lg:flex">
+        <div className="flex h-12 items-center gap-2.5 px-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-ink transition-opacity hover:opacity-80"
+          >
+            <NetworkMark size={20} className="text-ink" />
+            <span className="text-[15px] font-semibold tracking-[-0.03em]">
               Linken
             </span>
           </Link>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col px-3 py-4">
+        <div className="flex min-h-0 flex-1 flex-col px-3 pb-3">
           {company ? (
-            <div className="mb-4 rounded-lg border border-[#e0e4ea] bg-white px-2.5 py-2.5">
-              <p className="px-0.5 text-[9px] font-semibold tracking-[0.14em] text-[#8b93a1] uppercase">
-                Workspace
-              </p>
-              <Link
-                href={`/c/${company.slug}`}
-                className="mt-1.5 flex items-center gap-2.5 rounded-lg px-0.5 py-1 transition-colors hover:bg-[#f5f6f8]"
-              >
-                <LogoMark
-                  initials={initials(company.name)}
-                  logoUrl={company.logoUrl}
-                  website={company.website}
-                  size="sm"
-                  className="rounded-lg"
-                />
-                <div className="min-w-0">
-                  <p className="truncate text-[13px] font-semibold text-ink">
-                    {company.name}
-                  </p>
-                  <p className="truncate text-[11px] text-[#9aa3af]">
-                    {company.verified ? "Verified" : "Workspace"}
-                  </p>
-                </div>
-              </Link>
-            </div>
+            <Link
+              href={`/c/${company.slug}`}
+              className="mb-5 flex items-center gap-2.5 rounded-xl border border-[#e8eaee] bg-[#fafbfc] px-2.5 py-2 transition-colors hover:bg-[#f4f6f9]"
+            >
+              <LogoMark
+                initials={initials(company.name)}
+                logoUrl={company.logoUrl}
+                website={company.website}
+                size="sm"
+                className="rounded-lg"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[12px] font-semibold text-ink">
+                  {company.name}
+                </p>
+                <p className="truncate text-[11px] text-[#94a3b8]">
+                  {company.verified ? "Verified workspace" : "Workspace"}
+                </p>
+              </div>
+            </Link>
           ) : (
-            <div className="mb-5 rounded-xl border border-dashed border-[#e8eaee] bg-white px-3 py-3">
+            <div className="mb-5 rounded-xl border border-dashed border-[#e2e8f0] px-3 py-3">
               <p className="text-[13px] font-semibold text-ink">No company</p>
               <Link
                 href="/onboarding"
@@ -100,72 +133,68 @@ export function WorkspaceShell({ children, company }: Props) {
             </div>
           )}
 
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto pr-0.5">
             <WorkspaceNav companySlug={company?.slug} />
           </div>
 
-          <div className="mt-4 space-y-0.5 border-t border-[#e8eaee] pt-3">
+          <div className="mt-3 space-y-0.5 border-t border-[#f1f5f9] pt-3">
             <Link
               href="/search"
-              className="flex h-9 items-center rounded-lg px-3 text-[13px] font-medium text-[#5b6472] transition-colors hover:bg-white/70"
+              className="group flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium text-[#64748b] transition-colors hover:bg-[#f4f6f9] hover:text-ink"
             >
+              <IconSearch className="text-[#94a3b8] group-hover:text-[#64748b]" />
               Directory
             </Link>
             <Link
               href="/"
-              className="flex h-9 items-center rounded-lg px-3 text-[13px] font-medium text-[#5b6472] transition-colors hover:bg-white/70"
+              className="group flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium text-[#64748b] transition-colors hover:bg-[#f4f6f9] hover:text-ink"
             >
+              <IconHome className="text-[#94a3b8] group-hover:text-[#64748b]" />
               Home
             </Link>
           </div>
+
+          {company ? (
+            <div className="mt-3 flex items-center gap-2.5 rounded-xl px-2 py-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#eef1f6] text-[11px] font-semibold text-ink">
+                {initials(company.name).slice(0, 1)}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-[12px] font-semibold text-ink">
+                  {company.name}
+                </p>
+                <p className="truncate text-[10px] text-[#94a3b8]">Owner</p>
+              </div>
+            </div>
+          ) : null}
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col bg-[#f5f6f8]">
-        <header className="relative flex h-12 shrink-0 items-center gap-3 border-b border-[#e7e9ee] bg-white px-4 sm:px-5">
+      <div className="flex min-w-0 flex-1 flex-col bg-[#f6f7f9]">
+        <header className="flex h-12 shrink-0 items-center gap-3 border-b border-[#e8eaee] bg-white/90 px-4 backdrop-blur-sm sm:px-6">
           <div className="min-w-0 flex-1">
-            {isGraph ? (
-              <p className="truncate text-[12px] text-[#94a3b8]">
-                <span className="font-medium text-[#64748b]">Build</span>
-                <span className="mx-1.5 text-[#e2e8f0]">/</span>
-                <span className="font-semibold text-ink">Network graph</span>
+            <h1 className="truncate text-[14px] font-semibold tracking-[-0.02em] text-ink">
+              {meta.title}
+            </h1>
+            {meta.description && !isGraph ? (
+              <p className="hidden truncate text-[11px] text-[#94a3b8] sm:block">
+                {meta.description}
               </p>
-            ) : (
-              <h1 className="truncate text-[15px] font-semibold tracking-[-0.02em] text-ink">
-                {title}
-              </h1>
-            )}
+            ) : null}
           </div>
-          {isGraph ? (
-            <div className="absolute left-1/2 hidden -translate-x-1/2 items-center rounded-full border border-[#e2e8f0] bg-[#f8fafc] p-0.5 lg:flex">
-              <span className="rounded-full bg-white px-3.5 py-1 text-[11px] font-semibold text-ink shadow-sm">
-                Editor
-              </span>
-              <Link
-                href="/dashboard/partners"
-                className="rounded-full px-3.5 py-1 text-[11px] font-medium text-[#64748b] transition-colors hover:text-ink"
-              >
-                Partners
-              </Link>
-              <Link
-                href="/dashboard/structure"
-                className="rounded-full px-3.5 py-1 text-[11px] font-medium text-[#64748b] transition-colors hover:text-ink"
-              >
-                Structure
-              </Link>
-            </div>
-          ) : null}
           {company ? (
             <div className="flex shrink-0 items-center gap-2">
-              <Link
-                href="/dashboard/structure"
-                className="hidden h-8 items-center rounded-lg border border-[#e2e8f0] bg-white px-3 text-[11px] font-semibold text-ink transition-colors hover:bg-[#f8fafc] sm:inline-flex"
-              >
-                Add subsidiary
-              </Link>
+              {!isGraph && meta.actionHref && meta.actionLabel ? (
+                <Link
+                  href={meta.actionHref}
+                  className="hidden h-8 items-center rounded-lg bg-ink px-3 text-[11px] font-semibold text-white transition-colors hover:bg-[#1a2332] sm:inline-flex"
+                >
+                  {meta.actionLabel}
+                </Link>
+              ) : null}
               <Link
                 href={`/c/${company.slug}`}
-                className="inline-flex h-8 items-center rounded-lg bg-ink px-3 text-[11px] font-semibold text-white transition-colors hover:bg-[#1a2332]"
+                className="inline-flex h-8 items-center rounded-lg border border-[#e2e8f0] bg-white px-3 text-[11px] font-semibold text-ink transition-colors hover:bg-[#f8fafc]"
               >
                 Public profile
               </Link>
@@ -182,9 +211,8 @@ export function WorkspaceShell({ children, company }: Props) {
 
         <div className="flex gap-1 overflow-x-auto border-b border-[#e8eaee] bg-white px-3 py-2 lg:hidden">
           {[
-            ["/dashboard", "Graph"],
+            ["/dashboard", "Network"],
             ["/dashboard/structure", "Structure"],
-            ["/dashboard/verification", "Verify"],
             ["/dashboard/insights", "Insights"],
             ["/dashboard/inbox", "Inbox"],
             ["/dashboard/partners", "Partners"],
@@ -193,10 +221,10 @@ export function WorkspaceShell({ children, company }: Props) {
               key={href}
               href={href}
               className={cn(
-                "shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium",
+                "shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors",
                 pathname === href
-                  ? "bg-[#eef0f3] font-semibold text-ink"
-                  : "text-[#5b6472]",
+                  ? "bg-[#eef1f6] font-semibold text-ink"
+                  : "text-[#64748b]",
               )}
             >
               {label}
@@ -207,17 +235,15 @@ export function WorkspaceShell({ children, company }: Props) {
         <div
           className={cn(
             "min-h-0 flex-1",
-            isGraph ? "overflow-hidden p-0" : "overflow-y-auto",
+            isGraph ? "overflow-hidden" : "overflow-y-auto",
           )}
         >
           {isGraph ? (
-            <div className="h-full min-h-0 overflow-hidden border-0 bg-white">
+            <div className="h-full min-h-0 overflow-hidden bg-[#f7f8fa]">
               {children}
             </div>
           ) : (
-            <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
-              {children}
-            </div>
+            children
           )}
         </div>
       </div>

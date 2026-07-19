@@ -54,7 +54,7 @@ export function OnboardingForm({ error }: Props) {
           </span>
           <Input
             name="name"
-            placeholder="Acme Architecture"
+            placeholder="Your company name"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}

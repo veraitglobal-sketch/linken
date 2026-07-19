@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getCaseStudiesForCompany } from "@/data/mock/case-studies";
-import { getCompanyBySlug } from "@/data/mock/companies";
-import { getPartnersForCompany } from "@/data/mock/partners";
+import { getCaseStudiesForCompany } from "@/features/case-studies/queries";
+import { getCompanyForPage } from "@/features/companies/queries";
+import { getPartnersForCompany } from "@/features/partners/public-queries";
 import { getSiteUrl } from "@/lib/site";
 
 type Params = {
@@ -19,7 +19,7 @@ export async function OPTIONS() {
 
 export async function GET(_request: Request, { params }: Params) {
   const { slug } = await params;
-  const company = getCompanyBySlug(slug);
+  const company = await getCompanyForPage(slug.trim());
 
   if (!company) {
     return NextResponse.json(
@@ -29,9 +29,10 @@ export async function GET(_request: Request, { params }: Params) {
   }
 
   const siteUrl = getSiteUrl();
-  const confirmedPartners = getPartnersForCompany(slug).filter(
-    (partner) => partner.status === "accepted",
-  );
+  const [partners, caseStudies] = await Promise.all([
+    getPartnersForCompany(company.id),
+    getCaseStudiesForCompany(company.id),
+  ]);
 
   return NextResponse.json(
     {
@@ -41,8 +42,8 @@ export async function GET(_request: Request, { params }: Params) {
       logoInitials: company.logoInitials,
       city: company.city,
       country: company.country,
-      partnerCount: confirmedPartners.length,
-      caseStudyCount: getCaseStudiesForCompany(slug).length,
+      partnerCount: partners.length,
+      caseStudyCount: caseStudies.length,
       profileUrl: `${siteUrl}/c/${company.slug}`,
       embedUrl: `${siteUrl}/embed/${company.slug}`,
     },

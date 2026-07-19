@@ -19,8 +19,8 @@ export function CreateUnclaimedForm({ defaultName = "" }: Props) {
         Can&apos;t find them? Add a draft profile
       </h2>
       <p className="mt-2 text-[13px] text-ink-soft">
-        We create an unclaimed company page and send an invite. Partnerships stay
-        pending until they claim and confirm.
+        We create an unclaimed company page and email a claim link. They are not
+        official partners until they claim and accept the request.
       </p>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -28,7 +28,7 @@ export function CreateUnclaimedForm({ defaultName = "" }: Props) {
           <span className="mb-1.5 block text-[12px] font-medium text-ink">
             Company name
           </span>
-          <Input name="name" required defaultValue={defaultName} placeholder="BauPro GmbH" />
+          <Input name="name" required defaultValue={defaultName} placeholder="Partner firm name" />
         </label>
         <label className="block">
           <span className="mb-1.5 block text-[12px] font-medium text-ink">

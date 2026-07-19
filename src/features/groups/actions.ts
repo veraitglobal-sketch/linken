@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendGroupInviteEmail, sendTeamInviteEmail } from "@/lib/email";
 import { toSlug } from "@/lib/slug";
@@ -257,6 +258,23 @@ export async function createSubsidiary(formData: FormData) {
 
   if (!group) {
     redirect(`${back}?error=${encodeURIComponent("Group not found.")}`);
+  }
+
+  // Ghost subsidiary counts toward the creator firm's daily unclaimed quota.
+  const { data: seedCompany } = await supabase
+    .from("companies")
+    .select("id")
+    .eq("owner_id", user.id)
+    .eq("claimed", true)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (seedCompany?.id) {
+    const quota = await assertGhostDailyQuota(supabase, seedCompany.id);
+    if (!quota.ok) {
+      redirect(`${back}?error=${encodeURIComponent(quota.error)}`);
+    }
   }
 
   const slug = await uniqueCompanySlug(supabase, name);

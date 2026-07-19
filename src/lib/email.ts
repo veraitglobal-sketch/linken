@@ -92,6 +92,35 @@ export async function sendClaimInviteEmail({
   });
 }
 
+type PartnershipRequestEmailInput = {
+  to: string;
+  requesterName: string;
+  recipientName: string;
+};
+
+/** Existing claimed company — open invite to accept on Partners. */
+export async function sendPartnershipRequestEmail({
+  to,
+  requesterName,
+  recipientName,
+}: PartnershipRequestEmailInput) {
+  const inboxUrl = `${getSiteUrl()}/dashboard/partners`;
+  return sendTextEmail({
+    to,
+    subject: `${requesterName} wants to partner with ${recipientName} on Linken`,
+    body: [
+      `${requesterName} sent a partnership request to ${recipientName} on Linken.`,
+      "",
+      "Accept it in your workspace to become official partners (then it appears on the network graph):",
+      inboxUrl,
+      "",
+      "If this was unexpected, you can decline in the Partners inbox.",
+    ].join("\n"),
+    logLabel: "partnership-request",
+    linkForLog: inboxUrl,
+  });
+}
+
 type ReferenceEmailInput = {
   to: string;
   providerName: string;
@@ -244,5 +273,38 @@ export async function sendTeamInviteEmail(input: {
     ].join("\n"),
     logLabel: "team-invite",
     linkForLog: loginUrl,
+  });
+}
+
+type TeamJoinInviteEmailInput = {
+  to: string;
+  inviterName: string;
+  companyName: string;
+  token: string;
+};
+
+/** Consent-gated team invite — accept at /join/[token]. */
+export async function sendTeamJoinInviteEmail({
+  to,
+  inviterName,
+  companyName,
+  token,
+}: TeamJoinInviteEmailInput) {
+  const joinUrl = `${getSiteUrl()}/join/${token}`;
+  return sendTextEmail({
+    to,
+    subject: `${inviterName} te poziva u tim firme ${companyName} na Linken-u`,
+    body: [
+      `${inviterName} te poziva u tim firme ${companyName} na Linken-u.`,
+      "",
+      "Otvori link da prihvatiš ili odbiješ pozivnicu:",
+      joinUrl,
+      "",
+      "Javni prikaz na profilu firme biraš ti — podrazumevano si sakriven.",
+      "",
+      "Ako nisi očekivao/la ovaj email, možeš ga ignorisati.",
+    ].join("\n"),
+    logLabel: "team-join-invite",
+    linkForLog: joinUrl,
   });
 }

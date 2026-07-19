@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CompanyResult } from "@/components/search/company-result";
 import { Input } from "@/components/ui/input";
 import { SectionTitle } from "@/components/ui/section-title";
@@ -15,6 +16,7 @@ type Props = {
 export default async function SearchPage({ searchParams }: Props) {
   const { q = "" } = await searchParams;
   const results = await searchCompanies(q);
+  const empty = results.length === 0;
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
@@ -35,8 +37,20 @@ export default async function SearchPage({ searchParams }: Props) {
         {results.map((company) => (
           <CompanyResult key={company.id} company={company} />
         ))}
-        {results.length === 0 ? (
-          <p className="text-sm text-muted">No companies match this search.</p>
+        {empty ? (
+          <div className="rounded-2xl border border-line bg-[#fafbfc] px-5 py-8 text-center">
+            <p className="text-sm text-muted">
+              {q.trim()
+                ? "No companies match this search."
+                : "No companies on Linken yet — be the first."}
+            </p>
+            <Link
+              href="/onboarding"
+              className="mt-3 inline-block text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
+            >
+              Create your company link
+            </Link>
+          </div>
         ) : null}
       </div>
     </div>

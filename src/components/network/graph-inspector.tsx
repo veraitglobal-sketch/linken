@@ -14,7 +14,7 @@ import type {
 } from "@/features/network/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LogoMark } from "@/components/ui/logo-mark";
+import { LogoTile } from "@/components/ui/logo-tile";
 
 const ROLE_LABEL = {
   group: "Group hub",
@@ -58,7 +58,8 @@ export function GraphInspector({
           {ROLE_LABEL[selected.kind]}
         </p>
         <div className="mt-2 flex items-start gap-3">
-          <LogoMark
+          <LogoTile
+            name={selected.name}
             initials={selected.logoInitials}
             logoUrl={selected.logoUrl}
             website={selected.website}

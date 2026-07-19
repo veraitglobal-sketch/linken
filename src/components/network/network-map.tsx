@@ -8,7 +8,6 @@ import {
   ConnectionMode,
   Controls,
   MarkerType,
-  MiniMap,
   ReactFlow,
   addEdge,
   applyEdgeChanges,
@@ -61,49 +60,68 @@ type Props = {
 };
 
 function toFlowEdge(e: NetworkEdge, selected: boolean): Edge {
-  const ink = selected ? "#3b82f6" : "#94a3b8";
-  const style =
-    e.type === "subsidiary"
-      ? {
-          stroke: selected ? "#3b82f6" : "#64748b",
-          strokeWidth: selected ? 2.25 : 1.75,
-        }
-      : e.type === "partner"
-        ? {
-            stroke: ink,
-            strokeWidth: selected ? 2 : 1.5,
-            strokeDasharray: "5 4",
-          }
-        : e.type === "member_of"
-          ? { stroke: ink, strokeWidth: selected ? 2 : 1.5 }
-          : {
-              stroke: selected ? "#93c5fd" : "#cbd5e1",
-              strokeWidth: 1.25,
-              strokeDasharray: "4 4",
-            };
+  const isOwns = e.type === "subsidiary";
+  const isMember = e.type === "member_of";
+  const isStructure = isOwns || isMember;
+  const isPartner = e.type === "partner";
+
+  // Ownership = solid dark + arrow. Partner = dashed, mutual (no arrow).
+  const stroke = selected
+    ? "#2563eb"
+    : isOwns
+      ? "#0b1220"
+      : isMember
+        ? "#475569"
+        : isPartner
+          ? "#94a3b8"
+          : "#cbd5e1";
+
+  const label = isOwns
+    ? "owns"
+    : isPartner
+      ? "partner"
+      : isMember
+        ? "member"
+        : e.type === "client"
+          ? "client"
+          : undefined;
 
   return {
     id: e.id,
     source: e.source,
     target: e.target,
-    type: "smoothstep",
+    type: isStructure ? "smoothstep" : "default",
     data: e,
     selectable: true,
     focusable: true,
     deletable: Boolean(e.detachable),
-    reconnectable: e.type === "subsidiary" || e.type === "member_of",
+    reconnectable: isStructure,
     interactionWidth: 28,
-    style,
+    label,
+    labelStyle: {
+      fill: isOwns ? "#0b1220" : "#64748b",
+      fontSize: 10,
+      fontWeight: 600,
+      letterSpacing: "0.02em",
+    },
+    labelBgStyle: { fill: "#f7f8fa" },
+    labelBgPadding: [3, 6] as [number, number],
+    labelBgBorderRadius: 4,
+    style: {
+      stroke,
+      strokeWidth: selected ? 2.25 : isOwns ? 2 : isPartner ? 1.5 : 1.6,
+      strokeDasharray: isPartner || e.type === "client" ? "5 4" : undefined,
+      opacity: 1,
+    },
     animated: false,
-    markerEnd:
-      e.type === "subsidiary" || e.type === "client"
-        ? {
-            type: MarkerType.ArrowClosed,
-            color: selected ? "#3b82f6" : "#64748b",
-            width: 12,
-            height: 12,
-          }
-        : undefined,
+    markerEnd: isOwns
+      ? {
+          type: MarkerType.ArrowClosed,
+          color: stroke,
+          width: 14,
+          height: 14,
+        }
+      : undefined,
   };
 }
 
@@ -116,9 +134,8 @@ function graphSignature(graph: NetworkGraph) {
 
 export function NetworkMap({ graph, editable = false }: Props) {
   const router = useRouter();
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [mode, setMode] = useState<ConnectMode>("structure");
-  const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selected, setSelected] = useState<NetworkNodeData | null>(null);
@@ -226,17 +243,9 @@ export function NetworkMap({ graph, editable = false }: Props) {
   }, [selectedId, onSelect, onAdd, editable, setNodes, setEdges]);
 
   const flash = useCallback((msg: string, isError = false) => {
-    if (isError) {
-      setError(msg);
-      setToast(null);
-    } else {
-      setToast(msg);
-      setError(null);
-    }
-    window.setTimeout(() => {
-      setToast(null);
-      setError(null);
-    }, 4200);
+    if (!isError) return;
+    setError(msg);
+    window.setTimeout(() => setError(null), 3800);
   }, []);
 
   const persistPositions = useCallback(
@@ -288,10 +297,8 @@ export function NetworkMap({ graph, editable = false }: Props) {
         };
       }),
     );
-    flash("Layout reset.");
   }, [
     editable,
-    flash,
     graph.edges,
     graph.nodes,
     layoutKey,
@@ -323,7 +330,6 @@ export function NetworkMap({ graph, editable = false }: Props) {
               router.refresh();
               return;
             }
-            flash(result.message ?? "Detached.");
             router.refresh();
           });
         }
@@ -367,7 +373,6 @@ export function NetworkMap({ graph, editable = false }: Props) {
           router.refresh();
           return;
         }
-        flash(result.message ?? "Connected.");
         router.refresh();
       });
     },
@@ -412,7 +417,6 @@ export function NetworkMap({ graph, editable = false }: Props) {
           router.refresh();
           return;
         }
-        flash(result.message ?? "Moved.");
         router.refresh();
       });
     },
@@ -421,76 +425,74 @@ export function NetworkMap({ graph, editable = false }: Props) {
 
   if (graph.nodes.length === 0) return null;
 
-  const edgeCounts = useMemo(() => {
-    let structure = 0;
-    let partner = 0;
-    let client = 0;
-    for (const e of graph.edges) {
-      if (e.type === "subsidiary" || e.type === "member_of") structure += 1;
-      else if (e.type === "partner") partner += 1;
-      else if (e.type === "client") client += 1;
-    }
-    return { structure, partner, client, nodes: graph.nodes.length };
-  }, [graph.edges, graph.nodes.length]);
-
   return (
     <div className="linken-flow relative h-full w-full bg-[#f7f8fa]">
-      {/* Floating command cluster — stays out of the canvas */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-3 p-3">
-        <div className="pointer-events-auto flex flex-wrap items-center gap-2">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-2 p-3">
+        <div className="pointer-events-auto flex flex-col gap-1.5">
           {editable ? (
-            <div className="flex items-center rounded-xl border border-[#e2e8f0] bg-white/95 p-1 shadow-[0_8px_24px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+            <div className="flex items-center rounded-lg border border-[#e2e8f0] bg-white p-0.5 shadow-sm">
               <button
                 type="button"
                 onClick={() => setMode("structure")}
+                title="Drag from parent → child firm (ownership)"
                 className={cn(
-                  "rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors",
+                  "rounded-md px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
                   mode === "structure"
                     ? "bg-ink text-white"
-                    : "text-[#64748b] hover:bg-[#f8fafc] hover:text-ink",
+                    : "text-[#64748b] hover:text-ink",
                 )}
               >
-                Structure
+                Ownership
               </button>
               <button
                 type="button"
                 onClick={() => setMode("partner")}
+                title="Drag between firms to request partnership"
                 className={cn(
-                  "rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors",
+                  "rounded-md px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
                   mode === "partner"
                     ? "bg-ink text-white"
-                    : "text-[#64748b] hover:bg-[#f8fafc] hover:text-ink",
+                    : "text-[#64748b] hover:text-ink",
                 )}
               >
                 Partner
               </button>
-              <span className="mx-1 h-4 w-px bg-[#e2e8f0]" />
               <button
                 type="button"
                 onClick={resetLayout}
-                className="rounded-lg px-2.5 py-1.5 text-[11px] font-medium text-[#64748b] transition-colors hover:bg-[#f8fafc] hover:text-ink"
-                title="Auto-arrange"
+                className="rounded-md px-2 py-1.5 text-[11px] text-[#94a3b8] transition-colors hover:text-ink"
+                title="Reset layout"
               >
                 Reset
               </button>
             </div>
           ) : null}
-          <div className="hidden items-center gap-2 rounded-xl border border-[#e2e8f0] bg-white/90 px-2.5 py-1.5 text-[10px] text-[#64748b] shadow-sm backdrop-blur-sm sm:flex">
-            <span className="tabular-nums font-semibold text-ink">
-              {edgeCounts.nodes}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-[#e2e8f0] bg-white/95 px-2.5 py-1.5 text-[10px] font-medium text-[#64748b] shadow-sm">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="relative inline-block h-px w-5 bg-ink">
+                <span className="absolute top-1/2 right-0 h-0 w-0 -translate-y-1/2 border-y-[3px] border-l-[5px] border-y-transparent border-l-ink" />
+              </span>
+              Owns
             </span>
-            nodes
-            <span className="text-[#e2e8f0]">·</span>
-            <span className="tabular-nums font-semibold text-ink">
-              {edgeCounts.partner}
+            <span className="inline-flex items-center gap-1.5">
+              <span
+                className="inline-block h-px w-5 border-t border-dashed border-[#94a3b8]"
+                style={{ borderTopWidth: 1.5 }}
+              />
+              Partner
             </span>
-            partners
-            <span className="text-[#e2e8f0]">·</span>
-            <span className="tabular-nums font-semibold text-ink">
-              {edgeCounts.structure}
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-sm border border-dashed border-[#f59e0b] bg-[#fffbeb]" />
+              Needs domain verify
             </span>
-            ownership
           </div>
+          {editable ? (
+            <p className="px-0.5 text-[10px] text-[#94a3b8]">
+              {mode === "structure"
+                ? "Mode: parent → child (ownership / ćerka firma)"
+                : "Mode: mutual partner link (pending until confirmed)"}
+            </p>
+          ) : null}
         </div>
 
         {editable ? (
@@ -504,28 +506,18 @@ export function NetworkMap({ graph, editable = false }: Props) {
                 setSelected(null);
               }
             }}
-            className="pointer-events-auto inline-flex h-9 items-center gap-2 rounded-xl border border-[#e2e8f0] bg-ink px-3.5 text-[12px] font-semibold text-white shadow-[0_8px_24px_rgba(15,23,42,0.14)] transition-colors hover:bg-[#1a2332]"
+            className="pointer-events-auto inline-flex h-8 items-center gap-1.5 rounded-lg bg-ink px-3 text-[11px] font-semibold text-white transition-colors hover:bg-[#1a2332]"
           >
-            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-white/15 text-[14px] leading-none">
-              +
-            </span>
-            Add company
+            + Add
           </button>
         ) : null}
       </div>
 
-      {(toast || error || pending) && (
-        <div
-          className={cn(
-            "absolute top-16 left-1/2 z-30 max-w-md -translate-x-1/2 rounded-xl border px-4 py-2.5 text-center text-[12px] font-medium shadow-lg",
-            error
-              ? "border-red-200 bg-red-50 text-red-800"
-              : "border-[#e2e8f0] bg-white text-ink",
-          )}
-        >
-          {pending ? "Saving…" : error ?? toast}
+      {error ? (
+        <div className="absolute top-14 left-1/2 z-30 max-w-sm -translate-x-1/2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-center text-[12px] font-medium text-red-800 shadow-sm">
+          {error}
         </div>
-      )}
+      ) : null}
 
       <ReactFlow
         nodes={nodes}
@@ -562,28 +554,15 @@ export function NetworkMap({ graph, editable = false }: Props) {
         <Background
           variant={BackgroundVariant.Dots}
           gap={22}
-          size={1.1}
-          color="#d4d9e2"
+          size={1}
+          color="#d8dde6"
           bgColor="#f7f8fa"
         />
         <Controls
           showInteractive={false}
           position="bottom-left"
-          className="!m-3 !overflow-hidden !rounded-xl !border !border-[#e2e8f0] !bg-white !shadow-[0_8px_24px_rgba(15,23,42,0.08)] [&>button]:!h-8 [&>button]:!w-8 [&>button]:!border-[#f1f5f9] [&>button]:!bg-white [&>button]:!fill-[#64748b]"
+          className="!m-3 !overflow-hidden !rounded-lg !border !border-[#e2e8f0] !bg-white !shadow-sm [&>button]:!h-7 [&>button]:!w-7 [&>button]:!border-[#f1f5f9] [&>button]:!bg-white [&>button]:!fill-[#64748b]"
         />
-        {!panelOpen ? (
-          <MiniMap
-            position="bottom-right"
-            pannable
-            zoomable
-            nodeStrokeWidth={3}
-            nodeColor={(n) =>
-              n.selected ? "#3b82f6" : "#94a3b8"
-            }
-            maskColor="rgba(15,23,42,0.06)"
-            className="!m-3 !h-[96px] !w-[140px] !overflow-hidden !rounded-xl !border !border-[#e2e8f0] !bg-white !shadow-[0_8px_24px_rgba(15,23,42,0.08)]"
-          />
-        ) : null}
       </ReactFlow>
 
       <GraphSidePanel

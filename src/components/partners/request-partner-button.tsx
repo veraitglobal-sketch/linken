@@ -1,25 +1,25 @@
-"use client";
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { PartnerInviteButton } from "@/components/partners/partner-invite-button";
 
 type Props = {
+  companySlug: string;
   companyName: string;
+  back?: string;
+  disabledReason?: string | null;
 };
 
-export function RequestPartnerButton({ companyName }: Props) {
-  const [sent, setSent] = useState(false);
-
+/** Alias — real partnership request via requestPartnership. */
+export function RequestPartnerButton({
+  companySlug,
+  companyName,
+  back = "/dashboard/partners",
+  disabledReason,
+}: Props) {
   return (
-    <Button
-      type="button"
-      variant="plus"
-      className="h-9 shrink-0 px-3"
-      disabled={sent}
-      onClick={() => setSent(true)}
-      aria-label={`Request partnership with ${companyName}`}
-    >
-      {sent ? "Requested" : "+ Request"}
-    </Button>
+    <PartnerInviteButton
+      companySlug={companySlug}
+      companyName={companyName}
+      back={back}
+      disabledReason={disabledReason}
+    />
   );
 }

@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const links = [
   { href: "/search", label: "Directory" },
-  { href: "/c/acme-architecture", label: "Example" },
+  { href: "/developers", label: "Developers" },
   { href: "/dashboard", label: "Workspace" },
 ];
 

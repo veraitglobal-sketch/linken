@@ -7,20 +7,22 @@ const stories = [
     quote:
       "Clients finally see our full delivery network — architecture, build, electrical — confirmed, not claimed.",
     person: "Elena Vogt",
-    role: "Managing Director, Acme Architecture",
-    with: "BauPro · Beta Elektro",
-    href: "/c/acme-architecture/case-studies/residence-berlin",
+    role: "Managing Director, architecture firm",
+    with: "Partners confirmed on shared case studies",
+    href: "/onboarding",
+    cta: "Create your company link",
     image: "/images/portrait-2.jpg",
     imageAlt: "Company leader",
   },
   {
     tone: "bg-[#163a32]",
     quote:
-      "Being confirmed on Acme’s page put us in front of clients who already trusted the lead firm.",
+      "Being confirmed on a lead firm’s page put us in front of clients who already trusted the network.",
     person: "Markus Stein",
-    role: "Owner, BauPro GmbH",
+    role: "Owner, general contracting",
     with: "Shared case study on both profiles",
-    href: "/c/acme-architecture/case-studies/office-campus-spandau",
+    href: "/search",
+    cta: "Find companies",
     image: "/images/portrait-1.jpg",
     imageAlt: "Partner company owner",
   },
@@ -29,9 +31,10 @@ const stories = [
     quote:
       "One link in the proposal. They scan, they verify, they trust the network — before the first meeting.",
     person: "Sofia Keller",
-    role: "Head of Sales, Beta Elektro",
+    role: "Head of Sales, specialist trade",
     with: "Verified one-pager attached to every bid",
-    href: "/c/acme-architecture",
+    href: "/onboarding",
+    cta: "Get started",
     image: "/images/site-work.jpg",
     imageAlt: "Project delivery",
   },
@@ -58,7 +61,7 @@ export function HomeStories() {
               <div className="flex flex-col justify-between px-7 py-8 sm:px-11 sm:py-10">
                 <div>
                   <p className="text-[11px] font-semibold tracking-[0.14em] text-[#5ec4a8] uppercase">
-                    Case study
+                    How teams use Linken
                   </p>
                   <p className="mt-5 font-display text-[clamp(1.4rem,2.6vw,2.15rem)] leading-[1.2] tracking-[-0.03em] text-white">
                     “{story.quote}”
@@ -77,7 +80,7 @@ export function HomeStories() {
                     variant="light"
                     className="h-10 px-4 text-[12px]"
                   >
-                    Read case study
+                    {story.cta}
                   </Button>
                 </div>
               </div>

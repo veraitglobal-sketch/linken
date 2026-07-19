@@ -60,6 +60,20 @@ export function UnclaimedBanner({ company, claimSent, claimError }: Props) {
             </Button>
           </form>
         ) : null}
+
+        <p className="mt-5 text-[12px] text-ink-soft">
+          <a
+            href={`mailto:hello@linken.com?subject=${encodeURIComponent(
+              `Remove unclaimed profile: ${company.name} (${company.slug})`,
+            )}&body=${encodeURIComponent(
+              `Hi Linken,\n\nThis unclaimed profile appears to be about my company and I would like it removed.\n\nProfile: ${company.slug}\n\nThanks.`,
+            )}`}
+            className="underline-offset-2 hover:underline"
+          >
+            Is this profile about your company and you want it removed? Contact
+            us
+          </a>
+        </p>
       </div>
     </section>
   );

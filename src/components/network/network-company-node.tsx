@@ -1,8 +1,13 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { LogoMark } from "@/components/ui/logo-mark";
+import { LogoTile } from "@/components/ui/logo-tile";
+import { fetchPublicTeamForPanel } from "@/features/team/panel-actions";
+import {
+  initialsFromName,
+  type PublicTeamMember,
+} from "@/features/team/types";
 import type { NetworkNodeData, NetworkNodeKind } from "@/features/network/types";
 import { cn } from "@/lib/cn";
 
@@ -17,223 +22,303 @@ export type FlowNodeData = NetworkNodeData & {
 const ROLE_LABEL: Record<NetworkNodeKind, string> = {
   group: "Group",
   company: "Company",
-  subsidiary: "Subsidiary",
+  subsidiary: "Child firm",
   partner: "Partner",
   client: "Client",
 };
 
-const ROLE_DOT: Record<NetworkNodeKind, string> = {
-  group: "bg-[#334155]",
-  company: "bg-[#0b1220]",
-  subsidiary: "bg-[#64748b]",
-  partner: "bg-[#3b82f6]",
-  client: "bg-[#94a3b8]",
-};
-
 function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
   const d = data as FlowNodeData;
-  const isHub = d.kind === "group";
   const isSelected = Boolean(selected || d.selected);
   const canWire = Boolean(d.editable) && d.kind !== "group" && !d.moreCount;
-  const meta = isHub
-    ? d.stats.companyCount != null
-      ? `${d.stats.companyCount} entities`
-      : "Hub"
-    : [d.category, d.city].filter(Boolean).join(" · ") || "—";
+  const meta = [d.category, d.city].filter(Boolean).join(" · ");
+  const needsVerify =
+    d.kind !== "group" && !d.moreCount && d.domainVerified === false;
 
   return (
-    <div className="linken-node group/node relative">
-      {/* n8n-style selection frame */}
-      <div
-        aria-hidden
-        className={cn(
-          "pointer-events-none absolute -inset-[7px] rounded-[14px] border-2 transition-opacity duration-100",
-          isSelected
-            ? "border-[#3b82f6] opacity-100"
-            : "border-transparent opacity-0",
-        )}
-      />
-
-      {/* Floating actions above selected node */}
-      {isSelected && d.editable && !d.moreCount ? (
-        <div className="nodrag nopan absolute -top-11 left-1/2 z-20 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-[#e2e8f0] bg-white p-0.5 shadow-[0_8px_20px_rgba(15,23,42,0.12)]">
-          {d.href && d.href !== "#" ? (
-            <a
-              href={d.href}
-              title="Open profile"
-              className="flex h-7 w-7 items-center justify-center rounded-md text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-ink"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ExternalIcon />
-            </a>
-          ) : null}
-          <button
-            type="button"
-            title="Add company"
-            className="flex h-7 w-7 items-center justify-center rounded-md text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-ink"
-            onClick={(e) => {
-              e.stopPropagation();
-              d.onAdd?.(id, d);
-            }}
-          >
-            <PlusIcon />
-          </button>
-        </div>
-      ) : null}
-
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={() => d.onSelect?.(id, d)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            d.onSelect?.(id, d);
-          }
-        }}
-        className={cn(
-          "relative cursor-grab rounded-[10px] border bg-white text-left transition-[border-color,box-shadow] duration-150 active:cursor-grabbing",
-          "border-[#e2e8f0] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_4px_12px_rgba(15,23,42,0.04)]",
-          "hover:border-[#cbd5e1] hover:shadow-[0_2px_8px_rgba(15,23,42,0.08)]",
-          isHub ? "min-w-[220px]" : "min-w-[200px]",
-          d.kind === "client" && "border-dashed",
-          isSelected && "border-[#cbd5e1]",
-        )}
-      >
-        <Handle
-          type="target"
-          position={Position.Left}
-          isConnectable={canWire}
+    <div className="linken-node group/node relative flex w-[132px] flex-col items-center">
+      <div className="relative w-full">
+        <div
+          aria-hidden
           className={cn(
-            "linken-handle !h-2.5 !w-2.5 !min-h-0 !min-w-0 !border-2 !border-white !bg-[#94a3b8]",
-            canWire ? "!cursor-crosshair" : "!pointer-events-none !opacity-0",
+            "pointer-events-none absolute -inset-1.5 rounded-[14px] border transition-opacity duration-100",
+            isSelected
+              ? needsVerify
+                ? "border-[#f59e0b] opacity-100"
+                : "border-[#3b82f6] opacity-100"
+              : "border-transparent opacity-0",
           )}
         />
 
-        <div className="flex items-center gap-3 px-3.5 py-3">
-          <div className="relative shrink-0">
-            <LogoMark
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => d.onSelect?.(id, d)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              d.onSelect?.(id, d);
+            }
+          }}
+          className={cn(
+            "relative w-full cursor-grab rounded-[12px] border text-center",
+            "shadow-[0_1px_0_rgba(15,23,42,0.04)] transition-colors duration-100",
+            "active:cursor-grabbing",
+            "border-l-[3px]",
+            needsVerify
+              ? "border-[#e2e8f0] border-l-[#f59e0b] bg-[#fafbfc] opacity-80"
+              : "border-[#dce1e8] border-l-[#0b1220] bg-[#fbfbfc] hover:border-[#c5ccd6] hover:bg-white",
+            d.kind === "partner" && !needsVerify && "border-l-[#64748b]",
+            d.kind === "client" && "border-dashed",
+            isSelected && !needsVerify && "border-[#c5ccd6] bg-white",
+          )}
+        >
+          <Handle
+            type="target"
+            position={Position.Left}
+            isConnectable={canWire}
+            className={cn(
+              "linken-handle !h-2 !w-2 !min-h-0 !min-w-0 !border-[1.5px] !border-[#fbfbfc] !bg-[#94a3b8]",
+              canWire ? "!cursor-crosshair" : "!pointer-events-none !opacity-0",
+            )}
+          />
+
+          <div className="relative flex flex-col items-center gap-2.5 px-3 pt-3.5 pb-3">
+            <LogoTile
+              name={d.name}
               initials={d.logoInitials}
               logoUrl={d.logoUrl}
               website={d.website}
-              size="sm"
-              className="rounded-lg"
+              size="md"
+              muted={needsVerify}
             />
-            <span
-              aria-hidden
-              className={cn(
-                "absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-white",
-                ROLE_DOT[d.kind],
-              )}
-            />
+            {d.publicTeamCount && d.publicTeamCount > 0 && d.companyId ? (
+              <TeamAvatarStack
+                companyId={d.companyId}
+                avatars={d.publicTeamAvatars ?? []}
+                count={d.publicTeamCount}
+              />
+            ) : null}
+            <span className="rounded px-1.5 py-0.5 text-[9px] font-semibold tracking-[0.12em] text-[#8b93a1] uppercase">
+              {ROLE_LABEL[d.kind]}
+            </span>
           </div>
 
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <p className="text-[10px] font-semibold tracking-[0.08em] text-[#94a3b8] uppercase">
-                {ROLE_LABEL[d.kind]}
-              </p>
-              {d.trustLevel ? (
-                <span className="truncate text-[10px] font-medium text-[#64748b]">
-                  · {d.trustLevel}
-                </span>
-              ) : null}
-            </div>
-            <p className="mt-0.5 truncate text-[13px] font-semibold tracking-[-0.02em] text-ink">
-              {d.name}
-            </p>
-            <p className="mt-0.5 truncate text-[11px] text-[#64748b]">{meta}</p>
-          </div>
+          <Handle
+            type="source"
+            position={Position.Right}
+            isConnectable={canWire}
+            className={cn(
+              "linken-handle !h-2 !w-2 !min-h-0 !min-w-0 !border-[1.5px] !border-[#fbfbfc] !bg-[#64748b]",
+              canWire ? "!cursor-crosshair" : "!pointer-events-none !opacity-0",
+            )}
+          />
         </div>
 
-        {!isHub && !d.moreCount ? (
-          <div className="flex items-center gap-3 border-t border-[#f1f5f9] px-3.5 py-1.5 text-[10px] font-medium text-[#94a3b8]">
-            <span>
-              <span className="tabular-nums text-[#475569]">
-                {d.stats.confirmedPartners}
-              </span>{" "}
-              partners
-            </span>
-            <span>
-              <span className="tabular-nums text-[#475569]">
-                {d.stats.confirmedReferences}
-              </span>{" "}
-              refs
-            </span>
+        {d.editable && !d.moreCount ? (
+          <div
+            className={cn(
+              "pointer-events-none absolute top-1/2 right-0 z-10 flex translate-x-full -translate-y-1/2 items-center",
+              "opacity-0 transition-opacity duration-120",
+              "group-hover/node:opacity-100",
+              isSelected && "opacity-100",
+            )}
+          >
+            <div className="h-px w-5 bg-[#c5ccd6]" />
+            <button
+              type="button"
+              title="Add company"
+              className="nodrag nopan pointer-events-auto ml-1.5 flex h-6 w-6 items-center justify-center rounded-[6px] border border-[#dce1e8] bg-white text-ink shadow-sm transition-colors hover:border-ink"
+              onClick={(e) => {
+                e.stopPropagation();
+                d.onAdd?.(id, d);
+              }}
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path
+                  d="M12 5v14M5 12h14"
+                  stroke="currentColor"
+                  strokeWidth="2.25"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
           </div>
         ) : null}
-
-        <Handle
-          type="source"
-          position={Position.Right}
-          isConnectable={canWire}
-          className={cn(
-            "linken-handle !h-2.5 !w-2.5 !min-h-0 !min-w-0 !border-2 !border-white !bg-[#64748b]",
-            canWire ? "!cursor-crosshair" : "!pointer-events-none !opacity-0",
-          )}
-        />
       </div>
 
-      {/* n8n-style trailing + */}
-      {d.editable && !d.moreCount ? (
-        <div
+      <div className="mt-2 w-[148px] px-1 text-center">
+        <p
           className={cn(
-            "pointer-events-none absolute top-1/2 right-0 z-10 flex translate-x-full -translate-y-1/2 items-center transition-opacity duration-150",
-            isSelected
-              ? "opacity-100"
-              : "opacity-0 group-hover/node:opacity-100",
+            "truncate text-[12px] font-semibold tracking-[-0.02em]",
+            needsVerify ? "text-[#94a3b8]" : "text-ink",
           )}
         >
-          <div className="relative flex h-px w-5 items-center bg-[#cbd5e1]">
-            <span className="absolute right-0 h-1.5 w-1.5 translate-x-1/2 rounded-full border border-white bg-[#94a3b8]" />
-          </div>
-          <button
-            type="button"
-            title="Add company"
-            className="nodrag nopan pointer-events-auto ml-2 flex h-6 w-6 items-center justify-center rounded-md border border-[#e2e8f0] bg-white text-[#475569] shadow-[0_1px_3px_rgba(15,23,42,0.08)] transition-all hover:border-[#3b82f6] hover:text-[#3b82f6]"
-            onClick={(e) => {
-              e.stopPropagation();
-              d.onAdd?.(id, d);
-            }}
-          >
-            <PlusIcon />
-          </button>
-        </div>
-      ) : null}
+          {d.name}
+        </p>
+        {needsVerify ? (
+          <p className="mt-0.5 text-[10px] font-semibold text-[#d97706]">
+            Verify domain
+          </p>
+        ) : meta ? (
+          <p className="mt-0.5 truncate text-[10px] text-[#94a3b8]">{meta}</p>
+        ) : null}
+      </div>
     </div>
   );
 }
 
-function PlusIcon() {
+function TeamAvatarStack({
+  companyId,
+  avatars,
+  count,
+}: {
+  companyId: string;
+  avatars: { photoUrl: string | null; initials: string }[];
+  count: number;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [members, setMembers] = useState<PublicTeamMember[] | null>(null);
+  const shown = avatars.slice(0, 3);
+
+  useEffect(() => {
+    if (!expanded || !companyId) return;
+    let cancelled = false;
+    void fetchPublicTeamForPanel(companyId).then((rows) => {
+      if (!cancelled) setMembers(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [expanded, companyId]);
+
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M12 5v14M5 12h14"
-        stroke="currentColor"
-        strokeWidth="2.25"
-        strokeLinecap="round"
-      />
-    </svg>
+    <>
+      <button
+        type="button"
+        className="nodrag nopan absolute -top-1 -right-1 z-20 flex items-center"
+        title={
+          expanded
+            ? "Collapse team"
+            : `${count} public team member${count === 1 ? "" : "s"} — click to expand`
+        }
+        aria-label={
+          expanded
+            ? "Collapse public team"
+            : `Expand ${count} public team members`
+        }
+        aria-expanded={expanded}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          setExpanded((v) => !v);
+        }}
+      >
+        <div className="flex -space-x-1.5">
+          {shown.map((a, i) =>
+            a.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={`${a.initials}-${i}`}
+                src={a.photoUrl}
+                alt=""
+                className="h-4 w-4 rounded-full border border-white object-cover"
+              />
+            ) : (
+              <span
+                key={`${a.initials}-${i}`}
+                className="flex h-4 w-4 items-center justify-center rounded-full border border-white bg-[#e2e8f0] text-[7px] font-semibold text-[#475569]"
+              >
+                {(a.initials || "?").slice(0, 1)}
+              </span>
+            ),
+          )}
+        </div>
+        <span className="ml-0.5 rounded-full bg-[#0b1220] px-1 py-px text-[8px] font-semibold text-white">
+          +{count}
+        </span>
+      </button>
+      {expanded && members && members.length > 0 ? (
+        <TeamSatelliteArc members={members} />
+      ) : null}
+    </>
   );
 }
 
-function ExternalIcon() {
+/** Visual-only satellites — not React Flow nodes, no edges, no panel. */
+function TeamSatelliteArc({ members }: { members: PublicTeamMember[] }) {
+  const max = 8;
+  const shown = members.slice(0, max);
+  const extra = members.length - max;
+  const slots = shown.length + (extra > 0 ? 1 : 0);
+  const startDeg = -210;
+  const endDeg = 30;
+  const radius = 48;
+
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M14 5h5v5M19 5l-9 9"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M10 5H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
-    </svg>
+    <div
+      className="pointer-events-none absolute top-[30px] left-1/2 z-30 h-0 w-0"
+      aria-hidden={false}
+    >
+      {shown.map((m, i) => {
+        const t = slots <= 1 ? 0.5 : i / Math.max(slots - 1, 1);
+        const deg = startDeg + t * (endDeg - startDeg);
+        const rad = (deg * Math.PI) / 180;
+        const x = Math.cos(rad) * radius;
+        const y = Math.sin(rad) * radius;
+        const tip = m.displayTitle
+          ? `${m.displayName} · ${m.displayTitle}`
+          : m.displayName;
+        const initials = initialsFromName(m.displayName);
+        return (
+          <div
+            key={`${m.displayName}-${i}`}
+            className="pointer-events-auto absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2"
+            style={{ left: x, top: y }}
+            title={tip}
+          >
+            {m.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={m.photoUrl}
+                alt=""
+                className="h-6 w-6 rounded-full border border-white object-cover shadow-sm"
+              />
+            ) : (
+              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white bg-[#e2e8f0] text-[8px] font-semibold text-[#475569] shadow-sm">
+                {initials.slice(0, 2)}
+              </span>
+            )}
+          </div>
+        );
+      })}
+      {extra > 0 ? (
+        <div
+          className="pointer-events-auto absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white bg-[#0b1220] text-[8px] font-semibold text-white shadow-sm"
+          style={{
+            left:
+              Math.cos(
+                ((startDeg +
+                  ((slots - 1) / Math.max(slots - 1, 1)) *
+                    (endDeg - startDeg)) *
+                  Math.PI) /
+                  180,
+              ) * radius,
+            top:
+              Math.sin(
+                ((startDeg +
+                  ((slots - 1) / Math.max(slots - 1, 1)) *
+                    (endDeg - startDeg)) *
+                  Math.PI) /
+                  180,
+              ) * radius,
+          }}
+          title={`${extra} more`}
+        >
+          +{extra}
+        </div>
+      ) : null}
+    </div>
   );
 }
 

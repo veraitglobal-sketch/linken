@@ -32,7 +32,7 @@ export function AddReferenceForm() {
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <label className="block sm:col-span-2">
           <span className="mb-1.5 block text-[12px] font-medium text-ink">Client name</span>
-          <Input name="client_name" required placeholder="Acme Offices GmbH" />
+          <Input name="client_name" required placeholder="Client company name" />
         </label>
         <label className="block sm:col-span-2">
           <span className="mb-1.5 block text-[12px] font-medium text-ink">Service</span>

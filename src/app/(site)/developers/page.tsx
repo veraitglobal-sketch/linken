@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "Linken Public API v1 and embed widgets — confirmed evidence only.",
 };
 
-const EXAMPLE_SLUG = "acme-architecture";
+const EXAMPLE_SLUG = "example-architecture";
 
 export default function DevelopersPage() {
   const siteUrl = getSiteUrl();
@@ -53,7 +53,7 @@ export default function DevelopersPage() {
       requirement:
         "Compact verified mark. Default for existing embeds — no query param required.",
       height: 72,
-      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}`,
+      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?preview=1`,
       snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "badge", 72),
       tokens: tokenizeShell(embedSnippet(siteUrl, EXAMPLE_SLUG, "badge", 72)),
     },
@@ -63,7 +63,7 @@ export default function DevelopersPage() {
       requirement:
         "Would-work-again rate and top strengths. Needs ≥3 client assessment answers on the profile.",
       height: 120,
-      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?variant=assessment`,
+      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?variant=assessment&preview=1`,
       snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "assessment", 120),
       tokens: tokenizeShell(
         embedSnippet(siteUrl, EXAMPLE_SLUG, "assessment", 120),
@@ -75,7 +75,7 @@ export default function DevelopersPage() {
       requirement:
         "Up to five confirmed client references. Empty profiles show a quiet fallback.",
       height: 160,
-      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?variant=references`,
+      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?variant=references&preview=1`,
       snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "references", 160),
       tokens: tokenizeShell(
         embedSnippet(siteUrl, EXAMPLE_SLUG, "references", 160),
@@ -217,8 +217,17 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="04"
               title="Embeds"
-              description="Drop an iframe on your site. Variants via ?variant=badge|assessment|references. Links back with ?src=embed."
+              description="Drop an iframe on your site. Variants via ?variant=compact|badge|assessment|references and ?theme=light|dark. Links back with ?src=embed."
             />
+            <p className="mt-4 text-[14px] text-ink-soft">
+              Prefer a visual configurator?{" "}
+              <a
+                href="/dashboard/widgets"
+                className="font-semibold text-ink underline underline-offset-2"
+              >
+                Configure in your dashboard →
+              </a>
+            </p>
             <EmbedsSection variants={embeds} />
           </section>
 
