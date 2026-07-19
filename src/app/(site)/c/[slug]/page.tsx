@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CompanyProfile } from "@/components/company/company-profile";
-import { getCompanyForPage } from "@/features/companies/queries";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
+import { getCompanyForPage } from "@/features/companies/queries";
+import { getReferencesForCompany } from "@/features/references/queries";
+import { getTrustProfile } from "@/features/trust/queries";
 import { getCaseStudiesForCompany } from "@/data/mock/case-studies";
 import { getPartnersForCompany } from "@/data/mock/partners";
 import { getSiteUrl } from "@/lib/site";
@@ -13,6 +15,9 @@ type Props = {
     claimSent?: string;
     claimError?: string;
     claimed?: string;
+    refAdded?: string;
+    inquirySent?: string;
+    error?: string;
   }>;
 };
 
@@ -38,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CompanyPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { claimSent, claimError } = await searchParams;
+  const { claimSent, claimError, inquirySent, error } = await searchParams;
   const company = await getCompanyForPage(slug);
   if (!company) notFound();
 
@@ -46,15 +51,28 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     (p) => p.status === "accepted",
   );
   const caseStudies = getCaseStudiesForCompany(slug);
-  const editable =
-    company.claimed !== false && (await isCompanyOwnerSlug(slug));
+  const [references, trust, isOwner] = await Promise.all([
+    getReferencesForCompany(company.id),
+    getTrustProfile(company.id, company.slug),
+    company.claimed !== false
+      ? isCompanyOwnerSlug(slug)
+      : Promise.resolve(false),
+  ]);
+  const editable = isOwner;
   const siteUrl = getSiteUrl();
+
+  const confirmedClientRels =
+    trust.breakdown.confirmedReferences + trust.breakdown.ongoingReferences;
+  const networkSuffix =
+    trust.level === "Trusted" || trust.level === "Pillar"
+      ? ` Verified network: ${trust.breakdown.confirmedPartners} confirmed partners, ${confirmedClientRels} confirmed client relationships.`
+      : "";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: company.name,
-    description: company.description,
+    description: `${company.description}${networkSuffix}`,
     url: company.website || undefined,
     address: {
       "@type": "PostalAddress",
@@ -77,9 +95,13 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         company={company}
         partners={partners}
         caseStudies={caseStudies}
+        references={references}
+        trust={trust}
         editable={editable}
         claimSent={claimSent === "1"}
         claimError={claimError}
+        inquirySent={inquirySent === "1"}
+        error={error}
       />
     </>
   );

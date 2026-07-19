@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendClaimInviteEmail } from "@/lib/email";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireOwnedCompany() {
@@ -136,8 +137,18 @@ export async function requestClaimInviteResend(formData: FormData) {
     redirect(`${back}?claimError=${encodeURIComponent("Enter the invite email.")}`);
   }
 
-  const supabase = await createClient();
-  const { data: token, error } = await supabase.rpc("resolve_claim_token", {
+  // resolve_claim_token is service-role only: if any browser-facing client
+  // could call it, knowing the invite email would be enough to obtain the
+  // claim token and hijack the profile.
+  const admin = createAdminClient();
+  if (!admin) {
+    console.warn(
+      "SUPABASE_SERVICE_ROLE_KEY not configured — claim invite resend disabled.",
+    );
+    redirect(`${back}?claimSent=1`);
+  }
+
+  const { data: token, error } = await admin.rpc("resolve_claim_token", {
     p_slug: slug,
     p_email: email,
   });
@@ -147,6 +158,7 @@ export async function requestClaimInviteResend(formData: FormData) {
     redirect(`${back}?claimSent=1`);
   }
 
+  const supabase = await createClient();
   const { data: company } = await supabase
     .from("companies")
     .select("name, created_by_company_id")

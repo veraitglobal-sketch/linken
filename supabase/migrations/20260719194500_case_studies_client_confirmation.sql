@@ -73,8 +73,44 @@ create policy "case_study_partners_public_read"
 on public.case_study_partners for select
 using (true);
 
-create policy "case_study_partners_owner_write"
-on public.case_study_partners for all
+-- Owner can add/edit/remove partner rows, but NEVER set confirmed: only the
+-- tagged partner company can confirm its own row (sacred confirmation rule).
+create policy "case_study_partners_owner_insert"
+on public.case_study_partners for insert
+to authenticated
+with check (
+  confirmed = false
+  and confirmed_at is null
+  and exists (
+    select 1 from public.case_studies cs
+    where cs.id = case_study_id
+      and public.is_company_owner(cs.company_id)
+  )
+);
+
+create policy "case_study_partners_owner_update_unconfirmed"
+on public.case_study_partners for update
+to authenticated
+using (
+  confirmed = false
+  and exists (
+    select 1 from public.case_studies cs
+    where cs.id = case_study_id
+      and public.is_company_owner(cs.company_id)
+  )
+)
+with check (
+  confirmed = false
+  and confirmed_at is null
+  and exists (
+    select 1 from public.case_studies cs
+    where cs.id = case_study_id
+      and public.is_company_owner(cs.company_id)
+  )
+);
+
+create policy "case_study_partners_owner_delete"
+on public.case_study_partners for delete
 to authenticated
 using (
   exists (
@@ -82,14 +118,13 @@ using (
     where cs.id = case_study_id
       and public.is_company_owner(cs.company_id)
   )
-)
-with check (
-  exists (
-    select 1 from public.case_studies cs
-    where cs.id = case_study_id
-      and public.is_company_owner(cs.company_id)
-  )
 );
+
+create policy "case_study_partners_partner_confirm"
+on public.case_study_partners for update
+to authenticated
+using (public.is_company_owner(partner_company_id))
+with check (public.is_company_owner(partner_company_id));
 
 -- Client confirmation requests
 create policy "client_confirm_public_read_confirmed"
@@ -116,17 +151,26 @@ with check (
   )
 );
 
-create policy "client_confirm_owner_update_own"
-on public.case_study_client_confirmation_requests for update
+-- No direct UPDATE for anyone: the requester must not be able to set
+-- status='confirmed' on its own request. The only path that changes status is
+-- the security definer function respond_client_confirmation below.
+-- Requester may withdraw a pending request.
+create policy "client_confirm_requester_delete_pending"
+on public.case_study_client_confirmation_requests for delete
 to authenticated
 using (
-  public.is_company_owner(requested_by_company_id)
-  or public.is_company_owner(confirmed_by_company_id)
-)
-with check (
-  public.is_company_owner(requested_by_company_id)
-  or public.is_company_owner(confirmed_by_company_id)
+  status = 'pending'
+  and public.is_company_owner(requested_by_company_id)
 );
+
+-- The token is a bearer credential and the email is private: never readable
+-- through the table API (RLS protects rows, not columns). Token-gated access
+-- goes through get_client_confirmation_by_token only.
+revoke select on public.case_study_client_confirmation_requests from anon, authenticated;
+grant select (
+  id, case_study_id, requested_by_company_id, status,
+  confirmed_by_company_id, created_at, confirmed_at
+) on public.case_study_client_confirmation_requests to anon, authenticated;
 
 -- Token lookup (confirm page) — security definer, no email leak of other rows
 create or replace function public.get_client_confirmation_by_token(p_token uuid)
@@ -215,6 +259,8 @@ begin
     confirmed_at = case when p_response = 'confirmed' then now() else null end
   where r.token = p_token
     and r.status = 'pending'
+    -- a company must not confirm its own request
+    and r.requested_by_company_id <> p_company_id
   returning * into row;
 
   if row.id is null then

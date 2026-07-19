@@ -1,12 +1,21 @@
 import Image from "next/image";
+import { InquiryForm } from "@/components/inquiries/inquiry-form";
+import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
 import { Button } from "@/components/ui/button";
+import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
 
 type Props = {
   company: Company;
+  trustLevel?: TrustLevel;
+  showContact?: boolean;
 };
 
-export function CompanyHeroBand({ company }: Props) {
+export function CompanyHeroBand({
+  company,
+  trustLevel = "Member",
+  showContact = false,
+}: Props) {
   return (
     <section className="px-4 pt-3">
       <div className="mesh-stage relative mx-auto grid max-w-6xl overflow-hidden rounded-[32px] lg:min-h-[560px] lg:grid-cols-[1.15fr_0.85fr]">
@@ -22,10 +31,6 @@ export function CompanyHeroBand({ company }: Props) {
               <span className="rounded-full border border-ember/40 bg-ember/15 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-ember uppercase">
                 Unclaimed profile
               </span>
-            ) : company.verified ? (
-              <span className="rounded-full border border-[#5ec4a8]/35 bg-[#5ec4a8]/12 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-[#5ec4a8] uppercase">
-                Verified company
-              </span>
             ) : null}
           </div>
 
@@ -33,9 +38,14 @@ export function CompanyHeroBand({ company }: Props) {
             <p className="font-display text-[clamp(0.95rem,1.4vw,1.1rem)] tracking-[0.04em] text-white/40 uppercase">
               Public company page
             </p>
-            <h1 className="mt-3 font-display text-[clamp(2.4rem,5.5vw,4rem)] leading-[0.94] font-medium tracking-[-0.045em]">
-              {company.name}
-            </h1>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <h1 className="font-display text-[clamp(2.4rem,5.5vw,4rem)] leading-[0.94] font-medium tracking-[-0.045em]">
+                {company.name}
+              </h1>
+              {company.claimed !== false ? (
+                <TrustLevelBadge level={trustLevel} onDark />
+              ) : null}
+            </div>
             <p className="mt-5 max-w-md text-[16px] leading-relaxed text-white/70">
               {company.tagline}
             </p>
@@ -51,16 +61,19 @@ export function CompanyHeroBand({ company }: Props) {
                 <span className="text-[#5ec4a8]">{company.slug}</span>
               </p>
             </div>
-            <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-start">
+              {showContact ? (
+                <InquiryForm
+                  companySlug={company.slug}
+                  companyName={company.name}
+                />
+              ) : null}
               <Button
                 href={company.website}
-                variant="light"
+                variant={showContact ? "onDark" : "light"}
                 className="h-11 min-w-[150px] px-5"
               >
                 Website
-              </Button>
-              <Button variant="onDark" className="h-11 min-w-[150px] px-5">
-                Share profile
               </Button>
             </div>
           </div>

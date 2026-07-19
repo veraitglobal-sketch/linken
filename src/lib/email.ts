@@ -91,3 +91,85 @@ export async function sendClaimInviteEmail({
     linkForLog: claimUrl,
   });
 }
+
+type ReferenceEmailInput = {
+  to: string;
+  providerName: string;
+  clientName: string;
+  service: string;
+  startedYear: string;
+  token: string;
+};
+
+export async function sendReferenceConfirmEmail({
+  to,
+  providerName,
+  clientName,
+  service,
+  startedYear,
+  token,
+}: ReferenceEmailInput) {
+  const url = `${getSiteUrl()}/confirm-reference/${token}`;
+  return sendTextEmail({
+    to,
+    subject: `${providerName} asks you to confirm a service relationship on Linken`,
+    body: [
+      `${providerName} says they provide “${service}” for ${clientName}${startedYear ? ` since ${startedYear}` : ""}.`,
+      "",
+      "Confirm this service relationship:",
+      url,
+      "",
+      "If this was unexpected, you can ignore the email.",
+    ].join("\n"),
+    logLabel: "service-reference",
+    linkForLog: url,
+  });
+}
+
+type InquiryNotifyInput = {
+  to: string;
+  senderName: string;
+  senderEmail: string;
+  senderCompany: string;
+  serviceInterest: string;
+  message: string;
+  companyName: string;
+  companySlug: string;
+};
+
+export async function sendInquiryNotifyEmail({
+  to,
+  senderName,
+  senderEmail,
+  senderCompany,
+  serviceInterest,
+  message,
+  companyName,
+  companySlug,
+}: InquiryNotifyInput) {
+  const dashboardUrl = `${getSiteUrl()}/dashboard`;
+  return sendTextEmail({
+    to,
+    subject: `New inquiry via your Linken profile from ${senderName}`,
+    body: [
+      `Someone reached out to ${companyName} through your Linken profile.`,
+      "",
+      `From: ${senderName}`,
+      `Email: ${senderEmail}`,
+      senderCompany ? `Company: ${senderCompany}` : null,
+      serviceInterest ? `Interested in: ${serviceInterest}` : null,
+      "",
+      "Message:",
+      message,
+      "",
+      "Reply by email, or review in your dashboard:",
+      dashboardUrl,
+      "",
+      `Profile: ${getSiteUrl()}/c/${companySlug}`,
+    ]
+      .filter((line) => line !== null)
+      .join("\n"),
+    logLabel: "inquiry-notify",
+    linkForLog: dashboardUrl,
+  });
+}

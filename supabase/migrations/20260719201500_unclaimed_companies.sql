@@ -58,6 +58,17 @@ with check (
   and public.is_company_owner(created_by_company_id)
 );
 
+-- claim_token is a bearer credential and invite_email is private. RLS protects
+-- rows, not columns, and companies are publicly readable — so without this,
+-- anyone could list claim tokens via the REST API and hijack ghost profiles.
+-- App code must use explicit column lists (never select("*") on companies).
+revoke select on public.companies from anon, authenticated;
+grant select (
+  id, owner_id, name, slug, tagline, description, category, city, country,
+  website, logo_url, services, verified, created_at, updated_at,
+  claimed, created_by_company_id
+) on public.companies to anon, authenticated;
+
 -- Claim preview (no claim_token in result set)
 create or replace function public.get_claim_preview(p_token uuid)
 returns table (
@@ -120,8 +131,12 @@ as $$
     and lower(c.invite_email) = lower(trim(p_email));
 $$;
 
+-- Server-only: returning the token to any browser client would let anyone who
+-- knows (or guesses) the invite email obtain the token and hijack the profile.
+-- Only the service role may call this; the server action emails the link.
 revoke all on function public.resolve_claim_token(text, text) from public;
-grant execute on function public.resolve_claim_token(text, text) to anon, authenticated;
+revoke all on function public.resolve_claim_token(text, text) from anon, authenticated;
+grant execute on function public.resolve_claim_token(text, text) to service_role;
 
 -- Claim: one user → one company; partnerships stay pending
 create or replace function public.claim_company(p_token uuid)

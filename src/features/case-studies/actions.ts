@@ -56,26 +56,29 @@ export async function requestClientConfirmation(formData: FormData) {
     .eq("id", caseStudyId)
     .single();
 
-  const { data: request, error } = await supabase
+  // Token is generated here and never read back — the token column is not
+  // selectable through the table API (bearer credential).
+  const token = crypto.randomUUID();
+
+  const { error } = await supabase
     .from("case_study_client_confirmation_requests")
     .insert({
       case_study_id: caseStudyId,
       requested_by_company_id: company.id,
       email,
+      token,
       status: "pending",
-    })
-    .select("token")
-    .single();
+    });
 
-  if (error || !request) {
-    redirect(`${back}?error=${encodeURIComponent(error?.message ?? "Could not create request.")}`);
+  if (error) {
+    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
   }
 
   await sendClientConfirmationEmail({
     to: email,
     requesterName: company.name,
     caseTitle: mockMeta?.title ?? caseSlug,
-    token: request.token,
+    token,
   });
 
   revalidatePath(back);
