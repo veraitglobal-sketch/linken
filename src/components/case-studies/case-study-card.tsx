@@ -5,30 +5,82 @@ import type { CaseStudy } from "@/types/case-study";
 type Props = {
   companySlug: string;
   caseStudy: CaseStudy;
+  index: number;
+  featured?: boolean;
 };
 
-export function CaseStudyCard({ companySlug, caseStudy }: Props) {
+export function CaseStudyCard({
+  companySlug,
+  caseStudy,
+  index,
+  featured = false,
+}: Props) {
+  if (featured) {
+    return (
+      <article className="mesh-stage relative overflow-hidden rounded-[28px] text-white">
+        <div className="stage-grain absolute inset-0" />
+        <div className="relative z-10 px-6 py-7 sm:px-8 sm:py-8">
+          <div className="flex items-center gap-3 text-[12px] text-white/50">
+            <span className="font-display text-ember">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span>·</span>
+            <span className="tracking-[0.1em] uppercase">{caseStudy.year}</span>
+            <span>·</span>
+            <span>{caseStudy.location}</span>
+          </div>
+          <h3 className="mt-4 font-display text-[clamp(1.6rem,3vw,2.1rem)] font-medium tracking-[-0.035em]">
+            {caseStudy.title}
+          </h3>
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/70">
+            {caseStudy.summary}
+          </p>
+          <p className="mt-3 text-[12px] text-white/45">
+            {caseStudy.services.join(" · ")}
+          </p>
+          <Link
+            href={`/c/${companySlug}/case-studies/${caseStudy.slug}`}
+            className="mt-6 inline-flex h-11 items-center rounded-xl bg-white px-5 text-[13px] font-semibold text-ink"
+          >
+            Open case study
+          </Link>
+          <div className="mt-6 border-t border-white/15 pt-4">
+            <CaseStudyPartners partners={caseStudy.partners} onDark />
+          </div>
+        </div>
+      </article>
+    );
+  }
+
   return (
-    <article className="border-b border-line py-7 last:border-b-0">
+    <article className="rounded-[24px] border border-line bg-surface px-5 py-6 sm:px-7">
       <Link
         href={`/c/${companySlug}/case-studies/${caseStudy.slug}`}
         className="group block"
       >
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <span className="text-[12px] font-medium text-muted">{caseStudy.year}</span>
-          <h3 className="font-display text-xl font-semibold tracking-[-0.02em] text-ink group-hover:text-accent">
-            {caseStudy.title}
-          </h3>
+        <div className="flex items-center gap-3 text-[12px] text-muted">
+          <span className="font-display text-ember">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <span>·</span>
+          <span className="font-semibold tracking-[0.1em] uppercase">
+            {caseStudy.year}
+          </span>
+          <span>·</span>
+          <span>{caseStudy.location}</span>
+          <span className="ml-auto font-semibold text-ink underline-offset-4 group-hover:underline">
+            Open
+          </span>
         </div>
-        <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-soft">
+        <h3 className="mt-3 font-display text-[clamp(1.35rem,2.2vw,1.65rem)] font-medium tracking-[-0.03em] text-ink">
+          {caseStudy.title}
+        </h3>
+        <p className="mt-2.5 line-clamp-2 text-[14px] leading-relaxed text-ink-soft">
           {caseStudy.summary}
         </p>
         <p className="mt-2 text-[12px] text-muted">
-          {caseStudy.location} · {caseStudy.services.join(" · ")}
+          {caseStudy.services.join(" · ")}
         </p>
-        <span className="mt-3 inline-block text-[13px] font-medium text-accent">
-          Open case study
-        </span>
       </Link>
       <CaseStudyPartners partners={caseStudy.partners} />
     </article>

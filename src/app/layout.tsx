@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
-import { PageShell } from "@/components/layout/page-shell";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -36,9 +35,7 @@ export default function RootLayout({
       lang="en"
       className={`${jakarta.variable} ${newsreader.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">
-        <PageShell>{children}</PageShell>
-      </body>
+      <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>
   );
 }

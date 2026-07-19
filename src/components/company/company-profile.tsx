@@ -1,7 +1,7 @@
 import { CaseStudyList } from "@/components/case-studies/case-study-list";
 import { CompanyAbout } from "@/components/company/company-about";
 import { CompanyHeroBand } from "@/components/company/company-hero-band";
-import { CompanyIdentity } from "@/components/company/company-identity";
+import { CompanySignal } from "@/components/company/company-signal";
 import { PartnerSidebar } from "@/components/partners/partner-sidebar";
 import type { CaseStudy } from "@/types/case-study";
 import type { Company } from "@/types/company";
@@ -21,20 +21,28 @@ export function CompanyProfile({
   editable = false,
 }: Props) {
   return (
-    <>
+    <div className="pb-10">
       <CompanyHeroBand company={company} />
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12 lg:py-14">
-        <div className="min-w-0">
-          <CompanyIdentity company={company} />
-          <CompanyAbout company={company} />
-          <CaseStudyList companySlug={company.slug} caseStudies={caseStudies} />
+      <CompanySignal
+        partnerCount={partners.length}
+        caseStudyCount={caseStudies.length}
+        city={company.city}
+        category={company.category}
+      />
+
+      <div className="mx-auto mt-4 grid max-w-6xl gap-4 px-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-5">
+        <CompanyAbout company={company} />
+
+        <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <PartnerSidebar
+            companySlug={company.slug}
+            partners={partners}
+            editable={editable}
+          />
         </div>
-        <PartnerSidebar
-          companySlug={company.slug}
-          partners={partners}
-          editable={editable}
-        />
+
+        <CaseStudyList companySlug={company.slug} caseStudies={caseStudies} />
       </div>
-    </>
+    </div>
   );
 }

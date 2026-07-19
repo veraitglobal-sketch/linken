@@ -1,3 +1,5 @@
+import type { ClientConfirmation } from "@/types/client-confirmation";
+
 export type CaseStudyPartner = {
   slug: string;
   name: string;
@@ -17,4 +19,6 @@ export type CaseStudy = {
   year: string;
   services: string[];
   partners: CaseStudyPartner[];
+  /** Highest trust layer — confirmed by the client company. */
+  clientConfirmation?: ClientConfirmation | null;
 };

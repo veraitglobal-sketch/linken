@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogoMark } from "@/components/ui/logo-mark";
+import { PartnerMark } from "@/components/partners/partner-mark";
 import type { Partner } from "@/types/partner";
 
 type Props = {
@@ -7,31 +7,36 @@ type Props = {
 };
 
 export function PartnerCard({ partner }: Props) {
+  const casesLabel =
+    partner.sharedProjects === 1
+      ? "1 shared case study"
+      : `${partner.sharedProjects} shared case studies`;
+
   return (
     <Link
       href={`/c/${partner.slug}`}
-      className="block px-2 py-3 transition-colors hover:bg-paper"
+      className="block rounded-2xl bg-[#f7f8fa] px-3.5 py-3.5 transition-colors hover:bg-[#eef1f3]"
     >
-      <div className="flex items-start gap-3">
-        <LogoMark initials={partner.logoInitials} size="sm" />
+      <div className="flex items-center gap-3.5">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-ink">
-            {partner.name}
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="truncate text-sm font-semibold text-ink">
+              {partner.name}
+            </p>
             {partner.verified ? (
-              <span className="ml-1.5 text-[11px] font-medium text-success">
+              <span className="rounded-lg border border-[#1f6b5c]/25 bg-[#1f6b5c]/10 px-2 py-0.5 text-[9px] font-semibold tracking-[0.08em] text-[#1f6b5c] uppercase">
                 Verified
               </span>
             ) : null}
-          </p>
-          <p className="mt-0.5 text-[12px] text-muted">
-            {partner.category} · {partner.city}
+          </div>
+          <p className="mt-1 truncate text-[13px] text-ink-soft">
+            {partner.category} company
           </p>
           {partner.sharedProjects > 0 ? (
-            <p className="mt-1.5 text-[12px] text-ink-soft">
-              {partner.sharedProjects} shared case studies
-            </p>
+            <p className="mt-1 text-[12px] text-muted">{casesLabel}</p>
           ) : null}
         </div>
+        <PartnerMark initials={partner.logoInitials} />
       </div>
     </Link>
   );

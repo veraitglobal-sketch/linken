@@ -4,14 +4,20 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 
-export async function signInWithGoogle() {
+function safeNext(value: FormDataEntryValue | null, fallback: string) {
+  const next = String(value ?? fallback).trim();
+  return next.startsWith("/") ? next : fallback;
+}
+
+export async function signInWithGoogle(formData?: FormData) {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
+  const next = safeNext(formData?.get("next") ?? null, "/dashboard");
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   });
 
@@ -27,6 +33,7 @@ export async function signInWithGoogle() {
 export async function signUp(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
+  const next = safeNext(formData.get("next"), "/onboarding");
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({ email, password });
@@ -34,12 +41,13 @@ export async function signUp(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect("/onboarding");
+  redirect(next);
 }
 
 export async function signIn(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
+  const next = safeNext(formData.get("next"), "/dashboard");
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -47,7 +55,7 @@ export async function signIn(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect("/dashboard");
+  redirect(next);
 }
 
 export async function signOut() {

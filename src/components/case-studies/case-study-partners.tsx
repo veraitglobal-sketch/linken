@@ -1,39 +1,35 @@
 import Link from "next/link";
-import { LogoMark } from "@/components/ui/logo-mark";
+import { cn } from "@/lib/cn";
 import type { CaseStudyPartner } from "@/types/case-study";
 
 type Props = {
   partners: CaseStudyPartner[];
+  onDark?: boolean;
 };
 
-export function CaseStudyPartners({ partners }: Props) {
-  if (partners.length === 0) return null;
+export function CaseStudyPartners({ partners, onDark = false }: Props) {
+  const confirmed = partners.filter((p) => p.confirmed);
+  if (confirmed.length === 0) return null;
 
   return (
-    <div className="mt-4">
-      <ul className="flex flex-col gap-2">
-        {partners.map((partner) => (
-          <li key={partner.slug}>
-            <Link
-              href={`/c/${partner.slug}`}
-              className="flex items-center gap-3 border border-line bg-paper px-3 py-2.5 transition-colors hover:border-line-strong"
-            >
-              <LogoMark initials={partner.logoInitials} size="sm" />
-              <span className="min-w-0">
-                <span className="block truncate text-sm font-medium text-ink">
-                  {partner.name}
-                  {partner.confirmed ? (
-                    <span className="ml-2 text-[11px] font-medium text-success">
-                      Confirmed
-                    </span>
-                  ) : null}
-                </span>
-                <span className="block text-[12px] text-muted">{partner.role}</span>
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <div className="flex flex-wrap gap-2">
+      {confirmed.map((partner) => (
+        <Link
+          key={partner.slug}
+          href={`/c/${partner.slug}`}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] transition-colors",
+            onDark
+              ? "border border-white/15 bg-white/10 text-white hover:bg-white/16"
+              : "border border-line bg-[#f7f8fa] text-ink hover:border-[#10231f]/20 hover:bg-white",
+          )}
+        >
+          <span className="font-medium">{partner.name}</span>
+          <span className={onDark ? "text-white/50" : "text-muted"}>
+            · {partner.role}
+          </span>
+        </Link>
+      ))}
     </div>
   );
 }

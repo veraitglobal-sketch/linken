@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 
 export function HomeHero() {
   return (
-    <section className="px-4 pt-3">
-      <div className="mesh-stage relative mx-auto grid min-h-[82vh] max-w-6xl overflow-hidden rounded-[32px] lg:grid-cols-[1.12fr_0.88fr]">
+    <section className="flex min-h-[calc(100svh-4.75rem)] items-center px-4">
+      <div className="mesh-stage relative mx-auto grid w-full max-w-6xl min-h-[82vh] overflow-hidden rounded-[32px] lg:grid-cols-[1.12fr_0.88fr]">
         <div className="stage-grain absolute inset-0 z-[1]" />
 
         <div className="relative z-10 flex flex-col justify-between px-7 py-9 sm:px-11 sm:py-12">
