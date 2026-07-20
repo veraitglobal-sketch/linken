@@ -70,7 +70,7 @@ export function GettingStartedPill({ checklist }: Props) {
           id={panelId}
           role="dialog"
           aria-label="Getting started"
-          className="absolute top-[calc(100%+6px)] right-0 z-50 w-[min(calc(100vw-2rem),20rem)] overflow-hidden rounded-2xl border border-line bg-surface py-3 shadow-[0_16px_44px_rgba(8,20,18,0.12)] sm:left-0 sm:right-auto"
+          className="absolute top-[calc(100%+6px)] right-0 z-50 w-[min(calc(100vw-2rem),20rem)] overflow-hidden rounded-2xl border border-line bg-surface py-3 shadow-[0_16px_44px_rgba(8,20,18,0.12)]"
         >
           <div className="px-4 pb-2">
             <div className="flex items-baseline justify-between gap-3">

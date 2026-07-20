@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CompanySettingsForm } from "@/components/company/company-settings-form";
 import { CompanySettingsLogo } from "@/components/company/company-settings-logo";
+import { SettingsFlash } from "@/components/company/settings-flash";
+import { SettingsStatusStrip } from "@/components/company/settings-status-strip";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
-import { toSettingsCompany } from "@/features/company/settings-company";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
+import { toSettingsCompany } from "@/features/company/settings-company";
+import { extractDomain } from "@/features/verification/domain";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getSiteUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
@@ -26,9 +29,21 @@ function initials(name: string) {
     .toUpperCase();
 }
 
+function flashMessage(params: {
+  saved?: string;
+  ok?: string;
+}): string | null {
+  if (params.saved === "1") return "Profile saved.";
+  if (params.ok === "logo") return "Logo refreshed from your website.";
+  if (params.ok === "logo-cleared") return "Logo removed.";
+  if (params.ok === "logoUpload") return "Logo uploaded.";
+  return null;
+}
+
 export default async function DashboardSettingsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { user, company, needsCompanySwitch } = await assertCompanySection("settings");
+  const { user, company, needsCompanySwitch } =
+    await assertCompanySection("settings");
 
   if (needsCompanySwitch) {
     return <SwitchCompanyNotice title="Company settings" />;
@@ -36,9 +51,15 @@ export default async function DashboardSettingsPage({ searchParams }: Props) {
 
   if (!user) {
     return (
-      <WorkspacePage title="Company settings" description="Edit your public profile.">
-        <p className="text-sm text-[#64748b]">
-          <Link href="/login?next=/dashboard/settings" className="font-semibold underline">
+      <WorkspacePage
+        title="Company settings"
+        description="Edit your public profile."
+      >
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/login?next=/dashboard/settings"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
             Sign in
           </Link>{" "}
           to edit your company.
@@ -49,9 +70,15 @@ export default async function DashboardSettingsPage({ searchParams }: Props) {
 
   if (!company) {
     return (
-      <WorkspacePage title="Company settings" description="Edit your public profile.">
-        <p className="text-sm text-[#64748b]">
-          <Link href="/onboarding" className="font-semibold underline">
+      <WorkspacePage
+        title="Company settings"
+        description="Edit your public profile."
+      >
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/onboarding"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
             Create your company
           </Link>{" "}
           first.
@@ -72,37 +99,48 @@ export default async function DashboardSettingsPage({ searchParams }: Props) {
   if (!full) {
     return (
       <WorkspacePage title="Company settings">
-        <p className="text-sm text-[#64748b]">Could not load company profile.</p>
+        <p className="text-[14px] text-muted">Could not load company profile.</p>
       </WorkspacePage>
     );
   }
 
-  const flash =
-    params.saved === "1"
-      ? "Profile saved."
-      : params.ok === "logo"
-        ? "Logo refreshed from your website."
-        : params.ok === "logoUpload"
-          ? "Logo uploaded."
-          : null;
+  const settings = toSettingsCompany(full, new URL(getSiteUrl()).host);
+  const flash = flashMessage(params);
+  const domain = extractDomain(full.website ?? "");
 
   return (
     <WorkspacePage
       title="Company settings"
-      description="Update the details shown on your public profile."
+      description="Update what appears on your public profile — logo, details, services, and availability."
+      action={
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/dashboard/verification"
+            className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+          >
+            Verification
+          </Link>
+          <Link
+            href={`/c/${full.slug}`}
+            className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+          >
+            Public profile
+          </Link>
+        </div>
+      }
     >
-      {params.error ? (
-        <p className="mb-4 rounded-xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-          {params.error}
-        </p>
-      ) : null}
-      {flash ? (
-        <p className="mb-4 rounded-xl border border-[#1a5c51]/25 bg-[#1a5c51]/8 px-4 py-3 text-sm text-ink">
-          {flash}
-        </p>
-      ) : null}
+      <div className="space-y-4">
+        {params.error ? (
+          <SettingsFlash tone="error">{params.error}</SettingsFlash>
+        ) : null}
+        {flash ? <SettingsFlash>{flash}</SettingsFlash> : null}
 
-      <div className="space-y-5">
+        <SettingsStatusStrip
+          domain={domain}
+          verified={Boolean(full.verified)}
+          acceptingClients={settings.acceptingClients}
+        />
+
         <CompanySettingsLogo
           name={full.name}
           logoUrl={full.logo_url}
@@ -110,9 +148,7 @@ export default async function DashboardSettingsPage({ searchParams }: Props) {
           logoSource={full.logo_source}
           initials={initials(full.name)}
         />
-        <CompanySettingsForm
-          company={toSettingsCompany(full, new URL(getSiteUrl()).host)}
-        />
+        <CompanySettingsForm company={settings} />
       </div>
     </WorkspacePage>
   );

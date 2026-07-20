@@ -2,7 +2,7 @@ import type { NetworkGraph } from "@/features/network/types";
 
 export type StoredPosition = { x: number; y: number };
 
-const PREFIX = "linken:graph-layout:v1:";
+const PREFIX = "linken:graph-layout:v3:";
 
 export function graphLayoutKey(graph: NetworkGraph): string {
   const ctx = graph.context;

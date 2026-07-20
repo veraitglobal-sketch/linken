@@ -8,11 +8,11 @@ export const WORKSPACE_PAGE_META: Record<
   },
   "/dashboard/structure": {
     title: "Structure",
-    description: "Ownership tree for your company group.",
+    description: "Ownership tree, subsidiaries, and group invites.",
   },
   "/dashboard/verification": {
     title: "Verification",
-    description: "Evidence that backs public trust.",
+    description: "Prove domain ownership for the Verified badge.",
   },
   "/dashboard/insights": {
     title: "Insights",

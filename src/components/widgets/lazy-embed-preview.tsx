@@ -71,7 +71,7 @@ export function LazyEmbedPreview({
         />
       ) : (
         <div
-          className="h-full w-full animate-pulse bg-[#eef1f6]"
+          className="h-full w-full animate-pulse bg-paper"
           aria-hidden
         />
       )}

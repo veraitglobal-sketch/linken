@@ -9,8 +9,8 @@ const NetworkMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full items-center justify-center bg-[#fafbfc] text-[13px] text-[#9aa3af]">
-        Loading map…
+      <div className="flex h-full items-center justify-center bg-[#f4f5f3] text-[13px] text-muted">
+        Loading network…
       </div>
     ),
   },
@@ -20,18 +20,21 @@ type Props = {
   graph: NetworkGraph;
   editable?: boolean;
   pendingInviteCount?: number;
+  title?: string;
 };
 
 export function NetworkMapLazy({
   graph,
   editable,
   pendingInviteCount,
+  title,
 }: Props) {
   return (
     <NetworkMap
       graph={graph}
       editable={editable}
       pendingInviteCount={pendingInviteCount}
+      title={title}
     />
   );
 }

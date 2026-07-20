@@ -1,21 +1,22 @@
+import { WorkspaceCard } from "@/components/dashboard/workspace-page";
+
 export function RadarLocked() {
   return (
-    <div className="rounded-xl border border-line bg-paper px-5 py-6">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+    <WorkspaceCard>
+      <p className="text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
         Linken Radar
       </p>
-      <h2 className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">
-        Radar — coming soon
+      <h2 className="mt-1 font-display text-[18px] font-semibold tracking-[-0.03em] text-ink">
+        Coming soon
       </h2>
-      <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">
-        Company leads from your saved searches, plus project requests and intros
-        (99 €/mo · 15 credits). Feeds and targets unlock when Radar is enabled
-        for your company.
+      <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-muted">
+        Company leads from saved searches, plus project requests and intros
+        (99 €/mo · 15 credits). Unlocks when Radar is enabled for your company.
       </p>
-      <p className="mt-3 text-[12px] text-ink-soft">
-        Profile inquiries stay free forever. Radar is never shown on your public
-        profile — only Verified and evidence badges appear there.
+      <p className="mt-3 text-[12px] text-muted">
+        Profile inquiries stay free. Radar is never shown on your public
+        profile.
       </p>
-    </div>
+    </WorkspaceCard>
   );
 }

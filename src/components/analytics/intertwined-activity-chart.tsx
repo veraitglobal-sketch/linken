@@ -25,62 +25,44 @@ const SERIES = [
   { key: "embed" as const, name: "Embed", color: "#7eb8a4", soft: "#a8d4c4" },
 ];
 
-/** Soft intertwined lines — thick strokes, luminous points. */
+/** Colored lines only — no dots. */
 export function IntertwinedActivityChart({ data }: { data: ChartPoint[] }) {
   return (
     <div className="flex h-full flex-col">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 14, right: 12, left: -12, bottom: 4 }}>
-          <defs>
-            {SERIES.map((s) => (
-              <linearGradient
-                key={s.key}
-                id={`line-${s.key}`}
-                x1="0"
-                y1="0"
-                x2="1"
-                y2="0"
-              >
-                <stop offset="0%" stopColor={s.soft} />
-                <stop offset="100%" stopColor={s.color} />
-              </linearGradient>
-            ))}
-          </defs>
-          <CartesianGrid
-            strokeDasharray="4 8"
-            vertical={false}
-            stroke="#e2e6e3"
-          />
-          <XAxis
-            dataKey="label"
-            {...AXIS}
-            interval="preserveStartEnd"
-            minTickGap={32}
-          />
-          <YAxis {...AXIS} allowDecimals={false} width={36} />
-          <Tooltip content={<ChartTooltip />} />
-          {SERIES.map((s) => (
-            <Line
-              key={s.key}
-              type="monotone"
-              dataKey={s.key}
-              name={s.name}
-              stroke={`url(#line-${s.key})`}
-              strokeWidth={2.75}
-              dot={false}
-              activeDot={{
-                r: 5.5,
-                strokeWidth: 3,
-                stroke: "#fff",
-                fill: s.color,
-                style: {
-                  filter: "drop-shadow(0 0 8px rgba(26,92,81,0.45))",
-                },
-              }}
+      <div className="min-h-0 flex-1 rounded-2xl bg-[linear-gradient(180deg,#f7faf8_0%,#ffffff_60%)] px-1 pt-2">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={data}
+            margin={{ top: 12, right: 14, left: -10, bottom: 4 }}
+          >
+            <CartesianGrid
+              strokeDasharray="4 8"
+              vertical={false}
+              stroke="#dfe5e2"
             />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
+            <XAxis
+              dataKey="label"
+              {...AXIS}
+              interval="preserveStartEnd"
+              minTickGap={32}
+            />
+            <YAxis {...AXIS} allowDecimals={false} width={36} />
+            <Tooltip content={<ChartTooltip />} />
+            {SERIES.map((s) => (
+              <Line
+                key={s.key}
+                type="monotone"
+                dataKey={s.key}
+                name={s.name}
+                stroke={s.soft}
+                strokeWidth={2.75}
+                dot={false}
+                activeDot={false}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 px-1">
         {SERIES.map((s) => (
           <span
@@ -88,10 +70,8 @@ export function IntertwinedActivityChart({ data }: { data: ChartPoint[] }) {
             className="inline-flex items-center gap-1.5 text-[11px] text-[#66706b]"
           >
             <span
-              className="h-1 w-4 rounded-full"
-              style={{
-                background: `linear-gradient(90deg, ${s.soft}, ${s.color})`,
-              }}
+              className="h-0.5 w-4 rounded-full"
+              style={{ background: s.soft }}
             />
             {s.name}
           </span>

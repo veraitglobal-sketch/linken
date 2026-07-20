@@ -19,13 +19,13 @@ const SOURCE_META: {
   label: string;
   color: string;
 }[] = [
-  { key: "direct", label: "Direct", color: "#0b1220" },
-  { key: "search", label: "Search", color: "#3b82f6" },
-  { key: "partner", label: "Partners", color: "#64748b" },
-  { key: "qr", label: "QR", color: "#94a3b8" },
-  { key: "embed", label: "Embed", color: "#cbd5e1" },
-  { key: "one_pager", label: "One-pager", color: "#475569" },
-  { key: "external", label: "External", color: "#78716c" },
+  { key: "direct", label: "Direct", color: "#0e1f1c" },
+  { key: "search", label: "Search", color: "#1a5c51" },
+  { key: "partner", label: "Partners", color: "#7eb8a4" },
+  { key: "qr", label: "QR", color: "#3a423e" },
+  { key: "embed", label: "Embed", color: "#66706b" },
+  { key: "one_pager", label: "One-pager", color: "#8a948e" },
+  { key: "external", label: "External", color: "#a8b0aa" },
 ];
 
 function formatLabel(day: string) {
@@ -67,25 +67,25 @@ export function InsightsDashboard({ analytics, plan }: Props) {
       key: "profile",
       label: "Profile",
       value: analytics.profileViews,
-      color: "#0b1220",
+      color: "#0e1f1c",
     },
     {
       key: "one",
       label: "One-pager",
       value: analytics.onePagerViews,
-      color: "#3b82f6",
+      color: "#1a5c51",
     },
     {
       key: "embed",
       label: "Embed",
       value: analytics.embedViews,
-      color: "#94a3b8",
+      color: "#7eb8a4",
     },
     {
       key: "inq",
       label: "Inquiries",
       value: analytics.inquiries,
-      color: "#64748b",
+      color: "#3a423e",
     },
   ];
 
@@ -128,10 +128,14 @@ export function InsightsDashboard({ analytics, plan }: Props) {
                 Inquiries: {inquiryTotal}
               </span>
             </p>
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#f1f5f9]">
+            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-[#eef1ef] p-0.5">
               <div
-                className="h-full rounded-full bg-[#22c55e] transition-[width] duration-500"
-                style={{ width: `${Math.max(engagement, visitTotal ? 4 : 0)}%` }}
+                className="h-full rounded-full transition-[width] duration-500"
+                style={{
+                  width: `${Math.max(engagement, visitTotal ? 4 : 0)}%`,
+                  background:
+                    "linear-gradient(90deg, #7eb8a4 0%, #1a5c51 55%, #0e1f1c 100%)",
+                }}
               />
             </div>
             <p className="mt-2 text-[11px] text-[#94a3b8]">
@@ -157,7 +161,8 @@ export function InsightsDashboard({ analytics, plan }: Props) {
                 data={points}
                 dataKey="visits"
                 name="Visits"
-                color="#0b1220"
+                color="#0e1f1c"
+                colorSoft="#1a5c51"
                 gradientId="visitsGrad"
               />
             </ChartPane>
@@ -170,7 +175,8 @@ export function InsightsDashboard({ analytics, plan }: Props) {
                 data={points}
                 dataKey="inquiries"
                 name="Inquiries"
-                color="#3b82f6"
+                color="#1a5c51"
+                colorSoft="#7eb8a4"
                 gradientId="inqGrad"
               />
             </ChartPane>
@@ -279,9 +285,11 @@ function ChartPane({
       <p className="mt-1 text-[24px] font-semibold tracking-[-0.03em] tabular-nums text-ink">
         {value}
       </p>
-      <div className="mt-3 h-[160px]">{children}</div>
-      <p className="mt-1 flex items-center gap-1.5 text-[11px] text-[#94a3b8]">
-        <span className="inline-block h-2 w-2 rounded-sm bg-[#94a3b8]" />
+      <div className="mt-3 h-[168px] rounded-2xl bg-[linear-gradient(180deg,#f7faf8_0%,#ffffff_55%)] px-1 pt-2">
+        {children}
+      </div>
+      <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-[#8a948e]">
+        <span className="inline-block h-0.5 w-3 rounded-full bg-gradient-to-r from-[#7eb8a4] to-[#0e1f1c]" />
         Trend
       </p>
     </div>

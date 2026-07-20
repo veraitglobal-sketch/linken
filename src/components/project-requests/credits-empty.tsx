@@ -1,20 +1,22 @@
+import { WorkspaceCard } from "@/components/dashboard/workspace-page";
+
 export function CreditsEmpty() {
   return (
-    <div className="rounded-xl border border-line bg-paper px-5 py-6">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-        Linken Radar
+    <WorkspaceCard>
+      <p className="text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
+        Credits
       </p>
-      <h2 className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">
+      <h2 className="mt-1 font-display text-[18px] font-semibold tracking-[-0.03em] text-ink">
         Get credits
       </h2>
-      <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">
+      <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-muted">
         99 €/mo including 15 credits. Until checkout ships, ask Linken to grant
         credits for your company.
       </p>
-      <p className="mt-3 text-[12px] text-ink-soft">
-        Profile inquiries stay free forever. Credits apply only to Radar
-        marketplace requests.
+      <p className="mt-3 text-[12px] text-muted">
+        Profile inquiries stay free. Credits apply only to Radar marketplace
+        requests and intros.
       </p>
-    </div>
+    </WorkspaceCard>
   );
 }

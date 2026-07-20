@@ -1,15 +1,19 @@
 import type { NetworkEdge, NetworkNode } from "@/features/network/types";
 import { clusterEllipse } from "@/features/network/layout-clusters";
-import { placeFan } from "@/features/network/layout-place";
+import { placeColumn } from "@/features/network/layout-place";
 import type {
   LayoutResult,
   NetworkCluster,
   PositionedNode,
 } from "@/features/network/layout-types";
 
+const COL_STRUCTURE = 240;
+const COL_PARTNERS = 460;
+const ROW_GAP = 88;
+
 /**
- * Hub at origin, structure + partners on the right-side fan.
- * Single-owner case — positions identical to the prior radial layout.
+ * Hub left, structure + partners in even vertical lanes to the right.
+ * Reads as one composed graph — not a scattered fan.
  */
 export function layoutRadial(
   nodes: NetworkNode[],
@@ -47,8 +51,13 @@ export function layoutRadial(
   }
 
   const result: PositionedNode[] = [{ ...hub, position: { x: 0, y: 0 } }];
-  placeFan(structure, 300, result);
-  placeFan(partners, structure.length ? 480 : 340, result, 0.12);
+  placeColumn(structure, COL_STRUCTURE, result, ROW_GAP);
+  placeColumn(
+    partners,
+    structure.length ? COL_PARTNERS : COL_STRUCTURE,
+    result,
+    ROW_GAP,
+  );
 
   const posMap = new Map(result.map((n) => [n.id, n.position]));
   const clusters: NetworkCluster[] = [];

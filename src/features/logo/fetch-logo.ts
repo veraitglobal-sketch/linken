@@ -71,7 +71,7 @@ export async function fetchAndStoreCompanyLogo(
     .from("companies")
     .update({ logo_url: logoUrl, logo_source: "auto" })
     .eq("id", companyId)
-    .or("logo_source.is.null,logo_source.eq.auto");
+    .or("logo_source.is.null,logo_source.eq.auto,logo_source.eq.cleared");
 
   if (updateError) return { ok: false, error: updateError.message };
   return { ok: true, logoUrl };

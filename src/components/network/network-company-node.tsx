@@ -13,158 +13,170 @@ export type FlowNodeData = NetworkNodeData & {
   selected?: boolean;
   nodeId?: string;
   editable?: boolean;
+  /** Hub / root firm — slightly stronger card. */
+  isHub?: boolean;
 };
 
 const ROLE_LABEL: Record<NetworkNodeKind, string> = {
   group: "Group",
   company: "Company",
-  subsidiary: "Child firm",
+  subsidiary: "Subsidiary",
   partner: "Partner",
   client: "Client",
 };
 
-/** Compact company card on the map — readable, not ornamental. */
+const HANDLE = cn(
+  "linken-handle !h-3 !w-3 !min-h-0 !min-w-0 !border-[1.5px] !border-white !bg-navy !z-20",
+);
+
+function wireClass(can: boolean) {
+  return can
+    ? "!pointer-events-auto !cursor-crosshair !opacity-100"
+    : "!pointer-events-none !opacity-0";
+}
+
+/** Premium card — hub emphasis, quiet partners, handles outside click target. */
 function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
   const d = data as FlowNodeData;
   const isSelected = Boolean(selected || d.selected);
   const canWire = Boolean(d.editable) && d.kind !== "group" && !d.moreCount;
-  const meta = [d.category, d.city].filter(Boolean).join(" · ");
   const needsVerify =
     d.kind !== "group" && !d.moreCount && d.domainVerified === false;
+  const isHub = Boolean(d.isHub);
+  const isPartner = d.kind === "partner" || d.kind === "client";
 
   return (
-    <div className="linken-node group/node relative flex w-[132px] flex-col items-center">
-      <div className="relative w-full">
-        <div
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute -inset-1.5 rounded-[14px] border transition-opacity duration-100",
-            isSelected
-              ? needsVerify
-                ? "border-[#f59e0b] opacity-100"
-                : "border-[#1a5c51] opacity-100"
-              : "border-transparent opacity-0",
-          )}
-        />
+    <div
+      className={cn(
+        "linken-node group/node relative linken-node-enter",
+        isHub ? "w-[172px]" : "w-[158px]",
+      )}
+    >
+      <Handle
+        id="left-t"
+        type="target"
+        position={Position.Left}
+        isConnectable={canWire}
+        isConnectableStart={canWire}
+        isConnectableEnd={canWire}
+        className={cn(HANDLE, wireClass(canWire))}
+      />
+      <Handle
+        id="left-s"
+        type="source"
+        position={Position.Left}
+        isConnectable={canWire}
+        isConnectableStart={canWire}
+        isConnectableEnd={canWire}
+        className={cn(HANDLE, wireClass(canWire))}
+      />
 
+      <div
+        onClick={() => d.onSelect?.(id, d)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            d.onSelect?.(id, d);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        className={cn(
+          "relative w-full cursor-grab border bg-surface text-left",
+          "transition-[border-color,box-shadow,transform] duration-150 active:cursor-grabbing",
+          isHub ? "rounded-2xl" : "rounded-[14px]",
+          d.kind === "client" ? "border-dashed border-line" : "border-line",
+          isPartner && !isSelected && "opacity-[0.92]",
+          isHub && !isSelected && "border-[#c5ccc7]",
+          isSelected
+            ? "border-blue/45 shadow-[0_0_0_3px_rgba(26,92,81,0.12),0_14px_28px_rgba(8,20,18,0.08)]"
+            : cn(
+                "shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_8px_20px_rgba(8,20,18,0.05)]",
+                "hover:border-[#c5ccc7] hover:shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_14px_28px_rgba(8,20,18,0.08)]",
+              ),
+        )}
+      >
         <div
-          role="button"
-          tabIndex={0}
-          onClick={() => d.onSelect?.(id, d)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              d.onSelect?.(id, d);
-            }
-          }}
           className={cn(
-            "relative w-full cursor-grab rounded-[12px] border text-center",
-            "shadow-[0_2px_8px_rgba(8,20,18,0.06)] transition-colors duration-100",
-            "active:cursor-grabbing",
-            "border-l-[3px]",
-            needsVerify
-              ? "border-[#e2e8f0] border-l-[#f59e0b] bg-[#fafbfc] opacity-80"
-              : "border-[#dce1e8] border-l-[#0e1f1c] bg-white hover:border-[#c5ccd6]",
-            d.kind === "partner" && !needsVerify && "border-l-[#1a5c51]",
-            d.kind === "client" && "border-dashed",
-            isSelected && !needsVerify && "border-[#c5ccd6] bg-white",
+            "flex items-center gap-2.5",
+            isHub ? "px-3.5 py-3" : "px-3 py-2.5",
           )}
         >
-          <Handle
-            type="target"
-            position={Position.Left}
-            isConnectable={canWire}
-            className={cn(
-              "linken-handle !h-2.5 !w-2.5 !min-h-0 !min-w-0 !border-[1.5px] !border-white !bg-[#1a5c51]",
-              canWire
-                ? "!cursor-crosshair !opacity-100"
-                : "!pointer-events-none !opacity-0",
-            )}
+          <LogoTile
+            name={d.name}
+            initials={d.logoInitials}
+            logoUrl={d.logoUrl}
+            website={d.website}
+            size={isHub ? "md" : "sm"}
           />
-
-          <div className="relative flex flex-col items-center gap-2 px-3 pt-3 pb-2.5">
-            <LogoTile
-              name={d.name}
-              initials={d.logoInitials}
-              logoUrl={d.logoUrl}
-              website={d.website}
-              size="md"
-              muted={needsVerify}
-            />
-            {d.publicTeamCount && d.publicTeamCount > 0 && d.companyId ? (
-              <NetworkNodeTeam
-                companyId={d.companyId}
-                avatars={d.publicTeamAvatars ?? []}
-                count={d.publicTeamCount}
-              />
-            ) : null}
-            <span className="text-[9px] font-semibold tracking-[0.12em] text-[#8b93a1] uppercase">
-              {ROLE_LABEL[d.kind]}
-            </span>
-          </div>
-
-          <Handle
-            type="source"
-            position={Position.Right}
-            isConnectable={canWire}
-            className={cn(
-              "linken-handle !h-2.5 !w-2.5 !min-h-0 !min-w-0 !border-[1.5px] !border-white !bg-[#0e1f1c]",
-              canWire
-                ? "!cursor-crosshair !opacity-100"
-                : "!pointer-events-none !opacity-0",
-            )}
-          />
-        </div>
-
-        {d.editable && !d.moreCount ? (
-          <div
-            className={cn(
-              "pointer-events-none absolute top-1/2 right-0 z-10 flex translate-x-full -translate-y-1/2 items-center",
-              "opacity-0 transition-opacity duration-120",
-              "group-hover/node:opacity-100",
-              isSelected && "opacity-100",
-            )}
-          >
-            <div className="h-px w-5 bg-[#c5ccd6]" />
-            <button
-              type="button"
-              title="Add company"
-              className="nodrag nopan pointer-events-auto ml-1.5 flex h-6 w-6 items-center justify-center rounded-[6px] border border-[#dce1e8] bg-white text-ink shadow-sm transition-colors hover:border-ink"
-              onClick={(e) => {
-                e.stopPropagation();
-                d.onAdd?.(id, d);
-              }}
+          <div className="min-w-0 flex-1">
+            <p
+              className={cn(
+                "truncate font-semibold tracking-[-0.025em] text-ink",
+                isHub ? "text-[13px]" : "text-[12px]",
+              )}
             >
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path
-                  d="M12 5v14M5 12h14"
-                  stroke="currentColor"
-                  strokeWidth="2.25"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
+              {d.name}
+            </p>
+            <p className="mt-0.5 truncate text-[10px] font-medium text-muted">
+              {ROLE_LABEL[d.kind]}
+              {needsVerify ? " · Unverified" : ""}
+            </p>
           </div>
-        ) : null}
+          {d.publicTeamCount && d.publicTeamCount > 0 && d.companyId ? (
+            <NetworkNodeTeam
+              companyId={d.companyId}
+              avatars={d.publicTeamAvatars ?? []}
+              count={d.publicTeamCount}
+            />
+          ) : null}
+        </div>
       </div>
 
-      <div className="mt-2 w-[148px] px-1 text-center">
-        <p
+      <Handle
+        id="right-t"
+        type="target"
+        position={Position.Right}
+        isConnectable={canWire}
+        isConnectableStart={canWire}
+        isConnectableEnd={canWire}
+        className={cn(HANDLE, wireClass(canWire))}
+      />
+      <Handle
+        id="right-s"
+        type="source"
+        position={Position.Right}
+        isConnectable={canWire}
+        isConnectableStart={canWire}
+        isConnectableEnd={canWire}
+        className={cn(HANDLE, wireClass(canWire))}
+      />
+
+      {d.editable && !d.moreCount ? (
+        <button
+          type="button"
+          title="Add company"
           className={cn(
-            "truncate text-[12px] font-semibold tracking-[-0.02em]",
-            needsVerify ? "text-[#94a3b8]" : "text-ink",
+            "nodrag nopan absolute -bottom-8 left-1/2 z-10 flex h-6 w-6 -translate-x-1/2 items-center justify-center",
+            "rounded-full border border-line bg-surface text-ink shadow-sm",
+            "opacity-0 transition-opacity group-hover/node:opacity-100",
+            isSelected && "opacity-100",
           )}
+          onClick={(e) => {
+            e.stopPropagation();
+            d.onAdd?.(id, d);
+          }}
         >
-          {d.name}
-        </p>
-        {needsVerify ? (
-          <p className="mt-0.5 text-[10px] font-semibold text-[#d97706]">
-            Verify domain
-          </p>
-        ) : meta ? (
-          <p className="mt-0.5 truncate text-[10px] text-[#94a3b8]">{meta}</p>
-        ) : null}
-      </div>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path
+              d="M12 5v14M5 12h14"
+              stroke="currentColor"
+              strokeWidth="2.25"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+      ) : null}
     </div>
   );
 }

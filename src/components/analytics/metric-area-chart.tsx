@@ -18,7 +18,7 @@ const AXIS = {
   tickLine: false as const,
 };
 
-/** Soft gradient area — thick stroke + luminous fill. */
+/** Soft area — colored stroke + fill, no point markers. */
 export function MetricAreaChart({
   data,
   dataKey,
@@ -38,29 +38,18 @@ export function MetricAreaChart({
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={data} margin={{ top: 10, right: 8, left: -18, bottom: 0 }}>
+      <AreaChart data={data} margin={{ top: 12, right: 10, left: -14, bottom: 2 }}>
         <defs>
-          <linearGradient id={`${gradientId}-stroke`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor={soft} />
-            <stop offset="100%" stopColor={color} />
-          </linearGradient>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={soft} stopOpacity={0.45} />
-            <stop offset="55%" stopColor={color} stopOpacity={0.12} />
+            <stop offset="0%" stopColor={soft} stopOpacity={0.42} />
+            <stop offset="50%" stopColor={color} stopOpacity={0.12} />
             <stop offset="100%" stopColor={color} stopOpacity={0} />
           </linearGradient>
-          <filter id={`${gradientId}-glow`} x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2.2" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
         </defs>
         <CartesianGrid
           strokeDasharray="4 8"
           vertical={false}
-          stroke="#e2e6e3"
+          stroke="#dfe5e2"
         />
         <XAxis dataKey="label" {...AXIS} interval="preserveStartEnd" minTickGap={28} />
         <YAxis {...AXIS} allowDecimals={false} width={36} />
@@ -69,17 +58,11 @@ export function MetricAreaChart({
           type="monotone"
           dataKey={dataKey}
           name={name}
-          stroke={`url(#${gradientId}-stroke)`}
-          strokeWidth={3}
+          stroke={soft}
+          strokeWidth={2.75}
           fill={`url(#${gradientId})`}
-          filter={`url(#${gradientId}-glow)`}
-          activeDot={{
-            r: 6,
-            strokeWidth: 3,
-            stroke: "#fff",
-            fill: color,
-            style: { filter: "drop-shadow(0 0 6px rgba(126,184,164,0.55))" },
-          }}
+          dot={false}
+          activeDot={false}
         />
       </AreaChart>
     </ResponsiveContainer>

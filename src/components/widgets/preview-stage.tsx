@@ -3,14 +3,14 @@
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-/** Classic transparency checkerboard (~12px). */
+/** Classic transparency checkerboard — forest-tinted paper. */
 export const CHECKERBOARD_STYLE: CSSProperties = {
-  backgroundColor: "#f8fafc",
+  backgroundColor: "#f1f3f1",
   backgroundImage: `
-    linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
-    linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
-    linear-gradient(-45deg, transparent 75%, #e2e8f0 75%)
+    linear-gradient(45deg, #e2e6e3 25%, transparent 25%),
+    linear-gradient(-45deg, #e2e6e3 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e2e6e3 75%),
+    linear-gradient(-45deg, transparent 75%, #e2e6e3 75%)
   `,
   backgroundSize: "12px 12px",
   backgroundPosition: "0 0, 0 6px, 6px -6px, -6px 0",

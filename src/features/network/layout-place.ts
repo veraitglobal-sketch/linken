@@ -1,7 +1,7 @@
 import type { NetworkEdge, NetworkNode } from "@/features/network/types";
 import type { PositionedNode } from "@/features/network/layout-types";
 
-/** Right-side fan (~150°). Company-scope partner ring — keep identical. */
+/** Right-side fan (~150°). */
 export function placeFan(
   items: NetworkNode[],
   radius: number,
@@ -27,13 +27,31 @@ export function placeFan(
   }
 }
 
-const PREFERRED_STEP = 0.42;
-const MAX_SPAN = Math.PI * 0.75;
-const MIN_RADIUS = 150;
-/** Min center-to-center gap inside a cluster (node width ~132). */
-const MIN_CHORD = 155;
+/** Vertical lane centered on y=0 — even gaps, reads as designed. */
+export function placeColumn(
+  items: NetworkNode[],
+  x: number,
+  out: PositionedNode[],
+  gap = 84,
+) {
+  const n = items.length;
+  if (n === 0) return;
+  const startY = n === 1 ? 0 : -((n - 1) * gap) / 2;
+  for (let i = 0; i < n; i++) {
+    out.push({
+      ...items[i],
+      position: { x, y: startY + i * gap },
+    });
+  }
+}
+
+const PREFERRED_STEP = 0.38;
+const MAX_SPAN = Math.PI * 0.7;
+const MIN_RADIUS = 120;
+/** Min center-to-center gap inside a cluster (node width ~158). */
+const MIN_CHORD = 168;
 /** Extra empty margin between sibling cluster extents. */
-const CLUSTER_MARGIN = 120;
+const CLUSTER_MARGIN = 88;
 
 function clusterArc(n: number) {
   if (n <= 1) return { span: 0, radius: MIN_RADIUS, step: 0 };

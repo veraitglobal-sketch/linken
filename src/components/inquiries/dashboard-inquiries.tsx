@@ -1,120 +1,56 @@
-import { updateInquiryStatus } from "@/features/inquiries/actions";
-import { Badge } from "@/components/ui/badge";
-import type { Inquiry, InquiryStatus } from "@/types/inquiry";
+import Link from "next/link";
+import { InquiryRow } from "@/components/inquiries/inquiry-row";
+import { WorkspaceCard } from "@/components/dashboard/workspace-page";
+import type { Inquiry } from "@/types/inquiry";
 
 type Props = {
   inquiries: Inquiry[];
   newCount: number;
   monthCount: number;
+  companySlug: string;
 };
 
-const STATUS_TONE: Record<InquiryStatus, "neutral" | "success" | "accent"> = {
-  new: "accent",
-  read: "neutral",
-  replied: "success",
-  archived: "neutral",
-};
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function StatusActions({ id, status }: { id: string; status: InquiryStatus }) {
-  const next: { label: string; status: InquiryStatus }[] = [];
-  if (status === "new") next.push({ label: "Mark read", status: "read" });
-  if (status === "new" || status === "read") {
-    next.push({ label: "Mark replied", status: "replied" });
-  }
-  if (status !== "archived") next.push({ label: "Archive", status: "archived" });
+export function DashboardInquiries({
+  inquiries,
+  newCount,
+  monthCount,
+  companySlug,
+}: Props) {
+  const meta = [
+    `${monthCount} this month`,
+    newCount > 0 ? `${newCount} new` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {next.map((action) => (
-        <form key={action.status} action={updateInquiryStatus}>
-          <input type="hidden" name="inquiry_id" value={id} />
-          <input type="hidden" name="status" value={action.status} />
-          <button
-            type="submit"
-            className="rounded-md border border-line bg-white px-2 py-1 text-[11px] font-medium text-ink-soft transition-colors hover:border-ink/25 hover:text-ink"
-          >
-            {action.label}
-          </button>
-        </form>
-      ))}
-    </div>
-  );
-}
-
-export function DashboardInquiries({ inquiries, newCount, monthCount }: Props) {
-  return (
-    <section className="rounded-[28px] border border-line bg-white px-5 py-6 sm:px-7 sm:py-7">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
-        Inquiries
-        {newCount > 0 ? ` · ${newCount} new` : ""}
-      </p>
-      <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">
-        {monthCount} inquir{monthCount === 1 ? "y" : "ies"} this month
-      </p>
-      <p className="mt-1.5 text-[13px] text-ink-soft">
-        Leads from visitors who requested a quote on your public page. Reply by
-        email.
-      </p>
+    <WorkspaceCard padded={false}>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-paper/50 px-5 py-3 sm:px-6">
+        <p className="text-[12px] font-medium text-ink">{meta || "No activity"}</p>
+      </div>
 
       {inquiries.length === 0 ? (
-        <p className="mt-5 text-sm text-muted">
-          No inquiries yet. Share your Linken profile to start receiving them.
-        </p>
+        <div className="px-5 py-12 text-center sm:px-6">
+          <p className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
+            No inquiries yet
+          </p>
+          <p className="mx-auto mt-1.5 max-w-sm text-[13px] leading-relaxed text-muted">
+            Visitors request quotes from your public profile.
+          </p>
+          <Link
+            href={`/c/${companySlug}`}
+            className="mt-4 inline-flex h-9 items-center rounded-xl border border-line px-3.5 text-[12px] font-semibold text-ink transition-colors hover:bg-paper"
+          >
+            View public profile
+          </Link>
+        </div>
       ) : (
-        <ul className="mt-5 flex flex-col gap-3 border-t border-line pt-4">
-          {inquiries.map((inquiry) => (
-            <li
-              key={inquiry.id}
-              className="rounded-2xl border border-line bg-[#f7f8fa] px-4 py-3.5"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="text-sm font-medium text-ink">
-                    {inquiry.senderName}
-                    {inquiry.senderCompany ? (
-                      <span className="font-normal text-ink-soft">
-                        {" "}
-                        · {inquiry.senderCompany}
-                      </span>
-                    ) : null}
-                  </p>
-                  <a
-                    href={`mailto:${inquiry.senderEmail}?subject=${encodeURIComponent("Re: your inquiry on Linken")}`}
-                    className="mt-0.5 text-[13px] text-[#1a5c51] underline-offset-2 hover:underline"
-                  >
-                    {inquiry.senderEmail}
-                  </a>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge tone={STATUS_TONE[inquiry.status]}>{inquiry.status}</Badge>
-                  <span className="text-[12px] text-muted">
-                    {formatDate(inquiry.createdAt)}
-                  </span>
-                </div>
-              </div>
-              {inquiry.serviceInterest ? (
-                <p className="mt-2 text-[12px] text-muted">
-                  Interested in: {inquiry.serviceInterest}
-                </p>
-              ) : null}
-              <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
-                {inquiry.message}
-              </p>
-              <div className="mt-3">
-                <StatusActions id={inquiry.id} status={inquiry.status} />
-              </div>
-            </li>
+        <ul className="divide-y divide-line">
+          {inquiries.map((inquiry, i) => (
+            <InquiryRow key={inquiry.id} inquiry={inquiry} index={i} />
           ))}
         </ul>
       )}
-    </section>
+    </WorkspaceCard>
   );
 }

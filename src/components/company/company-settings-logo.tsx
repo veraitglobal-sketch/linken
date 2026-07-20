@@ -1,9 +1,16 @@
-import { refreshLogo } from "@/features/logo/actions";
-import { uploadCompanyLogo } from "@/features/company/profile-actions";
-import { LogoRetryHint } from "@/components/logo/logo-retry-hint";
-import { Button } from "@/components/ui/button";
-import { LogoMark } from "@/components/ui/logo-mark";
+"use client";
+
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
+import { Badge } from "@/components/ui/badge";
+import { LogoMark } from "@/components/ui/logo-mark";
+import {
+  clearCompanyLogo,
+  ensureCompanyLogoFromWebsite,
+  refreshLogo,
+} from "@/features/logo/actions";
+import { cn } from "@/lib/cn";
 
 type Props = {
   name: string;
@@ -13,6 +20,7 @@ type Props = {
   initials: string;
 };
 
+/** Auto logo from website — remove with ×. No manual upload. */
 export function CompanySettingsLogo({
   name,
   logoUrl,
@@ -20,69 +28,114 @@ export function CompanySettingsLogo({
   logoSource,
   initials,
 }: Props) {
-  const isManual = logoSource === "manual";
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [status, setStatus] = useState<string | null>(null);
+  const tried = useRef(false);
+  const hasWebsite = Boolean(website?.trim());
+  const cleared = logoSource === "cleared";
+  const showLogo = Boolean(logoUrl);
+
+  useEffect(() => {
+    if (tried.current) return;
+    if (!hasWebsite || showLogo || cleared || logoSource === "manual") return;
+    tried.current = true;
+    startTransition(async () => {
+      const result = await ensureCompanyLogoFromWebsite();
+      if (result.ok) {
+        router.refresh();
+        return;
+      }
+      setStatus(result.error ?? "Could not fetch logo.");
+    });
+  }, [cleared, hasWebsite, logoSource, router, showLogo]);
+
+  const stateLabel = showLogo
+    ? "From website"
+    : cleared
+      ? "Removed"
+      : pending
+        ? "Fetching…"
+        : hasWebsite
+          ? "No logo yet"
+          : "Needs website";
 
   return (
-    <WorkspaceCard>
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
-        Logo
-      </p>
-      <p className="mt-1 text-[13px] text-[#64748b]">
-        Upload replaces the auto logo. Fetch pulls from your website when auto
-        mode is on.
-      </p>
-
-      <div className="mt-5 flex flex-wrap items-center gap-5">
-        <LogoMark
-          initials={initials}
-          logoUrl={logoUrl}
-          website={website}
-          size="lg"
-          className="rounded-2xl"
-        />
-        <div className="min-w-0 flex-1 space-y-3">
-          <p className="text-[12px] text-[#94a3b8]">
-            {isManual ? "Source: uploaded (manual)" : "Source: website (auto)"}
-            {name ? ` · ${name}` : null}
+    <WorkspaceCard padded={false}>
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line bg-paper/70 px-5 py-4 sm:px-6">
+        <div className="min-w-0">
+          <p className="text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
+            Brand
           </p>
-          <LogoRetryHint
-            logoSource={logoSource}
+          <h2 className="mt-1 font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
+            Company logo
+          </h2>
+          <p className="mt-1 max-w-lg text-[12px] leading-relaxed text-muted">
+            Loaded automatically from your website. Remove with × if you
+            don&apos;t want it shown.
+          </p>
+        </div>
+        <Badge tone={showLogo ? "success" : "neutral"}>{stateLabel}</Badge>
+      </div>
+
+      <div className="flex flex-wrap items-start gap-5 px-5 py-5 sm:px-6">
+        <div className="relative shrink-0">
+          <LogoMark
+            initials={initials}
+            logoUrl={logoUrl}
             website={website}
-            back="/dashboard/settings"
+            size="lg"
+            className="rounded-2xl ring-1 ring-line"
           />
-          <form
-            action={uploadCompanyLogo}
-            className="flex flex-wrap items-center gap-2"
-          >
-            <input
-              type="file"
-              name="logo"
-              accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
-              required
-              className="max-w-full text-[12px] text-[#64748b] file:mr-3 file:rounded-lg file:border-0 file:bg-[#eef1f6] file:px-3 file:py-2 file:text-[12px] file:font-semibold file:text-ink"
-            />
-            <Button type="submit" variant="secondary" className="h-10">
-              Upload logo
-            </Button>
-          </form>
-          <form action={refreshLogo}>
-            <input type="hidden" name="back" value="/dashboard/settings" />
-            <Button
-              type="submit"
-              variant="ghost"
-              className="h-10"
-              disabled={isManual || !website}
-              title={
-                isManual
-                  ? "Uploaded logos are not replaced automatically."
-                  : !website
-                    ? "Add a website first."
-                    : "Fetch logo from website"
-              }
-            >
-              Fetch from website
-            </Button>
-          </form>
+          {showLogo ? (
+            <form action={clearCompanyLogo}>
+              <button
+                type="submit"
+                title="Remove logo"
+                aria-label="Remove logo"
+                className={cn(
+                  "absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center",
+                  "rounded-full border border-line bg-surface text-ink shadow-sm",
+                  "transition-colors hover:bg-paper",
+                )}
+              >
+                <span aria-hidden className="text-[14px] leading-none">
+                  ×
+                </span>
+              </button>
+            </form>
+          ) : null}
+        </div>
+
+        <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+          <p className="text-[13px] font-semibold tracking-[-0.02em] text-ink">
+            {name}
+          </p>
+          <p className="text-[12px] leading-relaxed text-muted">
+            {showLogo
+              ? "Logo is live on your public profile and widgets."
+              : cleared
+                ? "Logo removed. Initials show until you restore it."
+                : pending
+                  ? "Fetching logo from your website…"
+                  : hasWebsite
+                    ? "Waiting for a logo from your website."
+                    : "Add a website below to load a logo automatically."}
+          </p>
+          {status ? (
+            <p className="text-[12px] text-ember">{status}</p>
+          ) : null}
+          {hasWebsite && (cleared || !showLogo) && !pending ? (
+            <form action={refreshLogo}>
+              <input type="hidden" name="back" value="/dashboard/settings" />
+              <button
+                type="submit"
+                className="text-[12px] font-semibold text-blue underline-offset-2 hover:underline"
+              >
+                {cleared ? "Restore from website" : "Try again"}
+              </button>
+            </form>
+          ) : null}
         </div>
       </div>
     </WorkspaceCard>

@@ -33,7 +33,7 @@ export function NetworkNodeTeam({ companyId, avatars, count }: Props) {
     <>
       <button
         type="button"
-        className="nodrag nopan absolute -top-0.5 -right-0.5 z-20 flex items-center"
+        className="nodrag nopan relative z-20 flex shrink-0 items-center"
         title={
           expanded
             ? "Collapse team"

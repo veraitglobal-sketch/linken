@@ -17,7 +17,6 @@ import { LogoTile } from "@/components/ui/logo-tile";
 type Props = {
   confirmed: LogoWallEntry[];
   pending: LogoWallPendingInvite[];
-  /** Company ids currently excluded from the public wall */
   excludedIds: string[];
 };
 
@@ -39,15 +38,15 @@ export function LogoWallPicker({ confirmed, pending, excludedIds }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">
           Firms on the wall
         </p>
-        <p className="mt-1 text-[12px] text-[#64748b]">
+        <p className="mt-1 text-[12px] text-muted">
           Only confirmed partners and clients. Unchecked firms stay off the
           public widget.
         </p>
         {confirmed.length === 0 ? (
-          <p className="mt-2 text-[12px] text-[#92400e]">
+          <p className="mt-2 text-[12px] text-ember">
             No confirmed firms yet — add a company below (pending until they
             accept).
           </p>
@@ -58,7 +57,7 @@ export function LogoWallPicker({ confirmed, pending, excludedIds }: Props) {
               {confirmed.map((c) => (
                 <li key={c.id}>
                   <input type="hidden" name="candidate_id" value={c.id} />
-                  <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-line px-2.5 py-2 hover:bg-[#f7f8fa]">
+                  <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-line px-2.5 py-2 hover:bg-paper/70">
                     <input
                       type="checkbox"
                       name="included_id"
@@ -77,7 +76,7 @@ export function LogoWallPicker({ confirmed, pending, excludedIds }: Props) {
                       <span className="block truncate text-[12px] font-semibold text-ink">
                         {c.name}
                       </span>
-                      <span className="text-[10px] text-[#94a3b8] capitalize">
+                      <span className="text-[10px] text-plus capitalize">
                         {c.kind}
                         {c.ongoing ? " · ongoing" : ""}
                       </span>
@@ -86,7 +85,11 @@ export function LogoWallPicker({ confirmed, pending, excludedIds }: Props) {
                 </li>
               ))}
             </ul>
-            <Button type="submit" variant="secondary" className="h-9 w-full text-[12px]">
+            <Button
+              type="submit"
+              variant="secondary"
+              className="h-9 w-full text-[12px]"
+            >
               Save selection
             </Button>
           </form>
@@ -95,17 +98,17 @@ export function LogoWallPicker({ confirmed, pending, excludedIds }: Props) {
 
       {pending.length > 0 ? (
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">
             Awaiting confirmation
           </p>
-          <p className="mt-1 text-[12px] text-[#64748b]">
+          <p className="mt-1 text-[12px] text-muted">
             Visible only here — never on the public Logo wall until they accept.
           </p>
           <ul className="mt-2 space-y-1.5">
             {pending.map((p) => (
               <li
                 key={p.partnershipId}
-                className="flex items-center gap-2.5 rounded-xl border border-dashed border-[#d1d5db] bg-[#f8fafc] px-2.5 py-2 opacity-80"
+                className="flex items-center gap-2.5 rounded-xl border border-dashed border-line bg-paper/50 px-2.5 py-2 opacity-90"
               >
                 <LogoTile
                   name={p.name}
@@ -116,17 +119,17 @@ export function LogoWallPicker({ confirmed, pending, excludedIds }: Props) {
                   muted
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[12px] font-semibold text-[#64748b]">
+                  <p className="truncate text-[12px] font-semibold text-muted">
                     {p.name}
                   </p>
-                  <p className="text-[10px] text-[#94a3b8]">Pending</p>
+                  <p className="text-[10px] text-plus">Pending</p>
                 </div>
                 <form action={resendLogoWallInvite}>
                   <input type="hidden" name="company_id" value={p.companyId} />
                   <input type="hidden" name="back" value="/dashboard/widgets" />
                   <button
                     type="submit"
-                    className="text-[10px] font-semibold text-[#64748b] underline-offset-2 hover:text-ink hover:underline"
+                    className="text-[10px] font-semibold text-muted underline-offset-2 hover:text-ink hover:underline"
                   >
                     Resend
                   </button>
@@ -150,13 +153,13 @@ export function LogoWallPicker({ confirmed, pending, excludedIds }: Props) {
         ) : (
           <form
             action={createUnclaimedPartnerFromWidgets}
-            className="space-y-2 rounded-xl border border-line bg-[#f7f8fa] px-3 py-3"
+            className="space-y-2 rounded-xl border border-line bg-paper/60 px-3 py-3"
           >
             <input type="hidden" name="back" value="/dashboard/widgets" />
             <p className="text-[12px] font-semibold text-ink">
               Invite a firm (draft + claim link)
             </p>
-            <p className="text-[11px] text-[#64748b]">
+            <p className="text-[11px] text-muted">
               Auto-logo from their website. Partnership stays pending until they
               claim — not shown on the public wall.
             </p>

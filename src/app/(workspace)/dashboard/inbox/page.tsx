@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { InboxFlash } from "@/components/inbox/inbox-flash";
 import { InboxTabs } from "@/components/inbox/inbox-tabs";
 import { DashboardInquiries } from "@/components/inquiries/dashboard-inquiries";
 import { DashboardIntros } from "@/components/intros/dashboard-intros";
@@ -21,7 +22,8 @@ type Props = {
 export default async function DashboardInboxPage({ searchParams }: Props) {
   const { error, tab } = await searchParams;
   const active = tab === "intros" ? "intros" : "inquiries";
-  const { user, company, needsCompanySwitch } = await assertCompanySection("inbox");
+  const { user, company, needsCompanySwitch } =
+    await assertCompanySection("inbox");
 
   if (needsCompanySwitch) {
     return <SwitchCompanyNotice title="Inbox" />;
@@ -29,80 +31,86 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
 
   if (!user) {
     return (
-      <p className="py-10 text-[14px] text-ink-soft">
-        <Link href="/login?next=/dashboard/inbox" className="font-semibold underline">
-          Sign in
-        </Link>{" "}
-        to view your inbox.
-      </p>
+      <WorkspacePage title="Inbox" description="Inquiries and Radar intros.">
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/login?next=/dashboard/inbox"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
+            Sign in
+          </Link>{" "}
+          to view your inbox.
+        </p>
+      </WorkspacePage>
     );
   }
 
   if (!company) {
     return (
-      <p className="py-10 text-[14px] text-ink-soft">
-        <Link href="/onboarding" className="font-semibold underline">
-          Create your company
-        </Link>{" "}
-        first.
-      </p>
+      <WorkspacePage title="Inbox" description="Inquiries and Radar intros.">
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/onboarding"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
+            Create your company
+          </Link>{" "}
+          first.
+        </p>
+      </WorkspacePage>
+    );
+  }
+
+  const [inquiryData, intros] = await Promise.all([
+    getInquiriesForOwnerCompany(company.id),
+    listReceivedIntros(company.id),
+  ]);
+
+  if (active === "intros") {
+    const supabase = await createClient();
+    await Promise.all(
+      intros
+        .filter((i) => i.status === "sent")
+        .map((i) => supabase.rpc("mark_intro_seen", { p_intro_id: i.id })),
     );
   }
 
   return (
     <WorkspacePage
       title="Inbox"
-      description="Profile inquiries and Radar intros stay in separate tabs — never mixed."
+      description="Inquiries from your profile. Intros from Radar — kept separate."
+      action={
+        <Link
+          href={`/c/${company.slug}`}
+          className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+        >
+          Public profile
+        </Link>
+      }
     >
-      <InboxTabs active={active} />
-
-      {error ? (
-        <p className="mb-5 rounded-xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-          {error}
-        </p>
-      ) : null}
-
-      {active === "inquiries" ? (
-        <InquiriesPanel companyId={company.id} />
-      ) : (
-        <IntrosPanel
-          companyId={company.id}
-          receiveIntros={company.receiveIntros !== false}
+      <div className="space-y-5">
+        <InboxTabs
+          active={active}
+          inquiryNew={inquiryData.newCount}
+          introsCount={intros.length}
         />
-      )}
+
+        {error ? <InboxFlash tone="error">{error}</InboxFlash> : null}
+
+        {active === "inquiries" ? (
+          <DashboardInquiries
+            inquiries={inquiryData.inquiries}
+            newCount={inquiryData.newCount}
+            monthCount={inquiryData.monthCount}
+            companySlug={company.slug}
+          />
+        ) : (
+          <DashboardIntros
+            intros={intros}
+            receiveIntros={company.receiveIntros !== false}
+          />
+        )}
+      </div>
     </WorkspacePage>
-  );
-}
-
-async function InquiriesPanel({ companyId }: { companyId: string }) {
-  const data = await getInquiriesForOwnerCompany(companyId);
-  return (
-    <DashboardInquiries
-      inquiries={data.inquiries}
-      newCount={data.newCount}
-      monthCount={data.monthCount}
-    />
-  );
-}
-
-async function IntrosPanel({
-  companyId,
-  receiveIntros,
-}: {
-  companyId: string;
-  receiveIntros: boolean;
-}) {
-  const intros = await listReceivedIntros(companyId);
-  const supabase = await createClient();
-  await Promise.all(
-    intros
-      .filter((i) => i.status === "sent")
-      .map((i) =>
-        supabase.rpc("mark_intro_seen", { p_intro_id: i.id }),
-      ),
-  );
-
-  return (
-    <DashboardIntros intros={intros} receiveIntros={receiveIntros} />
   );
 }

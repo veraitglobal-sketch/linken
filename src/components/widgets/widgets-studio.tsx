@@ -12,6 +12,7 @@ import type {
   LogoWallEntry,
   LogoWallPendingInvite,
 } from "@/features/widgets/logo-wall";
+import { cn } from "@/lib/cn";
 
 type Availability = Record<WidgetVariant, boolean>;
 
@@ -35,7 +36,6 @@ export function WidgetsStudio({
   logoWallExcludedIds,
 }: Props) {
   const [active, setActive] = useState<WidgetDefinition | null>(null);
-
   const status = useMemo(
     () => WIDGET_CATALOG.filter((w) => w.section === "status"),
     [],
@@ -47,8 +47,30 @@ export function WidgetsStudio({
 
   return (
     <>
-      <Section title="Show your status" items={status} />
-      <Section title="Show your evidence" items={evidence} className="mt-8" />
+      <Section
+        title="Status"
+        meta={`${status.filter((w) => availability[w.id]).length} of ${status.length} ready`}
+        items={status}
+        columns="two"
+        availability={availability}
+        siteUrl={siteUrl}
+        slug={slug}
+        isPro={isPro}
+        onConfigure={setActive}
+      />
+      <Section
+        title="Evidence"
+        meta={`${evidence.filter((w) => availability[w.id]).length} of ${evidence.length} ready`}
+        items={evidence}
+        columns="three"
+        className="mt-10"
+        availability={availability}
+        siteUrl={siteUrl}
+        slug={slug}
+        isPro={isPro}
+        onConfigure={setActive}
+        indexOffset={status.length}
+      />
 
       {active ? (
         <WidgetConfigurator
@@ -64,35 +86,61 @@ export function WidgetsStudio({
       ) : null}
     </>
   );
+}
 
-  function Section({
-    title,
-    items,
-    className,
-  }: {
-    title: string;
-    items: WidgetDefinition[];
-    className?: string;
-  }) {
-    return (
-      <section className={className}>
-        <h2 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
+function Section({
+  title,
+  meta,
+  items,
+  columns,
+  className,
+  availability,
+  siteUrl,
+  slug,
+  isPro,
+  onConfigure,
+  indexOffset = 0,
+}: {
+  title: string;
+  meta: string;
+  items: WidgetDefinition[];
+  columns: "two" | "three";
+  className?: string;
+  availability: Availability;
+  siteUrl: string;
+  slug: string;
+  isPro: boolean;
+  onConfigure: (w: WidgetDefinition) => void;
+  indexOffset?: number;
+}) {
+  return (
+    <section className={className}>
+      <header className="mb-3 flex flex-wrap items-end justify-between gap-2">
+        <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
           {title}
         </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {items.map((widget) => (
-            <WidgetGalleryCard
-              key={widget.id}
-              widget={widget}
-              siteUrl={siteUrl}
-              slug={slug}
-              available={availability[widget.id]}
-              isPro={isPro}
-              onConfigure={() => setActive(widget)}
-            />
-          ))}
-        </div>
-      </section>
-    );
-  }
+        <p className="text-[12px] font-medium text-plus">{meta}</p>
+      </header>
+      <div
+        className={cn(
+          "grid items-stretch gap-4",
+          columns === "two" && "sm:grid-cols-2",
+          columns === "three" && "sm:grid-cols-2 xl:grid-cols-3",
+        )}
+      >
+        {items.map((widget, i) => (
+          <WidgetGalleryCard
+            key={widget.id}
+            widget={widget}
+            siteUrl={siteUrl}
+            slug={slug}
+            available={availability[widget.id]}
+            isPro={isPro}
+            index={indexOffset + i}
+            onConfigure={() => onConfigure(widget)}
+          />
+        ))}
+      </div>
+    </section>
+  );
 }

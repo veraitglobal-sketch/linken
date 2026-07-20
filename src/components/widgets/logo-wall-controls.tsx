@@ -45,7 +45,7 @@ export function LogoWallControls({
   return (
     <>
       <div>
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">
           Motion
         </p>
         <div className="mt-2 grid grid-cols-2 gap-1.5">
@@ -57,15 +57,15 @@ export function LogoWallControls({
               className={cn(
                 "rounded-xl border px-2.5 py-2 text-left transition-colors",
                 motion === opt.id
-                  ? "border-[#0e1f1c] bg-[#0e1f1c] text-white"
-                  : "border-line bg-white text-ink hover:border-[#c5ccd6]",
+                  ? "border-navy bg-navy text-white"
+                  : "border-line bg-surface text-ink hover:border-plus/40",
               )}
             >
               <span className="block text-[12px] font-semibold">{opt.name}</span>
               <span
                 className={cn(
                   "mt-0.5 block text-[10px] leading-snug",
-                  motion === opt.id ? "text-white/65" : "text-[#94a3b8]",
+                  motion === opt.id ? "text-white/65" : "text-plus",
                 )}
               >
                 {opt.hint}
@@ -76,10 +76,10 @@ export function LogoWallControls({
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">
           Logo size
         </p>
-        <div className="mt-2 flex gap-1.5 rounded-xl border border-line bg-[#f7f8fa] p-1">
+        <div className="mt-2 flex gap-1.5 rounded-xl border border-line bg-paper/60 p-1">
           {(["sm", "md", "lg", "xl"] as const).map((s) => (
             <button
               key={s}
@@ -88,8 +88,8 @@ export function LogoWallControls({
               className={cn(
                 "h-9 flex-1 rounded-lg text-[12px] font-semibold uppercase transition-colors",
                 size === s
-                  ? "bg-white text-ink shadow-sm"
-                  : "text-[#64748b] hover:text-ink",
+                  ? "bg-surface text-ink shadow-sm"
+                  : "text-muted hover:text-ink",
               )}
             >
               {s}
@@ -99,13 +99,13 @@ export function LogoWallControls({
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">
           Label
         </p>
         <select
           value={label}
           onChange={(e) => onLabel(e.target.value as LogoWallLabel)}
-          className="mt-2 h-11 w-full rounded-xl border border-[#e6eaf0] bg-white px-3 text-[13px] text-ink"
+          className="mt-2 h-11 w-full rounded-xl border border-line bg-surface px-3 text-[13px] text-ink"
         >
           <option value="both">Verified partners &amp; clients</option>
           <option value="partners">Our verified partners</option>
@@ -125,7 +125,7 @@ export function LogoWallControls({
           <span className="block text-[13px] font-semibold text-ink">
             Monochrome logos
           </span>
-          <span className="mt-0.5 block text-[12px] text-[#64748b]">
+          <span className="mt-0.5 block text-[12px] text-muted">
             Flat black/white marks — no color noise, no tile backgrounds.
           </span>
         </span>
@@ -136,7 +136,7 @@ export function LogoWallControls({
         pending={pending}
         excludedIds={excludedIds}
       />
-      <p className="text-[12px] text-[#94a3b8]">
+      <p className="text-[12px] text-plus">
         Height: {height}px · transparent embed
       </p>
     </>

@@ -101,16 +101,16 @@ export function WorkspaceShell({
 
         {isGraph ? (
           <>
-            <div className="pointer-events-none absolute top-3 right-3 z-40 flex items-center gap-2">
+            <div className="pointer-events-none absolute top-3 right-3 z-40 flex items-center gap-2 sm:top-4 sm:right-4">
               {checklist && !checklist.complete ? (
-                <div className="pointer-events-auto">
+                <div className="pointer-events-auto shrink-0">
                   <GettingStartedPill checklist={checklist} />
                 </div>
               ) : null}
               {publicHref ? (
                 <Link
                   href={publicHref}
-                  className="pointer-events-auto inline-flex h-8 items-center rounded-full border border-line/80 bg-surface/90 px-3.5 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)] backdrop-blur-md transition-colors hover:bg-surface"
+                  className="pointer-events-auto inline-flex h-8 shrink-0 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)] backdrop-blur-md transition-colors hover:bg-paper"
                 >
                   Public profile
                 </Link>

@@ -30,7 +30,7 @@ export function IntroProof({
         <Badge tone="neutral">{trustLevel}</Badge>
       ) : null}
       {wouldWorkAgain ? (
-        <span className="text-[12px] text-ink-soft">{wouldWorkAgain}</span>
+        <span className="text-[12px] text-muted">{wouldWorkAgain}</span>
       ) : null}
     </div>
   );

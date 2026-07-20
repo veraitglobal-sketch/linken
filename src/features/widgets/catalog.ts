@@ -44,8 +44,7 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "compact",
     name: "Compact",
-    description:
-      "Trust bar with Linken seal and sliding partner logos.",
+    description: "Trust bar with seal and sliding partner logos.",
     section: "status",
     recommended: true,
     height: 48,
@@ -53,42 +52,40 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "badge",
     name: "Badge",
-    description:
-      "Company card with sliding partner logos and Linken seal.",
+    description: "Company card with partner logos and Linken seal.",
     section: "status",
     height: 88,
   },
   {
     id: "references",
     name: "References",
-    description: "List of confirmed client relationships on your profile.",
+    description: "Confirmed client relationships from your profile.",
     section: "evidence",
     height: 160,
     requirementHint: "Requires at least one confirmed client reference.",
     unavailableCtaHref: "/dashboard/partners",
-    unavailableCtaLabel: "Confirm clients on your profile",
+    unavailableCtaLabel: "Confirm clients",
   },
   {
     id: "assessment",
     name: "Client assessment",
-    description: "“N of M would work again” plus top strengths.",
+    description: "Would-work-again score and top strengths.",
     section: "evidence",
     height: 120,
     requirementHint: "Requires ≥3 client answers",
     unavailableCtaHref: "/dashboard",
-    unavailableCtaLabel: "Invite clients to confirm",
+    unavailableCtaLabel: "Invite clients",
   },
   {
     id: "logo-wall",
     name: "Logo wall",
-    description:
-      "Clean partner logos — no cards. Row, vertical, fade, or grid.",
+    description: "Partner logos only — row, stack, fade, or grid.",
     section: "evidence",
     pro: true,
     height: 72,
     requirementHint: "Requires at least one confirmed partnership or client.",
     unavailableCtaHref: "/dashboard/partners",
-    unavailableCtaLabel: "confirm your first partnership",
+    unavailableCtaLabel: "Add partners",
   },
 ];
 

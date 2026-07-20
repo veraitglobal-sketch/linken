@@ -13,8 +13,8 @@ import type {
   PositionedNode,
 } from "@/features/network/layout-types";
 
-const LEVEL_GAP_Y = 170;
-const SIBLING_GAP_X = 240;
+const LEVEL_GAP_Y = 128;
+const SIBLING_GAP_X = 188;
 
 /**
  * Group scope: ownership tree + per-owner partner/client clusters

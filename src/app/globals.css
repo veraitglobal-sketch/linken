@@ -198,24 +198,76 @@ a {
   animation: orbit 18s linear infinite;
 }
 
-/* Workspace — quiet motion, Retell-like craft */
+/* Workspace — quiet motion */
 .workspace-fade {
   animation: fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Network graph stage */
+/* Network — soft depth, quiet grid */
 .linken-flow-stage {
-  background: #f4f5f3;
+  background:
+    radial-gradient(ellipse 85% 60% at 50% -5%, rgba(126, 184, 164, 0.12), transparent 58%),
+    radial-gradient(ellipse 45% 35% at 95% 90%, rgba(14, 31, 28, 0.035), transparent 55%),
+    #f2f4f2;
+}
+
+@keyframes linken-node-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.linken-node-enter {
+  animation: linken-node-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes linken-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.linken-panel-enter {
+  animation: linken-panel-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes linken-widget-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.linken-widget-enter {
+  animation: linken-widget-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .linken-widget-enter {
+    animation: none;
+  }
 }
 
 .linken-flow .react-flow__node {
   overflow: visible !important;
-  transition: filter 0.12s ease;
 }
 
 .linken-flow .react-flow__node:hover {
   z-index: 5;
-  filter: drop-shadow(0 10px 18px rgba(8, 20, 18, 0.1));
 }
 
 .linken-flow .react-flow__node.selected {
@@ -223,43 +275,47 @@ a {
 }
 
 .linken-flow .react-flow__edge-path {
-  transition: stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
+  transition: stroke 0.18s ease, stroke-width 0.18s ease, opacity 0.18s ease;
 }
 
 .linken-flow .react-flow__edge.selected .react-flow__edge-path,
 .linken-flow .react-flow__edge:focus .react-flow__edge-path {
   stroke: #1a5c51 !important;
-  stroke-width: 2.75 !important;
+  stroke-width: 2.1 !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 4px rgba(26, 92, 81, 0.22));
 }
 
 .linken-flow .react-flow__connection-line {
   stroke: #1a5c51 !important;
 }
 
+.linken-flow-connecting .react-flow__handle.linken-handle {
+  box-shadow: 0 0 0 3px rgba(126, 184, 164, 0.4), 0 0 0 1px #fff;
+  background: #7eb8a4 !important;
+}
+
 .linken-flow .react-flow__handle.linken-handle {
-  transition:
-    transform 0.12s ease,
-    background-color 0.12s ease,
-    box-shadow 0.12s ease;
-  box-shadow: 0 0 0 3px rgba(26, 92, 81, 0.18);
+  z-index: 20;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95);
 }
 
 .linken-flow .react-flow__handle.linken-handle:hover {
-  transform: scale(1.45);
+  transform: scale(1.4);
   background: #7eb8a4 !important;
-  box-shadow: 0 0 0 5px rgba(126, 184, 164, 0.35);
+  box-shadow: 0 0 0 3px rgba(126, 184, 164, 0.35);
 }
 
 .linken-flow .react-flow__controls-button:hover {
-  background: #f1f3f1 !important;
+  background: rgba(14, 31, 28, 0.05) !important;
 }
 
 .linken-flow .react-flow__minimap-mask {
   fill: rgba(14, 31, 28, 0.06);
 }
 
-.linken-flow .react-flow__background pattern circle {
-  /* React Flow dots — keep crisp against the stage wash */
+.linken-flow .react-flow__background {
   opacity: 1;
 }
 

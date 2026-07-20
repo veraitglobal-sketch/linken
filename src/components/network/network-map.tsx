@@ -8,7 +8,6 @@ import {
   useState,
   useTransition,
 } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Background,
@@ -39,6 +38,8 @@ import {
   isClusterNodeId,
   toHaloNodes,
 } from "@/components/network/network-cluster-nodes";
+import { NetworkHint } from "@/components/network/network-hint";
+import { NetworkMapChrome } from "@/components/network/network-map-chrome";
 import {
   GraphSidePanel,
   type PanelMode,
@@ -65,7 +66,6 @@ import type {
   NetworkGraph,
   NetworkNodeData,
 } from "@/features/network/types";
-import { cn } from "@/lib/cn";
 
 const nodeTypes = {
   company: NetworkCompanyNode,
@@ -79,69 +79,46 @@ type Props = {
   editable?: boolean;
   /** Outgoing pending partner invites (not drawn on the map). */
   pendingInviteCount?: number;
+  title?: string;
 };
 
 function toFlowEdge(e: NetworkEdge, selected: boolean): Edge {
   const isOwns = e.type === "subsidiary";
-  const isMember = e.type === "member_of";
-  const isStructure = isOwns || isMember;
+  const isStructure = isOwns || e.type === "member_of";
   const isPartner = e.type === "partner";
 
-  // Ownership = solid dark + arrow. Partner = dashed, mutual (no arrow).
   const stroke = selected
     ? "#1a5c51"
     : isOwns
       ? "#0e1f1c"
-      : isMember
-        ? "#3a423e"
-        : isPartner
-          ? "#66706b"
-          : "#94a3b8";
-
-  const label = isOwns
-    ? "owns"
-    : isPartner
-      ? "partner"
-      : isMember
-        ? "member"
-        : e.type === "client"
-          ? "client"
-          : undefined;
+      : isPartner
+        ? "#a3aba6"
+        : "#8a948e";
 
   return {
     id: e.id,
     source: e.source,
     target: e.target,
-    type: isStructure ? "smoothstep" : "default",
+    type: "smoothstep",
     data: e,
     selectable: true,
     focusable: true,
     deletable: Boolean(e.detachable),
     reconnectable: isStructure,
     interactionWidth: 28,
-    label,
-    labelStyle: {
-      fill: isOwns ? "#0b1220" : "#64748b",
-      fontSize: 10,
-      fontWeight: 600,
-      letterSpacing: "0.02em",
-    },
-    labelBgStyle: { fill: "#eef1ef" },
-    labelBgPadding: [3, 6] as [number, number],
-    labelBgBorderRadius: 4,
     style: {
       stroke,
-      strokeWidth: selected ? 2.75 : isOwns ? 2.4 : isPartner ? 2 : 2.1,
-      strokeDasharray: isPartner || e.type === "client" ? "6 5" : undefined,
-      opacity: 1,
+      strokeWidth: selected ? 2 : isOwns ? 1.6 : 1.2,
+      strokeDasharray: isPartner || e.type === "client" ? "2.5 5" : undefined,
+      opacity: selected ? 1 : isPartner ? 0.8 : 0.9,
     },
     animated: false,
     markerEnd: isOwns
       ? {
           type: MarkerType.ArrowClosed,
           color: stroke,
-          width: 16,
-          height: 16,
+          width: 11,
+          height: 11,
         }
       : undefined,
   };
@@ -158,6 +135,7 @@ export function NetworkMap({
   graph,
   editable = false,
   pendingInviteCount = 0,
+  title = "Network",
 }: Props) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -167,6 +145,7 @@ export function NetworkMap({
   const [selected, setSelected] = useState<NetworkNodeData | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelMode, setPanelMode] = useState<PanelMode>("inspect");
+  const [connecting, setConnecting] = useState(false);
   const [nodes, setNodes] = useNodesState<Node>([]);
   const [edges, setEdges] = useEdgesState<Edge>([]);
 
@@ -222,6 +201,10 @@ export function NetworkMap({
 
     // Keep user-dragged positions across refresh / data updates
     const saved = loadGraphPositions(layoutKey);
+    const hubId =
+      auto.nodes.find((n) => n.data.kind === "group")?.id ??
+      auto.nodes.find((n) => n.data.kind === "company")?.id ??
+      auto.nodes[0]?.id;
     const companyNodes: Node[] = auto.nodes.map((n) => ({
       id: n.id,
       type: "company",
@@ -235,6 +218,7 @@ export function NetworkMap({
         selected: false,
         nodeId: n.id,
         editable,
+        isHub: n.id === hubId,
       } satisfies FlowNodeData,
     }));
 
@@ -337,6 +321,10 @@ export function NetworkMap({
       ownerId: c.ownerId,
       nodeIds: c.nodeIds,
     }));
+    const hubId =
+      auto.nodes.find((n) => n.data.kind === "group")?.id ??
+      auto.nodes.find((n) => n.data.kind === "company")?.id ??
+      auto.nodes[0]?.id;
     setNodes((prev) => {
       const companyNodes: Node[] = auto.nodes.map((n) => {
         const existing = prev.find((p) => p.id === n.id);
@@ -353,6 +341,7 @@ export function NetworkMap({
             selected: existing?.id === selectedId,
             nodeId: n.id,
             editable,
+            isHub: n.id === hubId,
           } satisfies FlowNodeData,
         };
       });
@@ -486,96 +475,48 @@ export function NetworkMap({
 
   if (graph.nodes.length === 0) return null;
 
+  const countLabels = [
+    graph.summary.companies
+      ? `${graph.summary.companies} ${graph.summary.companies === 1 ? "company" : "companies"}`
+      : null,
+    graph.summary.subsidiaries
+      ? `${graph.summary.subsidiaries} subsidiaries`
+      : null,
+    graph.summary.partners
+      ? `${graph.summary.partners} partners`
+      : null,
+  ].filter(Boolean) as string[];
+
+  const firmCount = nodes.filter(
+    (n) => n.type === "company" && !isClusterNodeId(n.id),
+  ).length;
+
   return (
-    <div className="linken-flow linken-flow-stage relative h-full w-full">
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start p-3 pr-36 sm:pr-40">
-        <div className="pointer-events-auto flex flex-col gap-2">
-          {editable ? (
-            <div className="flex items-center gap-1.5">
-              <div className="flex items-center rounded-full border border-black/[0.06] bg-white/80 p-0.5 shadow-[0_10px_30px_rgba(8,20,18,0.07)] backdrop-blur-md">
-                <button
-                  type="button"
-                  onClick={() => setMode("structure")}
-                  title="Drag from parent → child firm (ownership)"
-                  className={cn(
-                    "rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors",
-                    mode === "structure"
-                      ? "bg-navy text-white"
-                      : "text-ink-soft hover:text-ink",
-                  )}
-                >
-                  Ownership
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("partner")}
-                  title="Drag between firms to request partnership"
-                  className={cn(
-                    "rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors",
-                    mode === "partner"
-                      ? "bg-navy text-white"
-                      : "text-ink-soft hover:text-ink",
-                  )}
-                >
-                  Partner
-                </button>
-                <button
-                  type="button"
-                  onClick={resetLayout}
-                  className="rounded-full px-2.5 py-1.5 text-[11px] text-muted transition-colors hover:text-ink"
-                  title="Reset layout"
-                >
-                  Reset
-                </button>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setPanelMode("add");
-                  setPanelOpen(true);
-                  if (!selected) {
-                    setSelectedId(null);
-                    setSelected(null);
-                  }
-                }}
-                className="inline-flex h-8 items-center gap-1 rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white shadow-[0_10px_28px_rgba(8,20,18,0.16)] transition-colors hover:bg-accent-hover"
-              >
-                + Add
-              </button>
-            </div>
-          ) : null}
-          <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 px-1 text-[10px] font-medium text-muted/90">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="relative inline-block h-px w-4 bg-ink/70">
-                <span className="absolute top-1/2 right-0 h-0 w-0 -translate-y-1/2 border-y-[3px] border-l-[4px] border-y-transparent border-l-ink/70" />
-              </span>
-              Owns
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span
-                className="inline-block h-px w-4 border-t border-dashed border-plus"
-                style={{ borderTopWidth: 1.5 }}
-              />
-              Partner
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-[2px] border border-dashed border-ember bg-[#faf4ec]" />
-              Verify
-            </span>
-            {pendingInviteCount > 0 ? (
-              <Link
-                href="/dashboard/partners"
-                className="pointer-events-auto inline-flex items-center gap-1 font-semibold text-ember underline-offset-2 hover:underline"
-              >
-                +{pendingInviteCount} pending
-              </Link>
-            ) : null}
-          </div>
-        </div>
-      </div>
+    <div
+      className={`linken-flow linken-flow-stage relative h-full w-full${connecting ? " linken-flow-connecting" : ""}`}
+    >
+      <NetworkMapChrome
+        title={title}
+        counts={countLabels}
+        editable={editable}
+        mode={mode}
+        onMode={setMode}
+        onReset={resetLayout}
+        onAdd={() => {
+          setPanelMode("add");
+          setPanelOpen(true);
+          if (!selected) {
+            setSelectedId(null);
+            setSelected(null);
+          }
+        }}
+        pendingInviteCount={pendingInviteCount}
+      />
+
+      <NetworkHint visible={editable && firmCount === 1 && !panelOpen} />
 
       {error ? (
-        <div className="absolute top-14 left-1/2 z-30 max-w-sm -translate-x-1/2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-center text-[12px] font-medium text-red-800 shadow-sm">
+        <div className="absolute top-14 left-1/2 z-30 max-w-sm -translate-x-1/2 rounded-2xl border border-red-200/80 bg-red-50/95 px-3.5 py-2 text-center text-[12px] font-medium text-red-800 shadow-[0_10px_28px_rgba(8,20,18,0.08)] backdrop-blur-md">
           {error}
         </div>
       ) : null}
@@ -587,13 +528,15 @@ export function NetworkMap({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={editable ? onConnect : undefined}
+        onConnectStart={editable ? () => setConnecting(true) : undefined}
+        onConnectEnd={editable ? () => setConnecting(false) : undefined}
         onReconnect={editable ? onReconnect : undefined}
         onNodeDragStop={onNodeDragStop}
         connectionMode={ConnectionMode.Loose}
         fitView
-        fitViewOptions={{ padding: 0.22 }}
-        minZoom={0.25}
-        maxZoom={1.6}
+        fitViewOptions={{ padding: 0.24, maxZoom: 1.25 }}
+        minZoom={0.3}
+        maxZoom={1.5}
         nodesDraggable
         nodesConnectable={editable}
         edgesReconnectable={editable}
@@ -608,21 +551,21 @@ export function NetworkMap({
         preventScrolling
         proOptions={{ hideAttribution: true }}
         defaultEdgeOptions={{ type: "smoothstep" }}
-        connectionLineStyle={{ stroke: "#1a5c51", strokeWidth: 2.25 }}
+        connectionLineStyle={{ stroke: "#1a5c51", strokeWidth: 1.75 }}
         onPaneClick={closePanel}
         className="linken-flow-canvas"
       >
         <Background
           variant={BackgroundVariant.Dots}
-          gap={22}
-          size={1.4}
-          color="#a8b0aa"
+          gap={20}
+          size={1}
+          color="rgba(14, 31, 28, 0.1)"
           bgColor="transparent"
         />
         <Controls
           showInteractive={false}
           position="bottom-left"
-          className="!m-3 !overflow-hidden !rounded-full !border !border-black/[0.06] !bg-white/85 !shadow-[0_10px_28px_rgba(8,20,18,0.07)] !backdrop-blur-md [&>button]:!h-7 [&>button]:!w-7 [&>button]:!border-transparent [&>button]:!bg-transparent [&>button]:!fill-[var(--muted)]"
+          className="!m-4 !overflow-hidden !rounded-2xl !border !border-white/80 !bg-white/78 !shadow-[0_10px_32px_rgba(8,20,18,0.07)] !backdrop-blur-xl [&>button]:!h-8 [&>button]:!w-8 [&>button]:!border-transparent [&>button]:!bg-transparent [&>button]:!fill-[var(--muted)]"
         />
       </ReactFlow>
 

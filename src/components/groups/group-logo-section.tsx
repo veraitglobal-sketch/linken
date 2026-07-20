@@ -1,12 +1,14 @@
+import { StructureSectionHead } from "@/components/dashboard/structure-ui";
+import { WorkspaceCard } from "@/components/dashboard/workspace-page";
+import { LogoRetryHint } from "@/components/logo/logo-retry-hint";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { LogoMark } from "@/components/ui/logo-mark";
 import {
   refreshGroupLogo,
   updateGroupWebsite,
 } from "@/features/groups/logo-actions";
 import { uploadGroupLogo } from "@/features/groups/logo-upload-action";
-import { LogoRetryHint } from "@/components/logo/logo-retry-hint";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { LogoMark } from "@/components/ui/logo-mark";
 
 type Props = {
   groupId: string;
@@ -30,15 +32,15 @@ export function GroupLogoSection({
   const isManual = logoSource === "manual";
 
   return (
-    <section className="rounded-[24px] border border-line bg-surface px-5 py-6">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">
-        Group logo & website
-      </p>
-      <p className="mt-2 text-[13px] text-ink-soft">
-        Auto-fetch uses the group website. Upload sets a manual logo.
-      </p>
+    <WorkspaceCard className="overflow-hidden !p-0">
+      <StructureSectionHead
+        eyebrow="Brand"
+        title="Group logo & website"
+        description="Auto-fetch uses the group website. Upload sets a manual logo."
+        tone="soft"
+      />
 
-      <div className="mt-5 flex flex-wrap items-start gap-5">
+      <div className="flex flex-wrap items-start gap-5 px-5 py-5 sm:px-6">
         <LogoMark
           initials={initials}
           logoUrl={logoUrl}
@@ -47,7 +49,7 @@ export function GroupLogoSection({
           className="rounded-2xl"
         />
         <div className="min-w-0 flex-1 space-y-3">
-          <p className="text-[12px] text-[#94a3b8]">
+          <p className="text-[12px] text-muted">
             {isManual ? "Source: uploaded (manual)" : "Source: website (auto)"}
             {name ? ` · ${name}` : null}
           </p>
@@ -83,7 +85,7 @@ export function GroupLogoSection({
               name="logo"
               accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
               required
-              className="max-w-full text-[12px] text-[#64748b] file:mr-3 file:rounded-lg file:border-0 file:bg-[#eef1f6] file:px-3 file:py-2 file:text-[12px] file:font-semibold file:text-ink"
+              className="max-w-full text-[12px] text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-paper file:px-3 file:py-2 file:text-[12px] file:font-semibold file:text-ink"
             />
             <Button type="submit" variant="secondary" className="h-10">
               Upload logo
@@ -110,6 +112,6 @@ export function GroupLogoSection({
           </form>
         </div>
       </div>
-    </section>
+    </WorkspaceCard>
   );
 }
