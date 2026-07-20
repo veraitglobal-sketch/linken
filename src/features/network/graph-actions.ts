@@ -25,10 +25,23 @@ type ViewerGate =
   | { ok: false; error: string };
 
 async function requireViewerDomainVerified(userId: string): Promise<ViewerGate> {
+  const { resolveActiveWorkspace } = await import(
+    "@/features/workspace/context"
+  );
+  const workspace = await resolveActiveWorkspace();
+  if (
+    !workspace?.company ||
+    workspace.userId !== userId ||
+    workspace.active?.type !== "company"
+  ) {
+    return { ok: false, error: "Switch to a company workspace first." };
+  }
+
   const supabase = await createClient();
   const { data: mine } = await supabase
     .from("companies")
     .select("id, verified")
+    .eq("id", workspace.company.id)
     .eq("owner_id", userId)
     .eq("claimed", true)
     .maybeSingle();
@@ -185,14 +198,15 @@ export async function disconnectGraphEdge(input: {
     });
     if (error) return { ok: false, error: error.message };
 
-    const { data: mine } = await supabase
-      .from("companies")
-      .select("id")
-      .eq("owner_id", user.id)
-      .eq("claimed", true)
-      .maybeSingle();
-    if (mine) {
-      await notifyPartnershipEnded(input.partnershipId, mine.id as string);
+    const { resolveActiveWorkspace } = await import(
+      "@/features/workspace/context"
+    );
+    const workspace = await resolveActiveWorkspace();
+    if (workspace?.company?.id) {
+      await notifyPartnershipEnded(
+        input.partnershipId,
+        workspace.company.id,
+      );
     }
 
     revalidateGraph();

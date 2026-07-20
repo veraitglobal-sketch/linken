@@ -64,6 +64,12 @@ export function AddReferenceForm() {
           </span>
           <Input type="email" name="invite_email" placeholder="client@company.com" />
         </label>
+        <label className="block sm:col-span-2">
+          <span className="mb-1.5 block text-[12px] font-medium text-ink">
+            Client website (optional)
+          </span>
+          <Input name="website" type="url" placeholder="https://" />
+        </label>
         <label className="flex items-center gap-2 text-[13px] text-ink sm:col-span-2">
           <input type="checkbox" name="create_ghost" className="size-4 rounded border-line" />
           Also create an unclaimed draft profile for this client

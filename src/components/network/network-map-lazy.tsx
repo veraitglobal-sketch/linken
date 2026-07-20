@@ -19,8 +19,19 @@ const NetworkMap = dynamic(
 type Props = {
   graph: NetworkGraph;
   editable?: boolean;
+  pendingInviteCount?: number;
 };
 
-export function NetworkMapLazy({ graph, editable }: Props) {
-  return <NetworkMap graph={graph} editable={editable} />;
+export function NetworkMapLazy({
+  graph,
+  editable,
+  pendingInviteCount,
+}: Props) {
+  return (
+    <NetworkMap
+      graph={graph}
+      editable={editable}
+      pendingInviteCount={pendingInviteCount}
+    />
+  );
 }

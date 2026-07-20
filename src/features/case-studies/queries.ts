@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { resolveActiveWorkspace } from "@/features/workspace/context";
 import type { CaseStudy, CaseStudyPartner } from "@/types/case-study";
 import type { ClientConfirmationView } from "@/types/client-confirmation";
 
@@ -233,14 +234,20 @@ export async function isCompanyOwnerSlug(slug: string) {
     } = await supabase.auth.getUser();
     if (!user) return false;
 
-    const { data } = await supabase
-      .from("companies")
-      .select("id")
-      .eq("slug", slug)
-      .eq("owner_id", user.id)
-      .maybeSingle();
+    const workspace = await resolveActiveWorkspace();
+    if (
+      !workspace?.company ||
+      workspace.active?.type !== "company" ||
+      workspace.company.slug !== slug
+    ) {
+      return false;
+    }
 
-    return Boolean(data);
+    const { data: allowed } = await supabase.rpc("is_company_operator", {
+      p_company_id: workspace.company.id,
+    });
+
+    return Boolean(allowed);
   } catch {
     return false;
   }

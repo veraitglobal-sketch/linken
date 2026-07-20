@@ -1,6 +1,9 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import {
+  scheduleCompanyLogoFetch,
+  scheduleGroupLogoFetch,
+} from "@/features/logo/schedule";
 import { buildMemberTree } from "@/features/groups/tree";
 import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
@@ -185,6 +188,9 @@ export async function createGroupCore(
     status: "confirmed",
     confirmed_at: new Date().toISOString(),
   });
+
+  const website = (input.website ?? "").trim();
+  if (website) scheduleGroupLogoFetch(data.id as string);
 
   return {
     ok: true,

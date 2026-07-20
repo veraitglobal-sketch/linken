@@ -1,3 +1,5 @@
+import type { WorkspaceSection } from "@/features/workspace/sections";
+
 export type TeamRole = "owner" | "admin" | "member";
 
 export type TeamMember = {
@@ -8,6 +10,7 @@ export type TeamMember = {
   photoUrl: string | null;
   publicVisible: boolean;
   createdAt: string;
+  permissions: WorkspaceSection[];
 };
 
 export type TeamInvitation = {

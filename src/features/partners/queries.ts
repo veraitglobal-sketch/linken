@@ -58,6 +58,8 @@ export async function viewerOwnsClaimedCompany() {
       )
       .eq("owner_id", user.id)
       .eq("claimed", true)
+      .order("created_at", { ascending: true })
+      .limit(1)
       .maybeSingle();
 
     return {

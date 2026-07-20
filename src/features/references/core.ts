@@ -1,5 +1,6 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
 import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendReferenceConfirmEmail } from "@/lib/email";
@@ -19,6 +20,8 @@ export type CreateReferenceInput = {
   /** Optional — form flow may create ghost + send invite in one step. */
   inviteEmail?: string | null;
   createGhost?: boolean;
+  /** Optional website when creating a ghost client profile. */
+  website?: string | null;
 };
 
 export async function createReferenceCore(
@@ -29,6 +32,7 @@ export async function createReferenceCore(
   const service = input.service.trim();
   const startedYear = input.startedYear.trim();
   const inviteEmail = (input.inviteEmail ?? "").trim().toLowerCase() || null;
+  const website = (input.website ?? "").trim();
 
   if (!clientName || !service || !startedYear) {
     return {
@@ -57,6 +61,7 @@ export async function createReferenceCore(
         slug,
         category: "Client",
         city: "",
+        website: website || "",
         tagline: `Client of ${input.companyName}`,
         description: `Draft profile created from a service reference by ${input.companyName}.`,
         services: [],
@@ -65,6 +70,9 @@ export async function createReferenceCore(
       .select("id")
       .single();
     clientCompanyId = ghost?.id ?? null;
+    if (website && clientCompanyId) {
+      scheduleCompanyLogoFetch(clientCompanyId);
+    }
   }
 
   const confirmToken = crypto.randomUUID();

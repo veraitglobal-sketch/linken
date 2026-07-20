@@ -20,6 +20,8 @@ export type NetworkNodeData = {
   logoInitials: string;
   logoUrl?: string | null;
   website?: string | null;
+  /** auto | manual | null — owner UI for retry when null + website. */
+  logoSource?: string | null;
   category: string;
   city: string;
   trustLevel: TrustLevel | null;
@@ -75,6 +77,10 @@ export type NetworkGraphContext = {
   groupId?: string | null;
   groupSlug?: string | null;
   viewerCompanyId?: string | null;
+  /** Group creator user id (for owner logo controls). */
+  groupCreatedBy?: string | null;
+  /** True when the signed-in user created the scoped group. */
+  isGroupCreator?: boolean;
 };
 
 export type NetworkGraph = {

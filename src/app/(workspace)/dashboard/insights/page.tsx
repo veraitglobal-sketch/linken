@@ -2,15 +2,20 @@ import type { Metadata } from "next";
 import { InsightsDashboard } from "@/components/analytics/insights-dashboard";
 import { Button } from "@/components/ui/button";
 import { getAnalytics } from "@/features/analytics/queries";
-import { getDashboardSession } from "@/features/dashboard/session";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { parsePlan } from "@/features/plan/entitlements";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 
 export const metadata: Metadata = {
   title: "Insights",
 };
 
 export default async function InsightsPage() {
-  const { user, company } = await getDashboardSession();
+  const { user, company, needsCompanySwitch } = await assertCompanySection("insights");
+
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="Insights" />;
+  }
 
   if (!user) {
     return (

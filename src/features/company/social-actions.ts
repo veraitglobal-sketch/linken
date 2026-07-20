@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 
 function normalizeSocialUrl(
   raw: string,
@@ -50,20 +50,9 @@ export async function updateSocialLinks(formData: FormData) {
     );
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard/verification")}`);
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!company) redirect("/onboarding");
+  const { supabase, company } = await requireOperatorActiveCompany({
+    loginNext: "/dashboard/verification",
+  });
 
   const { error } = await supabase
     .from("companies")

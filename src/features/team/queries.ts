@@ -7,14 +7,48 @@ import type {
   TeamRole,
 } from "@/features/team/types";
 
-/** Membership for dashboard Team — works for owner/admin/member. */
+/** Membership for dashboard Team — respects active workspace company. */
 export async function viewerCompanyMembership() {
   try {
+    const { resolveActiveWorkspace } = await import(
+      "@/features/workspace/context"
+    );
+    const workspace = await resolveActiveWorkspace();
+    if (!workspace) return { user: null, membership: null, company: null };
+
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return { user: null, membership: null, company: null };
+
+    if (workspace.active?.type !== "company" || !workspace.company) {
+      return { user, membership: null, company: null };
+    }
+
+    const companyBrief = {
+      id: workspace.company.id,
+      name: workspace.company.name,
+      slug: workspace.company.slug,
+    };
+
+    // Branch operators manage team without a membership row on the ghost.
+    if (workspace.company.role === "operator") {
+      return {
+        user,
+        membership: {
+          companyId: workspace.company.id,
+          userId: user.id,
+          role: "admin" as TeamRole,
+          displayName: "",
+          displayTitle: "",
+          photoUrl: null,
+          publicVisible: false,
+          createdAt: new Date(0).toISOString(),
+        },
+        company: companyBrief,
+      };
+    }
 
     const { data: membership } = await supabase
       .from("company_members")
@@ -22,17 +56,10 @@ export async function viewerCompanyMembership() {
         "company_id, user_id, role, display_name, display_title, photo_url, public_visible, created_at",
       )
       .eq("user_id", user.id)
-      .order("created_at", { ascending: true })
-      .limit(1)
+      .eq("company_id", workspace.company.id)
       .maybeSingle();
 
     if (!membership) return { user, membership: null, company: null };
-
-    const { data: company } = await supabase
-      .from("companies")
-      .select("id, name, slug")
-      .eq("id", membership.company_id)
-      .maybeSingle();
 
     return {
       user,
@@ -46,13 +73,7 @@ export async function viewerCompanyMembership() {
         publicVisible: Boolean(membership.public_visible),
         createdAt: membership.created_at as string,
       },
-      company: company
-        ? {
-            id: company.id as string,
-            name: company.name as string,
-            slug: company.slug as string,
-          }
-        : null,
+      company: companyBrief,
     };
   } catch {
     return { user: null, membership: null, company: null };
@@ -99,7 +120,7 @@ export async function listCompanyTeam(companyId: string): Promise<{
       supabase
         .from("company_members")
         .select(
-          "user_id, role, display_name, display_title, photo_url, public_visible, created_at",
+          "user_id, role, display_name, display_title, photo_url, public_visible, created_at, permissions",
         )
         .eq("company_id", companyId)
         .order("created_at", { ascending: true }),
@@ -113,6 +134,9 @@ export async function listCompanyTeam(companyId: string): Promise<{
         .order("created_at", { ascending: false }),
     ]);
 
+    const { parseSectionPermissions } = await import(
+      "@/features/workspace/sections"
+    );
     const members: TeamMember[] = (membersRes.data ?? []).map((m) => ({
       userId: m.user_id as string,
       role: m.role as TeamRole,
@@ -121,6 +145,7 @@ export async function listCompanyTeam(companyId: string): Promise<{
       photoUrl: (m.photo_url as string | null) ?? null,
       publicVisible: Boolean(m.public_visible),
       createdAt: m.created_at as string,
+      permissions: parseSectionPermissions(m.permissions),
     }));
 
     const pendingInvites: TeamInvitation[] = (invitesRes.data ?? []).map(

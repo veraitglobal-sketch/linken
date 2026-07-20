@@ -7,23 +7,10 @@ import {
   type AgentApiKeyRow,
   type AgentScope,
 } from "@/features/agent-api/types";
-import { createClient } from "@/lib/supabase/server";
+import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
 
 async function requireOwnerCompany() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, company: null };
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  return { supabase, user, company };
+  return getOwnedActiveCompany();
 }
 
 export async function listApiKeys(): Promise<AgentApiKeyRow[]> {

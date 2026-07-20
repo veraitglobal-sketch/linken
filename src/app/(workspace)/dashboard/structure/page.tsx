@@ -8,7 +8,10 @@ import {
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
 import { Button } from "@/components/ui/button";
 import { getDashboardSession } from "@/features/dashboard/session";
-import { getDashboardGroupForCreator } from "@/features/groups/queries";
+import {
+  getDashboardGroupById,
+  getDashboardGroupForCreator,
+} from "@/features/groups/dashboard-group";
 
 export const metadata: Metadata = {
   title: "Structure",
@@ -25,8 +28,12 @@ type Props = {
 
 export default async function DashboardStructurePage({ searchParams }: Props) {
   const { error, created, invited, subsidiary } = await searchParams;
-  const { user, company } = await getDashboardSession();
-  const data = user ? await getDashboardGroupForCreator() : null;
+  const { user, company, group, active } = await getDashboardSession();
+  const data = user
+    ? active?.type === "group" && group
+      ? await getDashboardGroupById(group.id)
+      : await getDashboardGroupForCreator()
+    : null;
 
   if (!user) {
     return (
@@ -39,7 +46,7 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
     );
   }
 
-  if (!company) {
+  if (!company && !data) {
     return (
       <div className="py-10">
         <h1 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
@@ -56,10 +63,12 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
     );
   }
 
+  const rootName = company?.name ?? data?.group.name ?? "Group";
+
   return (
     <WorkspacePage
       title="Structure"
-      description={`${company.name} is the root. Add subsidiaries, then let branches grow their own. Public trust stays on confirmed evidence only.`}
+      description={`${rootName} is the root. Add subsidiaries, then let branches grow their own. Public trust stays on confirmed evidence only.`}
     >
       <div className="space-y-5">
         {error ? (
@@ -95,7 +104,7 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
             <div className="mt-4">
               <StructureTree
                 roots={data.tree}
-                highlightCompanyId={company.id}
+                highlightCompanyId={company?.id}
               />
             </div>
           </WorkspaceCard>

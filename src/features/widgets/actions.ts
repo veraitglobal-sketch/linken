@@ -5,29 +5,16 @@ import { redirect } from "next/navigation";
 import { createUnclaimedPartnerCore } from "@/features/partners/core";
 import { mergeLogoWallExcluded } from "@/features/widgets/settings";
 import { sendClaimInviteEmail } from "@/lib/email";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 
 function safeWidgetsBack(raw: string) {
   const back = raw.trim();
   return back.startsWith("/dashboard") ? back : "/dashboard/widgets";
 }
 
-async function requireOwnedCompany() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, company: null };
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, name, slug, verified, widget_settings")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  return { supabase, user, company };
+async function requireOperatorCompany() {
+  return getOperatorActiveCompany();
 }
 
 /** Persist which confirmed firms are hidden from the public Logo wall. */
@@ -36,7 +23,7 @@ export async function saveLogoWallSelection(formData: FormData) {
   const included = formData.getAll("included_id").map(String).filter(Boolean);
   const allIds = formData.getAll("candidate_id").map(String).filter(Boolean);
 
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await requireOperatorCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
@@ -68,7 +55,7 @@ export async function resendLogoWallInvite(formData: FormData) {
   const companyId = String(formData.get("company_id") ?? "").trim();
   const back = safeWidgetsBack(String(formData.get("back") ?? "/dashboard/widgets"));
 
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await requireOperatorCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
@@ -138,7 +125,7 @@ export async function createUnclaimedPartnerFromWidgets(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Company name is required.")}`);
   }
 
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await requireOperatorCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);

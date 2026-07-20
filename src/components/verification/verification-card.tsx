@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { refreshLogo } from "@/features/logo/actions";
+import { LogoRetryHint } from "@/components/logo/logo-retry-hint";
 import {
   checkEmailDomainVerification,
   runBacklinkCheck,
@@ -24,6 +25,7 @@ type Method = "email" | "dns" | "meta";
 type Props = {
   verification: CompanyVerification;
   website: string;
+  logoSource?: string | null;
   ownerEmail: string;
   token: string | null;
   companySlug: string;
@@ -38,6 +40,7 @@ type Props = {
 export function VerificationCard({
   verification,
   website,
+  logoSource,
   ownerEmail,
   token,
   companySlug,
@@ -316,6 +319,11 @@ export function VerificationCard({
             Auto from favicon / apple-touch-icon. Manual uploads are never
             overwritten.
           </p>
+          <LogoRetryHint
+            logoSource={logoSource}
+            website={website}
+            back="/dashboard/verification"
+          />
           <form action={refreshLogo} className="mt-3">
             <input type="hidden" name="back" value="/dashboard/verification" />
             <Button type="submit" variant="secondary" className="h-10">

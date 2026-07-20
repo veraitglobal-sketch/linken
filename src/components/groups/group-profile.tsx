@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { GroupMemberCard } from "@/components/groups/group-member-card";
 import { Button } from "@/components/ui/button";
+import { LogoMark } from "@/components/ui/logo-mark";
 import { flattenMemberTree } from "@/features/groups/tree";
 import type { GroupPublicPage } from "@/features/groups/types";
 
@@ -8,6 +9,15 @@ type Props = {
   page: GroupPublicPage;
   networkMap?: ReactNode;
 };
+
+function groupInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
 
 export function GroupProfile({ page, networkMap }: Props) {
   const { group, tree, companyCount, countryCount } = page;
@@ -18,11 +28,22 @@ export function GroupProfile({ page, networkMap }: Props) {
     <div className="pb-10">
       <section className="px-4 pt-3">
         <div className="relative mx-auto overflow-hidden rounded-[32px] bg-[#10231f] px-6 py-10 text-white sm:px-10 sm:py-12">
-          <div className="animate-rise flex flex-wrap items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#5ec4a8]" />
-            <p className="text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase">
-              Company group
-            </p>
+          <div className="animate-rise flex flex-wrap items-center gap-3">
+            <LogoMark
+              initials={groupInitials(group.name)}
+              logoUrl={group.logoUrl}
+              website={group.website}
+              size="md"
+              className="rounded-2xl ring-1 ring-white/15"
+            />
+            <div>
+              <span className="inline-flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#5ec4a8]" />
+                <p className="text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase">
+                  Company group
+                </p>
+              </span>
+            </div>
           </div>
           <h1 className="animate-rise-delay mt-5 max-w-2xl font-display text-[clamp(2.2rem,5vw,3.6rem)] leading-[0.96] font-medium tracking-[-0.045em]">
             {group.name}

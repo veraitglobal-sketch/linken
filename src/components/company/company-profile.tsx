@@ -81,6 +81,7 @@ export function CompanyProfile({
         showContact={!isUnclaimed}
         showOnePager={editable && !isUnclaimed}
         showEmbed={editable && !isUnclaimed}
+        showEditProfile={editable && !isUnclaimed}
         siteUrl={siteUrl}
         groupBadge={groupBadge}
       />

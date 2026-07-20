@@ -27,7 +27,6 @@ export function EditMyTeamProfile({ companyId, me, needsSetup }: Props) {
       <form
         action={updateMyTeamProfile}
         className="mt-4 grid gap-3 sm:grid-cols-2"
-        encType="multipart/form-data"
       >
         <input type="hidden" name="company_id" value={companyId} />
         <input type="hidden" name="back" value="/dashboard/team" />

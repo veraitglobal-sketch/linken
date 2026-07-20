@@ -130,7 +130,6 @@ export function JoinTeamPanel({
       <form
         action={respondTeamInvitation}
         className="mt-6 space-y-5"
-        encType="multipart/form-data"
       >
         <input type="hidden" name="token" value={token} />
         <input type="hidden" name="decision" value="accepted" />

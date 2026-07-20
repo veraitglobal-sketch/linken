@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DashboardAside } from "@/components/dashboard/dashboard-aside";
 import { VerificationCard } from "@/components/verification/verification-card";
-import { getDashboardSession } from "@/features/dashboard/session";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { getPendingOwnershipTransfer } from "@/features/ownership/queries";
 import { getCompanyVerification } from "@/features/verification/queries";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getSiteUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
@@ -25,7 +26,11 @@ type Props = {
 
 export default async function DashboardVerificationPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { user, company } = await getDashboardSession();
+  const { user, company, needsCompanySwitch } = await assertCompanySection("verification");
+
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="Verification" />;
+  }
 
   if (!user) {
     return (
@@ -54,7 +59,7 @@ export default async function DashboardVerificationPage({ searchParams }: Props)
     await Promise.all([
       supabase
         .from("companies")
-        .select("website, linkedin_url, facebook_url")
+        .select("website, linkedin_url, facebook_url, logo_source")
         .eq("id", company.id)
         .maybeSingle(),
       getCompanyVerification(company.id),
@@ -111,6 +116,7 @@ export default async function DashboardVerificationPage({ searchParams }: Props)
             }
           }
           website={full?.website ?? ""}
+          logoSource={full?.logo_source ?? null}
           ownerEmail={user.email ?? ""}
           token={(tokenRes.data as string | null) ?? null}
           companySlug={company.slug}

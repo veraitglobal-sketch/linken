@@ -7,23 +7,11 @@ import {
   deleteReferenceCore,
 } from "@/features/references/core";
 import { sendReferenceConfirmEmail } from "@/lib/email";
-import { createClient } from "@/lib/supabase/server";
+import { requireOwnedActiveCompany } from "@/features/workspace/require-owned";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 
-async function requireOwnedCompany() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, company: null };
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, name, slug")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  return { supabase, user, company };
+async function requireOperatorCompany() {
+  return getOperatorActiveCompany();
 }
 
 export async function addReference(formData: FormData) {
@@ -36,8 +24,9 @@ export async function addReference(formData: FormData) {
     .trim()
     .toLowerCase();
   const createGhost = String(formData.get("create_ghost") ?? "") === "on";
+  const website = String(formData.get("website") ?? "").trim();
 
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await requireOperatorCompany();
   const back = company ? `/c/${company.slug}` : "/dashboard";
 
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
@@ -55,6 +44,7 @@ export async function addReference(formData: FormData) {
     endedYear: endedYear || null,
     inviteEmail: inviteEmail || null,
     createGhost,
+    website: website || null,
   });
 
   if (!result.ok) {
@@ -91,11 +81,9 @@ async function respondServiceReference(
   const token = String(formData.get("token") ?? "").trim();
   const path = `/confirm-reference/${token}`;
 
-  const { supabase, user, company } = await requireOwnedCompany();
-  if (!user) redirect(path);
-  if (!company) {
-    redirect(`${path}?error=${encodeURIComponent("Create your company profile first.")}`);
-  }
+  const { supabase, company } = await requireOwnedActiveCompany({
+    loginNext: path,
+  });
 
   const { error } = await supabase.rpc("confirm_service_reference", {
     p_token: token,
@@ -111,14 +99,14 @@ async function respondServiceReference(
   revalidatePath(`/c/${company.slug}`);
   revalidatePath("/welcome");
   if (decision === "confirmed") {
-    redirect("/welcome?from=confirm");
+    redirect(`${path}?done=confirmed`);
   }
   redirect(`${path}?done=${decision}`);
 }
 
 export async function deleteReference(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await requireOperatorCompany();
   const back = company ? `/c/${company.slug}` : "/dashboard";
 
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);

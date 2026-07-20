@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
+import { OperatorBranchBanner } from "@/components/dashboard/operator-branch-banner";
 import { WorkspaceShell } from "@/components/dashboard/workspace-shell";
+import { getActivationChecklist } from "@/features/activation/checklist";
 import { getDashboardSession } from "@/features/dashboard/session";
-import { companyDisplayLogoUrl } from "@/features/logo/display-url";
-import { viewerCompanyMembership } from "@/features/team/queries";
 import { getCompanyVerification } from "@/features/verification/queries";
 import { createClient } from "@/lib/supabase/server";
 
@@ -11,48 +11,52 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  const { company: owned } = await getDashboardSession();
-  // Non-owners (admin/member) still need shell branding on Team.
-  const membership = !owned ? await viewerCompanyMembership() : null;
-  const company = owned
-    ? { id: owned.id, name: owned.name, slug: owned.slug }
-    : membership?.company;
+  const { active, contexts, company } = await getDashboardSession();
 
-  let logoUrl: string | null = null;
-  let website: string | null = null;
   let verified = false;
+  let checklist = null;
+  let operatorBanner = null as ReactNode;
 
   if (company) {
-    const supabase = await createClient();
-    const [{ data: full }, verification] = await Promise.all([
-      supabase
-        .from("companies")
-        .select("logo_url, website")
-        .eq("id", company.id)
-        .maybeSingle(),
+    const [verification, activation] = await Promise.all([
       getCompanyVerification(company.id),
+      company.role === "owner" || company.role === "operator"
+        ? getActivationChecklist(company.id)
+        : Promise.resolve(null),
     ]);
-    website = full?.website ?? null;
-    logoUrl = companyDisplayLogoUrl({
-      logoUrl: full?.logo_url,
-      website,
-    });
     verified = Boolean(verification?.verified);
+    checklist =
+      activation && !activation.complete ? activation : null;
+
+    if (company.role === "operator" && company.claimed === false) {
+      const supabase = await createClient();
+      const { data: banner } = await supabase.rpc("get_operator_branch_banner", {
+        p_company_id: company.id,
+      });
+      const row = Array.isArray(banner) ? banner[0] : banner;
+      if (row) {
+        operatorBanner = (
+          <OperatorBranchBanner
+            companyId={company.id}
+            creatorName={(row.creator_name as string) || "The parent company"}
+            hasInviteEmail={Boolean(row.has_invite_email)}
+          />
+        );
+      }
+    }
   }
+
+  const allowedSections =
+    company?.role === "member" ? (company.permissions ?? []) : null;
 
   return (
     <WorkspaceShell
-      company={
-        company
-          ? {
-              name: company.name,
-              slug: company.slug,
-              logoUrl,
-              website,
-              verified,
-            }
-          : null
-      }
+      active={active}
+      contexts={contexts}
+      verified={verified}
+      checklist={checklist}
+      allowedSections={allowedSections}
+      operatorBanner={operatorBanner}
     >
       {children}
     </WorkspaceShell>

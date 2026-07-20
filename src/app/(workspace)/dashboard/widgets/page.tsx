@@ -4,8 +4,9 @@ import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { LogoOptOutCard } from "@/components/widgets/logo-opt-out-card";
 import { WidgetsStudio } from "@/components/widgets/widgets-studio";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
-import { getDashboardSession } from "@/features/dashboard/session";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { getEntitlements } from "@/features/plan/entitlements";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getReferencesForCompany } from "@/features/references/queries";
 import {
   getLogoWallConfirmedCandidates,
@@ -31,8 +32,12 @@ type Props = {
 
 export default async function DashboardWidgetsPage({ searchParams }: Props) {
   const { error, logoOpt, wallSaved, wallInvited, resent } = await searchParams;
-  const { user, company } = await getDashboardSession();
+  const { user, company, needsCompanySwitch } = await assertCompanySection("widgets");
   const siteUrl = getSiteUrl();
+
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="Widgets" />;
+  }
 
   if (!user) {
     return (

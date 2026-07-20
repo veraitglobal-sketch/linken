@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
+import { LogoRetryHint } from "@/components/logo/logo-retry-hint";
 import { LogoTile } from "@/components/ui/logo-tile";
 import { GraphInviteTeamForm } from "@/components/network/graph-invite-team-form";
 import { GraphPendingInvites } from "@/components/network/graph-pending-invites";
@@ -209,6 +210,27 @@ export function GraphSidePanel({
                 </p>
               </div>
             </div>
+            {selected.kind === "group" && context?.isGroupCreator ? (
+              <div className="mt-3">
+                <LogoRetryHint
+                  logoSource={selected.logoSource}
+                  website={selected.website}
+                  back="/dashboard"
+                  kind="group"
+                  groupId={context.groupId ?? undefined}
+                />
+              </div>
+            ) : null}
+            {selected.kind !== "group" &&
+            selected.companyId === context?.viewerCompanyId ? (
+              <div className="mt-3">
+                <LogoRetryHint
+                  logoSource={selected.logoSource}
+                  website={selected.website}
+                  back="/dashboard"
+                />
+              </div>
+            ) : null}
             {selected.kind !== "group" && selected.domainVerified === false ? (
               selected.companyId &&
               selected.companyId === context?.viewerCompanyId ? (
@@ -455,6 +477,12 @@ export function GraphSidePanel({
                       name="city"
                       required
                       placeholder="City"
+                      className="h-9 w-full rounded-lg border border-[#e8eaee] bg-white px-3 text-[12px] outline-none focus:border-ink"
+                    />
+                    <input
+                      name="website"
+                      type="url"
+                      placeholder="Website (optional)"
                       className="h-9 w-full rounded-lg border border-[#e8eaee] bg-white px-3 text-[12px] outline-none focus:border-ink"
                     />
                     <button

@@ -2,15 +2,29 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { endPartnership } from "@/features/network/partnership-lifecycle";
+import {
+  endPartnership as endPartnershipImpl,
+  withdrawPartnership as withdrawPartnershipImpl,
+} from "@/features/network/partnership-lifecycle";
+import { requestPartnership as requestPartnershipImpl } from "@/features/network/partnership-request";
+import { respondPartnership as respondPartnershipImpl } from "@/features/network/partnership-respond";
 import { createClient } from "@/lib/supabase/server";
 
-export { requestPartnership } from "@/features/network/partnership-request";
-export { respondPartnership } from "@/features/network/partnership-respond";
-export {
-  endPartnership,
-  withdrawPartnership,
-} from "@/features/network/partnership-lifecycle";
+export async function requestPartnership(formData: FormData) {
+  return requestPartnershipImpl(formData);
+}
+
+export async function respondPartnership(formData: FormData) {
+  return respondPartnershipImpl(formData);
+}
+
+export async function endPartnership(formData: FormData) {
+  return endPartnershipImpl(formData);
+}
+
+export async function withdrawPartnership(formData: FormData) {
+  return withdrawPartnershipImpl(formData);
+}
 
 function safeBack(raw: string, fallback = "/dashboard") {
   const back = raw.trim();
@@ -33,7 +47,7 @@ export async function detachGraphLink(formData: FormData) {
   const back = safeBack(String(formData.get("back") ?? "/dashboard"));
 
   if (edgeType === "partner") {
-    return endPartnership(formData);
+    return endPartnershipImpl(formData);
   }
 
   if (edgeType === "subsidiary" || edgeType === "member_of") {

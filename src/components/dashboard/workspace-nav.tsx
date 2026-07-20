@@ -18,6 +18,7 @@ import {
   IconTeam,
   IconWidgets,
 } from "@/components/dashboard/workspace-icons";
+import type { WorkspaceContextType } from "@/features/workspace/types";
 import { cn } from "@/lib/cn";
 
 type Item = {
@@ -25,24 +26,92 @@ type Item = {
   label: string;
   icon: ComponentType<{ className?: string }>;
   match?: "exact" | "prefix";
+  /** Hide when active workspace is a group. */
+  companyOnly?: boolean;
+  section?: import("@/features/workspace/sections").WorkspaceSection;
 };
 
 const build: Item[] = [
-  { href: "/dashboard", label: "Network", icon: IconGraph, match: "exact" },
-  { href: "/dashboard/structure", label: "Structure", icon: IconStructure },
-  { href: "/dashboard/partners", label: "Partners", icon: IconPartners },
-  { href: "/dashboard/settings", label: "Settings", icon: IconSettings },
+  {
+    href: "/dashboard",
+    label: "Network",
+    icon: IconGraph,
+    match: "exact",
+    section: "network",
+  },
+  {
+    href: "/dashboard/structure",
+    label: "Structure",
+    icon: IconStructure,
+    section: "structure",
+  },
+  {
+    href: "/dashboard/partners",
+    label: "Partners",
+    icon: IconPartners,
+    companyOnly: true,
+    section: "partners",
+  },
+  {
+    href: "/dashboard/settings",
+    label: "Settings",
+    icon: IconSettings,
+    companyOnly: true,
+    section: "settings",
+  },
 ];
 
 const operate: Item[] = [
-  { href: "/dashboard/verification", label: "Verification", icon: IconShield },
-  { href: "/dashboard/widgets", label: "Widgets", icon: IconWidgets },
-  { href: "/dashboard/api", label: "API", icon: IconKey },
-  { href: "/dashboard/insights", label: "Insights", icon: IconChart },
-  { href: "/dashboard/inbox", label: "Inbox", icon: IconInbox },
-  { href: "/dashboard/radar", label: "Radar", icon: IconRadar },
+  {
+    href: "/dashboard/verification",
+    label: "Verification",
+    icon: IconShield,
+    companyOnly: true,
+    section: "verification",
+  },
+  {
+    href: "/dashboard/widgets",
+    label: "Widgets",
+    icon: IconWidgets,
+    companyOnly: true,
+    section: "widgets",
+  },
+  {
+    href: "/dashboard/api",
+    label: "API",
+    icon: IconKey,
+    companyOnly: true,
+    section: "api",
+  },
+  {
+    href: "/dashboard/insights",
+    label: "Insights",
+    icon: IconChart,
+    companyOnly: true,
+    section: "insights",
+  },
+  {
+    href: "/dashboard/inbox",
+    label: "Inbox",
+    icon: IconInbox,
+    companyOnly: true,
+    section: "inbox",
+  },
+  {
+    href: "/dashboard/radar",
+    label: "Radar",
+    icon: IconRadar,
+    companyOnly: true,
+    section: "radar",
+  },
   { href: "/dashboard/group", label: "Company group", icon: IconGroup },
-  { href: "/dashboard/team", label: "Team", icon: IconTeam },
+  {
+    href: "/dashboard/team",
+    label: "Team",
+    icon: IconTeam,
+    companyOnly: true,
+    section: "team",
+  },
 ];
 
 function NavLink({ item, pathname }: { item: Item; pathname: string }) {
@@ -82,6 +151,7 @@ function NavGroup({
   items: Item[];
   pathname: string;
 }) {
+  if (items.length === 0) return null;
   return (
     <div>
       <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-[#94a3b8] uppercase">
@@ -100,16 +170,40 @@ function NavGroup({
 
 type Props = {
   companySlug?: string | null;
+  groupSlug?: string | null;
+  contextType?: WorkspaceContextType | null;
+  /** null = full access; array = member allowlist (hide others). */
+  allowedSections?: import("@/features/workspace/sections").WorkspaceSection[] | null;
 };
 
-export function WorkspaceNav({ companySlug }: Props) {
+export function WorkspaceNav({
+  companySlug,
+  groupSlug,
+  contextType,
+  allowedSections = null,
+}: Props) {
   const pathname = usePathname();
+  const isGroup = contextType === "group";
+  const filter = (items: Item[]) =>
+    items.filter((i) => {
+      if (isGroup && i.companyOnly) return false;
+      if (allowedSections && i.section && !allowedSections.includes(i.section)) {
+        return false;
+      }
+      return true;
+    });
+
+  const publicHref = companySlug
+    ? `/c/${companySlug}`
+    : groupSlug
+      ? `/g/${groupSlug}`
+      : null;
 
   return (
     <nav className="flex flex-col gap-6" aria-label="Workspace">
-      <NavGroup title="Build" items={build} pathname={pathname} />
-      <NavGroup title="Operate" items={operate} pathname={pathname} />
-      {companySlug ? (
+      <NavGroup title="Build" items={filter(build)} pathname={pathname} />
+      <NavGroup title="Operate" items={filter(operate)} pathname={pathname} />
+      {publicHref ? (
         <div>
           <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-[#94a3b8] uppercase">
             Open
@@ -117,11 +211,11 @@ export function WorkspaceNav({ companySlug }: Props) {
           <ul className="space-y-0.5">
             <li>
               <Link
-                href={`/c/${companySlug}`}
+                href={publicHref}
                 className="group flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium text-[#64748b] transition-colors hover:bg-[#f4f6f9] hover:text-ink"
               >
                 <IconExternal className="text-[#94a3b8] group-hover:text-[#64748b]" />
-                Public profile
+                {groupSlug && !companySlug ? "Public group" : "Public profile"}
               </Link>
             </li>
           </ul>

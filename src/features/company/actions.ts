@@ -5,26 +5,17 @@ import { redirect } from "next/navigation";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
 import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { tryEmailDomainVerificationAfterOnboarding } from "@/features/verification/actions";
+import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
+import { setWorkspacePreference } from "@/features/workspace/set-preference";
 import { createClient } from "@/lib/supabase/server";
 import { toSlug } from "@/lib/slug";
 
 export async function setAcceptingClients(formData: FormData) {
   const accepting = String(formData.get("accepting_clients") ?? "") === "true";
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect(`/login?next=${encodeURIComponent("/dashboard")}`);
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!company) redirect("/onboarding");
+  const { supabase, company } = await requireOperatorActiveCompany({
+    loginNext: "/dashboard",
+  });
 
   const { error } = await supabase
     .from("companies")
@@ -54,20 +45,9 @@ export async function setAllowLogoInPartnerWidgets(formData: FormData) {
   const back = String(formData.get("back") ?? "/dashboard/widgets").trim();
   const safeBack = back.startsWith("/dashboard") ? back : "/dashboard/widgets";
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect(`/login?next=${encodeURIComponent(safeBack)}`);
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!company) redirect("/onboarding");
+  const { supabase, company } = await requireOperatorActiveCompany({
+    loginNext: safeBack,
+  });
 
   const { error } = await supabase
     .from("companies")
@@ -150,6 +130,8 @@ export async function createCompany(formData: FormData) {
     void matchCompanyToSearches(created.id, "became_verified");
   }
 
+  await setWorkspacePreference("company", created.id);
+  revalidatePath("/dashboard", "layout");
   revalidatePath(`/c/${created.slug}`);
   revalidatePath("/dashboard");
 

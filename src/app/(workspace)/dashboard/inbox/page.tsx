@@ -4,9 +4,10 @@ import { InboxTabs } from "@/components/inbox/inbox-tabs";
 import { DashboardInquiries } from "@/components/inquiries/dashboard-inquiries";
 import { DashboardIntros } from "@/components/intros/dashboard-intros";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
-import { getDashboardSession } from "@/features/dashboard/session";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { getInquiriesForOwnerCompany } from "@/features/inquiries/queries";
 import { listReceivedIntros } from "@/features/intros/queries";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -20,7 +21,11 @@ type Props = {
 export default async function DashboardInboxPage({ searchParams }: Props) {
   const { error, tab } = await searchParams;
   const active = tab === "intros" ? "intros" : "inquiries";
-  const { user, company } = await getDashboardSession();
+  const { user, company, needsCompanySwitch } = await assertCompanySection("inbox");
+
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="Inbox" />;
+  }
 
   if (!user) {
     return (

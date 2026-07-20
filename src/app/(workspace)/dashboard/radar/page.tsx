@@ -6,8 +6,9 @@ import { RadarBoard } from "@/components/project-requests/radar-board";
 import { CompanyLeadsFeed } from "@/components/radar-leads/company-leads-feed";
 import { SavedSearchesPanel } from "@/components/radar-leads/saved-searches-panel";
 import { getAnalytics } from "@/features/analytics/queries";
-import { getDashboardSession } from "@/features/dashboard/session";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { searchRadarCompanies } from "@/features/intros/search";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getEntitlements } from "@/features/plan/entitlements";
 import {
   getCreditBalance,
@@ -44,7 +45,11 @@ type Props = {
 
 export default async function DashboardRadarPage({ searchParams }: Props) {
   const sp = await searchParams;
-  const { user, company } = await getDashboardSession();
+  const { user, company, needsCompanySwitch } = await assertCompanySection("radar");
+
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="Radar" />;
+  }
 
   if (!user) {
     return (

@@ -24,6 +24,7 @@ async function createAndSendTeamInvite(input: {
   title: string;
   email: string;
   role: "admin" | "member";
+  permissions?: string[];
 }): Promise<
   | { ok: true; email: string; companySlug: string | null }
   | { ok: false; error: string }
@@ -33,6 +34,7 @@ async function createAndSendTeamInvite(input: {
   const title = input.title.trim();
   const email = input.email.trim().toLowerCase();
   const role = input.role === "admin" ? "admin" : "member";
+  const permissions = role === "member" ? (input.permissions ?? []) : [];
 
   if (!companyId || !name || !email) {
     return { ok: false, error: "Name, email, and company are required." };
@@ -81,6 +83,7 @@ async function createAndSendTeamInvite(input: {
     p_invite_title: title,
     p_invite_email: email,
     p_role: effectiveRole,
+    p_permissions: permissions,
   });
 
   if (error || !token) {
@@ -128,6 +131,10 @@ export async function inviteTeamMember(formData: FormData) {
     .toLowerCase();
   const role = roleRaw === "admin" ? "admin" : "member";
   const back = safeBack(String(formData.get("back") ?? "/dashboard/team"));
+  const { permissionsFromFormData } = await import(
+    "@/features/workspace/sections"
+  );
+  const permissions = permissionsFromFormData(formData);
 
   const result = await createAndSendTeamInvite({
     companyId,
@@ -135,6 +142,7 @@ export async function inviteTeamMember(formData: FormData) {
     title,
     email,
     role,
+    permissions,
   });
 
   if (!result.ok) {
@@ -420,4 +428,33 @@ export async function leaveTeam(formData: FormData) {
   revalidatePath("/dashboard/team");
   revalidatePath("/dashboard");
   redirect("/dashboard?leftTeam=1");
+}
+
+export async function updateMemberPermissions(formData: FormData) {
+  const companyId = String(formData.get("company_id") ?? "").trim();
+  const userId = String(formData.get("user_id") ?? "").trim();
+  const back = safeBack(String(formData.get("back") ?? "/dashboard/team"));
+  const { permissionsFromFormData } = await import(
+    "@/features/workspace/sections"
+  );
+  const permissions = permissionsFromFormData(formData);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
+
+  const { error } = await supabase.rpc("set_member_section_permissions", {
+    p_company_id: companyId,
+    p_user_id: userId,
+    p_permissions: permissions,
+  });
+
+  if (error) {
+    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidateTeam();
+  redirect(`${back}?accessUpdated=1`);
 }

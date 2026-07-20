@@ -2,27 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { classifyLogoFetchFailure } from "@/features/logo/classify-failure";
 import { fetchAndStoreCompanyLogo } from "@/features/logo/fetch-logo";
-import { createClient } from "@/lib/supabase/server";
+import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 
 export async function refreshLogo(formData: FormData) {
   const backRaw = String(formData.get("back") ?? "/dashboard").trim();
   const back = backRaw.startsWith("/") ? backRaw : "/dashboard";
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug, website, logo_source")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!company) redirect("/onboarding");
+  const { supabase, company } = await requireOperatorActiveCompany({
+    loginNext: back,
+  });
 
   const dash = (query: string) => {
     const hashIdx = back.indexOf("#");
@@ -62,6 +52,14 @@ export async function refreshLogo(formData: FormData) {
 
   const result = await fetchAndStoreCompanyLogo(company.id);
   if (!result.ok) {
+    if (!result.skipped) {
+      console.error(
+        "[logo-fetch] company",
+        company.id,
+        classifyLogoFetchFailure(result.error),
+        result.error,
+      );
+    }
     redirect(dash(`error=${encodeURIComponent(result.error)}`));
   }
 

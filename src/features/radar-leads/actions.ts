@@ -2,27 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import type { ApiTrustLevelKey } from "@/types/radar-leads";
 
 const MAX_SAVED_SEARCHES = 5;
 const RADAR = "/dashboard/radar";
 
-async function requireOwnedCompany() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, company: null };
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug, radar")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  return { supabase, user, company };
+async function requireOperatorCompany() {
+  return getOperatorActiveCompany();
 }
 
 function parseMinLevel(raw: string): ApiTrustLevelKey | null {
@@ -44,7 +31,7 @@ function emptyToNull(value: string): string | null {
 }
 
 export async function createSavedSearch(formData: FormData) {
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await requireOperatorCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(RADAR)}`);
   if (!company) redirect("/onboarding");
   if (!company.radar) {
@@ -101,7 +88,7 @@ export async function createSavedSearch(formData: FormData) {
 }
 
 export async function deleteSavedSearch(formData: FormData) {
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await requireOperatorCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(RADAR)}`);
   if (!company) redirect("/onboarding");
 
@@ -125,7 +112,7 @@ export async function deleteSavedSearch(formData: FormData) {
 }
 
 export async function dismissCompanyLead(formData: FormData) {
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await requireOperatorCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(RADAR)}`);
   if (!company) redirect("/onboarding");
 

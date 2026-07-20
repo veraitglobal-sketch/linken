@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { sendPartnershipEndedEmail } from "@/lib/email";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -79,23 +80,15 @@ export async function endPartnership(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Missing partnership.")}`);
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, company } = await getOperatorActiveCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
-
-  const { data: mine } = await supabase
-    .from("companies")
-    .select("id, slug")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!mine) {
-    redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
+  if (!company) {
+    redirect(
+      `${back}?error=${encodeURIComponent("Switch to a company workspace first.")}`,
+    );
   }
 
+  const supabase = await createClient();
   const { error } = await supabase.rpc("end_partnership", {
     p_partnership_id: partnershipId,
   });
@@ -103,7 +96,7 @@ export async function endPartnership(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent(error.message)}`);
   }
 
-  await notifyPartnershipEnded(partnershipId, mine.id as string);
-  revalidateNetwork([back, `/c/${mine.slug}`]);
+  await notifyPartnershipEnded(partnershipId, company.id);
+  revalidateNetwork([back, `/c/${company.slug}`]);
   redirect(`${back}?ended=1`);
 }

@@ -2,7 +2,6 @@ import { getTrustProfile } from "@/features/trust/queries";
 import { buildMemberTree } from "@/features/groups/tree";
 import type {
   ConfirmedGroupBadge,
-  DashboardGroup,
   GroupMemberCard,
   GroupPublicPage,
   OwnedGroupMembership,
@@ -72,7 +71,9 @@ export async function getGroupBySlug(
     const supabase = await createClient();
     const { data: group } = await supabase
       .from("company_groups")
-      .select("id, name, slug, description, website, created_by, created_at")
+      .select(
+        "id, name, slug, description, website, logo_url, logo_source, created_by, created_at",
+      )
       .eq("slug", slug)
       .maybeSingle();
 
@@ -110,6 +111,8 @@ export async function getGroupBySlug(
         slug: group.slug,
         description: group.description ?? "",
         website: group.website ?? "",
+        logoUrl: group.logo_url ?? null,
+        logoSource: group.logo_source ?? null,
         createdBy: group.created_by,
         createdAt: group.created_at,
       },
@@ -147,77 +150,10 @@ export async function getConfirmedGroupForCompany(
   }
 }
 
-export async function getDashboardGroupForCreator(): Promise<DashboardGroup | null> {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return null;
-
-    const { data: group } = await supabase
-      .from("company_groups")
-      .select("id, name, slug, description, website, created_by, created_at")
-      .eq("created_by", user.id)
-      .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle();
-
-    if (!group) return null;
-
-    const { data: rows } = await supabase
-      .from("company_group_members")
-      .select(
-        "status, parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, logo_url)",
-      )
-      .eq("group_id", group.id);
-
-    const confirmed: GroupMemberCard[] = [];
-    const pending: DashboardGroup["pending"] = [];
-
-    for (const row of rows ?? []) {
-      const company = unwrapCompany(
-        row.company as CompanyJoin | CompanyJoin[] | null,
-      );
-      if (!company) continue;
-
-      if (row.status === "confirmed") {
-        confirmed.push(
-          await toMemberCard({
-            ...company,
-            parentCompanyId: row.parent_company_id as string | null,
-          }),
-        );
-      } else if (row.status === "pending") {
-        pending.push({
-          companyId: company.id,
-          slug: company.slug,
-          name: company.name,
-          city: company.city ?? "",
-          country: company.country ?? "",
-          parentCompanyId: (row.parent_company_id as string | null) ?? null,
-        });
-      }
-    }
-
-    return {
-      group: {
-        id: group.id,
-        name: group.name,
-        slug: group.slug,
-        description: group.description ?? "",
-        website: group.website ?? "",
-        createdBy: group.created_by,
-        createdAt: group.created_at,
-      },
-      confirmed,
-      tree: buildMemberTree(confirmed),
-      pending,
-    };
-  } catch {
-    return null;
-  }
-}
+export {
+  getDashboardGroupById,
+  getDashboardGroupForCreator,
+} from "@/features/groups/dashboard-group";
 
 export async function getPendingGroupInvitesForOwner(): Promise<
   PendingGroupInvite[]

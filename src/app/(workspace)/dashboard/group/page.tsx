@@ -2,21 +2,36 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
 import { SectionTitle } from "@/components/ui/section-title";
-import { getDashboardGroupForCreator } from "@/features/groups/queries";
-import { viewerOwnsClaimedCompany } from "@/features/partners/queries";
+import { getDashboardSession } from "@/features/dashboard/session";
+import {
+  getDashboardGroupById,
+  getDashboardGroupForCreator,
+} from "@/features/groups/dashboard-group";
 
 export const metadata: Metadata = {
   title: "Company group",
 };
 
 type Props = {
-  searchParams: Promise<{ error?: string; created?: string; invited?: string; subsidiary?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    created?: string;
+    invited?: string;
+    subsidiary?: string;
+  }>;
 };
 
 export default async function DashboardGroupPage({ searchParams }: Props) {
   const { error, created, invited, subsidiary } = await searchParams;
-  const { user } = await viewerOwnsClaimedCompany();
-  const data = user ? await getDashboardGroupForCreator() : null;
+  const { user, group, active } = await getDashboardSession();
+
+  let data = null;
+  if (user) {
+    data =
+      active?.type === "group" && group
+        ? await getDashboardGroupById(group.id)
+        : await getDashboardGroupForCreator();
+  }
 
   return (
     <div className="max-w-3xl space-y-2 pb-8">

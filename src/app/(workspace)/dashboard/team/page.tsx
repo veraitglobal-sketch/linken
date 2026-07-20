@@ -4,14 +4,17 @@ import {
   WorkspaceCard,
   WorkspacePage,
 } from "@/components/dashboard/workspace-page";
+import { EditMemberAccess } from "@/components/team/edit-member-access";
 import { EditMyTeamProfile } from "@/components/team/edit-my-team-profile";
 import { InviteTeamForm } from "@/components/team/invite-team-form";
 import { TeamMemberRow } from "@/components/team/team-member-row";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { cancelTeamInvitation } from "@/features/team/actions";
 import {
   listCompanyTeam,
   viewerCompanyMembership,
 } from "@/features/team/queries";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -36,10 +39,22 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
     joined,
     profileUpdated,
   } = await searchParams;
+  const { needsCompanySwitch, company: sessionCompany } =
+    await assertCompanySection("team");
+  if (needsCompanySwitch) {
+    return (
+      <WorkspacePage title="Team" description="People in this workspace.">
+        <SwitchCompanyNotice title="Team" />
+      </WorkspacePage>
+    );
+  }
+
   const { user, membership, company } = await viewerCompanyMembership();
 
   const canManage =
-    membership?.role === "owner" || membership?.role === "admin";
+    membership?.role === "owner" ||
+    membership?.role === "admin" ||
+    sessionCompany?.role === "operator";
 
   const { members, pendingInvites } =
     company && membership
@@ -104,13 +119,15 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
           </p>
         ) : null}
 
-        {company && me ? (
+        {company && (me || canManage) ? (
           <>
-            <EditMyTeamProfile
-              companyId={company.id}
-              me={me}
-              needsSetup={needsSetup}
-            />
+            {me ? (
+              <EditMyTeamProfile
+                companyId={company.id}
+                me={me}
+                needsSetup={needsSetup}
+              />
+            ) : null}
 
             <WorkspaceCard>
               <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
@@ -122,6 +139,15 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
                     key={m.userId}
                     member={m}
                     isYou={m.userId === user?.id}
+                    actions={
+                      canManage && m.role === "member" ? (
+                        <EditMemberAccess
+                          companyId={company.id}
+                          userId={m.userId}
+                          permissions={m.permissions}
+                        />
+                      ) : undefined
+                    }
                   />
                 ))}
                 {members.length === 0 ? (

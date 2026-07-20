@@ -1,5 +1,6 @@
 import { refreshLogo } from "@/features/logo/actions";
 import { uploadCompanyLogo } from "@/features/company/profile-actions";
+import { LogoRetryHint } from "@/components/logo/logo-retry-hint";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/ui/logo-mark";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
@@ -44,9 +45,13 @@ export function CompanySettingsLogo({
             {isManual ? "Source: uploaded (manual)" : "Source: website (auto)"}
             {name ? ` · ${name}` : null}
           </p>
+          <LogoRetryHint
+            logoSource={logoSource}
+            website={website}
+            back="/dashboard/settings"
+          />
           <form
             action={uploadCompanyLogo}
-            encType="multipart/form-data"
             className="flex flex-wrap items-center gap-2"
           >
             <input

@@ -9,8 +9,8 @@ import {
 } from "@/features/company/profile-fields";
 import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { uploadLogoCore } from "@/features/logo/core";
+import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 
 const SETTINGS = "/dashboard/settings";
 
@@ -18,22 +18,8 @@ function fail(message: string): never {
   redirect(`${SETTINGS}?error=${encodeURIComponent(message)}`);
 }
 
-async function requireOwnedCompany() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect(`/login?next=${encodeURIComponent(SETTINGS)}`);
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug, website, verified, accepting_clients")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!company) redirect("/onboarding");
-  return { supabase, user, company };
+async function requireOperatorCompany() {
+  return requireOperatorActiveCompany({ loginNext: SETTINGS });
 }
 
 function revalidateCompany(slug: string) {
@@ -51,13 +37,13 @@ export async function updateCompanyProfile(formData: FormData) {
   const parsed = parseSettingsFormData(formData);
   if (!parsed.ok) fail(parsed.error);
 
-  const { supabase, company } = await requireOwnedCompany();
+  const { supabase, company } = await requireOperatorCompany();
   const next = parsed.data;
   const domainShift =
     Boolean(company.verified) &&
     websiteDomainChanged(company.website ?? "", next.website);
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("companies")
     .update({
       name: next.name,
@@ -72,9 +58,14 @@ export async function updateCompanyProfile(formData: FormData) {
       services: next.services,
       accepting_clients: next.accepting_clients,
     })
-    .eq("id", company.id);
+    .eq("id", company.id)
+    .select("id")
+    .maybeSingle();
 
   if (error) fail(error.message);
+  if (!updated) {
+    fail("Could not save profile — check you still have edit access.");
+  }
 
   if (domainShift) {
     const admin = createAdminClient();
@@ -96,7 +87,7 @@ export async function updateCompanyProfile(formData: FormData) {
 }
 
 export async function uploadCompanyLogo(formData: FormData) {
-  const { user, company } = await requireOwnedCompany();
+  const { user, company } = await requireOperatorCompany();
   const file = formData.get("logo");
   if (!(file instanceof File) || file.size === 0) {
     fail("Choose an image file to upload.");

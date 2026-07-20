@@ -11,7 +11,8 @@ import { CompanyResult } from "@/components/search/company-result";
 import { Input } from "@/components/ui/input";
 import { searchCompanies } from "@/features/companies/queries";
 import { getPartnershipInbox } from "@/features/partners/inbox";
-import { viewerOwnsClaimedCompany } from "@/features/partners/queries";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -26,13 +27,24 @@ type Props = {
     invited?: string;
     accepted?: string;
     declined?: string;
+    resent?: string;
   }>;
 };
 
 export default async function DashboardPartnersPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { q = "", error, created, invited, accepted, declined } = params;
-  const { company: mine } = await viewerOwnsClaimedCompany();
+  const { q = "", error, created, invited, accepted, declined, resent } =
+    params;
+  const { company: mine, needsCompanySwitch } = await assertCompanySection("partners");
+
+  if (needsCompanySwitch) {
+    return (
+      <WorkspacePage title="Partners" description="Grow confirmed relationships.">
+        <SwitchCompanyNotice title="Partners" />
+      </WorkspacePage>
+    );
+  }
+
   const from = mine?.slug;
 
   let verified = false;
@@ -119,6 +131,12 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
         {declined ? (
           <p className="rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm text-ink">
             Request declined.
+          </p>
+        ) : null}
+        {resent ? (
+          <p className="rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm text-ink">
+            Invite resent — they still need to join Linken and confirm before
+            appearing on your network map.
           </p>
         ) : null}
 

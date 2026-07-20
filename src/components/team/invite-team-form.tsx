@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { inviteTeamMember } from "@/features/team/actions";
+import { SectionPermissionsFields } from "@/components/team/section-permissions-fields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
@@ -8,6 +12,8 @@ type Props = {
 };
 
 export function InviteTeamForm({ companyId }: Props) {
+  const [role, setRole] = useState<"member" | "admin">("member");
+
   return (
     <WorkspaceCard>
       <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
@@ -49,13 +55,17 @@ export function InviteTeamForm({ companyId }: Props) {
           </span>
           <select
             name="role"
-            defaultValue="member"
+            value={role}
+            onChange={(e) =>
+              setRole(e.target.value === "admin" ? "admin" : "member")
+            }
             className="h-11 w-full rounded-xl border border-[#e6eaf0] bg-white px-3 text-[13px] text-ink"
           >
             <option value="member">Member</option>
             <option value="admin">Admin</option>
           </select>
         </label>
+        <SectionPermissionsFields visible={role === "member"} />
         <div className="sm:col-span-2">
           <Button type="submit" className="h-10">
             Send invite

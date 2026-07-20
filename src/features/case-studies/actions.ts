@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requestClientConfirmationCore } from "@/features/case-studies/core";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireUserCompany(supabase: Awaited<ReturnType<typeof createClient>>) {
@@ -30,12 +31,11 @@ export async function requestClientConfirmation(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Enter a valid client email.")}`);
   }
 
-  const supabase = await createClient();
-  const { user, company } = await requireUserCompany(supabase);
+  const { supabase, user, company } = await getOperatorActiveCompany();
 
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company || company.slug !== companySlug) {
-    redirect(`${back}?error=${encodeURIComponent("Only the company owner can request confirmation.")}`);
+    redirect(`${back}?error=${encodeURIComponent("Not allowed for this company.")}`);
   }
 
   const result = await requestClientConfirmationCore(supabase, {

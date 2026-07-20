@@ -113,8 +113,9 @@ export async function searchCompanies(query: string): Promise<Company[]> {
       .limit(40);
 
     if (q) {
+      // Include slug so dashboard partner search works with public URLs / slugs.
       req = req.or(
-        `name.ilike.%${q}%,category.ilike.%${q}%,city.ilike.%${q}%`,
+        `name.ilike.%${q}%,slug.ilike.%${q}%,category.ilike.%${q}%,city.ilike.%${q}%`,
       );
     }
 

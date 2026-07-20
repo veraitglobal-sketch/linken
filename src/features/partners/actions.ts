@@ -4,26 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createUnclaimedPartnerCore } from "@/features/partners/core";
 import { sendClaimInviteEmail } from "@/lib/email";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-
-async function requireOwnedCompany() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return { supabase, user: null, company: null };
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, name, slug, verified")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  return { supabase, user, company };
-}
 
 export async function createUnclaimedPartner(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
@@ -35,7 +18,7 @@ export async function createUnclaimedPartner(formData: FormData) {
     .toLowerCase();
   const back = "/dashboard/partners";
 
-  const { supabase, user, company } = await requireOwnedCompany();
+  const { supabase, user, company } = await getOperatorActiveCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company profile first.")}`);

@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import {
+  scheduleCompanyLogoFetch,
+  scheduleGroupLogoFetch,
+} from "@/features/logo/schedule";
 import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendGroupInviteEmail, sendTeamInviteEmail } from "@/lib/email";
@@ -61,7 +64,7 @@ export async function createGroup(formData: FormData) {
       website,
       created_by: user.id,
     })
-    .select("slug")
+    .select("id, slug")
     .single();
 
   if (error || !data) {
@@ -69,6 +72,8 @@ export async function createGroup(formData: FormData) {
       `${back}?error=${encodeURIComponent(error?.message ?? "Could not create group.")}`,
     );
   }
+
+  if (website) scheduleGroupLogoFetch(data.id);
 
   revalidatePath(back);
   revalidatePath(`/g/${data.slug}`);

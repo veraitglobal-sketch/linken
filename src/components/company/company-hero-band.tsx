@@ -1,9 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { EmbedSnippetButton } from "@/components/company/embed-snippet-button";
-import { InquiryForm } from "@/components/inquiries/inquiry-form";
+import { CompanyHeroActions } from "@/components/company/company-hero-actions";
 import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
-import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/ui/logo-mark";
 import { SocialIcons } from "@/components/ui/social-icons";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
@@ -16,6 +14,7 @@ type Props = {
   showContact?: boolean;
   showOnePager?: boolean;
   showEmbed?: boolean;
+  showEditProfile?: boolean;
   siteUrl?: string;
   groupBadge?: ConfirmedGroupBadge | null;
 };
@@ -26,6 +25,7 @@ export function CompanyHeroBand({
   showContact = false,
   showOnePager = false,
   showEmbed = false,
+  showEditProfile = false,
   siteUrl = "",
   groupBadge = null,
 }: Props) {
@@ -133,44 +133,18 @@ export function CompanyHeroBand({
                 <span className="text-[#5ec4a8]">{company.slug}</span>
               </p>
             </div>
-            <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-start">
-              {showContact ? (
-                <InquiryForm
-                  companySlug={company.slug}
-                  companyName={company.name}
-                  fullyBooked={!accepting}
-                />
-              ) : null}
-              {showOnePager ? (
-                <Button
-                  href={`/c/${company.slug}/one-pager`}
-                  variant="onDark"
-                  className="h-11 min-w-[150px] px-5"
-                >
-                  One-pager
-                </Button>
-              ) : null}
-              {showEmbed && siteUrl ? (
-                <EmbedSnippetButton
-                  companySlug={company.slug}
-                  siteUrl={siteUrl}
-                />
-              ) : null}
-              {company.website ? (
-                <Button
-                  href={company.website}
-                  variant={showContact ? "onDark" : "light"}
-                  className="h-11 min-w-[150px] px-5"
-                >
-                  Website
-                  {company.websiteLinked ? (
-                    <span className="ml-1 text-[10px] font-semibold tracking-[0.08em] opacity-80 uppercase">
-                      · Linked
-                    </span>
-                  ) : null}
-                </Button>
-              ) : null}
-            </div>
+            <CompanyHeroActions
+              slug={company.slug}
+              name={company.name}
+              website={company.website}
+              websiteLinked={Boolean(company.websiteLinked)}
+              accepting={accepting}
+              showContact={showContact}
+              showOnePager={showOnePager}
+              showEmbed={showEmbed}
+              showEditProfile={showEditProfile}
+              siteUrl={siteUrl}
+            />
           </div>
         </div>
 

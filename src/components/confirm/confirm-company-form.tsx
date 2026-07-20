@@ -11,7 +11,6 @@ export function ConfirmCompanyForm({ next }: Props) {
     <form
       action={createMinimalCompany}
       className="rounded-[24px] border border-line bg-surface px-5 py-6 sm:px-7"
-      encType="multipart/form-data"
     >
       <input type="hidden" name="next" value={next} />
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">

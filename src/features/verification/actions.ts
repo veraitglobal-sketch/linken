@@ -12,25 +12,13 @@ import {
   fetchCompanySite,
   resolveTxtRecords,
 } from "@/features/verification/safe-fetch";
+import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
 import { getSiteUrl } from "@/lib/site";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireOwnedCompany() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, company: null };
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, slug, website, name, verified")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  return { supabase, user, company };
+  return getOwnedActiveCompany();
 }
 
 async function allowCheck(

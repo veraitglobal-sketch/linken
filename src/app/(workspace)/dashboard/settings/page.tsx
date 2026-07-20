@@ -4,7 +4,8 @@ import { CompanySettingsForm } from "@/components/company/company-settings-form"
 import { CompanySettingsLogo } from "@/components/company/company-settings-logo";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { toSettingsCompany } from "@/features/company/settings-company";
-import { getDashboardSession } from "@/features/dashboard/session";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getSiteUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,7 +28,11 @@ function initials(name: string) {
 
 export default async function DashboardSettingsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { user, company } = await getDashboardSession();
+  const { user, company, needsCompanySwitch } = await assertCompanySection("settings");
+
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="Company settings" />;
+  }
 
   if (!user) {
     return (

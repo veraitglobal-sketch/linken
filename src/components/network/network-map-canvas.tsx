@@ -13,6 +13,7 @@ type Props = {
   fullBleed?: boolean;
   editable?: boolean;
   viewerCompanyId?: string | null;
+  pendingInviteCount?: number;
 };
 
 export async function NetworkMapCanvas({
@@ -24,6 +25,7 @@ export async function NetworkMapCanvas({
   fullBleed = false,
   editable = false,
   viewerCompanyId,
+  pendingInviteCount = 0,
 }: Props) {
   const graph = await getNetworkGraph(scope, { viewerCompanyId });
   const publicHref =
@@ -113,7 +115,11 @@ export async function NetworkMapCanvas({
         </div>
       ) : (
         <div className={fullBleed ? "relative min-h-0 flex-1" : heightClass}>
-          <NetworkMapLazy graph={graph} editable={editable} />
+          <NetworkMapLazy
+            graph={graph}
+            editable={editable}
+            pendingInviteCount={pendingInviteCount}
+          />
         </div>
       )}
     </div>

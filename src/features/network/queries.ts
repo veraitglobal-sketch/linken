@@ -36,6 +36,7 @@ type CompanyRow = {
   verified?: boolean | null;
   logo_url?: string | null;
   website?: string | null;
+  logo_source?: string | null;
 };
 
 type MemberRow = CompanyRow & {
@@ -88,6 +89,7 @@ async function companyNode(
       website: row.website,
     }),
     website: row.website ?? null,
+    logoSource: row.logo_source ?? null,
     category: row.category ?? "",
     city: row.city ?? "",
     trustLevel: row.claimed === false ? null : trust.level,
@@ -114,7 +116,9 @@ async function fetchCompaniesByIds(
   const supabase = await createClient();
   const { data } = await supabase
     .from("companies")
-    .select("id, slug, name, category, city, claimed, verified, logo_url, website")
+    .select(
+      "id, slug, name, category, city, claimed, verified, logo_url, website, logo_source",
+    )
     .in("id", unique);
 
   for (const row of data ?? []) {
@@ -280,7 +284,7 @@ async function loadGroupMembers(groupId: string): Promise<MemberRow[]> {
   const { data: memberships } = await supabase
     .from("company_group_members")
     .select(
-      "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, verified, logo_url, website)",
+      "parent_company_id, company:companies!company_id(id, slug, name, category, city, country, claimed, verified, logo_url, website, logo_source)",
     )
     .eq("group_id", groupId)
     .eq("status", "confirmed");
@@ -379,7 +383,15 @@ async function attachPartnersAndClients(
 }
 
 async function buildGroupGraph(
-  group: { id: string; name: string; slug: string },
+  group: {
+    id: string;
+    name: string;
+    slug: string;
+    website?: string | null;
+    logo_url?: string | null;
+    logo_source?: string | null;
+    created_by?: string | null;
+  },
   members: MemberRow[],
 ): Promise<NetworkGraph> {
   const countryCount = new Set(
@@ -394,7 +406,12 @@ async function buildGroupGraph(
         slug: group.slug,
         name: group.name,
         logoInitials: initials(group.name),
-        logoUrl: null,
+        logoUrl: companyDisplayLogoUrl({
+          logoUrl: group.logo_url,
+          website: group.website,
+        }),
+        website: group.website ?? null,
+        logoSource: group.logo_source ?? null,
         category: "Group",
         city: "",
         trustLevel: null,
@@ -459,15 +476,26 @@ async function buildGroupGraph(
   return trimGraph(nodes, edges, hubId, {
     groupId: group.id,
     groupSlug: group.slug,
+    groupCreatedBy: group.created_by ?? null,
   });
 }
+
+type GroupHub = {
+  id: string;
+  name: string;
+  slug: string;
+  website?: string | null;
+  logo_url?: string | null;
+  logo_source?: string | null;
+  created_by?: string | null;
+};
 
 async function buildLocalCompanyGraph(
   company: CompanyRow,
   options: {
     descendants: MemberRow[];
     parent: CompanyRow | null;
-    group: { id: string; name: string; slug: string } | null;
+    group: GroupHub | null;
   },
 ): Promise<NetworkGraph> {
   const hub = await companyNode(company, "company");
@@ -487,7 +515,12 @@ async function buildLocalCompanyGraph(
         slug: options.group.slug,
         name: options.group.name,
         logoInitials: initials(options.group.name),
-        logoUrl: null,
+        logoUrl: companyDisplayLogoUrl({
+          logoUrl: options.group.logo_url,
+          website: options.group.website,
+        }),
+        website: options.group.website ?? null,
+        logoSource: options.group.logo_source ?? null,
         category: "Group",
         city: "",
         trustLevel: null,
@@ -564,6 +597,7 @@ async function buildLocalCompanyGraph(
 
   return trimGraph(nodes, edges, hub.id, {
     groupId: options.group?.id ?? null,
+    groupCreatedBy: options.group?.created_by ?? null,
     groupSlug: options.group?.slug ?? null,
     viewerCompanyId: company.id,
   });
@@ -652,12 +686,24 @@ export async function getNetworkGraph(
 
     const graph = await withPublicTeamPreviews(raw);
 
-    if (opts?.viewerCompanyId) {
+    let isGroupCreator = false;
+    if (graph.context?.groupCreatedBy) {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      isGroupCreator = Boolean(
+        user && user.id === graph.context.groupCreatedBy,
+      );
+    }
+
+    if (opts?.viewerCompanyId || isGroupCreator) {
       return {
         ...graph,
         context: {
           ...graph.context,
-          viewerCompanyId: opts.viewerCompanyId,
+          viewerCompanyId: opts?.viewerCompanyId ?? null,
+          isGroupCreator,
         },
       };
     }
@@ -685,7 +731,7 @@ async function graphForGroup(slug: string): Promise<NetworkGraph> {
   const supabase = await createClient();
   const { data: group } = await supabase
     .from("company_groups")
-    .select("id, name, slug")
+    .select("id, name, slug, website, logo_url, logo_source, created_by")
     .eq("slug", slug)
     .maybeSingle();
   if (!group) return { nodes: [], edges: [], summary: emptySummary() };
@@ -701,7 +747,9 @@ async function graphForCompany(
   const supabase = await createClient();
   const { data: company } = await supabase
     .from("companies")
-    .select("id, slug, name, category, city, claimed, verified, logo_url, website")
+    .select(
+      "id, slug, name, category, city, claimed, verified, logo_url, website, logo_source",
+    )
     .eq("slug", slug)
     .maybeSingle();
   if (!company) return { nodes: [], edges: [], summary: emptySummary() };
@@ -709,7 +757,7 @@ async function graphForCompany(
   const { data: membership } = await supabase
     .from("company_group_members")
     .select(
-      "parent_company_id, group:company_groups!group_id(id, name, slug, created_by)",
+      "parent_company_id, group:company_groups!group_id(id, name, slug, website, logo_url, logo_source, created_by)",
     )
     .eq("company_id", company.id)
     .eq("status", "confirmed")
@@ -725,10 +773,7 @@ async function graphForCompany(
 
   if (group && expand === "full") {
     const members = await loadGroupMembers(group.id);
-    return buildGroupGraph(
-      { id: group.id, name: group.name, slug: group.slug },
-      members,
-    );
+    return buildGroupGraph(group, members);
   }
 
   let descendants: MemberRow[] = [];

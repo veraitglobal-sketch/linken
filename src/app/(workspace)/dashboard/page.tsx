@@ -1,24 +1,27 @@
 import type { Metadata } from "next";
-import { GettingStartedCard } from "@/components/activation/getting-started-card";
+import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
 import { PendingGroupInvites } from "@/components/groups/pending-group-invites";
 import { NetworkMapCanvas } from "@/components/network/network-map-canvas";
 import { Button } from "@/components/ui/button";
-import { getActivationChecklist } from "@/features/activation/checklist";
 import { getDashboardSession } from "@/features/dashboard/session";
 import {
+  getDashboardGroupById,
   getDashboardGroupForCreator,
+} from "@/features/groups/dashboard-group";
+import {
   getOwnedGroupMemberships,
   getPendingGroupInvitesForOwner,
   getPendingParentProposalsForOwner,
 } from "@/features/groups/queries";
 import { resolveWorkspaceGraphScope } from "@/features/network/queries";
+import { getPartnershipInbox } from "@/features/partners/inbox";
 
 export const metadata: Metadata = {
   title: "Network graph",
 };
 
 export default async function DashboardOverviewPage() {
-  const { user, company } = await getDashboardSession();
+  const { user, company, group, active } = await getDashboardSession();
 
   if (!user) {
     return (
@@ -29,6 +32,15 @@ export default async function DashboardOverviewPage() {
         <Button href="/login?next=/dashboard" className="mt-6 h-11">
           Sign in
         </Button>
+      </div>
+    );
+  }
+
+  if (active?.type === "group" && group) {
+    const data = await getDashboardGroupById(group.id);
+    return (
+      <div className="mx-auto max-w-3xl space-y-2 px-4 py-8 sm:px-6">
+        <DashboardGroupPanel data={data} backPath="/dashboard" />
       </div>
     );
   }
@@ -50,19 +62,14 @@ export default async function DashboardOverviewPage() {
     );
   }
 
-  const [
-    groupInvites,
-    parentProposals,
-    ownedMemberships,
-    groupData,
-    checklist,
-  ] = await Promise.all([
-    getPendingGroupInvitesForOwner(),
-    getPendingParentProposalsForOwner(),
-    getOwnedGroupMemberships(),
-    getDashboardGroupForCreator(),
-    getActivationChecklist(company.id),
-  ]);
+  const [groupInvites, parentProposals, ownedMemberships, groupData, inbox] =
+    await Promise.all([
+      getPendingGroupInvitesForOwner(),
+      getPendingParentProposalsForOwner(),
+      getOwnedGroupMemberships(),
+      getDashboardGroupForCreator(),
+      getPartnershipInbox(company.id),
+    ]);
 
   const groupSlug =
     groupData?.group.slug ?? ownedMemberships[0]?.groupSlug ?? null;
@@ -71,18 +78,11 @@ export default async function DashboardOverviewPage() {
     groupSlug,
   });
 
-  const showGettingStarted = checklist && !checklist.complete;
   const showInvites =
     groupInvites.length > 0 || parentProposals.length > 0;
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
-      {showGettingStarted ? (
-        <div className="absolute top-3 left-3 z-30 w-[min(100%-1.5rem,22rem)]">
-          <GettingStartedCard checklist={checklist} variant="overlay" />
-        </div>
-      ) : null}
-
       {showInvites ? (
         <div className="absolute top-3 left-1/2 z-30 w-[min(100%-1.5rem,28rem)] -translate-x-1/2">
           <PendingGroupInvites
@@ -97,6 +97,7 @@ export default async function DashboardOverviewPage() {
         fullBleed
         editable
         viewerCompanyId={company.id}
+        pendingInviteCount={inbox.outgoingPending.length}
         emptyHref="/dashboard/structure"
         emptyLabel="Add first subsidiary"
         subtitle={groupSlug ? "Company network" : "Your network"}

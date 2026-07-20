@@ -4,6 +4,7 @@ export type PartnershipRow = {
   id: string;
   status: "pending" | "accepted" | "cancelled" | "declined";
   direction: "outgoing" | "incoming";
+  createdAt?: string;
   other: {
     id: string;
     slug: string;
@@ -38,6 +39,7 @@ export async function getPartnershipInbox(
         `
         id,
         status,
+        created_at,
         requester_id,
         recipient_id,
         requester:companies!requester_id(id, slug, name, category, city, verified, claimed),
@@ -64,6 +66,7 @@ export async function getPartnershipInbox(
         id: row.id as string,
         status: row.status as PartnershipRow["status"],
         direction: outgoing ? "outgoing" : "incoming",
+        createdAt: (row.created_at as string | undefined) ?? undefined,
         other: {
           id: other.id as string,
           slug: other.slug as string,

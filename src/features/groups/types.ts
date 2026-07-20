@@ -7,6 +7,8 @@ export type CompanyGroup = {
   slug: string;
   description: string;
   website: string;
+  logoUrl?: string | null;
+  logoSource?: string | null;
   createdBy: string;
   createdAt: string;
 };

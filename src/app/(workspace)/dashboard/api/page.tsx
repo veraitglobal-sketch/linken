@@ -3,14 +3,19 @@ import Link from "next/link";
 import { ApiKeysPanel } from "@/components/dashboard/api-keys-panel";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { listApiKeys, listRecentAudit } from "@/features/agent-api/keys";
-import { getDashboardSession } from "@/features/dashboard/session";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
+import { assertCompanySection } from "@/features/workspace/company-gate";
 
 export const metadata: Metadata = {
   title: "API",
 };
 
 export default async function DashboardApiPage() {
-  const { user, company } = await getDashboardSession();
+  const { user, company, needsCompanySwitch } = await assertCompanySection("api");
+
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="API" />;
+  }
 
   if (!user) {
     return (
