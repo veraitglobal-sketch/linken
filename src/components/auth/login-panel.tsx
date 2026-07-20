@@ -19,7 +19,7 @@ export function LoginPanel({ error }: Props) {
   return (
     <div className="relative flex flex-col justify-center border-t border-line bg-[#fbfbfc] px-6 py-8 sm:px-9 sm:py-10 lg:border-t-0 lg:border-l lg:border-white/10">
       <div className="animate-rise">
-        <p className="text-[11px] font-semibold tracking-[0.16em] text-[#1f6b5c] uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.16em] text-[#1a5c51] uppercase">
           {isCreate ? "New account" : "Welcome back"}
         </p>
         <h1 className="mt-3 font-display text-[clamp(1.7rem,2.4vw,2.15rem)] font-medium tracking-[-0.035em] text-ink">
@@ -142,7 +142,7 @@ function ModeButton({
       className={cn(
         "h-10 rounded-xl text-[13px] font-semibold transition-colors",
         active
-          ? "bg-[#10231f] text-white"
+          ? "bg-[#0e1f1c] text-white"
           : "bg-transparent text-ink-soft hover:text-ink",
       )}
     >

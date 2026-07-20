@@ -11,7 +11,7 @@ export function GroupMemberCard({ member }: Props) {
   return (
     <Link
       href={`/c/${member.slug}`}
-      className="flex h-full flex-col rounded-[24px] border border-line bg-surface p-5 transition-colors hover:border-[#10231f]/20 hover:bg-white"
+      className="flex h-full flex-col rounded-[24px] border border-line bg-surface p-5 transition-colors hover:border-[#0e1f1c]/20 hover:bg-white"
     >
       <div className="flex items-start gap-3">
         <LogoMark
@@ -27,7 +27,7 @@ export function GroupMemberCard({ member }: Props) {
             {member.claimed ? (
               <TrustLevelBadge level={member.trustLevel} />
             ) : (
-              <span className="rounded-full border border-[#1f6b5c]/25 bg-[#1f6b5c]/10 px-2 py-0.5 text-[10px] font-semibold tracking-[0.08em] text-[#1f6b5c] uppercase">
+              <span className="rounded-full border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-2 py-0.5 text-[10px] font-semibold tracking-[0.08em] text-[#1a5c51] uppercase">
                 Unclaimed
               </span>
             )}

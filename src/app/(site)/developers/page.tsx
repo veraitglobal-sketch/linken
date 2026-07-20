@@ -148,7 +148,7 @@ export default function DevelopersPage() {
               title="Quickstart"
               description={`One request. Replace ${EXAMPLE_SLUG} with any public profile slug.`}
             />
-            <div className="mt-7 overflow-hidden rounded-[28px] border border-line bg-[#10231f]">
+            <div className="mt-7 overflow-hidden rounded-[28px] border border-line bg-[#0e1f1c]">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 sm:px-7">
                 <div>
                   <p className="text-[10px] font-semibold tracking-[0.14em] text-white/40 uppercase">
@@ -160,7 +160,7 @@ export default function DevelopersPage() {
                 </div>
                 <Badge
                   tone="success"
-                  className="border-[#5ec4a8]/35 bg-[#5ec4a8]/15 text-[#5ec4a8]"
+                  className="border-[#7eb8a4]/35 bg-[#7eb8a4]/15 text-[#7eb8a4]"
                 >
                   GET
                 </Badge>
@@ -292,9 +292,9 @@ export default function DevelopersPage() {
 
             <div
               id="agent-cannot"
-              className="mt-7 rounded-[28px] border border-[#10231f]/15 bg-[#10231f] px-5 py-6 text-white sm:px-7"
+              className="mt-7 rounded-[28px] border border-[#0e1f1c]/15 bg-[#0e1f1c] px-5 py-6 text-white sm:px-7"
             >
-              <p className="text-[11px] font-semibold tracking-[0.14em] text-[#5ec4a8] uppercase">
+              <p className="text-[11px] font-semibold tracking-[0.14em] text-[#7eb8a4] uppercase">
                 What agents cannot do
               </p>
               <p className="mt-3 font-display text-[clamp(1.35rem,2.4vw,1.75rem)] font-medium tracking-[-0.03em]">
@@ -576,8 +576,8 @@ export default function DevelopersPage() {
               description="A stable contract you can ship against."
             />
             <div className="mt-7 grid overflow-hidden rounded-[28px] border border-line bg-surface sm:grid-cols-[0.9fr_1.1fr]">
-              <div className="bg-[#10231f] px-6 py-8 text-white sm:px-8">
-                <p className="text-[11px] font-semibold tracking-[0.14em] text-[#5ec4a8] uppercase">
+              <div className="bg-[#0e1f1c] px-6 py-8 text-white sm:px-8">
+                <p className="text-[11px] font-semibold tracking-[0.14em] text-[#7eb8a4] uppercase">
                   Current
                 </p>
                 <p className="mt-3 font-display text-[clamp(1.8rem,3vw,2.4rem)] font-medium tracking-[-0.04em]">

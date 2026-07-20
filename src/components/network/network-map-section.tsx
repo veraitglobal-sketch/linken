@@ -90,7 +90,7 @@ export async function NetworkMapSection({
           </ul>
           <Link
             href={fullMapHref}
-            className="mt-3 inline-block text-[13px] font-semibold text-[#1f6b5c] underline-offset-2 hover:underline"
+            className="mt-3 inline-block text-[13px] font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
           >
             Open full map
           </Link>

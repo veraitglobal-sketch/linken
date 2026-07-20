@@ -9,9 +9,14 @@ import { cn } from "@/lib/cn";
 type Props = {
   reference: ServiceReference;
   editable?: boolean;
+  companySlug?: string;
 };
 
-export function ReferenceCard({ reference, editable = false }: Props) {
+export function ReferenceCard({
+  reference,
+  editable = false,
+  companySlug,
+}: Props) {
   const confirmed = reference.status === "confirmed";
   const period = formatReferencePeriod(reference);
 
@@ -20,7 +25,7 @@ export function ReferenceCard({ reference, editable = false }: Props) {
       className={cn(
         "rounded-[22px] border px-4 py-4 sm:px-5",
         confirmed
-          ? "border-[#1f6b5c]/25 bg-[linear-gradient(135deg,rgba(31,107,92,0.08),rgba(255,255,255,0.9))]"
+          ? "border-[#1a5c51]/25 bg-[linear-gradient(135deg,rgba(31,107,92,0.08),rgba(255,255,255,0.9))]"
           : "border-line bg-[#f7f8fa]",
       )}
     >
@@ -57,6 +62,9 @@ export function ReferenceCard({ reference, editable = false }: Props) {
       {editable ? (
         <form action={deleteReference} className="mt-3">
           <input type="hidden" name="id" value={reference.id} />
+          {companySlug ? (
+            <input type="hidden" name="company_slug" value={companySlug} />
+          ) : null}
           <Button type="submit" variant="ghost" className="h-8 px-2 text-[12px]">
             Remove
           </Button>

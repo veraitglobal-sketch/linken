@@ -81,7 +81,7 @@ export default async function DashboardVerificationPage({ searchParams }: Props)
   return (
     <div className="space-y-6 pb-8">
       <header>
-        <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
           Verification
         </p>
         <h1 className="mt-1 font-display text-[clamp(1.6rem,2.5vw,2rem)] font-medium tracking-[-0.04em] text-ink">

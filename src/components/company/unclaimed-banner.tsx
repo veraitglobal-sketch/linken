@@ -13,7 +13,7 @@ type Props = {
 export function UnclaimedBanner({ company, claimSent, claimError }: Props) {
   return (
     <section className="mx-auto mt-4 max-w-6xl px-4">
-      <div className="rounded-[28px] border border-ember/30 bg-[linear-gradient(135deg,rgba(196,120,58,0.12),rgba(16,35,31,0.04))] px-5 py-6 sm:px-8">
+      <div className="rounded-[28px] border border-ember/30 bg-[linear-gradient(135deg,rgba(196,120,58,0.12),rgba(14, 31, 28,0.04))] px-5 py-6 sm:px-8">
         <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
           Unclaimed profile
         </p>
@@ -28,7 +28,7 @@ export function UnclaimedBanner({ company, claimSent, claimError }: Props) {
         </p>
 
         {claimSent ? (
-          <p className="mt-4 rounded-2xl border border-[#1f6b5c]/25 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
+          <p className="mt-4 rounded-2xl border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
             If that email matches the invite on file, we sent a claim link.
           </p>
         ) : null}

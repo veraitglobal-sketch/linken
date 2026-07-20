@@ -1,4 +1,5 @@
-import { EmbedVerifiedMark } from "@/components/embed/embed-brand";
+import type { EmbedProofCompany } from "@/components/embed/embed-brand";
+import { EmbedProofMarquee } from "@/components/embed/embed-proof-marquee";
 import {
   embedInkClass,
   embedMutedClass,
@@ -13,80 +14,116 @@ type Props = {
   verified: boolean;
   claimed: boolean;
   confirmedCount?: number;
+  proofCompanies?: EmbedProofCompany[];
   profileUrl: string;
   theme?: EmbedTheme;
 };
 
-/** ~40px one-line mark — icon + mint verified + count. */
+/**
+ * Premium micro bar — Linken seal fixed left, partner logos slide, count right.
+ * Not a text chip: proof has to be visible.
+ */
 export function EmbedCompact({
   name,
   verified,
   claimed,
   confirmedCount = 0,
+  proofCompanies = [],
   profileUrl,
   theme = "light",
 }: Props) {
-  const showVerified = claimed && verified;
+  const dark = theme === "dark";
+  const hasLogos = proofCompanies.length > 0;
 
   return (
-    <a
-      href={profileUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+    <div
       className={cn(
-        "flex h-10 w-full items-center gap-2 border px-3 no-underline",
+        "flex h-11 w-full items-center overflow-hidden border pr-2 pl-1.5",
         embedShellClass(theme),
       )}
     >
-      <NetworkMark
-        size={15}
-        animate={false}
-        className="shrink-0 text-[#5ec4a8]"
-      />
-      {showVerified ? (
-        <>
-          <EmbedVerifiedMark theme={theme} label="Verified on Linken" />
-          {confirmedCount > 0 ? (
-            <span className={cn("min-w-0 truncate text-[12px]", embedMutedClass(theme))}>
-              <span className="mx-0.5 opacity-45">·</span>
-              <span
-                className={cn(
-                  "font-display text-[13px] font-medium tracking-[-0.02em]",
-                  embedInkClass(theme),
-                )}
-              >
-                {confirmedCount}
-              </span>{" "}
-              confirmed
-            </span>
-          ) : null}
-        </>
-      ) : (
-        <>
-          <p
+      <a
+        href={profileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex shrink-0 items-center gap-2 py-1 pr-2.5 pl-0.5 no-underline"
+        title={`${name} on Linken`}
+      >
+        <span
+          className={cn(
+            "linken-seal-glow flex h-8 w-8 items-center justify-center rounded-[10px]",
+            dark
+              ? "bg-[#7eb8a4] text-[#081412]"
+              : "bg-[#0e1f1c] text-[#7eb8a4]",
+          )}
+        >
+          <NetworkMark size={15} animate={false} />
+        </span>
+        <span className="flex min-w-0 flex-col leading-none">
+          <span
             className={cn(
-              "min-w-0 flex-1 truncate text-[13px] font-semibold",
+              "font-display text-[12px] font-semibold tracking-[-0.03em]",
               embedInkClass(theme),
             )}
           >
-            {name}
-          </p>
-          {!claimed ? (
-            <span
-              className={cn(
-                "shrink-0 text-[10px] font-semibold tracking-[0.08em] uppercase",
-                embedMutedClass(theme),
-              )}
-            >
-              Unclaimed
-            </span>
-          ) : (
-            <span className="font-display text-[11px] font-semibold tracking-[-0.02em] text-[#5ec4a8]">
-              Linken
-            </span>
+            Linken
+          </span>
+          <span
+            className={cn(
+              "mt-0.5 text-[8px] font-semibold tracking-[0.14em] uppercase",
+              embedMutedClass(theme),
+            )}
+          >
+            {claimed && verified ? "Verified" : claimed ? "On Linken" : "Unclaimed"}
+          </span>
+        </span>
+      </a>
+
+      <span
+        className={cn(
+          "mr-1 h-7 w-px shrink-0",
+          dark ? "bg-white/12" : "bg-[#e2e6e3]",
+        )}
+        aria-hidden
+      />
+
+      {hasLogos ? (
+        <EmbedProofMarquee
+          companies={proofCompanies}
+          theme={theme}
+          className="min-w-0 flex-1"
+        />
+      ) : (
+        <p
+          className={cn(
+            "min-w-0 flex-1 truncate px-2 text-[12px] font-medium",
+            embedInkClass(theme),
           )}
-        </>
+        >
+          {name}
+        </p>
       )}
-    </a>
+
+      {confirmedCount > 0 ? (
+        <span
+          className={cn(
+            "ml-1.5 flex shrink-0 items-center gap-1 rounded-full px-2 py-1",
+            dark ? "bg-white/8" : "bg-[#0e1f1c]/06",
+          )}
+        >
+          <span
+            className={cn(
+              "font-display text-[13px] font-medium tracking-[-0.03em] tabular-nums",
+              embedInkClass(theme),
+            )}
+          >
+            {confirmedCount}
+          </span>
+          <span className={cn("text-[9px] font-semibold uppercase", embedMutedClass(theme))}>
+            links
+          </span>
+        </span>
+      ) : null}
+    </div>
   );
 }

@@ -11,7 +11,7 @@ export function TrustProgressCard({ trust }: Props) {
 
   if (!nextStep.nextLevel) {
     return (
-      <aside className="rounded-[24px] border border-[#10231f]/15 bg-[#10231f] px-5 py-5 text-white">
+      <aside className="rounded-[24px] border border-[#0e1f1c]/15 bg-[#0e1f1c] px-5 py-5 text-white">
         <p className="text-[11px] font-semibold tracking-[0.14em] text-white/50 uppercase">
           Your progress
         </p>

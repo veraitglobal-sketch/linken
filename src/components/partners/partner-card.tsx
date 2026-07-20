@@ -35,7 +35,7 @@ export function PartnerCard({
               {partner.name}
             </p>
             {partner.verified ? (
-              <span className="rounded-lg border border-[#1f6b5c]/25 bg-[#1f6b5c]/10 px-2 py-0.5 text-[9px] font-semibold tracking-[0.08em] text-[#1f6b5c] uppercase">
+              <span className="rounded-lg border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-2 py-0.5 text-[9px] font-semibold tracking-[0.08em] text-[#1a5c51] uppercase">
                 Verified
               </span>
             ) : null}

@@ -43,24 +43,24 @@ export function GettingStartedPill({ checklist }: Props) {
         aria-expanded={open}
         aria-controls={panelId}
         className={cn(
-          "inline-flex h-8 max-w-full items-center gap-2 rounded-full border border-[#e2e8f0] bg-white px-2.5",
-          "text-left transition-colors hover:border-[#d8dee8] hover:bg-[#f8fafc]",
-          open && "border-[#d8dee8] bg-[#f8fafc]",
+          "inline-flex h-8 max-w-full items-center gap-2 rounded-full border border-line bg-surface px-2.5",
+          "text-left transition-colors hover:border-[#cfd5d1] hover:bg-paper",
+          open && "border-[#cfd5d1] bg-paper",
         )}
       >
         <span className="hidden text-[11px] font-semibold text-ink sm:inline">
           Getting started
         </span>
         <span
-          className="hidden h-1 w-10 overflow-hidden rounded-full bg-[#f1f5f9] sm:block"
+          className="hidden h-1 w-10 overflow-hidden rounded-full bg-paper sm:block"
           aria-hidden
         >
           <span
-            className="block h-full rounded-full bg-[#10231f]"
+            className="block h-full rounded-full bg-navy"
             style={{ width: `${pct}%` }}
           />
         </span>
-        <span className="text-[11px] font-semibold tabular-nums text-[#64748b]">
+        <span className="text-[11px] font-semibold tabular-nums text-muted">
           {count}
         </span>
       </button>
@@ -70,24 +70,24 @@ export function GettingStartedPill({ checklist }: Props) {
           id={panelId}
           role="dialog"
           aria-label="Getting started"
-          className="absolute top-[calc(100%+6px)] right-0 z-50 w-[min(calc(100vw-2rem),20rem)] overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white py-3 shadow-[0_12px_40px_rgba(15,23,42,0.12)] sm:left-0 sm:right-auto"
+          className="absolute top-[calc(100%+6px)] right-0 z-50 w-[min(calc(100vw-2rem),20rem)] overflow-hidden rounded-2xl border border-line bg-surface py-3 shadow-[0_16px_44px_rgba(8,20,18,0.12)] sm:left-0 sm:right-auto"
         >
           <div className="px-4 pb-2">
             <div className="flex items-baseline justify-between gap-3">
-              <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+              <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">
                 Getting started
               </p>
-              <p className="text-[12px] font-semibold tabular-nums text-[#64748b]">
+              <p className="text-[12px] font-semibold tabular-nums text-muted">
                 {count}
               </p>
             </div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#f1f5f9]">
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-paper">
               <div
-                className="h-full rounded-full bg-[#10231f] transition-[width] duration-300"
+                className="h-full rounded-full bg-navy transition-[width] duration-300"
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <p className="mt-2 text-[12px] leading-relaxed text-[#64748b]">
+            <p className="mt-2 text-[12px] leading-relaxed text-ink-soft">
               Each step fills your network with confirmed evidence.
             </p>
           </div>

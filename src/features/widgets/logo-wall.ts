@@ -148,7 +148,7 @@ export async function getLogoWallEntries(
       return a.name.localeCompare(b.name);
     });
 
-    return entries.slice(0, 12);
+    return entries.slice(0, 24);
   } catch {
     return [];
   }

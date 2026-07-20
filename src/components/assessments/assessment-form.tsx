@@ -73,7 +73,7 @@ export function AssessmentForm({
               className={cn(
                 "rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors",
                 on
-                  ? "border-[#1f6b5c] bg-[#1f6b5c]/10 text-[#1f6b5c]"
+                  ? "border-[#1a5c51] bg-[#1a5c51]/10 text-[#1a5c51]"
                   : "border-line bg-white text-ink-soft hover:border-ink/25",
               )}
             >
@@ -100,7 +100,7 @@ export function AssessmentForm({
             className={cn(
               "rounded-full border px-4 py-1.5 text-[12px] font-medium transition-colors",
               would === value
-                ? "border-[#1f6b5c] bg-[#1f6b5c]/10 text-[#1f6b5c]"
+                ? "border-[#1a5c51] bg-[#1a5c51]/10 text-[#1a5c51]"
                 : "border-line bg-white text-ink-soft hover:border-ink/25",
             )}
           >
@@ -120,7 +120,7 @@ export function AssessmentForm({
           name="private_feedback"
           rows={2}
           placeholder="Optional"
-          className="mt-2 min-h-[4.5rem] w-full resize-none rounded-xl border border-line bg-[#f7f8fa] px-3.5 py-3 text-sm leading-relaxed text-ink outline-none placeholder:text-muted focus:border-[#1f6b5c] focus:bg-white focus:ring-2 focus:ring-[rgba(31,107,92,0.15)]"
+          className="mt-2 min-h-[4.5rem] w-full resize-none rounded-xl border border-line bg-[#f7f8fa] px-3.5 py-3 text-sm leading-relaxed text-ink outline-none placeholder:text-muted focus:border-[#1a5c51] focus:bg-white focus:ring-2 focus:ring-[rgba(31,107,92,0.15)]"
         />
       </label>
 

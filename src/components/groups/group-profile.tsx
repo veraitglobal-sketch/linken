@@ -27,7 +27,7 @@ export function GroupProfile({ page, networkMap }: Props) {
   return (
     <div className="pb-10">
       <section className="px-4 pt-3">
-        <div className="relative mx-auto overflow-hidden rounded-[32px] bg-[#10231f] px-6 py-10 text-white sm:px-10 sm:py-12">
+        <div className="relative mx-auto overflow-hidden rounded-[32px] bg-[#0e1f1c] px-6 py-10 text-white sm:px-10 sm:py-12">
           <div className="animate-rise flex flex-wrap items-center gap-3">
             <LogoMark
               initials={groupInitials(group.name)}
@@ -38,7 +38,7 @@ export function GroupProfile({ page, networkMap }: Props) {
             />
             <div>
               <span className="inline-flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#5ec4a8]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#7eb8a4]" />
                 <p className="text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase">
                   Company group
                 </p>

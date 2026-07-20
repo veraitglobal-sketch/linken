@@ -64,7 +64,7 @@ export function TrustWhyCard({ trust }: Props) {
           <li key={line.label}>
             <a
               href={line.href}
-              className="flex items-baseline justify-between gap-3 text-[13px] text-ink transition-colors hover:text-[#1f6b5c]"
+              className="flex items-baseline justify-between gap-3 text-[13px] text-ink transition-colors hover:text-[#1a5c51]"
             >
               <span>{line.label}</span>
               <span className="shrink-0 text-[12px] text-muted">

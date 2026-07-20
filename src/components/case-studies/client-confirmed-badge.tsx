@@ -12,7 +12,7 @@ export function ClientConfirmedBadge({ confirmation }: Props) {
   if (!firm) return null;
 
   return (
-    <div className="rounded-[24px] border border-[#c4783a]/35 bg-[linear-gradient(135deg,rgba(196,120,58,0.12),rgba(16,35,31,0.06))] px-5 py-4">
+    <div className="rounded-[24px] border border-[#c4783a]/35 bg-[linear-gradient(135deg,rgba(196,120,58,0.12),rgba(14, 31, 28,0.06))] px-5 py-4">
       <p className="text-[11px] font-semibold tracking-[0.16em] text-[#c4783a] uppercase">
         Confirmed by client
       </p>

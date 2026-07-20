@@ -8,7 +8,7 @@ type Props = {
 export function AvailabilityToggle({ acceptingClients }: Props) {
   return (
     <section className="rounded-[24px] border border-line bg-surface px-5 py-5">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
         Availability
       </p>
       <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">

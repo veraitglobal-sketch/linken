@@ -60,7 +60,7 @@ function TreeNode({
         <div className="min-w-0 flex-1">
           <p
             className={`truncate text-[13px] font-semibold ${
-              active ? "text-[#1f6b5c]" : "text-ink"
+              active ? "text-[#1a5c51]" : "text-ink"
             }`}
           >
             {node.name}

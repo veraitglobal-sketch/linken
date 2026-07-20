@@ -48,7 +48,7 @@ export function ServicesTagInput({
       <div
         className={cn(
           "flex min-h-12 flex-wrap items-center gap-1.5 rounded-xl border border-line bg-[#f7f8fa] px-2.5 py-2",
-          "focus-within:border-[#1f6b5c] focus-within:bg-white focus-within:ring-2 focus-within:ring-[rgba(31,107,92,0.15)]",
+          "focus-within:border-[#1a5c51] focus-within:bg-white focus-within:ring-2 focus-within:ring-[rgba(31,107,92,0.15)]",
         )}
       >
         {tags.map((tag) => (

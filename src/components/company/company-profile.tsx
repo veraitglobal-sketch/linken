@@ -91,7 +91,7 @@ export function CompanyProfile({
       {inquirySent ? <InquirySentBanner companyName={company.name} /> : null}
       {domainVerifiedJustNow ? (
         <div className="mx-auto mt-4 max-w-6xl px-4">
-          <p className="rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
+          <p className="rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
             Domain verified — your email matches your website. The Verified badge
             is live on this profile.
           </p>
@@ -126,7 +126,11 @@ export function CompanyProfile({
           {showTeam ? <CompanyTeamSection members={teamMembers} /> : null}
           <ClientHighlights summary={assessmentSummary} />
           {showRefs ? (
-            <ReferencesSection references={references} editable={editable} />
+            <ReferencesSection
+              references={references}
+              editable={editable}
+              companySlug={company.slug}
+            />
           ) : null}
           {showCases ? (
             <CaseStudyList

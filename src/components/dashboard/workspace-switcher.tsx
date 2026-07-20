@@ -54,10 +54,8 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
       <Link
         href={href}
         className={cn(
-          "group mb-5 flex items-center gap-2.5 rounded-xl bg-[#fafbfc] px-2.5 py-2 transition-colors hover:bg-[#f4f6f9]",
-          draftActive
-            ? "border border-dashed border-[#d4dae3]"
-            : "border border-[#e8eaee] hover:border-[#d8dee8]",
+          "group mb-4 flex items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-black/[0.03]",
+          draftActive && "ring-1 ring-dashed ring-[#c5cdc8]",
         )}
         title={active.type === "company" ? "Company settings" : "Group"}
       >
@@ -85,10 +83,8 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "flex w-full items-center gap-2.5 rounded-xl bg-[#fafbfc] px-2.5 py-2 text-left transition-colors hover:bg-[#f4f6f9]",
-          draftActive
-            ? "border border-dashed border-[#d4dae3]"
-            : "border border-[#e8eaee] hover:border-[#d8dee8]",
+          "flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-black/[0.03]",
+          draftActive && "ring-1 ring-dashed ring-[#c5cdc8]",
         )}
         aria-expanded={open}
         aria-haspopup="listbox"
@@ -107,7 +103,7 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
       {open ? (
         <div
           role="listbox"
-          className="absolute top-[calc(100%+4px)] left-0 z-50 w-full min-w-[220px] overflow-hidden rounded-xl border border-[#e8eaee] bg-white py-1 shadow-lg shadow-black/8"
+          className="absolute top-[calc(100%+4px)] left-0 z-50 w-full min-w-[220px] overflow-hidden rounded-xl border border-line bg-surface py-1 shadow-[0_16px_40px_rgba(8,20,18,0.12)]"
         >
           <ul className="max-h-72 overflow-y-auto py-1">
             {companies.length > 0 ? (
@@ -122,11 +118,11 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
             ))}
             {drafts.length > 0 ? (
               <>
-                <SwitcherGroupLabel className="mt-1 border-t border-[#f1f5f9] pt-2">
+                <SwitcherGroupLabel className="mt-1 border-t border-line pt-2">
                   Draft profiles you manage
                 </SwitcherGroupLabel>
                 <li className="px-2.5 pb-1">
-                  <p className="text-[10px] leading-snug text-[#94a3b8]">
+                  <p className="text-[10px] leading-snug text-muted">
                     Not yet claimed by their owner.
                   </p>
                 </li>
@@ -141,11 +137,11 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
             ) : null}
           </ul>
           {active.type === "company" ? (
-            <div className="border-t border-[#f1f5f9] px-1 py-1">
+            <div className="border-t border-line px-1 py-1">
               <Link
                 href="/dashboard/settings"
                 onClick={() => setOpen(false)}
-                className="block rounded-lg px-2.5 py-2 text-[12px] font-semibold text-[#64748b] transition-colors hover:bg-[#f4f6f9] hover:text-ink"
+                className="block rounded-lg px-2.5 py-2 text-[12px] font-semibold text-ink-soft transition-colors hover:bg-paper hover:text-ink"
               >
                 Company settings
               </Link>

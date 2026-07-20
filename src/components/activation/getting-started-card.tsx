@@ -28,7 +28,7 @@ export function GettingStartedCard({ checklist, className }: Props) {
       </div>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#f1f5f9]">
         <div
-          className="h-full rounded-full bg-[#10231f] transition-[width] duration-300"
+          className="h-full rounded-full bg-[#0e1f1c] transition-[width] duration-300"
           style={{
             width: `${Math.round((checklist.doneCount / checklist.total) * 100)}%`,
           }}

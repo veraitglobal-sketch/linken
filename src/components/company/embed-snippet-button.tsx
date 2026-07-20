@@ -80,7 +80,7 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
 
           <Link
             href="/dashboard/widgets"
-            className="mt-3 flex h-10 items-center justify-center rounded-xl bg-[#10231f] text-[13px] font-semibold text-white transition-colors hover:bg-[#0a1714]"
+            className="mt-3 flex h-10 items-center justify-center rounded-xl bg-[#0e1f1c] text-[13px] font-semibold text-white transition-colors hover:bg-[#081412]"
             onClick={() => setOpen(false)}
           >
             Open Widget studio →

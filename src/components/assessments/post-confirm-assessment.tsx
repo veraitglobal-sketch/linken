@@ -50,7 +50,7 @@ export function PostConfirmAssessment({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[24px] border border-[#1f6b5c]/25 bg-[#1f6b5c]/8 px-5 py-5 text-center sm:px-7">
+      <div className="rounded-[24px] border border-[#1a5c51]/25 bg-[#1a5c51]/8 px-5 py-5 text-center sm:px-7">
         <h2 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
           Confirmed
         </h2>

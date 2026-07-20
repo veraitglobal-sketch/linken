@@ -18,7 +18,7 @@ export function SwitcherGroupLabel({
   return (
     <li
       className={cn(
-        "px-2.5 pt-1.5 pb-0.5 text-[10px] font-semibold tracking-[0.04em] text-[#94a3b8] uppercase",
+        "px-2.5 pt-1.5 pb-0.5 text-[10px] font-semibold tracking-[0.08em] text-plus uppercase",
         className,
       )}
     >
@@ -45,8 +45,8 @@ export function SwitcherRow({
         <button
           type="submit"
           className={cn(
-            "flex w-full items-center gap-2.5 px-2.5 py-2 text-left transition-colors hover:bg-[#f4f6f9]",
-            isActive && "bg-[#f4f6f9]",
+            "flex w-full items-center gap-2.5 px-2.5 py-2 text-left transition-colors hover:bg-paper",
+            isActive && "bg-accent-soft",
           )}
         >
           <SwitcherMark ctx={ctx} />
@@ -58,14 +58,14 @@ export function SwitcherRow({
             <p
               className={cn(
                 "truncate text-[10px]",
-                draft ? "text-[#b45309]" : "text-[#94a3b8]",
+                draft ? "text-ember" : "text-muted",
               )}
             >
               {workspaceRoleLabel(ctx)}
             </p>
           </div>
           {isActive ? (
-            <span className="text-[12px] font-semibold text-[#1f6b5c]">✓</span>
+            <span className="text-[12px] font-semibold text-blue">✓</span>
           ) : null}
         </button>
       </form>
@@ -83,7 +83,7 @@ export function SwitcherMark({ ctx }: { ctx: WorkspaceContext }) {
       size="sm"
       className={cn(
         "rounded-lg",
-        draft && "ring-1 ring-dashed ring-[#d4dae3] ring-offset-1",
+        draft && "ring-1 ring-dashed ring-[#c5cdc8] ring-offset-1",
       )}
     />
   );
@@ -107,7 +107,7 @@ export function SwitcherMeta({
       <p
         className={cn(
           "truncate text-[11px]",
-          draft ? "text-[#b45309]" : "text-[#94a3b8]",
+          draft ? "text-ember" : "text-muted",
         )}
       >
         {subtitle}
@@ -121,7 +121,7 @@ export function SwitcherChevron({ open }: { open: boolean }) {
     <svg
       viewBox="0 0 16 16"
       className={cn(
-        "h-3.5 w-3.5 shrink-0 text-[#94a3b8] transition-transform",
+        "h-3.5 w-3.5 shrink-0 text-plus transition-transform",
         open && "rotate-180",
       )}
       aria-hidden
@@ -136,7 +136,7 @@ export function SwitcherChevron({ open }: { open: boolean }) {
 
 function DraftBadge() {
   return (
-    <span className="shrink-0 rounded border border-dashed border-[#d4dae3] px-1 py-px text-[9px] font-semibold tracking-wide text-[#94a3b8] uppercase">
+    <span className="shrink-0 rounded border border-dashed border-[#c5cdc8] px-1 py-px text-[9px] font-semibold tracking-wide text-muted uppercase">
       Draft
     </span>
   );

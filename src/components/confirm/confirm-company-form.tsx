@@ -38,7 +38,7 @@ export function ConfirmCompanyForm({ next }: Props) {
           type="file"
           name="logo"
           accept="image/*"
-          className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-lg file:border-0 file:bg-[#10231f] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white"
+          className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-lg file:border-0 file:bg-[#0e1f1c] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white"
         />
       </label>
 

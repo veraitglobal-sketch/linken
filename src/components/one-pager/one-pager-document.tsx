@@ -31,12 +31,12 @@ export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
             size="lg"
             className={
               company.logoUrl
-                ? "rounded-xl border-[#10231f]/15"
-                : "rounded-xl border-[#10231f]/15 bg-[#10231f] text-white"
+                ? "rounded-xl border-[#0e1f1c]/15"
+                : "rounded-xl border-[#0e1f1c]/15 bg-[#0e1f1c] text-white"
             }
           />
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+            <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
               Verified one-pager
             </p>
             <h1 className="mt-2 font-display text-[clamp(1.8rem,3vw,2.4rem)] font-medium tracking-[-0.04em] text-ink">
@@ -55,13 +55,13 @@ export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] uppercase ${
                   accepting
-                    ? "border-[#1f6b5c]/30 bg-[#1f6b5c]/8 text-[#1f6b5c]"
+                    ? "border-[#1a5c51]/30 bg-[#1a5c51]/8 text-[#1a5c51]"
                     : "border-line bg-paper text-muted"
                 }`}
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    accepting ? "bg-[#5ec4a8]" : "bg-muted"
+                    accepting ? "bg-[#7eb8a4]" : "bg-muted"
                   }`}
                 />
                 {accepting ? "Accepting new clients" : "Fully booked"}
@@ -147,7 +147,7 @@ export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
         <div className="max-w-md">
           <p className="font-display text-lg tracking-[-0.03em] text-ink">
             linken.com/
-            <span className="text-[#1f6b5c]">{company.slug}</span>
+            <span className="text-[#1a5c51]">{company.slug}</span>
           </p>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
             Scan to verify — every item on this page is confirmed by the other

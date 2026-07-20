@@ -1,8 +1,6 @@
-import {
-  EmbedLinkenMark,
-  EmbedProofRow,
-  type EmbedProofCompany,
-} from "@/components/embed/embed-brand";
+import { EmbedLinkenSeal } from "@/components/embed/embed-linken-seal";
+import { EmbedProofMarquee } from "@/components/embed/embed-proof-marquee";
+import type { EmbedProofCompany } from "@/components/embed/embed-brand";
 import {
   embedAccentClass,
   embedInkClass,
@@ -104,19 +102,29 @@ export function EmbedAssessment({
         </ul>
       ) : null}
 
-      {confirmedCount > 0 ? (
-        <EmbedProofRow
+      {proofCompanies.length > 0 ? (
+        <EmbedProofMarquee
           companies={proofCompanies}
-          total={confirmedCount}
           theme={theme}
-          compact
           className="mt-3"
         />
+      ) : confirmedCount > 0 ? (
+        <p className={cn("mt-3 text-[12px]", embedMutedClass(theme))}>
+          <span
+            className={cn(
+              "font-display text-[1.05rem] font-medium",
+              embedInkClass(theme),
+            )}
+          >
+            {confirmedCount}
+          </span>{" "}
+          confirmed relationships
+        </p>
       ) : null}
 
-      <EmbedLinkenMark
+      <EmbedLinkenSeal
         theme={theme}
-        className="absolute right-3.5 bottom-3"
+        className="absolute top-1/2 right-3 -translate-y-1/2 border-l-0 pl-0"
       />
     </a>
   );

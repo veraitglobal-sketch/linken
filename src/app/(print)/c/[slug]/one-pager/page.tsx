@@ -43,7 +43,7 @@ export default async function OnePagerPage({ params }: Props) {
     <div className="pb-16">
       <div className="mx-auto flex max-w-[210mm] flex-wrap items-center justify-between gap-3 px-4 pt-6 print:hidden sm:px-0">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
             Linken
           </p>
           <p className="mt-1 text-sm text-ink-soft">

@@ -32,7 +32,7 @@ export function LogoRetryHint({
           <input type="hidden" name="back" value={back} />
           <button
             type="submit"
-            className="font-semibold text-[#1f6b5c] underline-offset-2 hover:underline"
+            className="font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
           >
             Try again
           </button>
@@ -42,7 +42,7 @@ export function LogoRetryHint({
           <input type="hidden" name="back" value={back} />
           <button
             type="submit"
-            className="font-semibold text-[#1f6b5c] underline-offset-2 hover:underline"
+            className="font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
           >
             Try again
           </button>

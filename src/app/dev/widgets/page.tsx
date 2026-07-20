@@ -70,7 +70,7 @@ function ThemeBlock({
   theme: EmbedTheme;
   title: string;
 }) {
-  const stage = theme === "dark" ? "#0a1714" : null;
+  const stage = theme === "dark" ? "#081412" : null;
 
   return (
     <section className="space-y-4">
@@ -78,12 +78,13 @@ function ThemeBlock({
         {title}
       </h2>
       <PreviewStage color={stage} className="flex-col items-stretch gap-6 !p-6">
-        <Variant label="compact · 40px" width={360}>
+        <Variant label="compact · 48px" width={480}>
           <EmbedCompact
             name="Acme Architecture"
             verified
             claimed
             confirmedCount={12}
+            proofCompanies={PROOF}
             profileUrl={PROFILE}
             theme={theme}
           />
@@ -142,13 +143,44 @@ function ThemeBlock({
           />
         </Variant>
 
-        <Variant label="logo-wall" width={520}>
+        <Variant label="logo-wall · row" width={520}>
+          <EmbedLogoWall
+            ownerName="Acme Architecture"
+            ownerProfileUrl={PROFILE}
+            entries={WALL}
+            label="Trusted by brands winning in the network"
+            theme={theme}
+            mono
+            motion="row"
+            size="md"
+            siteUrl="https://linken.local"
+          />
+        </Variant>
+
+        <Variant label="logo-wall · vertical" width={280}>
           <EmbedLogoWall
             ownerName="Acme Architecture"
             ownerProfileUrl={PROFILE}
             entries={WALL}
             label="Trusted by"
             theme={theme}
+            mono
+            motion="stack"
+            size="md"
+            siteUrl="https://linken.local"
+          />
+        </Variant>
+
+        <Variant label="logo-wall · grid" width={480}>
+          <EmbedLogoWall
+            ownerName="Acme Architecture"
+            ownerProfileUrl={PROFILE}
+            entries={WALL}
+            label="Trusted by"
+            theme={theme}
+            mono
+            motion="grid"
+            size="sm"
             siteUrl="https://linken.local"
           />
         </Variant>
@@ -194,7 +226,7 @@ export default function DevWidgetsPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10 pb-24">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#5ec4a8] uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#7eb8a4] uppercase">
         Dev only
       </p>
       <h1 className="mt-2 font-display text-[clamp(1.8rem,4vw,2.4rem)] font-medium tracking-[-0.04em] text-ink">

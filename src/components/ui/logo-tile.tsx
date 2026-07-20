@@ -21,6 +21,8 @@ type Props = {
    */
   frameTone?: "light" | "dark";
   size?: LogoTileSize;
+  /** Circle mark for constellation graph nodes. */
+  shape?: "tile" | "circle";
   className?: string;
   /** Soften tile when awaiting / unverified (configurator, map). */
   muted?: boolean;
@@ -63,6 +65,7 @@ export function LogoTile({
   mono = false,
   frameTone = "light",
   size = "md",
+  shape = "tile",
   className,
   muted = false,
 }: Props) {
@@ -101,10 +104,12 @@ export function LogoTile({
           "inline-flex shrink-0 items-center justify-center overflow-hidden bg-white",
           BOX[size],
           PAD[size],
-          RADIUS[size],
-          frameTone === "dark"
-            ? "border border-black/15 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
-            : "border border-line",
+          shape === "circle" ? "rounded-full" : RADIUS[size],
+          shape === "circle"
+            ? "border-0"
+            : frameTone === "dark"
+              ? "border border-black/15 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
+              : "border border-line",
         )}
         aria-hidden
       >

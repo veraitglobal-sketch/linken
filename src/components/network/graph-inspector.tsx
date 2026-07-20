@@ -54,7 +54,7 @@ export function GraphInspector({
   return (
     <div className="absolute top-3 right-3 z-20 w-[min(100%-1.5rem,19rem)] overflow-hidden rounded-[22px] border border-white/15 bg-white shadow-[0_20px_50px_rgba(10,20,18,0.28)]">
       <div className="border-b border-line px-4 py-3">
-        <p className="text-[10px] font-semibold tracking-[0.12em] text-[#1f6b5c] uppercase">
+        <p className="text-[10px] font-semibold tracking-[0.12em] text-[#1a5c51] uppercase">
           {ROLE_LABEL[selected.kind]}
         </p>
         <div className="mt-2 flex items-start gap-3">
@@ -96,7 +96,7 @@ export function GraphInspector({
                 onClick={() =>
                   setMode((m) => (m === "subsidiary" ? "idle" : "subsidiary"))
                 }
-                className="h-9 rounded-xl border border-line bg-[#f7f8fa] px-3 text-left text-[12px] font-semibold text-ink transition-colors hover:border-[#1f6b5c]/35"
+                className="h-9 rounded-xl border border-line bg-[#f7f8fa] px-3 text-left text-[12px] font-semibold text-ink transition-colors hover:border-[#1a5c51]/35"
               >
                 + Add subsidiary under {selected.name}
               </button>
@@ -106,7 +106,7 @@ export function GraphInspector({
               onClick={() =>
                 setMode((m) => (m === "partner" ? "idle" : "partner"))
               }
-              className="h-9 rounded-xl border border-line bg-[#f7f8fa] px-3 text-left text-[12px] font-semibold text-ink transition-colors hover:border-[#1f6b5c]/35"
+              className="h-9 rounded-xl border border-line bg-[#f7f8fa] px-3 text-left text-[12px] font-semibold text-ink transition-colors hover:border-[#1a5c51]/35"
             >
               + Connect partner
             </button>
@@ -205,7 +205,7 @@ type DetachProps = {
 export function GraphDetachDialog({ edge, onCancel }: DetachProps) {
   if (!edge.detachable) {
     return (
-      <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#0a1714]/55 px-4 backdrop-blur-[2px]">
+      <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]">
         <div className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]">
           <p className="font-display text-lg font-medium text-ink">
             Can’t detach here
@@ -223,7 +223,7 @@ export function GraphDetachDialog({ edge, onCancel }: DetachProps) {
   }
 
   return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#0a1714]/55 px-4 backdrop-blur-[2px]">
+    <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]">
       <div className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]">
         <p className="text-[10px] font-semibold tracking-[0.12em] text-ember uppercase">
           Detach link

@@ -24,7 +24,7 @@ export function CompanySettingsLogo({
 
   return (
     <WorkspaceCard>
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
         Logo
       </p>
       <p className="mt-1 text-[13px] text-[#64748b]">

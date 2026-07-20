@@ -61,7 +61,7 @@ export function DashboardAside({
       </nav>
 
       <div>
-        <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
           Availability
         </p>
         <p className="mt-2 font-display text-[17px] font-medium tracking-[-0.03em] text-ink">
@@ -95,7 +95,7 @@ export function DashboardAside({
 
       <div id="social">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
             Social
           </p>
           <SocialIcons
@@ -105,7 +105,7 @@ export function DashboardAside({
           />
         </div>
         {socialSaved ? (
-          <p className="mt-2 text-[12px] font-medium text-[#1f6b5c]">
+          <p className="mt-2 text-[12px] font-medium text-[#1a5c51]">
             Links saved.
           </p>
         ) : null}

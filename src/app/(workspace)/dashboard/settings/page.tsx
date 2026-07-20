@@ -97,7 +97,7 @@ export default async function DashboardSettingsPage({ searchParams }: Props) {
         </p>
       ) : null}
       {flash ? (
-        <p className="mb-4 rounded-xl border border-[#1f6b5c]/25 bg-[#1f6b5c]/8 px-4 py-3 text-sm text-ink">
+        <p className="mb-4 rounded-xl border border-[#1a5c51]/25 bg-[#1a5c51]/8 px-4 py-3 text-sm text-ink">
           {flash}
         </p>
       ) : null}

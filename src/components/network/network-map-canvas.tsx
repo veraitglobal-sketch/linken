@@ -44,24 +44,24 @@ export async function NetworkMapCanvas({
     <div
       className={cn(
         "relative flex flex-col overflow-hidden bg-white",
-        fullBleed ? "h-full min-h-0" : "rounded-2xl border border-[#e8eaee]",
+        fullBleed ? "h-full min-h-0" : "rounded-2xl border border-line",
       )}
     >
       {!fullBleed ? (
-        <div className="flex shrink-0 items-center gap-3 border-b border-[#e8eaee] bg-[#fafbfc] px-3 py-2 sm:px-4">
+        <div className="flex shrink-0 items-center gap-3 border-b border-line bg-[#fafbfa] px-3 py-2 sm:px-4">
           <div className="min-w-0 flex-1">
             <p className="truncate text-[12px] font-semibold text-ink">
               {subtitle ?? "Network"}
             </p>
             {counts.length > 0 ? (
-              <p className="truncate text-[11px] text-[#94a3b8]">
+              <p className="truncate text-[11px] text-muted">
                 {counts.join(" · ")}
               </p>
             ) : null}
           </div>
           <Link
             href={publicHref}
-            className="inline-flex h-7 items-center rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-[11px] font-semibold text-ink"
+            className="inline-flex h-7 items-center rounded-lg border border-line bg-surface px-2.5 text-[11px] font-semibold text-ink"
           >
             Public map
           </Link>
@@ -71,12 +71,12 @@ export async function NetworkMapCanvas({
       {graph.nodes.length === 0 ? (
         <div
           className={cn(
-            "relative flex flex-col items-center justify-center gap-5 bg-[#fafbfc] px-6",
+            "relative flex flex-col items-center justify-center gap-5 bg-[#fafbfa] px-6",
             fullBleed ? "min-h-0 flex-1" : heightClass,
           )}
           style={{
             backgroundImage:
-              "radial-gradient(circle, #d8dde6 1px, transparent 1px)",
+              "radial-gradient(circle, #cfd5d1 1px, transparent 1px)",
             backgroundSize: "20px 20px",
           }}
         >

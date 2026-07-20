@@ -23,7 +23,7 @@ function formatDate(iso: string) {
 export function DashboardIntros({ intros, receiveIntros }: Props) {
   return (
     <section className="rounded-[28px] border border-line bg-white px-5 py-6 sm:px-7 sm:py-7">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
         Intros · via Linken Radar
       </p>
       <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">

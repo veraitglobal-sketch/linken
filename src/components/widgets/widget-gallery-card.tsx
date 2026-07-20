@@ -58,7 +58,12 @@ export function WidgetGalleryCard({
             height={widget.height}
             title={`${widget.name} preview`}
             scale={widget.id === "references" ? 0.92 : 1}
-            className="rounded-2xl border border-line bg-white/80"
+            className="w-full rounded-2xl bg-transparent"
+            eager={
+              widget.id === "compact" ||
+              widget.id === "badge" ||
+              widget.id === "logo-wall"
+            }
           />
         ) : (
           <WidgetZeroState
@@ -68,8 +73,8 @@ export function WidgetGalleryCard({
           />
         )}
         {showProWatermark ? (
-          <div className="pointer-events-none absolute inset-x-4 inset-y-4 flex items-end justify-end rounded-2xl bg-gradient-to-t from-[#0a1714]/35 to-transparent p-3">
-            <span className="rounded-md border border-white/30 bg-[#0a1714]/75 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] text-white uppercase">
+          <div className="pointer-events-none absolute inset-x-4 inset-y-4 flex items-end justify-end rounded-2xl bg-gradient-to-t from-[#081412]/35 to-transparent p-3">
+            <span className="rounded-md border border-white/30 bg-[#081412]/75 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] text-white uppercase">
               Pro preview
             </span>
           </div>
@@ -112,7 +117,7 @@ export function WidgetGalleryCard({
           className={cn(
             "mt-4 h-10 rounded-xl text-[13px] font-semibold transition-colors",
             canOpen
-              ? "bg-[#10231f] text-white hover:bg-[#0a1714]"
+              ? "bg-[#0e1f1c] text-white hover:bg-[#081412]"
               : "cursor-not-allowed bg-[#eef1f6] text-[#94a3b8]",
           )}
         >

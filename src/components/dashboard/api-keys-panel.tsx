@@ -144,8 +144,8 @@ export function ApiKeysPanel({ keys }: Props) {
   return (
     <div className="space-y-4">
       {createdKey ? (
-        <div className="rounded-2xl border border-[#1f6b5c]/35 bg-[#1f6b5c]/08 px-4 py-4">
-          <p className="text-[12px] font-semibold tracking-[0.1em] text-[#1f6b5c] uppercase">
+        <div className="rounded-2xl border border-[#1a5c51]/35 bg-[#1a5c51]/08 px-4 py-4">
+          <p className="text-[12px] font-semibold tracking-[0.1em] text-[#1a5c51] uppercase">
             Store it now
           </p>
           <p className="mt-1 text-[13px] text-ink">
@@ -260,7 +260,7 @@ export function ApiKeysPanel({ keys }: Props) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Viktor AI production"
-                className="mt-1 w-full rounded-xl border border-[#e2e8f0] px-3 py-2.5 text-[14px] text-ink outline-none focus:border-[#10231f]"
+                className="mt-1 w-full rounded-xl border border-[#e2e8f0] px-3 py-2.5 text-[14px] text-ink outline-none focus:border-[#0e1f1c]"
               />
             </label>
 
@@ -274,7 +274,7 @@ export function ApiKeysPanel({ keys }: Props) {
                     onClick={() =>
                       setScopes([...AGENT_SCOPE_PRESETS[preset.id]])
                     }
-                    className="rounded-xl border border-[#e2e8f0] px-3 py-2.5 text-left transition-colors hover:border-[#10231f] hover:bg-[#f8fafc]"
+                    className="rounded-xl border border-[#e2e8f0] px-3 py-2.5 text-left transition-colors hover:border-[#0e1f1c] hover:bg-[#f8fafc]"
                   >
                     <span className="block text-[13px] font-semibold text-ink">
                       {preset.label}
@@ -297,7 +297,7 @@ export function ApiKeysPanel({ keys }: Props) {
                   className={cn(
                     "flex cursor-pointer gap-3 rounded-xl border px-3 py-2.5",
                     scopes.includes(scope.id)
-                      ? "border-[#10231f] bg-[#f8fafc]"
+                      ? "border-[#0e1f1c] bg-[#f8fafc]"
                       : "border-[#e2e8f0]",
                   )}
                 >

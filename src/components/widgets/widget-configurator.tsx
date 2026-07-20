@@ -11,7 +11,7 @@ import {
 import { CodeBlock } from "@/components/developers/code-block";
 import { tokenizeShell } from "@/components/developers/highlight";
 import { LazyEmbedPreview } from "@/components/widgets/lazy-embed-preview";
-import { LogoWallPicker } from "@/components/widgets/logo-wall-picker";
+import { LogoWallControls } from "@/components/widgets/logo-wall-controls";
 import { PreviewStage } from "@/components/widgets/preview-stage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +19,8 @@ import {
   buildEmbedSnippet,
   buildEmbedSrc,
   widgetHeight,
-  type LogoWallDensity,
+  type LogoMotion,
+  type LogoSize,
   type LogoWallLabel,
   type WidgetDefinition,
   type WidgetTheme,
@@ -64,14 +65,18 @@ export function WidgetConfigurator({
   const [viewport, setViewport] = useState<"desktop" | "mobile">("desktop");
   const [copied, setCopied] = useState(false);
   const [label, setLabel] = useState<LogoWallLabel>("both");
-  const [mono, setMono] = useState(false);
-  const [density, setDensity] = useState<LogoWallDensity>("tiles+names");
+  const [mono, setMono] = useState(true);
+  const [motion, setMotion] = useState<LogoMotion>("row");
+  const [logoSize, setLogoSize] = useState<LogoSize>("md");
 
   const isLogoWall = widget.id === "logo-wall";
   const proLocked = Boolean(widget.pro && !isPro);
 
   const width = widthMode === "100%" ? "100%" : `${widthPx || "320"}px`;
-  const height = widgetHeight(widget.id);
+  const height = widgetHeight(widget.id, {
+    motion: isLogoWall ? motion : undefined,
+    size: isLogoWall ? logoSize : undefined,
+  });
 
   const previewSrc = useMemo(
     () =>
@@ -84,7 +89,8 @@ export function WidgetConfigurator({
         preview: true,
         label: isLogoWall ? label : undefined,
         mono: isLogoWall ? mono : undefined,
-        density: isLogoWall ? density : undefined,
+        motion: isLogoWall ? motion : undefined,
+        size: isLogoWall ? logoSize : undefined,
       }),
     [
       siteUrl,
@@ -96,7 +102,8 @@ export function WidgetConfigurator({
       isLogoWall,
       label,
       mono,
-      density,
+      motion,
+      logoSize,
     ],
   );
 
@@ -110,9 +117,21 @@ export function WidgetConfigurator({
         width,
         label: isLogoWall ? label : undefined,
         mono: isLogoWall ? mono : undefined,
-        density: isLogoWall ? density : undefined,
+        motion: isLogoWall ? motion : undefined,
+        size: isLogoWall ? logoSize : undefined,
       }),
-    [siteUrl, slug, widget.id, theme, width, isLogoWall, label, mono, density],
+    [
+      siteUrl,
+      slug,
+      widget.id,
+      theme,
+      width,
+      isLogoWall,
+      label,
+      mono,
+      motion,
+      logoSize,
+    ],
   );
 
   const tokens = useMemo(() => tokenizeShell(snippet), [snippet]);
@@ -172,7 +191,7 @@ export function WidgetConfigurator({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-[#0a1714]/55 px-3 py-3 backdrop-blur-[2px] sm:items-center sm:px-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#081412]/55 px-3 py-3 backdrop-blur-[2px] sm:items-center sm:px-4"
       role="presentation"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -242,113 +261,54 @@ export function WidgetConfigurator({
               </div>
 
               {isLogoWall ? (
-                <>
-                  <div>
-                    <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
-                      Label
-                    </p>
-                    <select
-                      value={label}
+                <LogoWallControls
+                  label={label}
+                  onLabel={setLabel}
+                  motion={motion}
+                  onMotion={setMotion}
+                  size={logoSize}
+                  onSize={setLogoSize}
+                  mono={mono}
+                  onMono={setMono}
+                  height={height}
+                  confirmed={logoWallConfirmed}
+                  pending={logoWallPending}
+                  excludedIds={logoWallExcludedIds}
+                />
+              ) : null}
+
+              <div>
+                <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+                  Width
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <select
+                    value={widthMode}
+                    onChange={(e) =>
+                      setWidthMode(e.target.value as "100%" | "px")
+                    }
+                    className="h-11 rounded-xl border border-[#e6eaf0] bg-white px-3 text-[13px] text-ink"
+                  >
+                    <option value="100%">100%</option>
+                    <option value="px">Fixed px</option>
+                  </select>
+                  {widthMode === "px" ? (
+                    <Input
+                      value={widthPx}
                       onChange={(e) =>
-                        setLabel(e.target.value as LogoWallLabel)
+                        setWidthPx(e.target.value.replace(/[^\d]/g, ""))
                       }
-                      className="mt-2 h-11 w-full rounded-xl border border-[#e6eaf0] bg-white px-3 text-[13px] text-ink"
-                    >
-                      <option value="both">Verified partners &amp; clients</option>
-                      <option value="partners">Our verified partners</option>
-                      <option value="clients">Trusted by</option>
-                      <option value="none">No label</option>
-                    </select>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
-                      Density
-                    </p>
-                    <div className="mt-2 flex gap-1.5 rounded-xl border border-line bg-[#f7f8fa] p-1">
-                      {(
-                        [
-                          { id: "tiles+names", label: "Tiles + names" },
-                          { id: "tiles", label: "Tiles only" },
-                        ] as const
-                      ).map((opt) => (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => setDensity(opt.id)}
-                          className={cn(
-                            "h-9 flex-1 rounded-lg text-[12px] font-semibold transition-colors",
-                            density === opt.id
-                              ? "bg-white text-ink shadow-sm"
-                              : "text-[#64748b] hover:text-ink",
-                          )}
-                        >
-                          {opt.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line px-3 py-3">
-                    <input
-                      type="checkbox"
-                      className="mt-1"
-                      checked={mono}
-                      onChange={(e) => setMono(e.target.checked)}
+                      className="h-11"
+                      aria-label="Width in pixels"
                     />
-                    <span>
-                      <span className="block text-[13px] font-semibold text-ink">
-                        Monochrome logos
-                      </span>
-                      <span className="mt-0.5 block text-[12px] text-[#64748b]">
-                        Grayscale on tile content only — frames stay crisp.
-                      </span>
-                    </span>
-                  </label>
-                  <LogoWallPicker
-                    confirmed={logoWallConfirmed}
-                    pending={logoWallPending}
-                    excludedIds={logoWallExcludedIds}
-                  />
-                  <p className="text-[12px] text-[#94a3b8]">
-                    Height: {height}px · width fluid (100%)
-                  </p>
-                </>
-              ) : (
-                <div>
-                  <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
-                    Size
-                  </p>
-                  <label className="mt-2 block">
-                    <span className="mb-1.5 block text-[12px] font-medium text-ink">
-                      Width
-                    </span>
-                    <div className="flex gap-2">
-                      <select
-                        value={widthMode}
-                        onChange={(e) =>
-                          setWidthMode(e.target.value as "100%" | "px")
-                        }
-                        className="h-11 rounded-xl border border-[#e6eaf0] bg-white px-3 text-[13px] text-ink"
-                      >
-                        <option value="100%">100%</option>
-                        <option value="px">Fixed px</option>
-                      </select>
-                      {widthMode === "px" ? (
-                        <Input
-                          value={widthPx}
-                          onChange={(e) =>
-                            setWidthPx(e.target.value.replace(/[^\d]/g, ""))
-                          }
-                          className="h-11"
-                          aria-label="Width in pixels"
-                        />
-                      ) : null}
-                    </div>
-                  </label>
+                  ) : null}
+                </div>
+                {!isLogoWall ? (
                   <p className="mt-2 text-[12px] text-[#94a3b8]">
                     Height: {height}px (fixed for this widget)
                   </p>
-                </div>
-              )}
+                ) : null}
+              </div>
 
               <div>
                 <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
@@ -406,7 +366,13 @@ export function WidgetConfigurator({
                 </div>
               </div>
 
-              <PreviewStage color={stageBg} className="mt-3">
+              <PreviewStage
+                color={stageBg}
+                className={cn(
+                  "mt-3 min-h-[200px]",
+                  widget.id === "compact" ? "items-center" : "items-start",
+                )}
+              >
                 <div
                   className="overflow-hidden rounded-xl transition-[width] duration-200"
                   style={{
@@ -420,10 +386,11 @@ export function WidgetConfigurator({
                     height={height}
                     title={`${widget.name} live preview`}
                     className="rounded-xl bg-transparent"
+                    eager
                   />
                 </div>
                 {proLocked ? (
-                  <span className="pointer-events-none absolute right-5 bottom-5 rounded-md border border-white/30 bg-[#0a1714]/75 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] text-white uppercase">
+                  <span className="pointer-events-none absolute right-5 bottom-5 rounded-md border border-white/30 bg-[#081412]/75 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] text-white uppercase">
                     Pro preview
                   </span>
                 ) : null}
@@ -471,11 +438,11 @@ export function WidgetConfigurator({
                   verification.
                 </p>
 
-                <div className="relative mt-4 overflow-hidden rounded-2xl border border-white/10 bg-[#0a1714]">
+                <div className="relative mt-4 overflow-hidden rounded-2xl border border-white/10 bg-[#081412]">
                   <button
                     type="button"
                     onClick={copy}
-                    className="absolute top-2 right-2 z-10 rounded-lg border border-white/15 bg-[#0a1714]/90 px-2.5 py-1.5 text-[11px] font-semibold text-white/70 transition-colors hover:border-white/30 hover:text-white"
+                    className="absolute top-2 right-2 z-10 rounded-lg border border-white/15 bg-[#081412]/90 px-2.5 py-1.5 text-[11px] font-semibold text-white/70 transition-colors hover:border-white/30 hover:text-white"
                   >
                     {copied ? "Copied ✓" : "Copy"}
                   </button>

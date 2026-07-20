@@ -133,7 +133,7 @@ export function GraphTeamSection({
           <button
             type="button"
             onClick={() => setShowContact(true)}
-            className="h-9 w-full rounded-xl bg-[#10231f] text-[12px] font-semibold text-white hover:bg-[#0a1714]"
+            className="h-9 w-full rounded-xl bg-[#0e1f1c] text-[12px] font-semibold text-white hover:bg-[#081412]"
           >
             Contact {companyName}
           </button>

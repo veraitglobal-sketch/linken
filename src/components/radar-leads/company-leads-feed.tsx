@@ -104,7 +104,7 @@ export function CompanyLeadsFeed({
                     <p className="mt-0.5 text-[13px] text-ink-soft">
                       {[m.category, m.city || m.country].filter(Boolean).join(" · ")}
                     </p>
-                    <p className="mt-1.5 text-[12px] font-medium text-[#1f6b5c]">
+                    <p className="mt-1.5 text-[12px] font-medium text-[#1a5c51]">
                       {reasonLabel(lead.reason)}
                       {lead.searchName ? (
                         <span className="font-normal text-muted">

@@ -5,9 +5,14 @@ import type { ServiceReference } from "@/types/service-reference";
 type Props = {
   references: ServiceReference[];
   editable?: boolean;
+  companySlug: string;
 };
 
-export function ReferencesSection({ references, editable = false }: Props) {
+export function ReferencesSection({
+  references,
+  editable = false,
+  companySlug,
+}: Props) {
   if (references.length === 0 && !editable) return null;
 
   return (
@@ -32,14 +37,15 @@ export function ReferencesSection({ references, editable = false }: Props) {
               key={reference.id}
               reference={reference}
               editable={editable}
+              companySlug={companySlug}
             />
           ))}
         </div>
       ) : null}
 
       {editable ? (
-        <div className={references.length > 0 ? "mt-5" : "mt-5"}>
-          <AddReferenceForm />
+        <div className="mt-5">
+          <AddReferenceForm companySlug={companySlug} />
         </div>
       ) : null}
     </section>

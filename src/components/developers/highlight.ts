@@ -18,13 +18,13 @@ export type CodeToken = { kind: TokenKind; text: string };
 
 const TOKEN_CLASS: Record<TokenKind, string> = {
   plain: "text-white/70",
-  key: "text-[#5ec4a8]",
+  key: "text-[#7eb8a4]",
   string: "text-[#e8e0d4]",
-  number: "text-[#5ec4a8]/85",
-  keyword: "text-[#5ec4a8]",
+  number: "text-[#7eb8a4]/85",
+  keyword: "text-[#7eb8a4]",
   punct: "text-white/40",
   comment: "text-white/35",
-  flag: "text-[#5ec4a8]/80",
+  flag: "text-[#7eb8a4]/80",
   cmd: "text-white",
 };
 

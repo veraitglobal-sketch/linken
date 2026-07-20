@@ -52,7 +52,7 @@ function StatusActions({ id, status }: { id: string; status: InquiryStatus }) {
 export function DashboardInquiries({ inquiries, newCount, monthCount }: Props) {
   return (
     <section className="rounded-[28px] border border-line bg-white px-5 py-6 sm:px-7 sm:py-7">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
         Inquiries
         {newCount > 0 ? ` · ${newCount} new` : ""}
       </p>
@@ -88,7 +88,7 @@ export function DashboardInquiries({ inquiries, newCount, monthCount }: Props) {
                   </p>
                   <a
                     href={`mailto:${inquiry.senderEmail}?subject=${encodeURIComponent("Re: your inquiry on Linken")}`}
-                    className="mt-0.5 text-[13px] text-[#1f6b5c] underline-offset-2 hover:underline"
+                    className="mt-0.5 text-[13px] text-[#1a5c51] underline-offset-2 hover:underline"
                   >
                     {inquiry.senderEmail}
                   </a>

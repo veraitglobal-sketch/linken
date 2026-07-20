@@ -1,3 +1,9 @@
+import {
+  logoWallHeight,
+  type LogoMotion,
+  type LogoSize,
+} from "@/features/widgets/logo-motion";
+
 export type WidgetVariant =
   | "compact"
   | "badge"
@@ -6,8 +12,20 @@ export type WidgetVariant =
   | "logo-wall";
 export type WidgetTheme = "light" | "dark";
 export type LogoWallLabel = "none" | "partners" | "clients" | "both";
-/** tiles+names = pločica + ime (default); tiles = samo pločice */
+/** @deprecated kept for old embeds — ignored by clean logo wall */
 export type LogoWallDensity = "tiles+names" | "tiles";
+
+export type {
+  LogoMotion,
+  LogoSize,
+} from "@/features/widgets/logo-motion";
+export {
+  LOGO_MOTION_OPTIONS,
+  LOGO_SIZE_PX,
+  logoWallHeight,
+  parseLogoMotion,
+  parseLogoSize,
+} from "@/features/widgets/logo-motion";
 
 export type WidgetDefinition = {
   id: WidgetVariant;
@@ -17,7 +35,6 @@ export type WidgetDefinition = {
   recommended?: boolean;
   pro?: boolean;
   height: number;
-  /** Shown under the card when eligibility fails */
   requirementHint?: string;
   unavailableCtaHref?: string;
   unavailableCtaLabel?: string;
@@ -27,7 +44,8 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "compact",
     name: "Compact",
-    description: "One-line verified mark — lightest footprint on any page.",
+    description:
+      "Trust bar with Linken seal and sliding partner logos.",
     section: "status",
     recommended: true,
     height: 48,
@@ -35,9 +53,10 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "badge",
     name: "Badge",
-    description: "Card with partner and case study counts from confirmed evidence.",
+    description:
+      "Company card with sliding partner logos and Linken seal.",
     section: "status",
-    height: 72,
+    height: 88,
   },
   {
     id: "references",
@@ -63,10 +82,10 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     id: "logo-wall",
     name: "Logo wall",
     description:
-      "Live verified partner & client logos for your website — clickable to Linken profiles.",
+      "Clean partner logos — no cards. Row, vertical, fade, or grid.",
     section: "evidence",
     pro: true,
-    height: 80,
+    height: 72,
     requirementHint: "Requires at least one confirmed partnership or client.",
     unavailableCtaHref: "/dashboard/partners",
     unavailableCtaLabel: "confirm your first partnership",
@@ -77,7 +96,13 @@ export function parseLogoWallDensity(raw: string | undefined): LogoWallDensity {
   return raw === "tiles" ? "tiles" : "tiles+names";
 }
 
-export function widgetHeight(variant: WidgetVariant): number {
+export function widgetHeight(
+  variant: WidgetVariant,
+  opts?: { motion?: LogoMotion; size?: LogoSize },
+): number {
+  if (variant === "logo-wall") {
+    return logoWallHeight(opts?.motion ?? "row", opts?.size ?? "md");
+  }
   return WIDGET_CATALOG.find((w) => w.id === variant)?.height ?? 72;
 }
 
@@ -90,10 +115,10 @@ export function buildEmbedSrc(input: {
   preview?: boolean;
   label?: LogoWallLabel;
   mono?: boolean;
-  density?: LogoWallDensity;
+  motion?: LogoMotion;
+  size?: LogoSize;
 }): string {
   const url = new URL(`${input.siteUrl}/embed/${input.slug}`);
-  // badge is the default route — omit param for stable existing embeds
   if (input.variant !== "badge") {
     url.searchParams.set("variant", input.variant);
   }
@@ -108,11 +133,15 @@ export function buildEmbedSrc(input: {
     if (input.label && input.label !== "both") {
       url.searchParams.set("label", input.label);
     }
-    if (input.mono) {
-      url.searchParams.set("mono", "1");
+    // mono defaults on for clean walls — only send when off
+    if (input.mono === false) {
+      url.searchParams.set("mono", "0");
     }
-    if (input.density && input.density !== "tiles+names") {
-      url.searchParams.set("density", input.density);
+    if (input.motion && input.motion !== "row") {
+      url.searchParams.set("motion", input.motion);
+    }
+    if (input.size && input.size !== "md") {
+      url.searchParams.set("size", input.size);
     }
   }
   if (input.preview) {
@@ -129,9 +158,13 @@ export function buildEmbedSnippet(input: {
   width: string;
   label?: LogoWallLabel;
   mono?: boolean;
-  density?: LogoWallDensity;
+  motion?: LogoMotion;
+  size?: LogoSize;
 }): string {
-  const height = widgetHeight(input.variant);
+  const height = widgetHeight(input.variant, {
+    motion: input.motion,
+    size: input.size,
+  });
   const isFluid = input.width === "100%";
   const px = input.width.replace(/px$/i, "");
   const src = buildEmbedSrc({
@@ -142,9 +175,10 @@ export function buildEmbedSnippet(input: {
     width: isFluid ? undefined : px,
     label: input.label,
     mono: input.mono,
-    density: input.density,
+    motion: input.motion,
+    size: input.size,
   });
   const widthAttr = isFluid ? "100%" : px;
   const styleWidth = isFluid ? "100%" : `${px}px`;
-  return `<iframe src="${src}" width="${widthAttr}" height="${height}" style="border:0;width:${styleWidth};max-width:100%" title="Verified on Linken" loading="lazy"></iframe>`;
+  return `<iframe src="${src}" width="${widthAttr}" height="${height}" style="border:0;width:${styleWidth};max-width:100%;background:transparent" title="Verified on Linken" loading="lazy"></iframe>`;
 }

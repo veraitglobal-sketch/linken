@@ -49,7 +49,7 @@ function EmbedCard({
       <div className="border-b border-line px-5 py-5">
         <div className="flex items-baseline gap-2">
           <span className="font-display text-[12px] text-muted">{index}</span>
-          <p className="text-[11px] font-semibold tracking-[0.12em] text-[#1f6b5c] uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.12em] text-[#1a5c51] uppercase">
             {variant.title}
           </p>
         </div>
@@ -76,11 +76,11 @@ function EmbedCard({
         <p className="mt-4 text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
           Snippet
         </p>
-        <div className="relative mt-2 overflow-hidden rounded-2xl border border-white/10 bg-[#0a1714]">
+        <div className="relative mt-2 overflow-hidden rounded-2xl border border-white/10 bg-[#081412]">
           <button
             type="button"
             onClick={copy}
-            className="absolute top-2 right-2 z-10 rounded-lg border border-white/15 bg-[#0a1714]/90 px-2.5 py-1.5 text-[11px] font-semibold text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            className="absolute top-2 right-2 z-10 rounded-lg border border-white/15 bg-[#081412]/90 px-2.5 py-1.5 text-[11px] font-semibold text-white/70 transition-colors hover:border-white/30 hover:text-white"
           >
             {copied ? "Copied ✓" : "Copy"}
           </button>

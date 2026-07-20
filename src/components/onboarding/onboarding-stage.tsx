@@ -8,7 +8,7 @@ export function OnboardingStage() {
 
       <div className="relative z-10 animate-rise">
         <div className="flex items-center gap-3">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#5ec4a8]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-[#7eb8a4]" />
           <p className="text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase">
             Company registration
           </p>

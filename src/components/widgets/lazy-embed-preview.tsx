@@ -10,6 +10,8 @@ type Props = {
   className?: string;
   /** Scale down for gallery cards */
   scale?: number;
+  /** Load immediately (studio modal) — skip IntersectionObserver. */
+  eager?: boolean;
 };
 
 /** Loads the iframe only once it enters the viewport. */
@@ -19,11 +21,13 @@ export function LazyEmbedPreview({
   title,
   className,
   scale = 1,
+  eager = false,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(eager);
 
   useEffect(() => {
+    if (eager) return;
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -37,7 +41,7 @@ export function LazyEmbedPreview({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [eager]);
 
   const scaledHeight = Math.round(height * scale);
 

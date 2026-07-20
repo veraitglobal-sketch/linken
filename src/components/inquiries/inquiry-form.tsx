@@ -172,7 +172,7 @@ export function InquiryForm({
             "min-h-[5rem] w-full resize-none rounded-xl border px-3.5 py-3 text-sm leading-relaxed outline-none",
             panel
               ? "border-[#e6eaf0] bg-white text-ink placeholder:text-[#94a3b8] focus:border-ink"
-              : "border-white/20 bg-white/10 text-white placeholder:text-white/40 focus:border-[#5ec4a8] focus:ring-2 focus:ring-[rgba(94,196,168,0.2)]",
+              : "border-white/20 bg-white/10 text-white placeholder:text-white/40 focus:border-[#7eb8a4] focus:ring-2 focus:ring-[rgba(126, 184, 164,0.2)]",
           )}
         />
       </div>

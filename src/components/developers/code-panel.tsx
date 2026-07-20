@@ -28,7 +28,7 @@ export function CodePanel({ tabs, caption }: Props) {
   if (!current) return null;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0a1714] shadow-[0_18px_50px_rgba(10,20,18,0.18)]">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#081412] shadow-[0_18px_50px_rgba(10,20,18,0.18)]">
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-3 py-2.5">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {caption ? (
@@ -46,7 +46,7 @@ export function CodePanel({ tabs, caption }: Props) {
                   className={cn(
                     "h-8 rounded-lg text-[12px] font-semibold transition-colors",
                     active === tab.id
-                      ? "bg-white text-[#10231f]"
+                      ? "bg-white text-[#0e1f1c]"
                       : "bg-transparent text-white/50 hover:text-white/80",
                   )}
                 >

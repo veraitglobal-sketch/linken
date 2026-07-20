@@ -23,7 +23,7 @@ export function AnalyticsCard({ analytics, plan }: Props) {
 
   return (
     <section className="rounded-[28px] border border-line bg-white px-5 py-6 sm:px-7 sm:py-7">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
         What Linken brings you
       </p>
       <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">
@@ -77,7 +77,7 @@ export function AnalyticsCard({ analytics, plan }: Props) {
                   <div
                     key={d.day}
                     title={`${d.day}: ${d.count}`}
-                    className="w-2.5 shrink-0 rounded-t-sm bg-[#1f6b5c]/80"
+                    className="w-2.5 shrink-0 rounded-t-sm bg-[#1a5c51]/80"
                     style={{
                       height: `${Math.max(10, (d.count / maxDay) * 100)}%`,
                     }}
@@ -97,7 +97,7 @@ export function AnalyticsCard({ analytics, plan }: Props) {
               {[40, 70, 35, 90, 55, 60, 45].map((h, i) => (
                 <div
                   key={i}
-                  className="flex-1 rounded-t-sm bg-[#1f6b5c]/40"
+                  className="flex-1 rounded-t-sm bg-[#1a5c51]/40"
                   style={{ height: `${h}%` }}
                 />
               ))}

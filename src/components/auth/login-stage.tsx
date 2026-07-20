@@ -6,7 +6,7 @@ export function LoginStage() {
 
       <div className="relative z-10 animate-rise">
         <div className="flex items-center gap-3">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#5ec4a8]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-[#7eb8a4]" />
           <p className="text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase">
             Company access
           </p>
@@ -25,7 +25,7 @@ export function LoginStage() {
       </div>
 
       <div className="relative z-10 animate-rise-late border-t border-white/15 pt-6">
-        <p className="text-[11px] font-semibold tracking-[0.16em] text-[#5ec4a8]/80 uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.16em] text-[#7eb8a4]/80 uppercase">
           After you enter
         </p>
         <p className="mt-3 font-display text-[clamp(1.25rem,2vw,1.55rem)] leading-snug tracking-[-0.03em] text-white/90">

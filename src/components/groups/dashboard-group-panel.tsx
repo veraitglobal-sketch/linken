@@ -67,7 +67,7 @@ export function DashboardGroupPanel({
                 <div className="flex flex-wrap items-center gap-2">
                   <Link
                     href={`/c/${m.slug}`}
-                    className="text-[12px] font-semibold text-[#1f6b5c] underline-offset-2 hover:underline"
+                    className="text-[12px] font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
                   >
                     Profile
                   </Link>

@@ -57,8 +57,8 @@ export function SocialIcons({
           className={cn(
             "inline-flex h-10 w-10 items-center justify-center rounded-xl border transition-colors",
             tone === "dark"
-              ? "border-white/20 bg-white/10 text-white hover:border-[#5ec4a8]/50 hover:bg-[#5ec4a8]/15 hover:text-[#5ec4a8]"
-              : "border-line bg-white text-ink hover:border-[#10231f]/25 hover:bg-[#f7f8fa]",
+              ? "border-white/20 bg-white/10 text-white hover:border-[#7eb8a4]/50 hover:bg-[#7eb8a4]/15 hover:text-[#7eb8a4]"
+              : "border-line bg-white text-ink hover:border-[#0e1f1c]/25 hover:bg-[#f7f8fa]",
           )}
         >
           <Icon className="h-[18px] w-[18px]" />

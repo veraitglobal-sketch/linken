@@ -1,25 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #0b1220;
-  --ink-soft: #3b4556;
-  --muted: #6b7280;
-  --line: #e6eaf0;
-  --paper: #f4f6f8;
+  /* Cool forest family — one lane, no warm-brown drift */
+  --ink: #0d1210;
+  --ink-soft: #3a423e;
+  --muted: #66706b;
+  --line: #e2e6e3;
+  --paper: #f1f3f1;
   --surface: #ffffff;
-  --navy: #10231f;
-  --navy-deep: #0a1714;
-  --blue: #1f6b5c;
-  --blue-soft: #5ec4a8;
-  --accent: #10231f;
-  --accent-hover: #0a1714;
-  --accent-soft: rgba(16, 35, 31, 0.07);
+  --navy: #0e1f1c;
+  --navy-deep: #081412;
+  --blue: #1a5c51;
+  --blue-soft: #7eb8a4;
+  --accent: #0e1f1c;
+  --accent-hover: #081412;
+  --accent-soft: rgba(14, 31, 28, 0.07);
   --success: #1f7a56;
-  --ember: #c4783a;
-  --plus: #94a3b8;
+  --ember: #b8895a;
+  --plus: #8a948e;
   --font-sans: var(--font-ui);
   --font-display: var(--font-display);
-  --shadow: 0 20px 60px rgba(7, 18, 37, 0.12);
+  --shadow: 0 22px 64px rgba(8, 20, 18, 0.1);
 }
 
 @theme inline {
@@ -55,9 +56,10 @@ body {
   margin: 0;
   min-height: 100%;
   color: var(--ink);
-  background: #f7f8fa;
+  background: #f0f2f0;
   font-family: var(--font-sans), ui-sans-serif, sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -65,22 +67,23 @@ a {
 }
 
 ::selection {
-  background: rgba(31, 107, 92, 0.2);
+  background: rgba(26, 92, 81, 0.18);
 }
 
 .stage-grain {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.07;
+  opacity: 0.055;
   mix-blend-mode: overlay;
   pointer-events: none;
 }
 
 .media-zoom {
-  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 .group:hover .media-zoom {
-  transform: scale(1.04);
+  transform: scale(1.035);
 }
 
 @keyframes fade-up {
@@ -100,6 +103,69 @@ a {
   }
 }
 
+/* Embed widgets — partner logos slide; Linken seal stays fixed */
+@keyframes linken-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes linken-seal-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(126, 184, 164, 0.45);
+  }
+  55% {
+    box-shadow: 0 0 0 7px rgba(126, 184, 164, 0);
+  }
+}
+
+.linken-marquee {
+  animation-name: linken-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.linken-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes linken-marquee-y {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+.linken-marquee-y {
+  animation-name: linken-marquee-y;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.linken-marquee-y:hover {
+  animation-play-state: paused;
+}
+
+.linken-seal-glow {
+  animation: linken-seal-pulse 2.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .linken-marquee,
+  .linken-marquee-y,
+  .linken-seal-glow {
+    animation: none;
+  }
+}
+
 .animate-rise {
   animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -114,16 +180,17 @@ a {
 
 .mesh-stage {
   background:
-    radial-gradient(ellipse 70% 55% at 12% 20%, rgba(94, 196, 168, 0.22), transparent 52%),
-    radial-gradient(ellipse 75% 60% at 85% 30%, rgba(31, 107, 92, 0.55), transparent 55%),
-    radial-gradient(ellipse 55% 45% at 45% 90%, rgba(16, 50, 44, 0.7), transparent 50%),
-    linear-gradient(155deg, #0a1412 0%, #122822 42%, #163a32 100%);
+    radial-gradient(ellipse 60% 48% at 12% 18%, rgba(126, 184, 164, 0.11), transparent 55%),
+    radial-gradient(ellipse 70% 55% at 88% 26%, rgba(26, 92, 81, 0.38), transparent 58%),
+    radial-gradient(ellipse 50% 42% at 48% 95%, rgba(6, 14, 12, 0.88), transparent 52%),
+    linear-gradient(158deg, #070f0d 0%, #0e1f1c 44%, #142a25 100%);
 }
 
 .glass-nav {
-  background: #ffffff;
-  border: 1px solid rgba(16, 35, 31, 0.08);
-  box-shadow: 0 10px 36px rgba(10, 20, 18, 0.07);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(14, 31, 28, 0.08);
+  box-shadow: 0 12px 40px rgba(8, 20, 18, 0.07);
+  backdrop-filter: blur(12px);
 }
 
 .link-pulse {
@@ -136,7 +203,11 @@ a {
   animation: fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Network graph — n8n-inspired interaction polish (light) */
+/* Network graph stage */
+.linken-flow-stage {
+  background: #f4f5f3;
+}
+
 .linken-flow .react-flow__node {
   overflow: visible !important;
   transition: filter 0.12s ease;
@@ -144,6 +215,7 @@ a {
 
 .linken-flow .react-flow__node:hover {
   z-index: 5;
+  filter: drop-shadow(0 10px 18px rgba(8, 20, 18, 0.1));
 }
 
 .linken-flow .react-flow__node.selected {
@@ -156,28 +228,39 @@ a {
 
 .linken-flow .react-flow__edge.selected .react-flow__edge-path,
 .linken-flow .react-flow__edge:focus .react-flow__edge-path {
-  stroke: #3b82f6 !important;
+  stroke: #1a5c51 !important;
+  stroke-width: 2.75 !important;
 }
 
 .linken-flow .react-flow__connection-line {
-  stroke: #3b82f6 !important;
+  stroke: #1a5c51 !important;
 }
 
 .linken-flow .react-flow__handle.linken-handle {
-  transition: transform 0.12s ease, background-color 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    background-color 0.12s ease,
+    box-shadow 0.12s ease;
+  box-shadow: 0 0 0 3px rgba(26, 92, 81, 0.18);
 }
 
 .linken-flow .react-flow__handle.linken-handle:hover {
-  transform: scale(1.35);
-  background: #3b82f6 !important;
+  transform: scale(1.45);
+  background: #7eb8a4 !important;
+  box-shadow: 0 0 0 5px rgba(126, 184, 164, 0.35);
 }
 
 .linken-flow .react-flow__controls-button:hover {
-  background: #f8fafc !important;
+  background: #f1f3f1 !important;
 }
 
 .linken-flow .react-flow__minimap-mask {
-  fill: rgba(15, 23, 42, 0.06);
+  fill: rgba(14, 31, 28, 0.06);
+}
+
+.linken-flow .react-flow__background pattern circle {
+  /* React Flow dots — keep crisp against the stage wash */
+  opacity: 1;
 }
 
 @media print {

@@ -51,20 +51,20 @@ export function WorkspaceShell({
 
   return (
     <div className="flex min-h-0 flex-1">
-      <aside className="hidden w-[248px] shrink-0 flex-col border-r border-[#e8eaee] bg-white lg:flex">
-        <div className="flex h-12 items-center gap-2.5 px-4">
+      <aside className="hidden w-[212px] shrink-0 flex-col border-r border-line/70 bg-[#f7f8f6] lg:flex">
+        <div className="flex h-11 items-center gap-2 px-3.5">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-ink transition-opacity hover:opacity-80"
+            className="inline-flex items-center gap-2 text-ink transition-opacity hover:opacity-75"
           >
-            <NetworkMark size={20} className="text-ink" />
-            <span className="text-[15px] font-semibold tracking-[-0.03em]">
+            <NetworkMark size={18} className="text-navy" />
+            <span className="font-display text-[14px] font-semibold tracking-[-0.04em]">
               Linken
             </span>
           </Link>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col px-3 pb-3">
+        <div className="flex min-h-0 flex-1 flex-col px-2.5 pb-2.5">
           {active ? (
             <WorkspaceSwitcher
               active={active}
@@ -72,18 +72,18 @@ export function WorkspaceShell({
               verified={verified}
             />
           ) : (
-            <div className="mb-5 rounded-xl border border-dashed border-[#e2e8f0] px-3 py-3">
-              <p className="text-[13px] font-semibold text-ink">No company</p>
+            <div className="mb-4 rounded-xl border border-dashed border-line bg-surface/80 px-3 py-2.5">
+              <p className="text-[12px] font-semibold text-ink">No company</p>
               <Link
                 href="/onboarding"
-                className="mt-1 inline-block text-[12px] font-semibold text-ink underline-offset-2 hover:underline"
+                className="mt-1 inline-block text-[11px] font-semibold text-blue underline-offset-2 hover:underline"
               >
                 Create company →
               </Link>
             </div>
           )}
 
-          <div className="min-h-0 flex-1 overflow-y-auto pr-0.5">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             <WorkspaceNav
               companySlug={active?.type === "company" ? active.slug : null}
               groupSlug={active?.type === "group" ? active.slug : null}
@@ -96,81 +96,97 @@ export function WorkspaceShell({
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col bg-[#f6f7f9]">
+      <div className="relative flex min-w-0 flex-1 flex-col bg-[#f0f2f0]">
         {operatorBanner}
-        <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-[#e8eaee] bg-white/90 px-4 py-2 backdrop-blur-sm sm:h-12 sm:flex-nowrap sm:py-0 sm:px-6">
-          <div className="flex min-w-0 flex-1 items-center gap-2.5">
-            <div className="min-w-0 flex-1">
-              <h1 className="truncate text-[14px] font-semibold tracking-[-0.02em] text-ink">
-                {active?.type === "group" && pathname === "/dashboard"
-                  ? "Company group"
-                  : meta.title}
-              </h1>
-              {meta.description && !isGraph ? (
-                <p className="hidden truncate text-[11px] text-[#94a3b8] sm:block">
-                  {meta.description}
-                </p>
+
+        {isGraph ? (
+          <>
+            <div className="pointer-events-none absolute top-3 right-3 z-40 flex items-center gap-2">
+              {checklist && !checklist.complete ? (
+                <div className="pointer-events-auto">
+                  <GettingStartedPill checklist={checklist} />
+                </div>
+              ) : null}
+              {publicHref ? (
+                <Link
+                  href={publicHref}
+                  className="pointer-events-auto inline-flex h-8 items-center rounded-full border border-line/80 bg-surface/90 px-3.5 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)] backdrop-blur-md transition-colors hover:bg-surface"
+                >
+                  Public profile
+                </Link>
               ) : null}
             </div>
-            {checklist && !checklist.complete ? (
-              <GettingStartedPill checklist={checklist} />
-            ) : null}
-          </div>
-          {publicHref ? (
-            <Link
-              href={publicHref}
-              className="inline-flex h-8 shrink-0 items-center rounded-lg border border-[#e2e8f0] bg-white px-3 text-[11px] font-semibold text-ink transition-colors hover:bg-[#f8fafc]"
-            >
-              {active?.type === "group" ? "Public group" : "Public profile"}
-            </Link>
-          ) : (
-            <Link
-              href="/onboarding"
-              className="inline-flex h-8 shrink-0 items-center rounded-lg bg-ink px-3 text-[11px] font-semibold text-white"
-            >
-              Create company
-            </Link>
-          )}
-        </header>
-
-        <div className="flex gap-1 overflow-x-auto border-b border-[#e8eaee] bg-white px-3 py-2 lg:hidden">
-          {[
-            ["/dashboard", "Network"],
-            ["/dashboard/structure", "Structure"],
-            ["/dashboard/insights", "Insights"],
-            ["/dashboard/inbox", "Inbox"],
-            ["/dashboard/partners", "Partners"],
-          ].map(([href, label]) => (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors",
-                pathname === href
-                  ? "bg-[#eef1f6] font-semibold text-ink"
-                  : "text-[#64748b]",
+            <MobileNav pathname={pathname} />
+            <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
+          </>
+        ) : (
+          <>
+            <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-line/80 bg-[#f7f8f6]/90 px-4 py-2 backdrop-blur-md sm:h-11 sm:flex-nowrap sm:py-0 sm:px-6">
+              <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                <div className="min-w-0 flex-1">
+                  <h1 className="truncate text-[13px] font-semibold tracking-[-0.02em] text-ink">
+                    {active?.type === "group" && pathname === "/dashboard"
+                      ? "Company group"
+                      : meta.title}
+                  </h1>
+                  {meta.description ? (
+                    <p className="hidden truncate text-[11px] text-muted sm:block">
+                      {meta.description}
+                    </p>
+                  ) : null}
+                </div>
+                {checklist && !checklist.complete ? (
+                  <GettingStartedPill checklist={checklist} />
+                ) : null}
+              </div>
+              {publicHref ? (
+                <Link
+                  href={publicHref}
+                  className="inline-flex h-8 shrink-0 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+                >
+                  {active?.type === "group" ? "Public group" : "Public profile"}
+                </Link>
+              ) : (
+                <Link
+                  href="/onboarding"
+                  className="inline-flex h-8 shrink-0 items-center rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white"
+                >
+                  Create company
+                </Link>
               )}
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
+            </header>
+            <MobileNav pathname={pathname} />
+            <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
-        <div
+function MobileNav({ pathname }: { pathname: string }) {
+  return (
+    <div className="flex gap-1 overflow-x-auto border-b border-line/70 bg-[#f7f8f6] px-3 py-2 lg:hidden">
+      {[
+        ["/dashboard", "Network"],
+        ["/dashboard/structure", "Structure"],
+        ["/dashboard/insights", "Insights"],
+        ["/dashboard/inbox", "Inbox"],
+        ["/dashboard/partners", "Partners"],
+      ].map(([href, label]) => (
+        <Link
+          key={href}
+          href={href}
           className={cn(
-            "min-h-0 flex-1",
-            isGraph ? "overflow-hidden" : "overflow-y-auto",
+            "shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors",
+            pathname === href
+              ? "bg-navy font-semibold text-white"
+              : "text-ink-soft hover:text-ink",
           )}
         >
-          {isGraph ? (
-            <div className="h-full min-h-0 overflow-hidden bg-[#f7f8fa]">
-              {children}
-            </div>
-          ) : (
-            children
-          )}
-        </div>
-      </div>
+          {label}
+        </Link>
+      ))}
     </div>
   );
 }

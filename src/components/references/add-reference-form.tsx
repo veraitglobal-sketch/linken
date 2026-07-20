@@ -5,7 +5,11 @@ import { addReference } from "@/features/references/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function AddReferenceForm() {
+type Props = {
+  companySlug: string;
+};
+
+export function AddReferenceForm({ companySlug }: Props) {
   const [open, setOpen] = useState(false);
   const [ongoing, setOngoing] = useState(true);
 
@@ -22,6 +26,7 @@ export function AddReferenceForm() {
       action={addReference}
       className="rounded-[24px] border border-line bg-[#f7f8fa] px-4 py-5 sm:px-5"
     >
+      <input type="hidden" name="company_slug" value={companySlug} />
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
         New reference
       </p>

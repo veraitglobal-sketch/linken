@@ -47,17 +47,17 @@ export default async function DashboardGroupPage({ searchParams }: Props) {
         </p>
       ) : null}
       {created ? (
-        <p className="mt-6 rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
+        <p className="mt-6 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
           Group created.
         </p>
       ) : null}
       {invited ? (
-        <p className="mt-6 rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
+        <p className="mt-6 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
           Invite sent to {invited}. They must confirm.
         </p>
       ) : null}
       {subsidiary ? (
-        <p className="mt-6 rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
+        <p className="mt-6 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
           Subsidiary created:{" "}
           <Link href={`/c/${subsidiary}`} className="font-semibold underline">
             {subsidiary}

@@ -84,7 +84,7 @@ export function VerificationCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 max-w-xl">
-          <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
             Domain verification
           </p>
           <h2 className="mt-2 font-display text-[clamp(1.4rem,2.4vw,1.85rem)] font-medium tracking-[-0.035em] text-ink">
@@ -115,7 +115,7 @@ export function VerificationCard({
       {successMessage ? (
         <div
           role="status"
-          className="mt-5 rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-[14px] font-medium text-ink"
+          className="mt-5 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-[14px] font-medium text-ink"
         >
           {successMessage}
         </div>
@@ -159,7 +159,7 @@ export function VerificationCard({
               className={cn(
                 "h-11 rounded-xl text-[12px] font-semibold transition-colors sm:text-[13px]",
                 method === id
-                  ? "bg-[#10231f] text-white"
+                  ? "bg-[#0e1f1c] text-white"
                   : "bg-transparent text-ink-soft hover:text-ink",
               )}
             >
@@ -207,7 +207,7 @@ export function VerificationCard({
                 {emailCheck.reason} Use DNS TXT or Meta / file instead.
               </p>
             ) : (
-              <p className="text-[13px] font-medium text-[#1f6b5c]">
+              <p className="text-[13px] font-medium text-[#1a5c51]">
                 Domains match — ready to verify.
               </p>
             )}
@@ -357,7 +357,7 @@ function CopyBlock({ value }: { value: string }) {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-line bg-[#0a1714]">
+    <div className="relative overflow-hidden rounded-xl border border-line bg-[#081412]">
       <button
         type="button"
         onClick={copy}

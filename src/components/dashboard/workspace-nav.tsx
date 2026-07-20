@@ -26,7 +26,6 @@ type Item = {
   label: string;
   icon: ComponentType<{ className?: string }>;
   match?: "exact" | "prefix";
-  /** Hide when active workspace is a group. */
   companyOnly?: boolean;
   section?: import("@/features/workspace/sections").WorkspaceSection;
 };
@@ -125,16 +124,16 @@ function NavLink({ item, pathname }: { item: Item; pathname: string }) {
     <Link
       href={item.href}
       className={cn(
-        "group flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-colors",
+        "group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium transition-colors",
         active
-          ? "bg-[#eef1f6] font-semibold text-ink"
-          : "text-[#64748b] hover:bg-[#f4f6f9] hover:text-ink",
+          ? "bg-navy/[0.07] font-semibold text-ink"
+          : "text-ink-soft hover:bg-black/[0.03] hover:text-ink",
       )}
     >
       <Icon
         className={cn(
           "shrink-0 transition-colors",
-          active ? "text-ink" : "text-[#94a3b8] group-hover:text-[#64748b]",
+          active ? "text-navy" : "text-plus group-hover:text-ink-soft",
         )}
       />
       {item.label}
@@ -154,10 +153,10 @@ function NavGroup({
   if (items.length === 0) return null;
   return (
     <div>
-      <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-[#94a3b8] uppercase">
+      <p className="mb-1 px-2 text-[9px] font-semibold tracking-[0.16em] text-plus/90 uppercase">
         {title}
       </p>
-      <ul className="space-y-0.5">
+      <ul className="space-y-px">
         {items.map((item) => (
           <li key={item.href}>
             <NavLink item={item} pathname={pathname} />
@@ -172,7 +171,6 @@ type Props = {
   companySlug?: string | null;
   groupSlug?: string | null;
   contextType?: WorkspaceContextType | null;
-  /** null = full access; array = member allowlist (hide others). */
   allowedSections?: import("@/features/workspace/sections").WorkspaceSection[] | null;
 };
 
@@ -200,21 +198,21 @@ export function WorkspaceNav({
       : null;
 
   return (
-    <nav className="flex flex-col gap-6" aria-label="Workspace">
+    <nav className="flex flex-col gap-5" aria-label="Workspace">
       <NavGroup title="Build" items={filter(build)} pathname={pathname} />
       <NavGroup title="Operate" items={filter(operate)} pathname={pathname} />
       {publicHref ? (
         <div>
-          <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-[#94a3b8] uppercase">
+          <p className="mb-1 px-2 text-[9px] font-semibold tracking-[0.16em] text-plus/90 uppercase">
             Open
           </p>
-          <ul className="space-y-0.5">
+          <ul className="space-y-px">
             <li>
               <Link
                 href={publicHref}
-                className="group flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium text-[#64748b] transition-colors hover:bg-[#f4f6f9] hover:text-ink"
+                className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium text-ink-soft transition-colors hover:bg-black/[0.03] hover:text-ink"
               >
-                <IconExternal className="text-[#94a3b8] group-hover:text-[#64748b]" />
+                <IconExternal className="text-plus group-hover:text-ink-soft" />
                 {groupSlug && !companySlug ? "Public group" : "Public profile"}
               </Link>
             </li>

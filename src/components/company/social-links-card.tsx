@@ -21,7 +21,7 @@ export function SocialLinksCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1f6b5c] uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
             Social
           </p>
           <h2 className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">
@@ -39,7 +39,7 @@ export function SocialLinksCard({
       </div>
 
       {saved ? (
-        <p className="mt-3 rounded-xl border border-[#1f6b5c]/25 bg-[#1f6b5c]/10 px-3 py-2 text-[13px] text-ink">
+        <p className="mt-3 rounded-xl border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-3 py-2 text-[13px] text-ink">
           Social links saved.
         </p>
       ) : null}

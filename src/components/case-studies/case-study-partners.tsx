@@ -21,7 +21,7 @@ export function CaseStudyPartners({ partners, onDark = false }: Props) {
             "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] transition-colors",
             onDark
               ? "border border-white/15 bg-white/10 text-white hover:bg-white/16"
-              : "border border-line bg-[#f7f8fa] text-ink hover:border-[#10231f]/20 hover:bg-white",
+              : "border border-line bg-[#f7f8fa] text-ink hover:border-[#0e1f1c]/20 hover:bg-white",
           )}
         >
           <span className="font-medium">{partner.name}</span>

@@ -52,7 +52,7 @@ export function CaseStudyDetail({
         </p>
       ) : null}
       {requested ? (
-        <p className="mt-6 rounded-2xl border border-[#1f6b5c]/30 bg-[#1f6b5c]/10 px-4 py-3 text-sm text-ink">
+        <p className="mt-6 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
           Confirmation request sent. The client will receive an email with a
           secure link.
         </p>

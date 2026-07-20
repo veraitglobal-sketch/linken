@@ -138,7 +138,7 @@ export function EmbedProofRow({
               className={cn(
                 i > 0 && "-ml-2",
                 "rounded-lg ring-2",
-                theme === "dark" ? "ring-[#0a1714]" : "ring-white",
+                theme === "dark" ? "ring-[#081412]" : "ring-white",
               )}
               style={{ zIndex: shown.length - i }}
             >
@@ -157,7 +157,7 @@ export function EmbedProofRow({
               className={cn(
                 "-ml-1.5 flex h-6 min-w-6 items-center justify-center rounded-lg border px-1 text-[9px] font-semibold tabular-nums",
                 theme === "dark"
-                  ? "border-white/15 bg-[#10231f] text-white/70 ring-2 ring-[#0a1714]"
+                  ? "border-white/15 bg-[#0e1f1c] text-white/70 ring-2 ring-[#081412]"
                   : "border-line bg-paper text-ink-soft ring-2 ring-white",
               )}
               style={{ zIndex: 0 }}

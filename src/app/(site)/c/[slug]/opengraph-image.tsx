@@ -23,7 +23,7 @@ export default async function Image({ params }: Props) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "#10231f",
+            background: "#0e1f1c",
             color: "white",
             fontSize: 48,
           }}
@@ -50,7 +50,7 @@ export default async function Image({ params }: Props) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#10231f",
+          background: "#0e1f1c",
           color: "white",
           padding: "64px 72px",
           fontFamily: "Georgia, 'Times New Roman', serif",
@@ -62,7 +62,7 @@ export default async function Image({ params }: Props) {
               width: 10,
               height: 10,
               borderRadius: 999,
-              background: "#5ec4a8",
+              background: "#7eb8a4",
             }}
           />
           <span
@@ -97,7 +97,7 @@ export default async function Image({ params }: Props) {
                 display: "flex",
                 fontSize: 22,
                 fontFamily: "system-ui, sans-serif",
-                color: "#5ec4a8",
+                color: "#7eb8a4",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
               }}

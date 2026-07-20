@@ -9,10 +9,8 @@ import {
 import { sendReferenceConfirmEmail } from "@/lib/email";
 import { requireOwnedActiveCompany } from "@/features/workspace/require-owned";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
-
-async function requireOperatorCompany() {
-  return getOperatorActiveCompany();
-}
+import { requireOperatorForCompanySlug } from "@/features/workspace/require-operator-slug";
+import { setWorkspacePreference } from "@/features/workspace/set-preference";
 
 export async function addReference(formData: FormData) {
   const clientName = String(formData.get("client_name") ?? "").trim();
@@ -25,14 +23,12 @@ export async function addReference(formData: FormData) {
     .toLowerCase();
   const createGhost = String(formData.get("create_ghost") ?? "") === "on";
   const website = String(formData.get("website") ?? "").trim();
+  const companySlug = String(formData.get("company_slug") ?? "").trim();
 
-  const { supabase, user, company } = await requireOperatorCompany();
-  const back = company ? `/c/${company.slug}` : "/dashboard";
-
-  if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
-  if (!company) {
-    redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
-  }
+  const { supabase, company, back } = await resolveOperatorCompany(
+    companySlug,
+    companySlug ? `/c/${companySlug}` : "/dashboard",
+  );
 
   const result = await createReferenceCore(supabase, {
     companyId: company.id,
@@ -62,6 +58,7 @@ export async function addReference(formData: FormData) {
     });
   }
 
+  await setWorkspacePreference("company", company.id);
   revalidatePath(back);
   redirect(`${back}?refAdded=1`);
 }
@@ -106,14 +103,46 @@ async function respondServiceReference(
 
 export async function deleteReference(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
-  const { supabase, user, company } = await requireOperatorCompany();
-  const back = company ? `/c/${company.slug}` : "/dashboard";
+  const companySlug = String(formData.get("company_slug") ?? "").trim();
+  const fallback = companySlug ? `/c/${companySlug}` : "/dashboard";
 
-  if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
-  if (!company || !id) redirect(back);
+  if (!id) redirect(fallback);
+
+  const { supabase, company, back } = await resolveOperatorCompany(
+    companySlug,
+    fallback,
+  );
 
   await deleteReferenceCore(supabase, company.id, id);
-
+  await setWorkspacePreference("company", company.id);
   revalidatePath(back);
   redirect(back);
+}
+
+/** Prefer slug from the wall form; fall back to active workspace. */
+async function resolveOperatorCompany(companySlug: string, loginNext: string) {
+  if (companySlug) {
+    const ctx = await requireOperatorForCompanySlug({
+      slug: companySlug,
+      loginNext,
+    });
+    return {
+      supabase: ctx.supabase,
+      company: ctx.company,
+      back: `/c/${ctx.company.slug}`,
+    };
+  }
+
+  const { supabase, user, company } = await getOperatorActiveCompany();
+  if (!user) redirect(`/login?next=${encodeURIComponent(loginNext)}`);
+  if (!company) {
+    redirect(
+      `${loginNext}?error=${encodeURIComponent("Switch to a company workspace.")}`,
+    );
+  }
+  return {
+    supabase,
+    company,
+    back: `/c/${company.slug}`,
+  };
 }

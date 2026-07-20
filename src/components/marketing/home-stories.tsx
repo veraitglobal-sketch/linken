@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 const stories = [
   {
-    tone: "bg-[#10231f]",
+    tone: "bg-[#0e1f1c]",
     quote:
       "Clients finally see our full delivery network — architecture, build, electrical — confirmed, not claimed.",
     person: "Elena Vogt",
@@ -13,9 +13,10 @@ const stories = [
     cta: "Create your company link",
     image: "/images/story-plans.jpg",
     imageAlt: "Project plans and a shared delivery network on site",
+    focus: "object-[center_38%]",
   },
   {
-    tone: "bg-[#163a32]",
+    tone: "bg-[#142a25]",
     quote:
       "Being confirmed on a lead firm’s page put us in front of clients who already trusted the network.",
     person: "Markus Stein",
@@ -25,9 +26,10 @@ const stories = [
     cta: "Find companies",
     image: "/images/story-partners.jpg",
     imageAlt: "Specialists coordinating delivery on a fit-out site",
+    focus: "object-[center_28%]",
   },
   {
-    tone: "bg-[#1f6b5c]",
+    tone: "bg-[#1a3530]",
     quote:
       "One link in the proposal. They scan, they verify, they trust the network — before the first meeting.",
     person: "Sofia Keller",
@@ -37,6 +39,7 @@ const stories = [
     cta: "Get started",
     image: "/images/story-team.jpg",
     imageAlt: "Delivery team reviewing a shared project brief",
+    focus: "object-center",
   },
 ];
 
@@ -56,14 +59,14 @@ export function HomeStories() {
             style={{ zIndex: index + 1 }}
           >
             <article
-              className={`group grid h-[min(72svh,520px)] w-full overflow-hidden rounded-[32px] shadow-[0_28px_70px_rgba(10,20,18,0.25)] ${story.tone} lg:grid-cols-[1.15fr_0.85fr]`}
+              className={`group grid h-[min(72svh,520px)] w-full overflow-hidden rounded-[32px] shadow-[0_28px_70px_rgba(10,20,18,0.22)] ring-1 ring-white/5 ${story.tone} lg:grid-cols-[1.15fr_0.85fr]`}
             >
               <div className="flex flex-col justify-between px-7 py-8 sm:px-11 sm:py-10">
                 <div>
-                  <p className="text-[11px] font-semibold tracking-[0.14em] text-[#5ec4a8] uppercase">
+                  <p className="text-[11px] font-semibold tracking-[0.16em] text-blue-soft/90 uppercase">
                     How teams use Linken
                   </p>
-                  <p className="mt-5 font-display text-[clamp(1.4rem,2.6vw,2.15rem)] leading-[1.2] tracking-[-0.03em] text-white">
+                  <p className="mt-5 font-display text-[clamp(1.4rem,2.6vw,2.15rem)] leading-[1.24] tracking-[-0.032em] text-white/[0.96]">
                     “{story.quote}”
                   </p>
                 </div>
@@ -89,10 +92,12 @@ export function HomeStories() {
                   src={story.image}
                   alt={story.imageAlt}
                   fill
-                  className="object-cover"
+                  quality={88}
+                  className={`media-zoom object-cover ${story.focus}`}
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   priority={index === 0}
                 />
+                <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black/25 to-transparent lg:w-20" />
               </div>
             </article>
           </div>

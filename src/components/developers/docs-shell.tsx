@@ -72,7 +72,7 @@ export function DocsShell({ children }: Props) {
               className={cn(
                 "shrink-0 rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors",
                 active === id
-                  ? "border-[#1f6b5c] bg-[#1f6b5c]/10 text-[#1f6b5c]"
+                  ? "border-[#1a5c51] bg-[#1a5c51]/10 text-[#1a5c51]"
                   : "border-line bg-surface text-ink-soft hover:border-ink/25",
               )}
             >
@@ -100,7 +100,7 @@ export function DocsShell({ children }: Props) {
                       <span
                         className={cn(
                           "block text-[11px] font-semibold tracking-[0.1em] uppercase",
-                          childActive ? "text-[#1f6b5c]" : "text-muted",
+                          childActive ? "text-[#1a5c51]" : "text-muted",
                         )}
                       >
                         {item.label}

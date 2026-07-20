@@ -22,7 +22,7 @@ function Field({
 }
 
 const textareaClass =
-  "min-h-[5.5rem] w-full resize-y rounded-xl border border-line bg-[#f7f8fa] px-3.5 py-3 text-sm leading-relaxed text-ink outline-none transition-colors placeholder:text-muted focus:border-[#1f6b5c] focus:bg-white focus:ring-2 focus:ring-[rgba(31,107,92,0.15)]";
+  "min-h-[5.5rem] w-full resize-y rounded-xl border border-line bg-[#f7f8fa] px-3.5 py-3 text-sm leading-relaxed text-ink outline-none transition-colors placeholder:text-muted focus:border-[#1a5c51] focus:bg-white focus:ring-2 focus:ring-[rgba(31,107,92,0.15)]";
 
 export function CompanySettingsFields({ company }: { company: SettingsCompany }) {
   return (

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import type { EmbedProofCompany } from "@/components/embed/embed-brand";
 import { EmbedAssessment } from "@/components/embed/embed-assessment";
 import { EmbedBadge } from "@/components/embed/embed-badge";
 import { EmbedCompact } from "@/components/embed/embed-compact";
@@ -20,12 +19,20 @@ import { getCompanyForPage } from "@/features/companies/queries";
 import { getEntitlements } from "@/features/plan/entitlements";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
-import { parseLogoWallDensity } from "@/features/widgets/catalog";
+import {
+  parseLogoMotion,
+  parseLogoSize,
+} from "@/features/widgets/logo-motion";
 import {
   getLogoWallEntries,
   logoWallLabelText,
   parseLogoWallLabel,
+  type LogoWallEntry,
 } from "@/features/widgets/logo-wall";
+import {
+  buildProofCompanies,
+  PREVIEW_PROOF_COMPANIES,
+} from "@/features/widgets/proof-companies";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
@@ -37,9 +44,25 @@ type Props = {
     w?: string;
     label?: string;
     mono?: string;
-    density?: string;
+    motion?: string;
+    size?: string;
   }>;
 };
+
+function previewWallEntries(): LogoWallEntry[] {
+  return PREVIEW_PROOF_COMPANIES.map((p, i) => ({
+    id: `preview-${i}`,
+    slug: p.name.toLowerCase().replace(/\s+/g, "-"),
+    name: p.name,
+    logoUrl: p.logoUrl ?? null,
+    website: p.website ?? null,
+    initials: p.initials,
+    showLogo: true,
+    kind: i % 2 === 0 ? "client" : "partner",
+    ongoing: i < 2,
+    evidenceScore: 3,
+  }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -69,20 +92,34 @@ function initialsFrom(name: string) {
     .toUpperCase();
 }
 
-function wrapEmbed(node: ReactNode, theme: EmbedTheme, w?: string) {
+function wrapEmbed(
+  node: ReactNode,
+  theme: EmbedTheme,
+  w?: string,
+  opts?: { center?: boolean; transparent?: boolean },
+) {
   const width =
     w && (/^\d+$/.test(w) || /^\d+%$/.test(w) || /^\d+px$/.test(w))
       ? /^\d+$/.test(w)
         ? `${w}px`
         : w
       : "100%";
+  const bg = opts?.transparent
+    ? "transparent"
+    : theme === "dark"
+      ? "#081412"
+      : "transparent";
   return (
     <div
-      className="box-border min-h-full w-full"
+      className={
+        opts?.center
+          ? "box-border flex min-h-full w-full items-center justify-center"
+          : "box-border min-h-full w-full"
+      }
       style={{
         width,
         maxWidth: "100%",
-        background: theme === "dark" ? "#0a1714" : "transparent",
+        background: bg,
       }}
     >
       {node}
@@ -99,7 +136,8 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
     w,
     label: labelRaw,
     mono: monoRaw,
-    density: densityRaw,
+    motion: motionRaw,
+    size: sizeRaw,
   } = await searchParams;
   const theme = parseEmbedTheme(themeRaw);
   const company = await getCompanyForPage(slug);
@@ -114,6 +152,10 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
   const profileUrl = `${siteUrl}/c/${company.slug}?src=embed`;
   const claimed = company.claimed !== false;
   const isPreview = preview === "1";
+  const logoMotion = parseLogoMotion(motionRaw);
+  const logoSize = parseLogoSize(sizeRaw);
+  // Clean walls default to mono; `mono=0` turns color back on.
+  const logoMono = monoRaw !== "0";
 
   if (variant === "logo-wall") {
     const entitlements = getEntitlements(company.plan);
@@ -132,12 +174,16 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
         />,
         theme,
         w,
+        { transparent: true },
       );
     }
 
-    const entries = claimed
+    let entries = claimed
       ? await getLogoWallEntries(company.id, { applySelection: true })
       : [];
+    if (entries.length === 0 && isPreview) {
+      entries = previewWallEntries();
+    }
     if (entries.length === 0) {
       return wrapEmbed(
         <EmbedCompact
@@ -150,6 +196,7 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
         />,
         theme,
         w,
+        { center: true },
       );
     }
 
@@ -160,12 +207,14 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
         entries={entries}
         label={logoWallLabelText(parseLogoWallLabel(labelRaw))}
         theme={theme}
-        mono={monoRaw === "1"}
-        density={parseLogoWallDensity(densityRaw)}
+        mono={logoMono}
+        motion={logoMotion}
+        size={logoSize}
         siteUrl={siteUrl}
       />,
       theme,
       w,
+      { transparent: true },
     );
   }
 
@@ -193,7 +242,7 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
           theme={theme}
         />
       );
-    return wrapEmbed(node, theme, w);
+    return wrapEmbed(node, theme, w, { center: variant === "compact" });
   }
 
   const [trust, assessment, references, wallEntries] = await Promise.all([
@@ -215,12 +264,15 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
     trust.breakdown.confirmedReferences +
     trust.breakdown.ongoingReferences;
 
-  const proofCompanies: EmbedProofCompany[] = wallEntries.slice(0, 5).map((e) => ({
-    name: e.name,
-    initials: e.initials,
-    logoUrl: e.logoUrl,
-    website: e.website,
-  }));
+  let proofCompanies = buildProofCompanies({
+    wall: wallEntries,
+    references: confirmedRefs,
+    limit: 24,
+  });
+  // Studio preview: show the motion even before real partners exist.
+  if (isPreview && proofCompanies.length === 0) {
+    proofCompanies = PREVIEW_PROOF_COMPANIES;
+  }
 
   if (variant === "compact") {
     return wrapEmbed(
@@ -229,6 +281,7 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
         verified={company.verified}
         claimed
         confirmedCount={confirmedCount}
+        proofCompanies={proofCompanies}
         profileUrl={profileUrl}
         theme={theme}
       />,

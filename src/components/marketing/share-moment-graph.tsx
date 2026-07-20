@@ -153,7 +153,7 @@ export function ShareMomentGraph() {
             "absolute touch-none overflow-hidden rounded-[22px] border border-white bg-white shadow-[0_12px_40px_rgba(15,23,42,0.12)] transition-shadow",
             "cursor-grab active:cursor-grabbing",
             dragId === n.id &&
-              "z-10 shadow-[0_16px_48px_rgba(15,23,42,0.18)] ring-2 ring-[#3b82f6]/35",
+              "z-10 shadow-[0_16px_48px_rgba(8,20,18,0.2)] ring-2 ring-blue-soft/45",
           )}
           style={{
             width: NODE,
@@ -174,7 +174,7 @@ export function ShareMomentGraph() {
         </button>
       ))}
 
-      <p className="pointer-events-none absolute right-3 bottom-2 text-[10px] font-medium tracking-wide text-[#94a3b8]">
+      <p className="pointer-events-none absolute right-3 bottom-2 text-[10px] font-medium tracking-[0.04em] text-[#94a3b8]">
         Drag to rearrange
       </p>
     </div>

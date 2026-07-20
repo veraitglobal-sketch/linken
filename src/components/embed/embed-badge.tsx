@@ -1,9 +1,7 @@
-import {
-  EmbedLinkenMark,
-  EmbedProofRow,
-  EmbedVerifiedMark,
-  type EmbedProofCompany,
-} from "@/components/embed/embed-brand";
+import type { EmbedProofCompany } from "@/components/embed/embed-brand";
+import { EmbedLinkenSeal } from "@/components/embed/embed-linken-seal";
+import { EmbedProofMarquee } from "@/components/embed/embed-proof-marquee";
+import { EmbedTrustStrip } from "@/components/embed/embed-trust-strip";
 import {
   embedInkClass,
   embedMutedClass,
@@ -26,7 +24,10 @@ type Props = {
   theme?: EmbedTheme;
 };
 
-/** ~72px card — company tile, serif name, proof row, Linken mark. */
+/**
+ * Trust card: company left, proof slides center, Linken seal fixed right.
+ * Seal is its own link — never nest anchors.
+ */
 export function EmbedBadge({
   name,
   initials,
@@ -41,65 +42,94 @@ export function EmbedBadge({
 }: Props) {
   const showVerified = claimed && verified;
   const showProof = claimed && confirmedCount > 0;
+  const hasLogos = proofCompanies.length > 0;
+  const stripFilled = showProof
+    ? Math.min(5, confirmedCount)
+    : showVerified
+      ? 5
+      : 0;
 
   return (
-    <a
-      href={profileUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+    <div
       className={cn(
-        "relative flex min-h-[72px] w-full items-center gap-3 border px-3.5 py-2.5 no-underline",
+        "relative flex min-h-[80px] w-full items-center gap-3 border py-2.5 pr-2 pl-3.5",
         embedShellClass(theme),
       )}
     >
-      <LogoTile
-        name={name}
-        initials={initials}
-        logoUrl={logoUrl}
-        website={website}
-        size="md"
-        frameTone={theme === "dark" ? "dark" : "light"}
-      />
-      <div className="min-w-0 flex-1 pr-14">
-        <div className="flex min-w-0 items-center gap-1.5">
-          <p
-            className={cn(
-              "truncate font-display text-[1.05rem] font-medium tracking-[-0.03em] leading-tight",
-              embedInkClass(theme),
-            )}
-          >
-            {name}
-          </p>
-          {showVerified ? <EmbedVerifiedMark theme={theme} /> : null}
-          {!claimed ? (
-            <span
+      <a
+        href={profileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex min-w-0 flex-1 items-center gap-3 no-underline"
+      >
+        <LogoTile
+          name={name}
+          initials={initials}
+          logoUrl={logoUrl}
+          website={website}
+          size="md"
+          frameTone={theme === "dark" ? "dark" : "light"}
+        />
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+          <div className="flex min-w-0 items-baseline gap-2">
+            <p
               className={cn(
-                "shrink-0 text-[10px] font-semibold tracking-[0.08em] uppercase",
-                embedMutedClass(theme),
+                "truncate font-display text-[1.05rem] font-medium tracking-[-0.03em] leading-tight",
+                embedInkClass(theme),
               )}
             >
-              Unclaimed
-            </span>
+              {name}
+            </p>
+            {showProof ? (
+              <span
+                className={cn("shrink-0 text-[11px]", embedMutedClass(theme))}
+              >
+                <span
+                  className={cn(
+                    "font-display text-[13px] font-medium",
+                    embedInkClass(theme),
+                  )}
+                >
+                  {confirmedCount}
+                </span>{" "}
+                confirmed
+              </span>
+            ) : !claimed ? (
+              <span
+                className={cn(
+                  "shrink-0 text-[10px] font-semibold tracking-[0.08em] uppercase",
+                  embedMutedClass(theme),
+                )}
+              >
+                Unclaimed
+              </span>
+            ) : null}
+          </div>
+
+        {hasLogos ? (
+          <EmbedProofMarquee companies={proofCompanies} theme={theme} />
+        ) : stripFilled > 0 ? (
+            <div className="flex items-center gap-2">
+              <EmbedTrustStrip filled={stripFilled} theme={theme} size="sm" />
+              {showVerified && !showProof ? (
+                <span
+                  className={cn(
+                    "text-[11px] font-semibold",
+                    theme === "dark" ? "text-[#7eb8a4]" : "text-[#1a5c51]",
+                  )}
+                >
+                  Verified
+                </span>
+              ) : null}
+            </div>
+          ) : !claimed ? (
+            <p className={cn("text-[11px]", embedMutedClass(theme))}>
+              Unclaimed profile
+            </p>
           ) : null}
         </div>
-        {showProof ? (
-          <EmbedProofRow
-            companies={proofCompanies}
-            total={confirmedCount}
-            theme={theme}
-            compact
-            className="mt-1.5"
-          />
-        ) : !claimed ? (
-          <p className={cn("mt-1 text-[11px]", embedMutedClass(theme))}>
-            Unclaimed profile
-          </p>
-        ) : null}
-      </div>
-      <EmbedLinkenMark
-        theme={theme}
-        className="absolute right-3 bottom-2.5"
-      />
-    </a>
+      </a>
+      <EmbedLinkenSeal theme={theme} href={profileUrl} />
+    </div>
   );
 }
