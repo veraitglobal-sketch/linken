@@ -45,6 +45,7 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
   const editable = await isCompanyOwnerSlug(slug);
   const siteUrl = getSiteUrl();
 
+  const clientConfirmed = caseStudy.clientConfirmation?.status === "confirmed";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -57,6 +58,17 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
       name: company.name,
       url: `${siteUrl}/c/${company.slug}`,
     },
+    // Linken extension — mirrors Public API `client_confirmed`.
+    client_confirmed: clientConfirmed,
+    ...(clientConfirmed
+      ? {
+          additionalProperty: {
+            "@type": "PropertyValue",
+            name: "client_confirmed",
+            value: true,
+          },
+        }
+      : {}),
   };
 
   return (

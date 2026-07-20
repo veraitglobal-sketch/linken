@@ -3,23 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requestClientConfirmationCore } from "@/features/case-studies/core";
+import { requireOwnedActiveCompany } from "@/features/workspace/require-owned";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
-import { createClient } from "@/lib/supabase/server";
-
-async function requireUserCompany(supabase: Awaited<ReturnType<typeof createClient>>) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { user: null, company: null };
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, name, slug, owner_id")
-    .eq("owner_id", user.id)
-    .maybeSingle();
-
-  return { user, company };
-}
 
 export async function requestClientConfirmation(formData: FormData) {
   const companySlug = String(formData.get("companySlug") ?? "").trim();
@@ -69,13 +54,9 @@ async function respondClientRequest(
   const token = String(formData.get("token") ?? "").trim();
   const path = `/confirm/${token}`;
 
-  const supabase = await createClient();
-  const { user, company } = await requireUserCompany(supabase);
-
-  if (!user) redirect(`/confirm/${token}`);
-  if (!company) {
-    redirect(`${path}?error=${encodeURIComponent("Create your company profile first.")}`);
-  }
+  const { supabase, company } = await requireOwnedActiveCompany({
+    loginNext: path,
+  });
 
   const { error } = await supabase.rpc("respond_client_confirmation", {
     p_token: token,
@@ -88,9 +69,8 @@ async function respondClientRequest(
   }
 
   revalidatePath(path);
+  revalidatePath(`/c/${company.slug}`);
   revalidatePath("/welcome");
-  if (response === "confirmed") {
-    redirect("/welcome?from=confirm");
-  }
+  // Stay on confirm page so assessment + badge refresh work (same as references).
   redirect(`${path}?done=${response}`);
 }

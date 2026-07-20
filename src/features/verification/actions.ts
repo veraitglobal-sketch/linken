@@ -154,16 +154,19 @@ export async function runDnsCheck() {
   }
 
   const expected = `linken-verify=${token}`;
+  let records: string[];
   try {
-    const records = await resolveTxtRecords(domain);
-    const hit = records.some((r) => r.includes(expected));
-    if (!hit) {
-      redirect(
-        dash(
-          `TXT record not found. Add: ${expected} on ${domain}`,
-        ),
-      );
-    }
+    records = await resolveTxtRecords(domain);
+  } catch (e) {
+    redirect(dash(e instanceof Error ? e.message : "DNS check failed."));
+  }
+
+  const hit = records.some((r) => r.includes(expected));
+  if (!hit) {
+    redirect(dash(`TXT record not found. Add: ${expected} on ${domain}`));
+  }
+
+  try {
     await markVerified(company.id, "dns_txt");
   } catch (e) {
     redirect(dash(e instanceof Error ? e.message : "DNS check failed."));

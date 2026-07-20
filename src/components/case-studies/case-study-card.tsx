@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ClientConfirmedChip } from "@/components/case-studies/client-confirmed-chip";
 import { CaseStudyPartners } from "@/components/case-studies/case-study-partners";
 import type { CaseStudy } from "@/types/case-study";
 
@@ -32,6 +33,11 @@ export function CaseStudyCard({
           <h3 className="mt-4 font-display text-[clamp(1.6rem,3vw,2.1rem)] font-medium tracking-[-0.035em]">
             {caseStudy.title}
           </h3>
+          {caseStudy.clientConfirmation ? (
+            <div className="mt-3">
+              <ClientConfirmedChip onDark />
+            </div>
+          ) : null}
           <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/70">
             {caseStudy.summary}
           </p>
@@ -75,6 +81,11 @@ export function CaseStudyCard({
         <h3 className="mt-3 font-display text-[clamp(1.35rem,2.2vw,1.65rem)] font-medium tracking-[-0.03em] text-ink">
           {caseStudy.title}
         </h3>
+        {caseStudy.clientConfirmation ? (
+          <div className="mt-2">
+            <ClientConfirmedChip />
+          </div>
+        ) : null}
         <p className="mt-2.5 line-clamp-2 text-[14px] leading-relaxed text-ink-soft">
           {caseStudy.summary}
         </p>
