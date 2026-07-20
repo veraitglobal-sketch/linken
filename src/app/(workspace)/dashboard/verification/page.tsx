@@ -19,6 +19,7 @@ type Props = {
     linked?: string;
     ok?: string;
     socialSaved?: string;
+    domainChanged?: string;
   }>;
 };
 
@@ -85,6 +86,15 @@ export default async function DashboardVerificationPage({ searchParams }: Props)
           Verified companies get stronger trust on the public profile. Subsidiaries
           verify their own domains separately.
         </p>
+        {params.domainChanged === "1" ? (
+          <p className="mt-3 max-w-xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-950">
+            Your website domain changed, so verification was cleared. Complete a
+            method below to restore the Verified badge.{" "}
+            <Link href="/dashboard/settings" className="font-semibold underline">
+              Back to settings
+            </Link>
+          </p>
+        ) : null}
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">

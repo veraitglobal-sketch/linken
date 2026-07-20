@@ -1,9 +1,10 @@
 import Link from "next/link";
 import {
   respondPartnership,
-  endPartnership,
+  withdrawPartnership,
 } from "@/features/network/actions";
 import type { PartnershipRow } from "@/features/partners/inbox";
+import { PartnershipAcceptedList } from "@/components/partners/partnership-accepted-list";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Button } from "@/components/ui/button";
 
@@ -108,7 +109,7 @@ export function PartnershipInbox({
                     Pending
                   </p>
                 </div>
-                <form action={endPartnership}>
+                <form action={withdrawPartnership}>
                   <input type="hidden" name="partnership_id" value={row.id} />
                   <input type="hidden" name="back" value="/dashboard/partners" />
                   <Button
@@ -116,7 +117,7 @@ export function PartnershipInbox({
                     variant="ghost"
                     className="h-8 px-3 text-[11px]"
                   >
-                    Cancel
+                    Withdraw
                   </Button>
                 </form>
               </li>
@@ -125,43 +126,7 @@ export function PartnershipInbox({
         </WorkspaceCard>
       ) : null}
 
-      {accepted.length > 0 ? (
-        <WorkspaceCard>
-          <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
-            Official partners
-          </h3>
-          <p className="mt-0.5 text-[12px] text-[#64748b]">
-            Accepted — shown on Network as a partner link.
-          </p>
-          <ul className="mt-4 space-y-2">
-            {accepted.map((row) => (
-              <li
-                key={row.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e8eaee] px-3 py-3"
-              >
-                <div className="min-w-0">
-                  <Link
-                    href={`/c/${row.other.slug}`}
-                    className="text-[13px] font-semibold text-ink hover:underline"
-                  >
-                    {row.other.name}
-                  </Link>
-                  <p className="text-[11px] text-[#16a34a]">
-                    Official
-                    {!row.other.verified ? " · Needs domain verify" : ""}
-                  </p>
-                </div>
-                <Link
-                  href="/dashboard"
-                  className="text-[11px] font-semibold text-ink underline-offset-2 hover:underline"
-                >
-                  Open graph →
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </WorkspaceCard>
-      ) : null}
+      <PartnershipAcceptedList accepted={accepted} />
     </div>
   );
 }

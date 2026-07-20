@@ -121,6 +121,30 @@ export async function sendPartnershipRequestEmail({
   });
 }
 
+/** Neutral notice when either party ends an accepted partnership. */
+export async function sendPartnershipEndedEmail(input: {
+  to: string;
+  actorName: string;
+  peerName: string;
+}) {
+  const partnersUrl = `${getSiteUrl()}/dashboard/partners`;
+  return sendTextEmail({
+    to: input.to,
+    subject: `Partnership update on Linken: ${input.actorName}`,
+    body: [
+      `${input.actorName} ended the partnership with ${input.peerName} on Linken.`,
+      "",
+      "The link no longer appears on either public profile or the network map.",
+      "Confirmed case study collaborations remain as historical evidence.",
+      "",
+      "You can send a new partnership request later from Partners:",
+      partnersUrl,
+    ].join("\n"),
+    logLabel: "partnership-ended",
+    linkForLog: partnersUrl,
+  });
+}
+
 type ReferenceEmailInput = {
   to: string;
   providerName: string;
@@ -356,6 +380,73 @@ export async function sendProjectRequestDigestEmail(input: {
     ].join("\n"),
     logLabel: "radar-digest",
     linkForLog: radarUrl,
+  });
+}
+
+/**
+ * Weekly Radar summary (company leads + project requests).
+ * TODO(cron): call once / week per radar firm; enforce max 1 send / 7 days.
+ */
+export async function sendRadarWeeklyDigestEmail(input: {
+  to: string;
+  companyName: string;
+  companyLeads: number;
+  projectRequests: number;
+  unsubscribeUrl?: string;
+}) {
+  const radarUrl = `${getSiteUrl()}/dashboard/radar`;
+  const unsub =
+    input.unsubscribeUrl ?? `${getSiteUrl()}/dashboard/radar?unsubscribe=1`;
+  const leads = input.companyLeads;
+  const reqs = input.projectRequests;
+
+  return sendTextEmail({
+    to: input.to,
+    subject: `Your Radar this week — ${leads + reqs} new signal${leads + reqs === 1 ? "" : "s"}`,
+    body: [
+      `Your Radar this week for ${input.companyName}:`,
+      "",
+      `• ${leads} new company lead${leads === 1 ? "" : "s"} (saved-search matches)`,
+      `• ${reqs} new project request${reqs === 1 ? "" : "s"} in your categories`,
+      "",
+      "Open Radar:",
+      radarUrl,
+      "",
+      "You receive at most one of these emails per week.",
+      `Unsubscribe: ${unsub}`,
+    ].join("\n"),
+    logLabel: "radar-weekly-digest",
+    linkForLog: radarUrl,
+  });
+}
+
+export async function sendIntroNotifyEmail(input: {
+  to: string;
+  senderName: string;
+  senderSlug: string;
+  offer: string;
+}) {
+  const inboxUrl = `${getSiteUrl()}/dashboard/inbox?tab=intros`;
+  const profileUrl = input.senderSlug
+    ? `${getSiteUrl()}/c/${input.senderSlug}`
+    : getSiteUrl();
+  return sendTextEmail({
+    to: input.to,
+    subject: `New intro via Linken Radar from ${input.senderName}`,
+    body: [
+      `${input.senderName} sent you an intro via Linken Radar.`,
+      "",
+      `Offer: ${input.offer}`,
+      "",
+      `Profile: ${profileUrl}`,
+      "",
+      "Review in your Intros inbox (separate from profile inquiries):",
+      inboxUrl,
+      "",
+      "Reply by email from the inbox — there is no chat on Linken.",
+    ].join("\n"),
+    logLabel: "radar-intro-notify",
+    linkForLog: inboxUrl,
   });
 }
 

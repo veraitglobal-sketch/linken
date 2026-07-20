@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import {
   domainsMatch,
   extractDomain,
@@ -33,6 +34,7 @@ async function markVerified(
     p_method: method,
   });
   if (error) throw new Error(error.message);
+  void matchCompanyToSearches(companyId, "became_verified");
 }
 
 async function markWebsiteLinked(companyId: string, linked: boolean) {

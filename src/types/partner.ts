@@ -11,4 +11,6 @@ export type Partner = {
   logoInitials: string;
   logoUrl?: string | null;
   status: PartnerStatus;
+  /** partnerships.id — for owner manage actions; omit on public-only cards. */
+  partnershipId?: string;
 };

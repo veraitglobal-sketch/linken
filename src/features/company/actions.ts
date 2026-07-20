@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { tryEmailDomainVerificationAfterOnboarding } from "@/features/verification/actions";
 import { createClient } from "@/lib/supabase/server";
 import { toSlug } from "@/lib/slug";
@@ -34,6 +35,10 @@ export async function setAcceptingClients(formData: FormData) {
     redirect(
       `/dashboard?error=${encodeURIComponent(error.message ?? "Update failed")}`,
     );
+  }
+
+  if (accepting) {
+    void matchCompanyToSearches(company.id, "accepting_clients");
   }
 
   revalidatePath("/dashboard");
@@ -138,6 +143,11 @@ export async function createCompany(formData: FormData) {
 
   if (website) {
     scheduleCompanyLogoFetch(created.id);
+  }
+
+  void matchCompanyToSearches(created.id, "new_company");
+  if (autoVerified) {
+    void matchCompanyToSearches(created.id, "became_verified");
   }
 
   revalidatePath(`/c/${created.slug}`);

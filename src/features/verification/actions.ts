@@ -7,6 +7,7 @@ import {
   extractDomain,
 } from "@/features/verification/domain";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import {
   fetchCompanySite,
   resolveTxtRecords,
@@ -59,6 +60,7 @@ async function markVerified(
     p_method: method,
   });
   if (error) throw new Error(error.message);
+  void matchCompanyToSearches(companyId, "became_verified");
 }
 
 async function markWebsiteLinked(companyId: string, linked: boolean) {

@@ -66,6 +66,7 @@ export async function refreshLogo(formData: FormData) {
   }
 
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/settings");
   revalidatePath("/dashboard/verification");
   revalidatePath(`/c/${company.slug}`);
   revalidatePath(`/c/${company.slug}/one-pager`);

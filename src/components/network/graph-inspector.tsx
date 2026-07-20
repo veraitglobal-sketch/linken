@@ -233,7 +233,7 @@ export function GraphDetachDialog({ edge, onCancel }: DetachProps) {
         </p>
         <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
           {edge.type === "partner"
-            ? "The partnership will be cancelled. It disappears from public maps until both sides connect again."
+            ? "This removes the partnership from both profiles. Case study collaborations remain."
             : "This firm will leave the group structure (subsidiary / membership). Evidence on each profile stays."}
         </p>
         <form action={detachGraphLink} className="mt-4 flex flex-wrap gap-2">

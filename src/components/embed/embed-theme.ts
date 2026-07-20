@@ -48,10 +48,6 @@ export function embedSoftClass(theme: EmbedTheme): string {
 
 /** Mint on both themes — our recognition color. */
 export function embedAccentClass(theme: EmbedTheme): string {
-  return theme === "dark" ? "text-[#5ec4a8]" : "text-[#5ec4a8]";
-}
-
-/** Slightly deeper mint for light body text that needs contrast. */
-export function embedAccentDeepClass(theme: EmbedTheme): string {
-  return theme === "dark" ? "text-[#5ec4a8]" : "text-[#1f6b5c]";
+  void theme;
+  return "text-[#5ec4a8]";
 }

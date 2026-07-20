@@ -45,60 +45,58 @@ export function EmbedLogoWall({
         embedShellClass(theme),
       )}
     >
-      <div className="flex min-h-[56px] items-center gap-3 pr-16">
-        {label ? (
-          <p
-            className={cn(
-              "shrink-0 text-[10px] font-semibold tracking-[0.1em] uppercase",
-              embedAccentClass(theme),
-            )}
-          >
-            {label}
-          </p>
-        ) : null}
-        <ul className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2.5 gap-y-2">
-          {entries.map((e) => {
-            const href = `${siteUrl}/c/${e.slug}?src=embed`;
-            return (
-              <li key={e.slug}>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={e.name}
-                  className={cn(
-                    "inline-flex max-w-[160px] items-center no-underline transition-opacity hover:opacity-80",
-                    embedInkClass(theme),
-                  )}
-                >
-                  {e.showLogo ? (
-                    <LogoTile
-                      name={e.name}
-                      initials={e.initials}
-                      logoUrl={e.logoUrl}
-                      website={e.website}
-                      showName={showNames}
-                      mono={mono}
-                      frameTone={frameTone}
-                      size="md"
-                    />
-                  ) : (
-                    <span
-                      className={cn(
-                        "truncate text-[12px] font-medium",
-                        embedInkClass(theme),
-                        mono && "opacity-70",
-                      )}
-                    >
-                      {e.name}
-                    </span>
-                  )}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      {label ? (
+        <p
+          className={cn(
+            "mb-2 pr-16 text-[10px] font-semibold tracking-[0.1em] uppercase",
+            embedAccentClass(theme),
+          )}
+        >
+          {label}
+        </p>
+      ) : null}
+      <ul className="flex min-h-[44px] min-w-0 flex-wrap items-center gap-x-2.5 gap-y-2 pr-16">
+        {entries.map((e) => {
+          const href = `${siteUrl}/c/${e.slug}?src=embed`;
+          return (
+            <li key={e.slug}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={e.name}
+                className={cn(
+                  "inline-flex max-w-[160px] items-center no-underline transition-opacity hover:opacity-80",
+                  embedInkClass(theme),
+                )}
+              >
+                {e.showLogo ? (
+                  <LogoTile
+                    name={e.name}
+                    initials={e.initials}
+                    logoUrl={e.logoUrl}
+                    website={e.website}
+                    showName={showNames}
+                    mono={mono}
+                    frameTone={frameTone}
+                    size="md"
+                  />
+                ) : (
+                  <span
+                    className={cn(
+                      "truncate text-[12px] font-medium",
+                      embedInkClass(theme),
+                      mono && "opacity-70",
+                    )}
+                  >
+                    {e.name}
+                  </span>
+                )}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
       <a
         href={ownerProfileUrl}
         target="_blank"

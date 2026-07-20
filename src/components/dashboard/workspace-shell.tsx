@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import {
   IconHome,
   IconSearch,
+  IconSettings,
 } from "@/components/dashboard/workspace-icons";
 import { WorkspaceNav } from "@/components/dashboard/workspace-nav";
 import { NetworkMark } from "@/components/marketing/network-mark";
@@ -53,8 +54,8 @@ const PAGE_META: Record<
     description: "Visits and inquiries on your public profile.",
   },
   "/dashboard/inbox": {
-    title: "Inquiries",
-    description: "Leads from your public company page.",
+    title: "Inbox",
+    description: "Profile inquiries and Radar intros — separate tabs.",
   },
   "/dashboard/radar": {
     title: "Radar",
@@ -63,6 +64,10 @@ const PAGE_META: Record<
   "/dashboard/partners": {
     title: "Partners",
     description: "Invite firms and grow confirmed relationships.",
+  },
+  "/dashboard/settings": {
+    title: "Company settings",
+    description: "Edit the details on your public profile.",
   },
   "/dashboard/group": {
     title: "Company group",
@@ -146,6 +151,15 @@ export function WorkspaceShell({ children, company }: Props) {
           </div>
 
           <div className="mt-3 space-y-0.5 border-t border-[#f1f5f9] pt-3">
+            {company ? (
+              <Link
+                href="/dashboard/settings"
+                className="group flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium text-[#64748b] transition-colors hover:bg-[#f4f6f9] hover:text-ink"
+              >
+                <IconSettings className="text-[#94a3b8] group-hover:text-[#64748b]" />
+                Edit profile
+              </Link>
+            ) : null}
             <Link
               href="/search"
               className="group flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium text-[#64748b] transition-colors hover:bg-[#f4f6f9] hover:text-ink"

@@ -70,6 +70,7 @@ export async function getPartnersForCompany(
           website: other.website as string | null,
         }),
         status: "accepted",
+        partnershipId: row.id as string,
       });
     }
 

@@ -8,8 +8,8 @@ export function RadarLocked() {
         Radar — coming soon
       </h2>
       <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">
-        Respond to matching project requests with credits (99 €/mo · 15 credits).
-        You can browse the feed below; responding unlocks when Radar is enabled
+        Company leads from your saved searches, plus project requests and intros
+        (99 €/mo · 15 credits). Feeds and targets unlock when Radar is enabled
         for your company.
       </p>
       <p className="mt-3 text-[12px] text-ink-soft">

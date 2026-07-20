@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { notifyPartnershipEnded } from "@/features/network/partnership-lifecycle";
 import { createClient } from "@/lib/supabase/server";
 
 export type GraphActionResult =
@@ -179,14 +180,21 @@ export async function disconnectGraphEdge(input: {
     if (!input.partnershipId) {
       return { ok: false, error: "Missing partnership." };
     }
-    const { error } = await supabase
-      .from("partnerships")
-      .update({
-        status: "cancelled",
-        responded_at: new Date().toISOString(),
-      })
-      .eq("id", input.partnershipId);
+    const { error } = await supabase.rpc("end_partnership", {
+      p_partnership_id: input.partnershipId,
+    });
     if (error) return { ok: false, error: error.message };
+
+    const { data: mine } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("owner_id", user.id)
+      .eq("claimed", true)
+      .maybeSingle();
+    if (mine) {
+      await notifyPartnershipEnded(input.partnershipId, mine.id as string);
+    }
+
     revalidateGraph();
     return { ok: true, message: "Partnership detached." };
   }

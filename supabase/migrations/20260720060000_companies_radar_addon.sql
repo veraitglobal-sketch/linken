@@ -5,9 +5,19 @@
 alter table public.companies
   add column if not exists radar boolean not null default false;
 
--- Authenticated owners may read their own flag via dashboard SELECT.
--- Do NOT grant to anon — Radar must not appear on public REST/profile reads.
-revoke select (radar) on public.companies from anon, public;
+-- Harden column grants: a table-level SELECT would leak claim_token,
+-- invite_email, and radar. Re-assert the public allowlist, then grant
+-- radar to authenticated only (dashboard session — never anon / public profile).
+revoke select on public.companies from anon, authenticated;
+
+grant select (
+  id, owner_id, name, slug, tagline, description, category, city, country,
+  website, logo_url, services, verified, created_at, updated_at,
+  claimed, created_by_company_id, accepting_clients, plan,
+  logo_source, linkedin_url, facebook_url,
+  allow_logo_in_partner_widgets, widget_settings
+) on public.companies to anon, authenticated;
+
 grant select (radar) on public.companies to authenticated;
 
 -- Only Radar firms may spend credits on marketplace responses.

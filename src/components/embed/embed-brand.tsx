@@ -155,7 +155,7 @@ export function EmbedProofRow({
           {overflow > 0 ? (
             <li
               className={cn(
-                "-ml-2 flex h-6 w-6 items-center justify-center rounded-lg border text-[9px] font-semibold",
+                "-ml-1.5 flex h-6 min-w-6 items-center justify-center rounded-lg border px-1 text-[9px] font-semibold tabular-nums",
                 theme === "dark"
                   ? "border-white/15 bg-[#10231f] text-white/70 ring-2 ring-[#0a1714]"
                   : "border-line bg-paper text-ink-soft ring-2 ring-white",

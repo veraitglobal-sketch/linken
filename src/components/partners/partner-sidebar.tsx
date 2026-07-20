@@ -47,7 +47,12 @@ export function PartnerSidebar({
         {preview.length > 0 ? (
           <div className="space-y-2 px-3.5 py-3.5">
             {preview.map((partner) => (
-              <PartnerCard key={partner.id} partner={partner} />
+              <PartnerCard
+                key={partner.id}
+                partner={partner}
+                editable={editable}
+                manageBack={editable ? `/c/${companySlug}` : undefined}
+              />
             ))}
           </div>
         ) : (

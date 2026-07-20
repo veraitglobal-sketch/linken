@@ -39,6 +39,7 @@ export function DashboardAside({
         <ul className="mt-3 space-y-1 border-l border-line pl-3">
           {[
             { href: "/dashboard", label: "Overview & graph" },
+            { href: "/dashboard/settings", label: "Company settings" },
             { href: "/dashboard/structure", label: "Company tree" },
             { href: "/dashboard/inbox", label: "Inquiries" },
             {
