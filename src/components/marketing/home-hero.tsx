@@ -44,11 +44,11 @@ export function HomeHero() {
 
         <div className="group relative min-h-[260px] overflow-hidden lg:min-h-full">
           <Image
-            src="/images/site-work.jpg"
+            src="/images/hero-network.jpg"
             alt="Teams delivering a real project"
             fill
             priority
-            className="media-zoom object-cover"
+            className="media-zoom object-cover object-[center_35%]"
             sizes="(max-width: 1024px) 100vw, 42vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 lg:bg-gradient-to-l lg:from-transparent lg:via-transparent lg:to-[rgba(10,20,18,0.45)]" />

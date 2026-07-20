@@ -34,7 +34,7 @@ export function HomeHighlights() {
         </div>
         <div className="group relative aspect-[5/4] overflow-hidden rounded-[32px]">
           <Image
-            src="/images/site-work.jpg"
+            src="/images/highlight-share.jpg"
             alt="Teams collaborating on a real project"
             fill
             className="media-zoom object-cover"

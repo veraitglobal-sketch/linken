@@ -150,7 +150,7 @@ export function CompanyHeroBand({
 
         <div className="group relative min-h-[220px] overflow-hidden lg:min-h-full">
           <Image
-            src="/images/site-work.jpg"
+            src="/images/hero-network.jpg"
             alt=""
             fill
             priority

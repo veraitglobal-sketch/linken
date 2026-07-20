@@ -17,9 +17,9 @@ const NODE = 88;
 const STAGE_H = 220;
 
 const INITIAL: NodePos[] = [
-  { id: "a", src: "/images/portrait-2.jpg", x: 0.18, y: 0.42 },
-  { id: "b", src: "/images/portrait-1.jpg", x: 0.5, y: 0.5 },
-  { id: "c", src: "/images/site-work.jpg", x: 0.82, y: 0.4 },
+  { id: "a", src: "/images/story-plans.jpg", x: 0.18, y: 0.42 },
+  { id: "b", src: "/images/story-partners.jpg", x: 0.5, y: 0.5 },
+  { id: "c", src: "/images/story-team.jpg", x: 0.82, y: 0.4 },
 ];
 
 function clamp(n: number, min: number, max: number) {

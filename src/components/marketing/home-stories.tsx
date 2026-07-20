@@ -11,8 +11,8 @@ const stories = [
     with: "Partners confirmed on shared case studies",
     href: "/onboarding",
     cta: "Create your company link",
-    image: "/images/portrait-2.jpg",
-    imageAlt: "Company leader",
+    image: "/images/story-plans.jpg",
+    imageAlt: "Project plans and a shared delivery network on site",
   },
   {
     tone: "bg-[#163a32]",
@@ -23,8 +23,8 @@ const stories = [
     with: "Shared case study on both profiles",
     href: "/search",
     cta: "Find companies",
-    image: "/images/portrait-1.jpg",
-    imageAlt: "Partner company owner",
+    image: "/images/story-partners.jpg",
+    imageAlt: "Specialists coordinating delivery on a fit-out site",
   },
   {
     tone: "bg-[#1f6b5c]",
@@ -35,8 +35,8 @@ const stories = [
     with: "Verified one-pager attached to every bid",
     href: "/onboarding",
     cta: "Get started",
-    image: "/images/site-work.jpg",
-    imageAlt: "Project delivery",
+    image: "/images/story-team.jpg",
+    imageAlt: "Delivery team reviewing a shared project brief",
   },
 ];
 
