@@ -20,6 +20,8 @@ type Props = {
     saved?: string;
     ok?: string;
     slugChanged?: string;
+    coverUpdated?: string;
+    coverCleared?: string;
   }>;
 };
 
@@ -36,6 +38,8 @@ function flashMessage(params: {
   saved?: string;
   ok?: string;
   slugChanged?: string;
+  coverUpdated?: string;
+  coverCleared?: string;
 }): string | null {
   if (params.slugChanged === "1") {
     return "Handle updated. Old links now redirect here automatically.";
@@ -44,6 +48,8 @@ function flashMessage(params: {
   if (params.ok === "logo") return "Logo refreshed from your website.";
   if (params.ok === "logo-cleared") return "Logo removed.";
   if (params.ok === "logoUpload") return "Logo uploaded.";
+  if (params.coverUpdated === "1") return "Cover photo updated.";
+  if (params.coverCleared === "1") return "Cover photo removed.";
   return null;
 }
 

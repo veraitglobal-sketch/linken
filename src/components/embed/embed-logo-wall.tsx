@@ -1,4 +1,4 @@
-import { EmbedLinkenSeal } from "@/components/embed/embed-linken-seal";
+import { EmbedHansalaSeal } from "@/components/embed/embed-linken-seal";
 import { LogoMotionFade } from "@/components/embed/logo-motion-fade";
 import { LogoMotionGrid } from "@/components/embed/logo-motion-grid";
 import { LogoMotionRow } from "@/components/embed/logo-motion-row";
@@ -65,10 +65,10 @@ export function EmbedLogoWall({
         )}
 
         {motion !== "grid" ? (
-          <EmbedLinkenSeal
+          <EmbedHansalaSeal
             theme={theme}
             href={ownerProfileUrl}
-            title={`${ownerName} on Linken`}
+            title={`${ownerName} on Hansala`}
             className={cn(
               "border-l pl-3",
               dark ? "border-white/15" : "border-[#e2e6e3]",
@@ -84,7 +84,7 @@ export function EmbedLogoWall({
               dark ? "text-[#7eb8a4]" : "text-[#1a5c51]",
             )}
           >
-            Linken
+            Hansala
           </a>
         )}
       </div>

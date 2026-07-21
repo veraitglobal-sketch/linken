@@ -15,6 +15,7 @@ import {
 import { flattenMemberTree } from "@/features/groups/tree";
 import {
   getConfirmedCoOwnershipsForGroup,
+  getExternalPartnersForGroup,
   getPendingCoOwnerProposals,
 } from "@/features/network/co-ownership-queries";
 import { PRODUCT } from "@/lib/product-model";
@@ -94,13 +95,14 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
   if (!hasGroup) tab = "grow";
   if (hasGroup && !hasTree && tabRaw !== "tree") tab = "grow";
 
-  const [coOwnerProposals, confirmedCoOwnerships] =
+  const [coOwnerProposals, confirmedCoOwnerships, externalPartners] =
     tab === "tree" && hasGroup && company && data
       ? await Promise.all([
           getPendingCoOwnerProposals(company.id),
           getConfirmedCoOwnershipsForGroup(data.group.id),
+          getExternalPartnersForGroup(data.confirmed.map((m) => m.companyId)),
         ])
-      : [[], []];
+      : [[], [], []];
 
   return (
     <WorkspacePage
@@ -147,6 +149,7 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
               <SharedOwnershipPanel
                 groupId={data.group.id}
                 members={data.confirmed}
+                externalPartners={externalPartners}
                 proposals={coOwnerProposals}
                 confirmedLinks={confirmedCoOwnerships}
                 viewerCompanyId={company?.id ?? null}

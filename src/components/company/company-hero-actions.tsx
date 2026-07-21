@@ -28,7 +28,7 @@ export function CompanyHeroActions({
   siteUrl,
 }: Props) {
   return (
-    <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-start">
+    <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
       {showContact ? (
         <InquiryForm
           companySlug={slug}
@@ -39,7 +39,7 @@ export function CompanyHeroActions({
       {showEditProfile ? (
         <Button
           href={`/c/${slug}/edit`}
-          variant="secondary"
+          variant="light"
           className="h-11 min-w-[150px] px-5"
         >
           Edit company
@@ -49,7 +49,7 @@ export function CompanyHeroActions({
         <Button
           href={`/c/${slug}/one-pager`}
           variant="onDark"
-          className="h-11 min-w-[150px] px-5"
+          className="h-10 px-4"
         >
           One-pager
         </Button>
@@ -60,8 +60,8 @@ export function CompanyHeroActions({
       {website ? (
         <Button
           href={website}
-          variant={showContact ? "onDark" : "light"}
-          className="h-11 min-w-[150px] px-5"
+          variant="onDark"
+          className="h-10 px-4"
         >
           Website
           {websiteLinked ? (

@@ -35,7 +35,7 @@ import { getSiteUrl } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Developers",
   description:
-    "Linken Public API v1 and embed widgets — confirmed evidence only.",
+    "Hansala Public API v1 and embed widgets — confirmed evidence only.",
 };
 
 const EXAMPLE_SLUG = "example-architecture";
@@ -106,7 +106,7 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="01"
               title="Overview"
-              description="The Public API exposes the same confirmed facts you see on a Linken company page — partners, references, case studies, and assessment aggregates."
+              description="The Public API exposes the same confirmed facts you see on a Hansala company page — partners, references, case studies, and assessment aggregates."
             />
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
               {[
@@ -244,7 +244,7 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="04"
               title="llms.txt & llm.md"
-              description="Machine-readable entry points for AI agents that cite Linken."
+              description="Machine-readable entry points for AI agents that cite Hansala."
             />
             <ul className="mt-5 space-y-2 text-[14px] leading-relaxed text-ink-soft">
               <li>

@@ -3,6 +3,7 @@
 import { GraphPanelAdd } from "@/components/network/graph-panel-add";
 import { GraphPanelInspect } from "@/components/network/graph-panel-inspect";
 import { CloseIcon } from "@/components/network/graph-panel-icons";
+import type { OwnershipSlice } from "@/components/network/network-ownership-chart";
 import { useGraphPanelState } from "@/components/network/use-graph-panel-state";
 import type {
   NetworkGraphContext,
@@ -16,6 +17,7 @@ type Props = {
   open: boolean;
   mode: PanelMode;
   selected: NetworkNodeData | null;
+  owners?: OwnershipSlice[];
   context?: NetworkGraphContext;
   editable?: boolean;
   onClose: () => void;
@@ -27,6 +29,7 @@ export function GraphSidePanel({
   open,
   mode,
   selected,
+  owners = [],
   context,
   editable = false,
   onClose,
@@ -81,6 +84,7 @@ export function GraphSidePanel({
       {mode === "inspect" && selected ? (
         <GraphPanelInspect
           selected={selected}
+          owners={owners}
           context={context}
           editable={editable}
           teamAccess={panel.teamAccess}

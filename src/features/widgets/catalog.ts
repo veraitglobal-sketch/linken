@@ -52,7 +52,7 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "badge",
     name: "Badge",
-    description: "Company card with partner logos and Linken seal.",
+    description: "Company card with partner logos and Hansala seal.",
     section: "status",
     height: 88,
   },
@@ -177,5 +177,5 @@ export function buildEmbedSnippet(input: {
   });
   const widthAttr = isFluid ? "100%" : px;
   const styleWidth = isFluid ? "100%" : `${px}px`;
-  return `<iframe src="${src}" width="${widthAttr}" height="${height}" style="border:0;width:${styleWidth};max-width:100%;background:transparent" title="Verified on Linken" loading="lazy"></iframe>`;
+  return `<iframe src="${src}" width="${widthAttr}" height="${height}" style="border:0;width:${styleWidth};max-width:100%;background:transparent" title="Verified on Hansala" loading="lazy"></iframe>`;
 }

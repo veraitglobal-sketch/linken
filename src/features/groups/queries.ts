@@ -141,10 +141,36 @@ export async function getConfirmedGroupForCompany(
       .limit(1)
       .maybeSingle();
 
-    if (!data?.group) return null;
-    const g = Array.isArray(data.group) ? data.group[0] : data.group;
-    if (!g?.slug) return null;
-    return { name: g.name, slug: g.slug };
+    if (data?.group) {
+      const g = Array.isArray(data.group) ? data.group[0] : data.group;
+      if (g?.slug) return { name: g.name, slug: g.slug };
+    }
+
+    // The company itself isn't a member row — check if it's the group's
+    // creator (owner) instead. A group's parent company gets no membership
+    // row of its own, but should still show the badge once the group has
+    // at least one confirmed member.
+    const { data: company } = await supabase
+      .from("companies")
+      .select("owner_id")
+      .eq("id", companyId)
+      .maybeSingle();
+    if (!company?.owner_id) return null;
+
+    const { data: ownedGroup } = await supabase
+      .from("company_groups")
+      .select("name, slug, members:company_group_members!group_id(status)")
+      .eq("created_by", company.owner_id)
+      .limit(1)
+      .maybeSingle();
+
+    if (!ownedGroup?.slug) return null;
+    const hasConfirmedMember = (ownedGroup.members ?? []).some(
+      (m: { status: string }) => m.status === "confirmed",
+    );
+    if (!hasConfirmedMember) return null;
+
+    return { name: ownedGroup.name, slug: ownedGroup.slug };
   } catch {
     return null;
   }

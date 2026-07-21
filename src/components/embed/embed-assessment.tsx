@@ -1,4 +1,4 @@
-import { EmbedLinkenSeal } from "@/components/embed/embed-linken-seal";
+import { EmbedHansalaSeal } from "@/components/embed/embed-linken-seal";
 import { EmbedProofMarquee } from "@/components/embed/embed-proof-marquee";
 import type { EmbedProofCompany } from "@/components/embed/embed-brand";
 import {
@@ -122,7 +122,7 @@ export function EmbedAssessment({
         </p>
       ) : null}
 
-      <EmbedLinkenSeal
+      <EmbedHansalaSeal
         theme={theme}
         className="absolute top-1/2 right-3 -translate-y-1/2 border-l-0 pl-0"
       />

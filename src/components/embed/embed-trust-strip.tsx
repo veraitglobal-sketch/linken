@@ -3,7 +3,7 @@ import type { EmbedTheme } from "@/components/embed/embed-theme";
 import { cn } from "@/lib/cn";
 
 type Props = {
-  /** How many tiles to fill (0–5). Linken's graphic row — not star ratings. */
+  /** How many tiles to fill (0–5). Hansala's graphic row — not star ratings. */
   filled: number;
   theme?: EmbedTheme;
   size?: "sm" | "md";

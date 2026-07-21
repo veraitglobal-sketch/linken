@@ -297,7 +297,7 @@ export async function runBacklinkCheck() {
     linked
       ? "/dashboard/verification?linked=1"
       : dash(
-          `No Linken link found. Add a link to ${siteUrl}${profilePath} or an embed iframe.`,
+          `No Hansala link found. Add a link to ${siteUrl}${profilePath} or an embed iframe.`,
         ),
   );
 }

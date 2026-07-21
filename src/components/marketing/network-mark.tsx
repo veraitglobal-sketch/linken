@@ -5,7 +5,7 @@ type Props = {
   animate?: boolean;
 };
 
-/** Two nodes + a link — Linken's mark, not an orbit logo. */
+/** Two nodes + a link — Hansala's mark, not an orbit logo. */
 export function NetworkMark({ size = 54, className, animate = true }: Props) {
   const s = size;
   return (

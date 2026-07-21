@@ -71,7 +71,7 @@ export function InquiryRow({
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <a
-          href={`mailto:${inquiry.senderEmail}?subject=${encodeURIComponent("Re: your inquiry on Linken")}`}
+          href={`mailto:${inquiry.senderEmail}?subject=${encodeURIComponent("Re: your inquiry on Hansala")}`}
           className="inline-flex h-9 items-center rounded-xl bg-navy px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-hover"
         >
           Reply by email

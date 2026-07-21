@@ -39,6 +39,8 @@ import {
   toHaloNodes,
 } from "@/components/network/network-cluster-nodes";
 import { NetworkHint } from "@/components/network/network-hint";
+import { NetworkMapLegend } from "@/components/network/network-map-legend";
+import type { OwnershipSlice } from "@/components/network/network-ownership-chart";
 import { NetworkMapChrome } from "@/components/network/network-map-chrome";
 import {
   GraphSidePanel,
@@ -95,7 +97,7 @@ function toFlowEdge(e: NetworkEdge, selected: boolean): Edge {
     : isOwnership
       ? "#0e1f1c"
       : isPartner
-        ? "#a3aba6"
+        ? "#b8895a"
         : "#8a948e";
 
   return {
@@ -119,7 +121,7 @@ function toFlowEdge(e: NetworkEdge, selected: boolean): Edge {
         : isPartner || e.type === "client"
           ? "2.5 5"
           : undefined,
-      opacity: selected ? 1 : isPartner ? 0.8 : 0.9,
+      opacity: selected ? 1 : isPartner ? 0.95 : 0.9,
     },
     animated: false,
     markerEnd: isOwnership
@@ -140,6 +142,37 @@ function graphSignature(graph: NetworkGraph) {
   ].join("|");
 }
 
+/** Every primary/co-owner edge pointing at this node, resolved to names. */
+function resolveOwners(nodeId: string, graph: NetworkGraph): OwnershipSlice[] {
+  const nameById = new Map(graph.nodes.map((n) => [n.id, n.data.name]));
+  return graph.edges
+    .filter(
+      (e) =>
+        e.target === nodeId && (e.type === "subsidiary" || e.type === "co_owner"),
+    )
+    .map((e) => ({
+      name: nameById.get(e.source) ?? "Unknown",
+      percentage: e.meta?.ownershipPercentage ?? null,
+      type: e.meta?.ownershipType ?? null,
+      primary: e.type === "subsidiary",
+    }));
+}
+
+/** The company whose profile this graph renders on gets the hub/focus
+ * treatment — falls back to the group, then the first company node. */
+function resolveHubId(
+  nodes: { id: string; data: NetworkNodeData }[],
+  focusCompanyId?: string | null,
+) {
+  const focusId = focusCompanyId ? `company:${focusCompanyId}` : null;
+  return (
+    (focusId && nodes.find((n) => n.id === focusId)?.id) ??
+    nodes.find((n) => n.data.kind === "group")?.id ??
+    nodes.find((n) => n.data.kind === "company")?.id ??
+    nodes[0]?.id
+  );
+}
+
 export function NetworkMap({
   graph,
   editable = false,
@@ -153,6 +186,7 @@ export function NetworkMap({
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selected, setSelected] = useState<NetworkNodeData | null>(null);
+  const [selectedOwners, setSelectedOwners] = useState<OwnershipSlice[]>([]);
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelMode, setPanelMode] = useState<PanelMode>("inspect");
   const [connecting, setConnecting] = useState(false);
@@ -163,16 +197,21 @@ export function NetworkMap({
     setPanelOpen(false);
     setSelected(null);
     setSelectedId(null);
+    setSelectedOwners([]);
     setPanelMode("inspect");
   }, []);
 
-  const onSelect = useCallback((id: string, data: NetworkNodeData) => {
-    if (data.moreCount) return;
-    setSelectedId(id);
-    setSelected(data);
-    setPanelMode("inspect");
-    setPanelOpen(true);
-  }, []);
+  const onSelect = useCallback(
+    (id: string, data: NetworkNodeData) => {
+      if (data.moreCount) return;
+      setSelectedId(id);
+      setSelected(data);
+      setSelectedOwners(resolveOwners(id, graph));
+      setPanelMode("inspect");
+      setPanelOpen(true);
+    },
+    [graph],
+  );
 
   const onAdd = useCallback((id: string, data: NetworkNodeData) => {
     if (data.moreCount) return;
@@ -211,10 +250,7 @@ export function NetworkMap({
 
     // Keep user-dragged positions across refresh / data updates
     const saved = loadGraphPositions(layoutKey);
-    const hubId =
-      auto.nodes.find((n) => n.data.kind === "group")?.id ??
-      auto.nodes.find((n) => n.data.kind === "company")?.id ??
-      auto.nodes[0]?.id;
+    const hubId = resolveHubId(auto.nodes, graph.context?.focusCompanyId);
     const companyNodes: Node[] = auto.nodes.map((n) => ({
       id: n.id,
       type: "company",
@@ -331,10 +367,7 @@ export function NetworkMap({
       ownerId: c.ownerId,
       nodeIds: c.nodeIds,
     }));
-    const hubId =
-      auto.nodes.find((n) => n.data.kind === "group")?.id ??
-      auto.nodes.find((n) => n.data.kind === "company")?.id ??
-      auto.nodes[0]?.id;
+    const hubId = resolveHubId(auto.nodes, graph.context?.focusCompanyId);
     setNodes((prev) => {
       const companyNodes: Node[] = auto.nodes.map((n) => {
         const existing = prev.find((p) => p.id === n.id);
@@ -359,6 +392,7 @@ export function NetworkMap({
     });
   }, [
     editable,
+    graph.context?.focusCompanyId,
     graph.edges,
     graph.nodes,
     layoutKey,
@@ -502,6 +536,12 @@ export function NetworkMap({
     (n) => n.type === "company" && !isClusterNodeId(n.id),
   ).length;
 
+  const showOwnershipLegend = graph.edges.some((e) => e.type === "subsidiary");
+  const showCoOwnerLegend = graph.edges.some((e) => e.type === "co_owner");
+  const showPartnerLegend = graph.edges.some(
+    (e) => e.type === "partner" || e.type === "client",
+  );
+
   return (
     <div
       className={`linken-flow linken-flow-stage relative h-full w-full${connecting ? " linken-flow-connecting" : ""}`}
@@ -534,6 +574,7 @@ export function NetworkMap({
       ) : null}
 
       <ReactFlow
+        key={signature}
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
@@ -581,10 +622,17 @@ export function NetworkMap({
         />
       </ReactFlow>
 
+      <NetworkMapLegend
+        showOwnership={showOwnershipLegend}
+        showCoOwner={showCoOwnerLegend}
+        showPartner={showPartnerLegend}
+      />
+
       <GraphSidePanel
         open={panelOpen}
         mode={panelMode}
         selected={selected}
+        owners={selectedOwners}
         context={graph.context}
         editable={editable}
         onClose={closePanel}

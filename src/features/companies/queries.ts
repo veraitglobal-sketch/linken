@@ -22,6 +22,7 @@ function mapRow(row: {
   country: string | null;
   website: string | null;
   logo_url?: string | null;
+  cover_image_url?: string | null;
   linkedin_url?: string | null;
   facebook_url?: string | null;
   services: string[] | null;
@@ -54,6 +55,7 @@ function mapRow(row: {
     websiteLinked: false,
     logoInitials: initials(row.name),
     logoUrl: row.logo_url ?? null,
+    coverImageUrl: row.cover_image_url ?? null,
     claimed: row.claimed !== false,
     acceptingClients: row.accepting_clients !== false,
     plan: parsePlan(row.plan),

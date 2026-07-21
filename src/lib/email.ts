@@ -16,7 +16,7 @@ async function sendTextEmail(input: {
   }
 
   const resend = new Resend(apiKey);
-  const from = process.env.RESEND_FROM_EMAIL ?? "Linken <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM_EMAIL ?? "Hansala <onboarding@resend.dev>";
   const { error } = await resend.emails.send({
     from,
     to: input.to,
@@ -48,7 +48,7 @@ export async function sendClientConfirmationEmail({
   const confirmUrl = `${getSiteUrl()}/confirm/${token}`;
   return sendTextEmail({
     to,
-    subject: `${requesterName} asks you to confirm a project on Linken`,
+    subject: `${requesterName} asks you to confirm a project on Hansala`,
     body: [
       `${requesterName} listed “${caseTitle}” as work delivered for your company.`,
       "",
@@ -78,9 +78,9 @@ export async function sendClaimInviteEmail({
   const claimUrl = `${getSiteUrl()}/claim/${claimToken}`;
   return sendTextEmail({
     to,
-    subject: `${inviterName} listed ${companyName} as a partner on Linken`,
+    subject: `${inviterName} listed ${companyName} as a partner on Hansala`,
     body: [
-      `${inviterName} added ${companyName} as a partner on Linken.`,
+      `${inviterName} added ${companyName} as a partner on Hansala.`,
       "",
       "A draft profile is waiting for you — claim it to manage partnerships and appear as confirmed:",
       claimUrl,
@@ -107,9 +107,9 @@ export async function sendPartnershipRequestEmail({
   const inboxUrl = `${getSiteUrl()}/dashboard/partners`;
   return sendTextEmail({
     to,
-    subject: `${requesterName} wants to partner with ${recipientName} on Linken`,
+    subject: `${requesterName} wants to partner with ${recipientName} on Hansala`,
     body: [
-      `${requesterName} sent a partnership request to ${recipientName} on Linken.`,
+      `${requesterName} sent a partnership request to ${recipientName} on Hansala.`,
       "",
       "Accept it in your workspace to become official partners (then it appears on the network graph):",
       inboxUrl,
@@ -130,9 +130,9 @@ export async function sendPartnershipEndedEmail(input: {
   const partnersUrl = `${getSiteUrl()}/dashboard/partners`;
   return sendTextEmail({
     to: input.to,
-    subject: `Partnership update on Linken: ${input.actorName}`,
+    subject: `Partnership update on Hansala: ${input.actorName}`,
     body: [
-      `${input.actorName} ended the partnership with ${input.peerName} on Linken.`,
+      `${input.actorName} ended the partnership with ${input.peerName} on Hansala.`,
       "",
       "The link no longer appears on either public profile or the network map.",
       "Confirmed case study collaborations remain as historical evidence.",
@@ -165,7 +165,7 @@ export async function sendReferenceConfirmEmail({
   const url = `${getSiteUrl()}/confirm-reference/${token}`;
   return sendTextEmail({
     to,
-    subject: `${providerName} asks you to confirm a service relationship on Linken`,
+    subject: `${providerName} asks you to confirm a service relationship on Hansala`,
     body: [
       `${providerName} says they provide “${service}” for ${clientName}${startedYear ? ` since ${startedYear}` : ""}.`,
       "",
@@ -203,9 +203,9 @@ export async function sendInquiryNotifyEmail({
   const dashboardUrl = `${getSiteUrl()}/dashboard`;
   return sendTextEmail({
     to,
-    subject: `New inquiry via your Linken profile from ${senderName}`,
+    subject: `New inquiry via your Hansala profile from ${senderName}`,
     body: [
-      `Someone reached out to ${companyName} through your Linken profile.`,
+      `Someone reached out to ${companyName} through your Hansala profile.`,
       "",
       `From: ${senderName}`,
       `Email: ${senderEmail}`,
@@ -237,9 +237,9 @@ export async function sendGroupInviteEmail(input: {
   const groupUrl = `${getSiteUrl()}/g/${input.groupSlug}`;
   return sendTextEmail({
     to: input.to,
-    subject: `${input.groupName} invited ${input.companyName} to join on Linken`,
+    subject: `${input.groupName} invited ${input.companyName} to join on Hansala`,
     body: [
-      `${input.groupName} invited ${input.companyName} to join their company group on Linken.`,
+      `${input.groupName} invited ${input.companyName} to join their company group on Hansala.`,
       "",
       "Confirm or decline in your dashboard:",
       dashboardUrl,
@@ -261,9 +261,9 @@ export async function sendOwnershipTransferEmail(input: {
   const url = `${getSiteUrl()}/transfer/${input.token}`;
   return sendTextEmail({
     to: input.to,
-    subject: `Accept ownership of ${input.companyName} on Linken`,
+    subject: `Accept ownership of ${input.companyName} on Hansala`,
     body: [
-      `You have been invited to become the owner of ${input.companyName} on Linken.`,
+      `You have been invited to become the owner of ${input.companyName} on Hansala.`,
       "",
       "Sign in (or create an account), then open this link to accept:",
       url,
@@ -285,9 +285,9 @@ export async function sendTeamInviteEmail(input: {
   const loginUrl = `${getSiteUrl()}/login?next=/dashboard`;
   return sendTextEmail({
     to: input.to,
-    subject: `You're invited to ${input.companyName} on Linken`,
+    subject: `You're invited to ${input.companyName} on Hansala`,
     body: [
-      `${input.inviterHint} invited you to help manage ${input.companyName} on Linken.`,
+      `${input.inviterHint} invited you to help manage ${input.companyName} on Hansala.`,
       "",
       "Create an account (or sign in) with this email:",
       loginUrl,
@@ -317,9 +317,9 @@ export async function sendTeamJoinInviteEmail({
   const joinUrl = `${getSiteUrl()}/join/${token}`;
   return sendTextEmail({
     to,
-    subject: `${inviterName} te poziva u tim firme ${companyName} na Linken-u`,
+    subject: `${inviterName} te poziva u tim firme ${companyName} na Hansala-u`,
     body: [
-      `${inviterName} te poziva u tim firme ${companyName} na Linken-u.`,
+      `${inviterName} te poziva u tim firme ${companyName} na Hansala-u.`,
       "",
       "Otvori link da prihvatiš ili odbiješ pozivnicu:",
       joinUrl,
@@ -342,7 +342,7 @@ export async function sendProjectRequestManageEmail(input: {
   const manageUrl = `${getSiteUrl()}/requests/manage/${input.manageToken}`;
   return sendTextEmail({
     to: input.to,
-    subject: `Your project request on Linken: ${input.title}`,
+    subject: `Your project request on Hansala: ${input.title}`,
     body: [
       `Hi ${input.requesterName},`,
       "",
@@ -367,9 +367,9 @@ export async function sendProjectRequestDigestEmail(input: {
   const list = input.requestTitles.map((t) => `• ${t}`).join("\n");
   return sendTextEmail({
     to: input.to,
-    subject: `New project request${input.requestTitles.length > 1 ? "s" : ""} via Linken Radar`,
+    subject: `New project request${input.requestTitles.length > 1 ? "s" : ""} via Hansala Radar`,
     body: [
-      `New project request${input.requestTitles.length > 1 ? "s" : ""} match ${input.companyName} via Linken Radar:`,
+      `New project request${input.requestTitles.length > 1 ? "s" : ""} match ${input.companyName} via Hansala Radar:`,
       "",
       list,
       "",
@@ -432,9 +432,9 @@ export async function sendIntroNotifyEmail(input: {
     : getSiteUrl();
   return sendTextEmail({
     to: input.to,
-    subject: `New intro via Linken Radar from ${input.senderName}`,
+    subject: `New intro via Hansala Radar from ${input.senderName}`,
     body: [
-      `${input.senderName} sent you an intro via Linken Radar.`,
+      `${input.senderName} sent you an intro via Hansala Radar.`,
       "",
       `Offer: ${input.offer}`,
       "",
@@ -443,7 +443,7 @@ export async function sendIntroNotifyEmail(input: {
       "Review in your Intros inbox (separate from profile inquiries):",
       inboxUrl,
       "",
-      "Reply by email from the inbox — there is no chat on Linken.",
+      "Reply by email from the inbox — there is no chat on Hansala.",
     ].join("\n"),
     logLabel: "radar-intro-notify",
     linkForLog: inboxUrl,
@@ -467,7 +467,7 @@ export async function sendProjectResponseBuyerEmail(input: {
     body: [
       `Hi ${input.requesterName},`,
       "",
-      `${input.companyName} responded to your project request on Linken.`,
+      `${input.companyName} responded to your project request on Hansala.`,
       "",
       "Message:",
       input.message,

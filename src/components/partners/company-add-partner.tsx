@@ -46,7 +46,7 @@ export function CompanyAddPartner({
               : "text-muted hover:text-ink"
           }
         >
-          Find on Linken
+          Find on Hansala
         </Link>
         <span className="text-plus">·</span>
         <Link

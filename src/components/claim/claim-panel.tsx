@@ -33,7 +33,7 @@ export function ClaimPanel({
     return (
       <Status
         title="One company per account"
-        body="Your account already owns a company on Linken. Contact support if you need to claim this draft under a different arrangement."
+        body="Your account already owns a company on Hansala. Contact support if you need to claim this draft under a different arrangement."
       />
     );
   }

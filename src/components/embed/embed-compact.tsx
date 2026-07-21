@@ -20,7 +20,7 @@ type Props = {
 };
 
 /**
- * Premium micro bar — Linken seal fixed left, partner logos slide, count right.
+ * Premium micro bar — Hansala seal fixed left, partner logos slide, count right.
  * Not a text chip: proof has to be visible.
  */
 export function EmbedCompact({
@@ -47,7 +47,7 @@ export function EmbedCompact({
         target="_blank"
         rel="noopener noreferrer"
         className="flex shrink-0 items-center gap-2 py-1 pr-2.5 pl-0.5 no-underline"
-        title={`${name} on Linken`}
+        title={`${name} on Hansala`}
       >
         <span
           className={cn(
@@ -66,7 +66,7 @@ export function EmbedCompact({
               embedInkClass(theme),
             )}
           >
-            Linken
+            Hansala
           </span>
           <span
             className={cn(
@@ -74,7 +74,7 @@ export function EmbedCompact({
               embedMutedClass(theme),
             )}
           >
-            {claimed && verified ? "Verified" : claimed ? "On Linken" : "Unclaimed"}
+            {claimed && verified ? "Verified" : claimed ? "On Hansala" : "Unclaimed"}
           </span>
         </span>
       </a>

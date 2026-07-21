@@ -18,8 +18,8 @@ const newsreader = Newsreader({
 
 export const metadata: Metadata = {
   title: {
-    default: "Linken",
-    template: "%s · Linken",
+    default: "Hansala",
+    template: "%s · Hansala",
   },
   description:
     "One company link for your profile, case studies, and mutually verified partners.",

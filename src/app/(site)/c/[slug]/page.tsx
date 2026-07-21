@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: url },
     openGraph: {
       type: "profile",
-      title: `${company.name} · Linken`,
+      title: `${company.name} · Hansala`,
       description: company.tagline,
       url,
     },

@@ -1,4 +1,4 @@
-import { EmbedLinkenSeal } from "@/components/embed/embed-linken-seal";
+import { EmbedHansalaSeal } from "@/components/embed/embed-linken-seal";
 import {
   embedAccentClass,
   embedInkClass,
@@ -137,7 +137,7 @@ export function EmbedReferences({
             })}
           </ul>
         </div>
-        <EmbedLinkenSeal theme={theme} />
+        <EmbedHansalaSeal theme={theme} />
       </div>
     </a>
   );

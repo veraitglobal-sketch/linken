@@ -48,7 +48,7 @@ export default async function ManageProjectRequestPage({
   return (
     <section className="mx-auto max-w-xl px-4 py-10 sm:py-14">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-        Linken · Your request
+        Hansala · Your request
       </p>
       <h1 className="mt-3 font-display text-[clamp(1.8rem,4vw,2.4rem)] font-medium tracking-[-0.04em] text-ink">
         Manage responses

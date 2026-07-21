@@ -64,7 +64,7 @@ export function HomeStories() {
               <div className="flex flex-col justify-between px-7 py-8 sm:px-11 sm:py-10">
                 <div>
                   <p className="text-[11px] font-semibold tracking-[0.16em] text-blue-soft/90 uppercase">
-                    How teams use Linken
+                    How teams use Hansala
                   </p>
                   <p className="mt-5 font-display text-[clamp(1.4rem,2.6vw,2.15rem)] leading-[1.24] tracking-[-0.032em] text-white/[0.96]">
                     “{story.quote}”

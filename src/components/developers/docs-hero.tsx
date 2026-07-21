@@ -38,7 +38,7 @@ export function DocsHero({ siteUrl, basePath, previewTokens }: Props) {
               <span className="mt-1 block text-white/40">company evidence.</span>
             </h1>
             <p className="mt-5 max-w-md text-[16px] leading-relaxed text-white/70">
-              Read-only JSON and embed widgets — the same trust rules as a Linken
+              Read-only JSON and embed widgets — the same trust rules as a Hansala
               company page. Nothing pending. Nothing private.
             </p>
           </div>

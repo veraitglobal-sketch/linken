@@ -44,12 +44,15 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
     d.kind !== "group" && !d.moreCount && d.domainVerified === false;
   const isHub = Boolean(d.isHub);
   const isPartner = d.kind === "partner" || d.kind === "client";
+  // Structure (group/company/subsidiary) always reads full. Partners stay
+  // logo-only until clicked — quieter, less competing with the ownership tree.
+  const expanded = !isPartner || isSelected;
 
   return (
     <div
       className={cn(
         "linken-node group/node relative linken-node-enter",
-        isHub ? "w-[172px]" : "w-[158px]",
+        expanded ? (isHub ? "w-[164px]" : "w-[150px]") : "w-11",
       )}
     >
       <Handle
@@ -83,8 +86,8 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
         tabIndex={0}
         className={cn(
           "relative w-full cursor-grab border bg-surface text-left",
-          "transition-[border-color,box-shadow,transform] duration-150 active:cursor-grabbing",
-          isHub ? "rounded-2xl" : "rounded-[14px]",
+          "transition-[border-color,box-shadow,transform,width] duration-150 active:cursor-grabbing",
+          expanded ? (isHub ? "rounded-2xl" : "rounded-[14px]") : "rounded-full",
           d.kind === "client" ? "border-dashed border-line" : "border-line",
           isPartner && !isSelected && "opacity-[0.92]",
           isHub && !isSelected && "border-[#c5ccc7]",
@@ -99,7 +102,7 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
         <div
           className={cn(
             "flex items-center gap-2.5",
-            isHub ? "px-3.5 py-3" : "px-3 py-2.5",
+            expanded ? (isHub ? "px-3.5 py-3" : "px-3 py-2.5") : "p-1",
           )}
         >
           <LogoTile
@@ -107,28 +110,32 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
             initials={d.logoInitials}
             logoUrl={d.logoUrl}
             website={d.website}
-            size={isHub ? "md" : "sm"}
+            size={expanded ? (isHub ? "md" : "sm") : "xs"}
           />
-          <div className="min-w-0 flex-1">
-            <p
-              className={cn(
-                "truncate font-semibold tracking-[-0.025em] text-ink",
-                isHub ? "text-[13px]" : "text-[12px]",
-              )}
-            >
-              {d.name}
-            </p>
-            <p className="mt-0.5 truncate text-[10px] font-medium text-muted">
-              {ROLE_LABEL[d.kind]}
-              {needsVerify ? " · Unverified" : ""}
-            </p>
-          </div>
-          {d.publicTeamCount && d.publicTeamCount > 0 && d.companyId ? (
-            <NetworkNodeTeam
-              companyId={d.companyId}
-              avatars={d.publicTeamAvatars ?? []}
-              count={d.publicTeamCount}
-            />
+          {expanded ? (
+            <>
+              <div className="min-w-0 flex-1">
+                <p
+                  className={cn(
+                    "truncate font-semibold tracking-[-0.025em] text-ink",
+                    isHub ? "text-[13px]" : "text-[12px]",
+                  )}
+                >
+                  {d.name}
+                </p>
+                <p className="mt-0.5 truncate text-[10px] font-medium text-muted">
+                  {ROLE_LABEL[d.kind]}
+                  {needsVerify ? " · Unverified" : ""}
+                </p>
+              </div>
+              {d.publicTeamCount && d.publicTeamCount > 0 && d.companyId ? (
+                <NetworkNodeTeam
+                  companyId={d.companyId}
+                  avatars={d.publicTeamAvatars ?? []}
+                  count={d.publicTeamCount}
+                />
+              ) : null}
+            </>
           ) : null}
         </div>
       </div>

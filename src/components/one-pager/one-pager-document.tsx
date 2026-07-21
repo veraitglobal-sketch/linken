@@ -146,19 +146,19 @@ export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
       <footer className="mt-12 flex flex-wrap items-end justify-between gap-6 border-t border-line pt-8">
         <div className="max-w-md">
           <p className="font-display text-lg tracking-[-0.03em] text-ink">
-            linken.com/
+            hansala.com/
             <span className="text-[#1a5c51]">{company.slug}</span>
           </p>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
             Scan to verify — every item on this page is confirmed by the other
-            party on Linken.
+            party on Hansala.
           </p>
           <p className="mt-2 text-[12px] text-muted">{profileUrl}</p>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={qrDataUri}
-          alt="QR code to verify this company on Linken"
+          alt="QR code to verify this company on Hansala"
           width={140}
           height={140}
           className="rounded-xl border border-line"

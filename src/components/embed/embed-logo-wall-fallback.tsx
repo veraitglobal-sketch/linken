@@ -1,4 +1,4 @@
-import { EmbedLinkenSeal } from "@/components/embed/embed-linken-seal";
+import { EmbedHansalaSeal } from "@/components/embed/embed-linken-seal";
 import { EmbedVerifiedMark } from "@/components/embed/embed-brand";
 import {
   embedInkClass,
@@ -51,10 +51,10 @@ export function EmbedLogoWallProFallback({
           {verified ? <EmbedVerifiedMark theme={theme} /> : null}
         </div>
         <p className={cn("mt-0.5 text-[11px]", embedMutedClass(theme))}>
-          Partner logo wall is a Linken Pro feature
+          Partner logo wall is a Hansala Pro feature
         </p>
       </div>
-      <EmbedLinkenSeal theme={theme} href={profileUrl} />
+      <EmbedHansalaSeal theme={theme} href={profileUrl} />
     </div>
   );
 }

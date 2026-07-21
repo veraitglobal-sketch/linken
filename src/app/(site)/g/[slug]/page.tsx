@@ -20,11 +20,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: page.group.name,
     description:
       page.group.description ||
-      `${page.companyCount} companies in the ${page.group.name} group on Linken.`,
+      `${page.companyCount} companies in the ${page.group.name} group on Hansala.`,
     alternates: { canonical: url },
     openGraph: {
-      title: `${page.group.name} · Linken`,
-      description: page.group.description || "Company group on Linken",
+      title: `${page.group.name} · Hansala`,
+      description: page.group.description || "Company group on Hansala",
       url,
     },
   };

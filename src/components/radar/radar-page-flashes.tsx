@@ -14,7 +14,7 @@ export function RadarPageFlashes({ params }: { params: FlashParams }) {
         <RadarFlash tone="error">{params.error}</RadarFlash>
       ) : null}
       {params.introSent === "1" ? (
-        <RadarFlash>Intro sent via Linken Radar (2 credits).</RadarFlash>
+        <RadarFlash>Intro sent via Hansala Radar (2 credits).</RadarFlash>
       ) : null}
       {params.searchSaved === "1" ? (
         <RadarFlash>

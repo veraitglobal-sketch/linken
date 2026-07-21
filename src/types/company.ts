@@ -18,6 +18,8 @@ export type Company = {
   websiteLinked?: boolean;
   logoInitials: string;
   logoUrl?: string | null;
+  /** Hero banner photo — falls back to the default stock image when unset. */
+  coverImageUrl?: string | null;
   /** false = ghost / unclaimed draft profile. Never includes claim_token. */
   claimed?: boolean;
   /** Public availability — default true when unset. */

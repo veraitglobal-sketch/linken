@@ -39,7 +39,7 @@ export function GroupCreateEmpty({ backPath }: Props) {
           </label>
           <p className="text-[12px] text-muted">
             After you create the group, add a subsidiary (new country firm) or
-            invite a company that already has a Linken profile.
+            invite a company that already has a Hansala profile.
           </p>
           <Button type="submit" className="h-10 w-fit px-4">
             Create group

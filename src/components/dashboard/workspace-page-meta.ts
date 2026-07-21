@@ -50,7 +50,7 @@ export const WORKSPACE_PAGE_META: Record<
   },
   "/dashboard/widgets": {
     title: "Widgets",
-    description: "Embed Linken on your website.",
+    description: "Embed Hansala on your website.",
   },
   "/dashboard/api": {
     title: "API",

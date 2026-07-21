@@ -67,7 +67,7 @@ export const COMPANY_FIELDS: FieldRow[] = [
   {
     name: "trust_level",
     type: '"member" | "established" | "trusted" | "pillar"',
-    description: "Public Linken Level (lowercase).",
+    description: "Public Hansala Level (lowercase).",
   },
   {
     name: "stats",
@@ -149,7 +149,7 @@ export const REFERENCE_FIELDS: FieldRow[] = [
   {
     name: "references[].client_slug",
     type: "string | null",
-    description: "Public slug when the client has a claimed Linken profile.",
+    description: "Public slug when the client has a claimed Hansala profile.",
   },
   { name: "references[].service", type: "string", description: "Service described." },
   { name: "references[].started_year", type: "string", description: "Start year." },

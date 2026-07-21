@@ -7,7 +7,7 @@ export function HomeOverview() {
         </p>
         <div className="mt-5 grid gap-8 md:grid-cols-[1fr_1fr] md:items-end">
           <h2 className="font-display text-4xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
-            What is Linken?
+            What is Hansala?
           </h2>
           <p className="max-w-md text-[17px] leading-relaxed text-ink-soft md:justify-self-end md:pb-1 md:text-right">
             A public company page where partnerships become visible only after both

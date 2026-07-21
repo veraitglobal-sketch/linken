@@ -259,7 +259,7 @@ export async function runVerificationCheckCore(
     if (!linked) {
       return {
         ok: false,
-        error: `No Linken link found. Add a link to ${siteUrl}${profilePath} or an embed iframe.`,
+        error: `No Hansala link found. Add a link to ${siteUrl}${profilePath} or an embed iframe.`,
       };
     }
     return {

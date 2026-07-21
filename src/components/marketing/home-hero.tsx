@@ -17,7 +17,7 @@ export function HomeHero() {
 
           <div className="animate-rise-delay max-w-xl py-12">
             <p className="font-display text-[clamp(3.2rem,7.5vw,5.2rem)] leading-[0.9] font-medium tracking-[-0.055em] text-white">
-              Linken
+              Hansala
             </p>
             <h1 className="mt-6 font-display text-[clamp(1.7rem,3.5vw,2.7rem)] leading-[1.14] font-medium tracking-[-0.032em] text-white/[0.92]">
               The company page that shows who you build with — only after they

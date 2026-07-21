@@ -6,7 +6,7 @@ export function OnboardingLinkScene() {
         Public address
       </p>
       <p className="mt-3 font-display text-[clamp(1.35rem,2.2vw,1.75rem)] leading-none tracking-[-0.035em] text-white">
-        linken.com/
+        hansala.com/
         <span className="text-white/40">your-company</span>
       </p>
       <p className="mt-4 max-w-xs text-[13px] leading-relaxed text-white/55">

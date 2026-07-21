@@ -22,10 +22,10 @@ export function WelcomeSetup({
 }: Props) {
   const heading =
     from === "confirm"
-      ? "You’re on Linken"
+      ? "You’re on Hansala"
       : from === "onboarding"
         ? "Your company link is live"
-        : "Welcome to Linken";
+        : "Welcome to Hansala";
 
   const sub =
     from === "confirm"

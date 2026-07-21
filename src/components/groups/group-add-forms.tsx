@@ -67,7 +67,7 @@ export function GroupAddForms({ groupId, confirmed, backPath }: Props) {
       <section>
         <GroupSection
           title="Invite an existing company"
-          description="They already have a Linken profile. They must confirm the invite. After confirmation you can nest them under a parent."
+          description="They already have a Hansala profile. They must confirm the invite. After confirmation you can nest them under a parent."
         />
         <WorkspaceCard>
           <form action={inviteCompanyToGroup} className="grid gap-3">

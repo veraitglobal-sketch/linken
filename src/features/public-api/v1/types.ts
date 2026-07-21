@@ -1,5 +1,5 @@
 /**
- * Linken Public API v1 — public contract.
+ * Hansala Public API v1 — public contract.
  * Fields may be ADDED in future releases. Never rename, remove, or change meaning.
  * Breaking changes require /api/v2/.
  */
@@ -65,7 +65,7 @@ export type ApiCompanyResponse = {
 
 export type ApiReference = {
   client_name: string;
-  /** Public slug when the client has a claimed Linken profile. */
+  /** Public slug when the client has a claimed Hansala profile. */
   client_slug: string | null;
   service: string;
   started_year: string;

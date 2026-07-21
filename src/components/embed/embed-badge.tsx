@@ -1,5 +1,5 @@
 import type { EmbedProofCompany } from "@/components/embed/embed-brand";
-import { EmbedLinkenSeal } from "@/components/embed/embed-linken-seal";
+import { EmbedHansalaSeal } from "@/components/embed/embed-linken-seal";
 import { EmbedProofMarquee } from "@/components/embed/embed-proof-marquee";
 import { EmbedTrustStrip } from "@/components/embed/embed-trust-strip";
 import {
@@ -25,7 +25,7 @@ type Props = {
 };
 
 /**
- * Trust card: company left, proof slides center, Linken seal fixed right.
+ * Trust card: company left, proof slides center, Hansala seal fixed right.
  * Seal is its own link — never nest anchors.
  */
 export function EmbedBadge({
@@ -129,7 +129,7 @@ export function EmbedBadge({
           ) : null}
         </div>
       </a>
-      <EmbedLinkenSeal theme={theme} href={profileUrl} />
+      <EmbedHansalaSeal theme={theme} href={profileUrl} />
     </div>
   );
 }

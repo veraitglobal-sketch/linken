@@ -51,7 +51,7 @@ export function CaseStudyCreateForm({ companySlug }: Props) {
           </span>
           <Input name="partner_slug" placeholder="partner-firm" />
           <span className="mt-1 block text-[11px] text-muted">
-            If you worked with a Linken partner, tag them here.
+            If you worked with a Hansala partner, tag them here.
           </span>
         </label>
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HowLinkenWorks } from "@/components/product/how-linken-works";
+import { HowHansalaWorks } from "@/components/product/how-linken-works";
 import { PRODUCT } from "@/lib/product-model";
 
 const LINKS = [
@@ -30,7 +30,7 @@ type Props = { slug: string };
 export function ProfileEditLinks({ slug }: Props) {
   return (
     <div className="space-y-4">
-      <HowLinkenWorks />
+      <HowHansalaWorks />
       <section className="rounded-2xl border border-line bg-surface px-5 py-5 sm:px-6">
         <p className="text-[10px] font-semibold tracking-[0.12em] text-plus uppercase">
           Add on company

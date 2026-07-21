@@ -38,7 +38,7 @@ export function TrustLevelBadge({ level, onDark = false }: Props) {
         onDark ? styles[level].onDark : styles[level].onLight,
       )}
     >
-      Linken {level}
+      Hansala {level}
     </span>
   );
 }

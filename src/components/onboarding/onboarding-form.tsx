@@ -34,7 +34,7 @@ export function OnboardingForm({ error }: Props) {
           Your link
         </p>
         <p className="mt-1 font-display text-lg tracking-[-0.03em]">
-          linken.com/<span className="text-[#7eb8a4]">{slug}</span>
+          hansala.com/<span className="text-[#7eb8a4]">{slug}</span>
         </p>
       </div>
 

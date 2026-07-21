@@ -58,7 +58,7 @@ export async function buildCompanyLlmMarkdown(
     );
     lines.push("");
     lines.push(
-      `Data source: Linken — every item above was confirmed by the counterparty. Verify live: ${siteUrl}/api/v1/companies/${company.slug}`,
+      `Data source: Hansala — every item above was confirmed by the counterparty. Verify live: ${siteUrl}/api/v1/companies/${company.slug}`,
     );
     return `${lines.join("\n")}\n`;
   }
@@ -133,7 +133,7 @@ export async function buildCompanyLlmMarkdown(
   }
 
   lines.push(
-    `Data source: Linken — every item above was confirmed by the counterparty. Verify live: ${siteUrl}/api/v1/companies/${company.slug}`,
+    `Data source: Hansala — every item above was confirmed by the counterparty. Verify live: ${siteUrl}/api/v1/companies/${company.slug}`,
   );
 
   return `${lines.join("\n")}\n`;

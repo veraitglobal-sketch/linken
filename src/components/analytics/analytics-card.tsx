@@ -24,7 +24,7 @@ export function AnalyticsCard({ analytics, plan }: Props) {
   return (
     <section className="rounded-[28px] border border-line bg-white px-5 py-6 sm:px-7 sm:py-7">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
-        What Linken brings you
+        What Hansala brings you
       </p>
       <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">
         Last {analytics.days} days

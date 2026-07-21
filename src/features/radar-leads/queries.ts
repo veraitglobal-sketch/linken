@@ -226,7 +226,7 @@ export function reasonLabel(reason: RadarFeedReason): string {
     case "level_up":
       return "Level up";
     default:
-      return "New on Linken";
+      return "New on Hansala";
   }
 }
 

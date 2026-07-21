@@ -59,7 +59,7 @@ export function WorkspaceShell({
           >
             <NetworkMark size={18} className="text-navy" />
             <span className="font-display text-[14px] font-semibold tracking-[-0.04em]">
-              Linken
+              Hansala
             </span>
           </Link>
         </div>

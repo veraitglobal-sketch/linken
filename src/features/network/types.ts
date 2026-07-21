@@ -57,6 +57,10 @@ export type NetworkEdgeMeta = {
   memberCompanyId?: string;
   /** company_co_owners row id — required to end a co_owner edge. */
   coOwnerId?: string;
+  /** Recorded stake for a co_owner edge — null when not specified. */
+  ownershipPercentage?: number | null;
+  /** equity | joint_venture | private_equity | shareholding | family | other */
+  ownershipType?: string | null;
   label?: string;
 };
 
@@ -84,6 +88,9 @@ export type NetworkGraphContext = {
   groupCreatedBy?: string | null;
   /** True when the signed-in user created the scoped group. */
   isGroupCreator?: boolean;
+  /** The company whose profile page this graph is rendered on — gets the
+   * visual hub/focus treatment even inside a larger group tree. */
+  focusCompanyId?: string | null;
 };
 
 export type NetworkGraph = {

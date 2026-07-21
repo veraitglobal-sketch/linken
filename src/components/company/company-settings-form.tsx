@@ -27,7 +27,7 @@ export function CompanySettingsForm({
             Public company details
           </h2>
           <p className="mt-1 max-w-lg text-[12px] leading-relaxed text-muted">
-            These fields appear on your Linken profile. Your public URL slug
+            These fields appear on your Hansala profile. Your public URL slug
             never changes.
           </p>
         </div>

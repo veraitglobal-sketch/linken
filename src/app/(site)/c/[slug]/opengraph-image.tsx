@@ -28,7 +28,7 @@ export default async function Image({ params }: Props) {
             fontSize: 48,
           }}
         >
-          Linken
+          Hansala
         </div>
       ),
       { ...size },
@@ -102,7 +102,7 @@ export default async function Image({ params }: Props) {
                 textTransform: "uppercase",
               }}
             >
-              Linken {trust.level}
+              Hansala {trust.level}
             </div>
           ) : null}
           {hasCounts ? (
@@ -133,7 +133,7 @@ export default async function Image({ params }: Props) {
                 marginTop: 8,
               }}
             >
-              on Linken
+              on Hansala
             </div>
           )}
         </div>
@@ -153,10 +153,10 @@ export default async function Image({ params }: Props) {
               fontWeight: 600,
             }}
           >
-            Linken
+            Hansala
           </span>
           <span style={{ fontSize: 22, color: "rgba(255,255,255,0.45)" }}>
-            linken.com/{company.slug}
+            hansala.com/{company.slug}
           </span>
         </div>
       </div>

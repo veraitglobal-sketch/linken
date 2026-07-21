@@ -20,7 +20,7 @@ export function CompanyTeamSection({
   if (members.length === 0 && !editable) return null;
 
   return (
-    <section id="team" className="scroll-mt-24 rounded-[24px] border border-line bg-surface px-5 py-6 sm:px-6">
+    <section id="team" className="scroll-mt-24 rounded-[28px] border border-line bg-surface px-5 py-6 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">

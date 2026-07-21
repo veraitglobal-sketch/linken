@@ -12,7 +12,7 @@ type Props = {
 
 function statusLine(row: PartnershipRow) {
   if (!row.other.claimed) {
-    return "Waiting for them to join Linken and confirm";
+    return "Waiting for them to join Hansala and confirm";
   }
   return "Waiting for their response";
 }

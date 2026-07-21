@@ -58,7 +58,7 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
       name: company.name,
       url: `${siteUrl}/c/${company.slug}`,
     },
-    // Linken extension — mirrors Public API `client_confirmed`.
+    // Hansala extension — mirrors Public API `client_confirmed`.
     client_confirmed: clientConfirmed,
     ...(clientConfirmed
       ? {

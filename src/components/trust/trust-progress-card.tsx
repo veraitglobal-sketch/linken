@@ -5,13 +5,13 @@ type Props = {
   trust: TrustProfile;
 };
 
-/** Owner-only — concrete next action toward the next Linken Level. */
+/** Owner-only — concrete next action toward the next Hansala Level. */
 export function TrustProgressCard({ trust }: Props) {
   const { nextStep, points, level } = trust;
 
   if (!nextStep.nextLevel) {
     return (
-      <aside className="rounded-[24px] border border-[#0e1f1c]/15 bg-[#0e1f1c] px-5 py-5 text-white">
+      <aside className="rounded-[28px] border border-[#0e1f1c]/15 bg-[#0e1f1c] px-5 py-5 text-white shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
         <p className="text-[11px] font-semibold tracking-[0.14em] text-white/50 uppercase">
           Your progress
         </p>
@@ -24,7 +24,7 @@ export function TrustProgressCard({ trust }: Props) {
   }
 
   return (
-    <aside className="rounded-[24px] border border-line bg-[#f7f8fa] px-5 py-5">
+    <aside className="rounded-[28px] border border-line bg-[#f7f8fa] px-5 py-5 shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
         Your progress
       </p>

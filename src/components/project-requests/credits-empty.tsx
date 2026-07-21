@@ -10,7 +10,7 @@ export function CreditsEmpty() {
         Get credits
       </h2>
       <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-muted">
-        99 €/mo including 15 credits. Until checkout ships, ask Linken to grant
+        99 €/mo including 15 credits. Until checkout ships, ask Hansala to grant
         credits for your company.
       </p>
       <p className="mt-3 text-[12px] text-muted">

@@ -1,5 +1,5 @@
 /**
- * Linken Agent API v1 — authenticated contract for AI agents / integrations.
+ * Hansala Agent API v1 — authenticated contract for AI agents / integrations.
  * Fields may be ADDED. Never rename/remove. Confirm endpoints do not exist.
  */
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CompanySettingsCover } from "@/components/company/company-settings-cover";
 import { CompanySettingsForm } from "@/components/company/company-settings-form";
 import { CompanySettingsLogo } from "@/components/company/company-settings-logo";
 import { CompanySlugEditor } from "@/components/company/company-slug-editor";
@@ -15,6 +16,7 @@ type Props = {
   logoUrl?: string | null;
   website?: string | null;
   logoSource?: string | null;
+  coverImageUrl?: string | null;
   initials: string;
   domain: string | null;
   verified: boolean;
@@ -29,6 +31,7 @@ export function ProfileEditHub({
   logoUrl,
   website,
   logoSource,
+  coverImageUrl,
   initials,
   domain,
   verified,
@@ -79,6 +82,7 @@ export function ProfileEditHub({
           initials={initials}
           backPath={backPath}
         />
+        <CompanySettingsCover coverImageUrl={coverImageUrl} backPath={backPath} />
         <CompanySettingsForm company={company} backPath={backPath} />
       </div>
     </div>

@@ -24,7 +24,16 @@ function revalidateNetwork(back: string) {
   revalidatePath("/dashboard/structure");
 }
 
-/** Propose that another confirmed group member also owns a child firm. */
+const OWNERSHIP_TYPES = new Set([
+  "equity",
+  "joint_venture",
+  "private_equity",
+  "shareholding",
+  "family",
+  "other",
+]);
+
+/** Propose that another confirmed group member (or confirmed partner) also owns a child firm. */
 export async function proposeCoOwnership(formData: FormData) {
   const groupId = String(formData.get("group_id") ?? "").trim();
   const childCompanyId = String(formData.get("child_company_id") ?? "").trim();
@@ -33,8 +42,16 @@ export async function proposeCoOwnership(formData: FormData) {
   ).trim();
   const back = safeBack(String(formData.get("back") ?? ""));
 
+  const percentageRaw = String(formData.get("ownership_percentage") ?? "").trim();
+  const percentage = percentageRaw ? Number(percentageRaw) : null;
+  const typeRaw = String(formData.get("ownership_type") ?? "").trim();
+  const ownershipType = OWNERSHIP_TYPES.has(typeRaw) ? typeRaw : null;
+
   if (!groupId || !childCompanyId || !coParentCompanyId) {
     redirect(`${back}?error=${encodeURIComponent("Pick both firms.")}`);
+  }
+  if (percentage !== null && (!Number.isFinite(percentage) || percentage <= 0 || percentage > 100)) {
+    redirect(`${back}?error=${encodeURIComponent("Ownership percentage must be between 0 and 100.")}`);
   }
 
   const { user, company } = await getOperatorActiveCompany();
@@ -51,6 +68,8 @@ export async function proposeCoOwnership(formData: FormData) {
     p_child_company_id: childCompanyId,
     p_co_parent_company_id: coParentCompanyId,
     p_as_company_id: company.id,
+    p_ownership_percentage: percentage,
+    p_ownership_type: ownershipType,
   });
   if (error) {
     redirect(`${back}?error=${encodeURIComponent(error.message)}`);

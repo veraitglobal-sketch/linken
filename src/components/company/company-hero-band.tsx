@@ -4,6 +4,7 @@ import { CompanyHeroActions } from "@/components/company/company-hero-actions";
 import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
 import { LogoMark } from "@/components/ui/logo-mark";
 import { SocialIcons } from "@/components/ui/social-icons";
+import { VerifiedBadge } from "@/components/ui/verified-badge";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
 import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
@@ -89,16 +90,14 @@ export function CompanyHeroBand({
                 {company.name}
               </h1>
               {company.claimed !== false && company.verified ? (
-                <span
+                <VerifiedBadge
                   title={
                     company.verifiedAt
-                      ? `Domain verified · ${new Date(company.verifiedAt).toLocaleDateString("en-GB", { month: "long", year: "numeric" })}`
-                      : "Domain verified"
+                      ? `Verified company · ${new Date(company.verifiedAt).getFullYear()}`
+                      : "Verified company"
                   }
-                  className="rounded-full border border-[#7eb8a4]/45 bg-[#7eb8a4]/15 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-[#7eb8a4] uppercase"
-                >
-                  Verified
-                </span>
+                  size={26}
+                />
               ) : null}
               {company.claimed !== false ? (
                 <TrustLevelBadge level={trustLevel} onDark />
@@ -106,9 +105,9 @@ export function CompanyHeroBand({
             </div>
             {company.claimed !== false && company.verified ? (
               <p className="mt-2 text-[12px] text-white/45">
-                Domain verified
+                Verified company
                 {company.verifiedAt
-                  ? ` · ${new Date(company.verifiedAt).toLocaleDateString("en-GB", { month: "short", year: "numeric" })}`
+                  ? ` · ${new Date(company.verifiedAt).getFullYear()}`
                   : ""}
               </p>
             ) : null}
@@ -129,7 +128,7 @@ export function CompanyHeroBand({
                 Shareable address
               </p>
               <p className="mt-1 font-display text-lg tracking-[-0.03em] text-white sm:text-xl">
-                linken.com/
+                hansala.com/
                 <span className="text-[#7eb8a4]">{company.slug}</span>
               </p>
             </div>
@@ -150,7 +149,7 @@ export function CompanyHeroBand({
 
         <div className="group relative min-h-[220px] overflow-hidden lg:min-h-full">
           <Image
-            src="/images/hero-network.jpg"
+            src={company.coverImageUrl || "/images/hero-network.jpg"}
             alt=""
             fill
             priority
@@ -160,7 +159,7 @@ export function CompanyHeroBand({
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10 lg:bg-gradient-to-l lg:from-transparent lg:via-transparent lg:to-[rgba(10,20,18,0.5)]" />
           <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/15 bg-black/40 px-4 py-3.5 backdrop-blur-md">
             <p className="text-[11px] font-semibold tracking-[0.12em] text-[#7eb8a4] uppercase">
-              On Linken
+              On Hansala
             </p>
             <p className="mt-1 text-sm font-medium text-white">
               Profile · Case studies · Mutual partners

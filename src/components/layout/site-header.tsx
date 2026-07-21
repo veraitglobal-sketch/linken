@@ -20,7 +20,7 @@ export async function SiteHeader() {
         <Link href="/" className="inline-flex items-center gap-2.5 text-ink">
           <NetworkMark size={26} className="text-navy" />
           <span className="font-display text-[1.2rem] leading-none font-semibold tracking-[-0.035em]">
-            Linken
+            Hansala
           </span>
         </Link>
 

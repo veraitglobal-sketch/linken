@@ -4,7 +4,7 @@ import { LoginStage } from "@/components/auth/login-stage";
 
 export const metadata: Metadata = {
   title: "Sign in",
-  description: "Sign in or create your Linken account.",
+  description: "Sign in or create your Hansala account.",
 };
 
 type Props = {

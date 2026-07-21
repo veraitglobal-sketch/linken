@@ -110,7 +110,7 @@ export function LoginPanel({ error }: Props) {
             </>
           ) : (
             <>
-              New to Linken?{" "}
+              New to Hansala?{" "}
               <button
                 type="button"
                 onClick={() => setMode("create")}

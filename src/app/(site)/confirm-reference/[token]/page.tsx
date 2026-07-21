@@ -39,7 +39,7 @@ export default async function ConfirmReferencePage({
           This confirmation link is invalid or already resolved.
         </p>
         <Link href="/" className="mt-6 inline-block text-sm font-semibold underline">
-          Back to Linken
+          Back to Hansala
         </Link>
       </section>
     );
@@ -53,7 +53,7 @@ export default async function ConfirmReferencePage({
   return (
     <section className="mx-auto max-w-xl px-4 py-10 sm:py-14">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-        Linken · Reference confirmation
+        Hansala · Reference confirmation
       </p>
       <h1 className="mt-3 font-display text-[clamp(1.8rem,4vw,2.4rem)] font-medium tracking-[-0.04em] text-ink">
         Confirm a service relationship

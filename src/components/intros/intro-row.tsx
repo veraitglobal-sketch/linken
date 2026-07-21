@@ -57,7 +57,7 @@ export function IntroRow({
       <div className="mt-3 flex flex-wrap gap-2">
         {intro.replyEmail ? (
           <a
-            href={`mailto:${intro.replyEmail}?subject=${encodeURIComponent(`Re: ${intro.offer} (Linken)`)}`}
+            href={`mailto:${intro.replyEmail}?subject=${encodeURIComponent(`Re: ${intro.offer} (Hansala)`)}`}
             className="inline-flex h-9 items-center rounded-xl bg-navy px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-hover"
           >
             Reply by email

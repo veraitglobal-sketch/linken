@@ -4,7 +4,7 @@ import { OnboardingStage } from "@/components/onboarding/onboarding-stage";
 
 export const metadata: Metadata = {
   title: "Create company",
-  description: "Register your company profile on Linken.",
+  description: "Register your company profile on Hansala.",
 };
 
 type Props = {

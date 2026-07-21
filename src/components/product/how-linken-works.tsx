@@ -6,7 +6,7 @@ type Props = {
   className?: string;
 };
 
-export function HowLinkenWorks({ compact = false, className }: Props) {
+export function HowHansalaWorks({ compact = false, className }: Props) {
   if (compact) {
     return (
       <p className={cn("text-[13px] leading-relaxed text-muted", className)}>

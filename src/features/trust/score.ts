@@ -70,7 +70,7 @@ export function getTrustNextStep(
     return {
       nextLevel: null,
       pointsNeeded: 0,
-      hint: "You are at the highest Linken Level.",
+      hint: "You are at the highest Hansala Level.",
       href: `/c/${companySlug}`,
     };
   }

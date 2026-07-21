@@ -116,7 +116,7 @@ export async function requestClaimInviteResend(formData: FormData) {
     .eq("claimed", false)
     .maybeSingle();
 
-  let inviterName = "A company on Linken";
+  let inviterName = "A company on Hansala";
   if (company?.created_by_company_id) {
     const { data: inviter } = await supabase
       .from("companies")

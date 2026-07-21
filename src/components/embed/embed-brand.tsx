@@ -16,7 +16,7 @@ export type EmbedProofCompany = {
 };
 
 /** Site icon + wordmark — always the same corner signature. */
-export function EmbedLinkenMark({
+export function EmbedHansalaMark({
   theme,
   className,
   size = "sm",
@@ -33,7 +33,7 @@ export function EmbedLinkenMark({
         embedAccentClass(theme),
         className,
       )}
-      aria-label="Linken"
+      aria-label="Hansala"
     >
       <NetworkMark size={icon} animate={false} className="shrink-0" />
       <span
@@ -42,7 +42,7 @@ export function EmbedLinkenMark({
           size === "md" ? "text-[13px]" : "text-[11px]",
         )}
       >
-        Linken
+        Hansala
       </span>
     </span>
   );

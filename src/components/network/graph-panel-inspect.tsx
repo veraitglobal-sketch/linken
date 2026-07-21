@@ -9,6 +9,10 @@ import {
   ShieldIcon,
 } from "@/components/network/graph-panel-icons";
 import { PanelRow } from "@/components/network/graph-panel-row";
+import {
+  NetworkOwnershipChart,
+  type OwnershipSlice,
+} from "@/components/network/network-ownership-chart";
 import type { TeamManageAccess } from "@/features/team/panel-actions";
 import type {
   NetworkGraphContext,
@@ -17,6 +21,7 @@ import type {
 
 type Props = {
   selected: NetworkNodeData;
+  owners?: OwnershipSlice[];
   context?: NetworkGraphContext;
   editable: boolean;
   teamAccess: TeamManageAccess | null;
@@ -31,6 +36,7 @@ type Props = {
 
 export function GraphPanelInspect({
   selected,
+  owners = [],
   context,
   editable,
   teamAccess,
@@ -42,9 +48,14 @@ export function GraphPanelInspect({
   onHideInviteTeam,
   onInviteSent,
 }: Props) {
+  const showOwnership =
+    owners.length > 1 || owners.some((o) => o.percentage != null || o.type);
+
   return (
     <div className="flex-1 overflow-y-auto px-2 py-2">
       <GraphPanelInspectProfile selected={selected} context={context} />
+
+      {showOwnership ? <NetworkOwnershipChart owners={owners} /> : null}
 
       {selected.kind !== "group" && selected.companyId ? (
         <GraphTeamSection

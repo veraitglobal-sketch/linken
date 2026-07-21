@@ -184,5 +184,5 @@ export function embedSnippet(
     variant === "badge"
       ? `${siteUrl}/embed/${slug}`
       : `${siteUrl}/embed/${slug}?variant=${variant}`;
-  return `<iframe src="${src}" width="320" height="${height}" style="border:0" title="Verified on Linken" loading="lazy"></iframe>`;
+  return `<iframe src="${src}" width="320" height="${height}" style="border:0" title="Verified on Hansala" loading="lazy"></iframe>`;
 }

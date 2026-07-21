@@ -61,7 +61,7 @@ export function OwnerLoopBar({
   if (overlay) return chips;
 
   return (
-    <div className="mx-auto mt-4 max-w-6xl px-4">
+    <div className="mx-auto mt-4 max-w-6xl px-4 md:hidden">
       <div className="rounded-2xl border border-line bg-surface px-3 py-3 sm:px-4">
         {chips}
         <p className="mt-2.5 px-1 text-[12px] leading-relaxed text-muted">

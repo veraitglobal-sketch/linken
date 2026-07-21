@@ -12,12 +12,12 @@ type Props = {
 
 /**
  * Fixed trust seal — always the same place on every widget.
- * Partners/clients move; Linken stays.
+ * Partners/clients move; Hansala stays.
  */
-export function EmbedLinkenSeal({
+export function EmbedHansalaSeal({
   theme,
   href,
-  title = "Verified on Linken",
+  title = "Verified on Hansala",
   className,
 }: Props) {
   const dark = theme === "dark";
@@ -38,7 +38,7 @@ export function EmbedLinkenSeal({
             dark ? "text-white" : "text-[#0d1210]",
           )}
         >
-          Linken
+          Hansala
         </span>
         <span
           className={cn(
@@ -73,7 +73,7 @@ export function EmbedLinkenSeal({
   }
 
   return (
-    <span className={shell} title={title} aria-label="Linken">
+    <span className={shell} title={title} aria-label="Hansala">
       {body}
     </span>
   );

@@ -58,7 +58,7 @@ export async function fetchCompanyResource(
   const maxBytes = options?.maxBytes ?? DEFAULT_MAX_BYTES;
   const timeoutMs = options?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const accept = options?.accept ?? "text/html,text/plain,*/*";
-  const userAgent = options?.userAgent ?? "LinkenDomainVerify/1.0";
+  const userAgent = options?.userAgent ?? "HansalaDomainVerify/1.0";
 
   let url: string;
   try {
@@ -153,7 +153,7 @@ export async function fetchCompanySite(
     maxBytes: DEFAULT_MAX_BYTES,
     timeoutMs: DEFAULT_TIMEOUT_MS,
     accept: "text/html,text/plain,*/*",
-    userAgent: "LinkenDomainVerify/1.0",
+    userAgent: "HansalaDomainVerify/1.0",
   });
   if (!result.ok) return result;
   const body = new TextDecoder("utf-8", { fatal: false }).decode(result.body);
@@ -173,7 +173,7 @@ export async function fetchCompanyBinary(
     maxBytes: options?.maxBytes ?? 1024 * 1024,
     timeoutMs: options?.timeoutMs ?? 8_000,
     accept: "image/*,*/*",
-    userAgent: "LinkenLogoFetch/1.0",
+    userAgent: "HansalaLogoFetch/1.0",
   });
 }
 

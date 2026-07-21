@@ -40,7 +40,7 @@ export function WidgetCodeStep({
         ) : (
           <>
             <p className="text-[13px] leading-relaxed text-ink">
-              Paste this iframe on your site. It links to your Linken profile and
+              Paste this iframe on your site. It links to your Hansala profile and
               can count toward website backlink verification.
             </p>
             <div className="relative mt-4 overflow-hidden rounded-2xl bg-navy-deep ring-1 ring-navy">

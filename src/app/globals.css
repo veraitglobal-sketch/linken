@@ -103,7 +103,7 @@ a {
   }
 }
 
-/* Embed widgets — partner logos slide; Linken seal stays fixed */
+/* Embed widgets — partner logos slide; Hansala seal stays fixed */
 @keyframes linken-marquee {
   from {
     transform: translate3d(0, 0, 0);

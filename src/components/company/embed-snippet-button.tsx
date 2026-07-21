@@ -43,8 +43,8 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
     <div className="relative">
       <Button
         type="button"
-        variant="secondary"
-        className="h-11 min-w-[150px] px-5"
+        variant="onDark"
+        className="h-10 px-4"
         onClick={() => setOpen((v) => !v)}
       >
         Embed

@@ -266,7 +266,7 @@ export async function disconnectGraphEdge(input: {
 }
 
 /**
- * Add an existing Linken company into this workspace graph.
+ * Add an existing Hansala company into this workspace graph.
  * - partner: partnership request (pending until they confirm)
  * - group: invite into company group (optionally under a parent firm)
  */

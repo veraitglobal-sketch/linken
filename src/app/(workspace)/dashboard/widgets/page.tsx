@@ -43,7 +43,7 @@ export default async function DashboardWidgetsPage({ searchParams }: Props) {
 
   if (!user) {
     return (
-      <WorkspacePage title="Widgets" description="Embed Linken on your website.">
+      <WorkspacePage title="Widgets" description="Embed Hansala on your website.">
         <p className="text-[14px] text-muted">
           <Link
             href="/login?next=/dashboard/widgets"
@@ -59,7 +59,7 @@ export default async function DashboardWidgetsPage({ searchParams }: Props) {
 
   if (!company) {
     return (
-      <WorkspacePage title="Widgets" description="Embed Linken on your website.">
+      <WorkspacePage title="Widgets" description="Embed Hansala on your website.">
         <p className="text-[14px] text-muted">
           <Link
             href="/onboarding"

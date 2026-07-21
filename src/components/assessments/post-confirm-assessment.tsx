@@ -30,8 +30,8 @@ export function PostConfirmAssessment({
         ? "Confirmed"
         : "Already confirmed";
     const body = assessedJustNow
-      ? "Your confirmation is on Linken. Strengths help others know what to expect."
-      : "This confirmation is recorded on Linken. No public review was required.";
+      ? "Your confirmation is on Hansala. Strengths help others know what to expect."
+      : "This confirmation is recorded on Hansala. No public review was required.";
     return (
       <div className="rounded-[24px] border border-line bg-surface px-5 py-8 text-center sm:px-7">
         <h2 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
@@ -55,7 +55,7 @@ export function PostConfirmAssessment({
           Confirmed
         </h2>
         <p className="mx-auto mt-2 max-w-md text-[14px] text-ink-soft">
-          Thank you — this is now verified on Linken.
+          Thank you — this is now verified on Hansala.
         </p>
       </div>
       <AssessmentForm

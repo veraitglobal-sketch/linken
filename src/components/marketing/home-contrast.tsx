@@ -34,7 +34,7 @@ export function HomeContrast() {
         <article className="relative flex min-h-[280px] flex-col overflow-hidden rounded-[28px] bg-navy px-6 py-8 text-white shadow-[0_22px_56px_rgba(8,20,18,0.22)]">
           <div className="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full bg-blue-soft/15 blur-3xl" />
           <p className="relative text-[11px] font-semibold tracking-[0.16em] text-blue-soft uppercase">
-            03 · Linken
+            03 · Hansala
           </p>
           <h3 className="relative mt-6 font-display text-3xl font-medium tracking-[-0.038em]">
             Mutual confirmation

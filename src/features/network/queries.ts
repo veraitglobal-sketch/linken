@@ -280,14 +280,22 @@ function trimGraph(
   };
 }
 
-type CoOwnerLink = { childId: string; coParentId: string; id: string };
+type CoOwnerLink = {
+  childId: string;
+  coParentId: string;
+  id: string;
+  ownershipPercentage: number | null;
+  ownershipType: string | null;
+};
 
 /** Confirmed extra owners (joint ventures) — additive on top of the primary tree. */
 async function loadConfirmedCoOwners(groupId: string): Promise<CoOwnerLink[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("company_co_owners")
-    .select("id, child_company_id, co_parent_company_id")
+    .select(
+      "id, child_company_id, co_parent_company_id, ownership_percentage, ownership_type",
+    )
     .eq("group_id", groupId)
     .eq("status", "confirmed");
 
@@ -295,6 +303,8 @@ async function loadConfirmedCoOwners(groupId: string): Promise<CoOwnerLink[]> {
     id: row.id as string,
     childId: row.child_company_id as string,
     coParentId: row.co_parent_company_id as string,
+    ownershipPercentage: (row.ownership_percentage as number | null) ?? null,
+    ownershipType: (row.ownership_type as string | null) ?? null,
   }));
 }
 
@@ -432,6 +442,7 @@ async function buildGroupGraph(
     created_by?: string | null;
   },
   members: MemberRow[],
+  focusCompanyId?: string | null,
 ): Promise<NetworkGraph> {
   const countryCount = new Set(
     members.map((m) => m.country).filter(Boolean),
@@ -535,6 +546,8 @@ async function buildGroupGraph(
           groupId: group.id,
           memberCompanyId: link.childId,
           coOwnerId: link.id,
+          ownershipPercentage: link.ownershipPercentage,
+          ownershipType: link.ownershipType,
           label: "Shared ownership",
         },
       }),
@@ -545,6 +558,7 @@ async function buildGroupGraph(
     groupId: group.id,
     groupSlug: group.slug,
     groupCreatedBy: group.created_by ?? null,
+    focusCompanyId: focusCompanyId ?? null,
   });
 }
 
@@ -676,6 +690,7 @@ async function buildLocalCompanyGraph(
     groupCreatedBy: options.group?.created_by ?? null,
     groupSlug: options.group?.slug ?? null,
     viewerCompanyId: company.id,
+    focusCompanyId: company.id,
   });
 }
 
@@ -841,15 +856,39 @@ async function graphForCompany(
     .maybeSingle();
 
   const groupRaw = membership?.group;
-  const group = groupRaw
+  let group = groupRaw
     ? Array.isArray(groupRaw)
       ? groupRaw[0]
       : groupRaw
     : null;
 
+  // The group's creator (parent company) has no membership row of its own —
+  // check ownership separately so its profile still shows the full tree.
+  if (!group) {
+    const { data: creatorCompany } = await supabase
+      .from("companies")
+      .select("owner_id")
+      .eq("id", company.id)
+      .maybeSingle();
+    if (creatorCompany?.owner_id) {
+      const { data: ownedGroup } = await supabase
+        .from("company_groups")
+        .select(
+          "id, name, slug, website, logo_url, logo_source, created_by, members:company_group_members!group_id(status)",
+        )
+        .eq("created_by", creatorCompany.owner_id)
+        .limit(1)
+        .maybeSingle();
+      const hasConfirmedMember = (ownedGroup?.members ?? []).some(
+        (m: { status: string }) => m.status === "confirmed",
+      );
+      if (ownedGroup && hasConfirmedMember) group = ownedGroup;
+    }
+  }
+
   if (group && expand === "full") {
     const members = await loadGroupMembers(group.id);
-    return buildGroupGraph(group, members);
+    return buildGroupGraph(group, members, company.id);
   }
 
   let descendants: MemberRow[] = [];

@@ -4,7 +4,7 @@ export function RadarLocked() {
   return (
     <WorkspaceCard>
       <p className="text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
-        Linken Radar
+        Hansala Radar
       </p>
       <h2 className="mt-1 font-display text-[18px] font-semibold tracking-[-0.03em] text-ink">
         Coming soon

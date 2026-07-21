@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const company = await getCompanyForPage(slug);
   return {
-    title: company ? `${company.name} · Verified on Linken` : "Linken badge",
+    title: company ? `${company.name} · Verified on Hansala` : "Hansala badge",
     robots: { index: false, follow: true },
   };
 }

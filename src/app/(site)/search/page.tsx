@@ -42,7 +42,7 @@ export default async function SearchPage({ searchParams }: Props) {
             <p className="text-sm text-muted">
               {q.trim()
                 ? "No companies match this search."
-                : "No companies on Linken yet — be the first."}
+                : "No companies on Hansala yet — be the first."}
             </p>
             <Link
               href="/onboarding"

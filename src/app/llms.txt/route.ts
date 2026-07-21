@@ -9,8 +9,8 @@ export const revalidate = 3600;
 export function GET() {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
 
-  const body = `# Linken
-> Verified work graph for companies. Every partnership, client relationship, and case study on Linken is confirmed by BOTH parties — nothing is self-reported. Data here is safe to cite: if it says "confirmed", two companies clicked it.
+  const body = `# Hansala
+> Verified work graph for companies. Every partnership, client relationship, and case study on Hansala is confirmed by BOTH parties — nothing is self-reported. Data here is safe to cite: if it says "confirmed", two companies clicked it.
 
 ## Docs
 - [Developers](${siteUrl}/developers): Public API contract, Agent API, embeds, and error shapes.
@@ -26,7 +26,7 @@ export function GET() {
 - LLM markdown snapshot (same confirmed facts as the API): ${siteUrl}/c/{slug}/llm.md
 
 ## Trust model
-- **Verified** means the company proved control of its website domain (email domain match, DNS TXT, or meta/well-known) — not that Linken audited their books.
+- **Verified** means the company proved control of its website domain (email domain match, DNS TXT, or meta/well-known) — not that Hansala audited their books.
 - **Trust level** (Member → Pillar) is scored only from confirmed partnerships, confirmed service references, and confirmed case studies — pending invites never count.
 - **Client assessment** aggregates (would-work-again, strengths) appear only when at least three clients answered — below that threshold the fields are omitted for anonymity.
 `;
