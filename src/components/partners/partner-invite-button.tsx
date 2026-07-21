@@ -18,7 +18,7 @@ export function PartnerInviteButton({
 }: Props) {
   if (disabledReason) {
     return (
-      <span className="shrink-0 rounded-lg border border-[#e8eaee] bg-[#fafbfc] px-2.5 py-1.5 text-[11px] font-semibold text-[#94a3b8]">
+      <span className="shrink-0 rounded-lg border border-line bg-paper px-2.5 py-1.5 text-[11px] font-semibold text-muted">
         {disabledReason}
       </span>
     );

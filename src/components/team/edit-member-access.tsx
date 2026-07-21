@@ -17,37 +17,36 @@ export function EditMemberAccess({ companyId, userId, permissions }: Props) {
 
   if (!open) {
     return (
-      <Button
-        type="button"
-        variant="ghost"
-        className="h-8 px-3 text-[11px]"
-        onClick={() => setOpen(true)}
-      >
-        Edit access
-      </Button>
+      <div className="flex justify-end">
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-9 px-3.5 text-[12px]"
+          onClick={() => setOpen(true)}
+        >
+          Edit access
+        </Button>
+      </div>
     );
   }
 
   return (
     <form
       action={updateMemberPermissions}
-      className="w-full max-w-md space-y-3 rounded-xl border border-[#e8eaee] bg-[#fafbfc] p-3"
+      className="space-y-3 rounded-xl border border-line bg-paper/50 p-3.5"
     >
       <input type="hidden" name="company_id" value={companyId} />
       <input type="hidden" name="user_id" value={userId} />
-      <input type="hidden" name="back" value="/dashboard/team" />
-      <SectionPermissionsFields
-        visible
-        defaultPermissions={permissions}
-      />
-      <div className="flex gap-2">
-        <Button type="submit" className="h-8 text-[11px]">
-          Save access
+      <input type="hidden" name="back" value="/dashboard/team?tab=people" />
+      <SectionPermissionsFields visible defaultPermissions={permissions} />
+      <div className="flex flex-wrap gap-2">
+        <Button type="submit" className="h-9 px-3.5 text-[12px]">
+          Save
         </Button>
         <Button
           type="button"
           variant="ghost"
-          className="h-8 text-[11px]"
+          className="h-9 px-3.5 text-[12px]"
           onClick={() => setOpen(false)}
         >
           Cancel

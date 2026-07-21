@@ -12,9 +12,9 @@ type Props = {
 
 function statusLine(row: PartnershipRow) {
   if (!row.other.claimed) {
-    return "Invited — waiting for them to join Linken and confirm";
+    return "Waiting for them to join Linken and confirm";
   }
-  return "Invited — waiting for their response";
+  return "Waiting for their response";
 }
 
 function invitedOn(iso: string | undefined) {
@@ -35,70 +35,85 @@ export function PendingPartnerInvites({
   if (rows.length === 0) return null;
 
   return (
-    <WorkspaceCard>
-      <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
-        Pending invites
-      </h3>
-      <p className="mt-0.5 text-[12px] leading-relaxed text-[#64748b]">
-        Pending partners don&apos;t appear on your public network map until they
-        confirm — this protects the accuracy of everyone&apos;s profile.
-      </p>
-      <ul className="mt-4 space-y-2">
-        {rows.map((row) => {
-          const date = invitedOn(row.createdAt);
-          const ghost = !row.other.claimed;
-          return (
-            <li
-              key={row.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-[#e2e8f0] bg-[#fafbfc] px-3 py-3"
-            >
-              <div className="min-w-0">
-                <Link
-                  href={`/c/${row.other.slug}`}
-                  className="text-[13px] font-semibold text-ink hover:underline"
-                >
-                  {row.other.name}
-                </Link>
-                <p className="mt-0.5 text-[11px] font-medium text-[#d97706]">
-                  {statusLine(row)}
-                </p>
-                {date ? (
-                  <p className="mt-0.5 text-[10px] text-[#94a3b8]">
-                    Invited {date}
-                    {ghost ? " · Draft profile" : ""}
+    <section>
+      <header className="mb-3 flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
+            Pending invites
+          </h2>
+          <p className="mt-1 text-[12px] leading-relaxed text-muted">
+            Not on Network until they confirm.
+          </p>
+        </div>
+        <p className="text-[12px] font-medium text-plus">
+          {rows.length} pending
+        </p>
+      </header>
+      <WorkspaceCard padded={false}>
+        <ul className="divide-y divide-line">
+          {rows.map((row) => {
+            const date = invitedOn(row.createdAt);
+            const ghost = !row.other.claimed;
+            return (
+              <li
+                key={row.id}
+                className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 sm:px-6"
+              >
+                <div className="min-w-0">
+                  <Link
+                    href={`/c/${row.other.slug}`}
+                    className="text-[14px] font-semibold text-ink underline-offset-2 hover:underline"
+                  >
+                    {row.other.name}
+                  </Link>
+                  <p className="mt-0.5 text-[12px] font-medium text-ink">
+                    {statusLine(row)}
                   </p>
-                ) : null}
-              </div>
-              <div className="flex gap-2">
-                {ghost ? (
-                  <form action={resendPendingPartnerInvite}>
+                  {date ? (
+                    <p className="mt-0.5 text-[11px] text-muted">
+                      Invited {date}
+                      {ghost ? " · Draft profile" : ""}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="flex gap-2">
+                  {ghost ? (
+                    <form action={resendPendingPartnerInvite}>
+                      <input
+                        type="hidden"
+                        name="company_id"
+                        value={row.other.id}
+                      />
+                      <input type="hidden" name="back" value={back} />
+                      <Button
+                        type="submit"
+                        className="h-9 px-3.5 text-[12px]"
+                      >
+                        Resend
+                      </Button>
+                    </form>
+                  ) : null}
+                  <form action={withdrawPartnership}>
                     <input
                       type="hidden"
-                      name="company_id"
-                      value={row.other.id}
+                      name="partnership_id"
+                      value={row.id}
                     />
                     <input type="hidden" name="back" value={back} />
-                    <Button type="submit" className="h-8 px-3 text-[11px]">
-                      Resend invite
+                    <Button
+                      type="submit"
+                      variant="ghost"
+                      className="h-9 px-3.5 text-[12px]"
+                    >
+                      Withdraw
                     </Button>
                   </form>
-                ) : null}
-                <form action={withdrawPartnership}>
-                  <input type="hidden" name="partnership_id" value={row.id} />
-                  <input type="hidden" name="back" value={back} />
-                  <Button
-                    type="submit"
-                    variant="ghost"
-                    className="h-8 px-3 text-[11px]"
-                  >
-                    Withdraw
-                  </Button>
-                </form>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </WorkspaceCard>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </WorkspaceCard>
+    </section>
   );
 }

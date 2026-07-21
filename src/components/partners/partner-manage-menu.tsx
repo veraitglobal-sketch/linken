@@ -19,7 +19,7 @@ export function PartnerManageMenu({ partnershipId, back }: Props) {
         aria-label="Manage partnership"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-7 w-7 items-center justify-center rounded-lg text-[#94a3b8] transition-colors hover:bg-[#eef1f3] hover:text-ink"
+        className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-paper hover:text-ink"
       >
         <span aria-hidden className="text-[16px] leading-none">
           ⋯

@@ -37,7 +37,7 @@ export function PartnerNetworkTile({ partner }: Props) {
       <h3 className="mt-4 font-display text-[1.25rem] font-medium tracking-[-0.03em] text-ink transition-colors group-hover:text-[#1a5c51]">
         {partner.name}
       </h3>
-      <p className="mt-1.5 text-[13px] text-ink-soft">
+      <p className="mt-1.5 text-[13px] text-muted">
         {partner.category} company
       </p>
       <p className="mt-1 text-[12px] text-muted">
@@ -45,7 +45,7 @@ export function PartnerNetworkTile({ partner }: Props) {
       </p>
 
       <div className="mt-auto border-t border-line pt-3.5">
-        <p className="text-[12px] text-ink-soft">{casesLabel}</p>
+        <p className="text-[12px] text-muted">{casesLabel}</p>
         <p className="mt-1 text-[13px] font-semibold text-ink underline-offset-4 group-hover:underline">
           Open profile
         </p>

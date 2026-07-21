@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StructureTree } from "@/components/dashboard/structure-tree";
-import {
-  StructureFlash,
-  StructureSectionHead,
-  StructureStat,
-} from "@/components/dashboard/structure-ui";
+import { StructureFlash, StructureStat } from "@/components/dashboard/structure-ui";
 import {
   WorkspaceCard,
   WorkspacePage,
 } from "@/components/dashboard/workspace-page";
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
-import { Button } from "@/components/ui/button";
 import { getDashboardSession } from "@/features/dashboard/session";
 import {
   getDashboardGroupById,
@@ -43,31 +38,39 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
 
   if (!user) {
     return (
-      <p className="px-5 py-10 text-[14px] text-muted sm:px-8">
-        <Link
-          href="/login?next=/dashboard/structure"
-          className="font-semibold text-ink underline-offset-2 hover:underline"
-        >
-          Sign in
-        </Link>{" "}
-        to manage company structure.
-      </p>
+      <WorkspacePage
+        title="Structure"
+        description="Ownership tree and subsidiaries."
+      >
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/login?next=/dashboard/structure"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
+            Sign in
+          </Link>{" "}
+          to manage company structure.
+        </p>
+      </WorkspacePage>
     );
   }
 
   if (!company && !data) {
     return (
-      <div className="px-5 py-10 sm:px-8">
-        <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
-          Register the main company first
-        </h1>
-        <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-muted">
-          Create your firm, then add subsidiaries under it.
+      <WorkspacePage
+        title="Structure"
+        description="Ownership tree and subsidiaries."
+      >
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/onboarding"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
+            Create your company
+          </Link>{" "}
+          first, then add subsidiaries.
         </p>
-        <Button href="/onboarding" className="mt-5 h-11">
-          Create company
-        </Button>
-      </div>
+      </WorkspacePage>
     );
   }
 
@@ -82,17 +85,17 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
   return (
     <WorkspacePage
       title="Structure"
-      description={`${rootName} is the root. Nest subsidiaries, invite firms, and keep ownership clear.`}
+      description={`${rootName} is the root. Nest subsidiaries and keep ownership clear.`}
       action={
         <Link
           href="/dashboard"
           className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
         >
-          Open network map
+          Network map
         </Link>
       }
     >
-      <div className="space-y-5">
+      <div className="space-y-10">
         {error ? <StructureFlash tone="error">{error}</StructureFlash> : null}
         {created ? <StructureFlash>Group created.</StructureFlash> : null}
         {invited ? (
@@ -118,38 +121,51 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
           <StructureStat label="Subsidiaries" value={String(subsidiaries)} />
         </div>
 
-        <WorkspaceCard className="overflow-hidden !p-0">
-          <StructureSectionHead
-            eyebrow="Ownership"
-            title={hasTree ? "Confirmed hierarchy" : "No hierarchy yet"}
-            description={
-              hasTree
-                ? `Nested firms under ${rootName}.`
-                : "Create a group and add a subsidiary — the tree appears here."
-            }
-            tone="soft"
-          />
-          {hasTree ? (
-            <div className="bg-paper/30 px-3 py-3 sm:px-4 sm:py-4">
-              <StructureTree
-                roots={data!.tree}
-                highlightCompanyId={company?.id}
-              />
+        <section>
+          <header className="mb-3 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
+                Hierarchy
+              </h2>
+              <p className="mt-1 text-[12px] leading-relaxed text-muted">
+                {hasTree
+                  ? `Nested firms under ${rootName}.`
+                  : "Create a group and add a subsidiary — the tree appears here."}
+              </p>
             </div>
-          ) : null}
-        </WorkspaceCard>
+            <Link
+              href="/dashboard/group"
+              className="text-[12px] font-semibold text-ink underline-offset-2 hover:underline"
+            >
+              Company group
+            </Link>
+          </header>
+          <WorkspaceCard padded={false} className="overflow-hidden">
+            {hasTree ? (
+              <div className="px-3 py-3 sm:px-4 sm:py-4">
+                <StructureTree
+                  roots={data!.tree}
+                  highlightCompanyId={company?.id}
+                />
+              </div>
+            ) : (
+              <div className="px-5 py-10 text-center sm:px-6">
+                <p className="text-[14px] font-medium text-ink">
+                  No hierarchy yet
+                </p>
+                <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-muted">
+                  Add a subsidiary below to start the tree.
+                </p>
+              </div>
+            )}
+          </WorkspaceCard>
+        </section>
 
-        <DashboardGroupPanel data={data} backPath="/dashboard/structure" />
-
-        <p className="text-[12px] text-muted">
-          Prefer the classic group page?{" "}
-          <Link
-            href="/dashboard/group"
-            className="font-semibold text-ink underline-offset-2 hover:underline"
-          >
-            Open company group →
-          </Link>
-        </p>
+        <DashboardGroupPanel
+          data={data}
+          backPath="/dashboard/structure"
+          omitMembers
+        />
       </div>
     </WorkspacePage>
   );

@@ -56,28 +56,28 @@ export function GraphPendingInvites({ companyId, refreshKey = 0 }: Props) {
 
   return (
     <div className="mt-3 border-t border-[#eef0f3] px-3 pt-3 pb-2">
-      <p className="text-[10px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+      <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
         Awaiting response ({invites.length})
       </p>
-      <p className="mt-1 text-[11px] text-[#64748b]">
+      <p className="mt-1 text-[11px] text-muted">
         Visible only to you — never on the public profile or map.
       </p>
       <ul className="mt-2 space-y-1.5">
         {invites.map((inv) => (
           <li
             key={inv.id}
-            className="flex items-start gap-2 rounded-xl border border-dashed border-[#d1d5db] bg-[#f8fafc] px-2.5 py-2"
+            className="flex items-start gap-2 rounded-xl border border-dashed border-[#d1d5db] bg-paper px-2.5 py-2"
           >
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12px] font-semibold text-[#64748b]">
+              <p className="truncate text-[12px] font-semibold text-muted">
                 {inv.inviteName}
               </p>
               {inv.inviteTitle ? (
-                <p className="truncate text-[11px] text-[#94a3b8]">
+                <p className="truncate text-[11px] text-muted">
                   {inv.inviteTitle}
                 </p>
               ) : null}
-              <p className="mt-0.5 text-[10px] text-[#94a3b8]">
+              <p className="mt-0.5 text-[10px] text-muted">
                 {relativeTime(inv.createdAt)}
                 {inv.role === "admin" ? " · Admin" : ""}
               </p>
@@ -86,7 +86,7 @@ export function GraphPendingInvites({ companyId, refreshKey = 0 }: Props) {
               type="button"
               disabled={pending && busyId === inv.id}
               onClick={() => cancelInvite(inv.id)}
-              className="shrink-0 text-[10px] font-semibold text-[#64748b] underline-offset-2 hover:text-ink hover:underline disabled:opacity-50"
+              className="shrink-0 text-[10px] font-semibold text-muted underline-offset-2 hover:text-ink hover:underline disabled:opacity-50"
             >
               Cancel
             </button>

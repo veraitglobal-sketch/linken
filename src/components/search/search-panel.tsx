@@ -86,7 +86,7 @@ export function SearchPanel({ mode = "browse", excludeSlug }: Props) {
                   back="/search"
                 />
               ) : mode === "invite" && !hit.claimed ? (
-                <span className="shrink-0 text-[11px] font-semibold text-[#94a3b8]">
+                <span className="shrink-0 text-[11px] font-semibold text-muted">
                   Unclaimed
                 </span>
               ) : undefined

@@ -24,7 +24,7 @@ export function LogoRetryHint({
   if (logoSource || !website?.trim()) return null;
 
   return (
-    <div className="text-[11px] text-[#94a3b8]">
+    <div className="text-[11px] text-muted">
       Logo: not fetched yet ·{" "}
       {kind === "group" && groupId ? (
         <form action={refreshGroupLogo} className="inline">

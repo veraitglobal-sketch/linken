@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
-import { SectionTitle } from "@/components/ui/section-title";
+import { GroupFlash } from "@/components/groups/group-flash";
 import { getDashboardSession } from "@/features/dashboard/session";
 import {
   getDashboardGroupById,
@@ -34,50 +35,51 @@ export default async function DashboardGroupPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="max-w-3xl space-y-2 pb-8">
-      <SectionTitle
-        eyebrow="Network"
-        title="Company group"
-        description="Organize country branches under one group. Evidence stays on each company profile. Prefer Structure for the tree view."
-      />
+    <WorkspacePage
+      title="Company group"
+      description="Country branches under one group. Evidence stays on each company."
+      action={
+        <Link
+          href="/dashboard/structure"
+          className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+        >
+          Structure tree
+        </Link>
+      }
+    >
+      <div className="space-y-8">
+        {error ? <GroupFlash tone="error">{error}</GroupFlash> : null}
+        {created ? <GroupFlash>Group created.</GroupFlash> : null}
+        {invited ? (
+          <GroupFlash>Invite sent to {invited}. They must confirm.</GroupFlash>
+        ) : null}
+        {subsidiary ? (
+          <GroupFlash>
+            Subsidiary created:{" "}
+            <Link
+              href={`/c/${subsidiary}`}
+              className="font-semibold underline-offset-2 hover:underline"
+            >
+              {subsidiary}
+            </Link>
+            . Local managers can claim it later.
+          </GroupFlash>
+        ) : null}
 
-      {error ? (
-        <p className="mt-6 rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-          {error}
-        </p>
-      ) : null}
-      {created ? (
-        <p className="mt-6 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
-          Group created.
-        </p>
-      ) : null}
-      {invited ? (
-        <p className="mt-6 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
-          Invite sent to {invited}. They must confirm.
-        </p>
-      ) : null}
-      {subsidiary ? (
-        <p className="mt-6 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
-          Subsidiary created:{" "}
-          <Link href={`/c/${subsidiary}`} className="font-semibold underline">
-            {subsidiary}
-          </Link>
-          . Local managers can claim it later.
-        </p>
-      ) : null}
-
-      {!user ? (
-        <p className="mt-8 text-sm text-ink-soft">
-          <Link href="/login?next=/dashboard/group" className="font-semibold underline">
-            Sign in
-          </Link>{" "}
-          to manage a company group.
-        </p>
-      ) : (
-        <div className="mt-8">
+        {!user ? (
+          <p className="text-[14px] text-muted">
+            <Link
+              href="/login?next=/dashboard/group"
+              className="font-semibold text-ink underline-offset-2 hover:underline"
+            >
+              Sign in
+            </Link>{" "}
+            to manage a company group.
+          </p>
+        ) : (
           <DashboardGroupPanel data={data} />
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </WorkspacePage>
   );
 }

@@ -7,13 +7,23 @@ type Props = {
   member: TeamMember;
   isYou?: boolean;
   actions?: ReactNode;
+  index?: number;
 };
 
-export function TeamMemberRow({ member, isYou, actions }: Props) {
+function roleLabel(role: string) {
+  if (role === "owner") return "Owner";
+  if (role === "admin") return "Admin";
+  return "Member";
+}
+
+export function TeamMemberRow({ member, isYou, actions, index = 0 }: Props) {
   const name = member.displayName.trim() || (isYou ? "You" : "Unnamed");
   return (
-    <li className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e8eaee] px-3 py-3">
-      <div className="flex min-w-0 items-center gap-3">
+    <li
+      className="linken-widget-enter flex flex-wrap items-start justify-between gap-3 px-5 py-3.5 sm:px-6"
+      style={{ animationDelay: `${index * 40}ms` }}
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         <LogoMark
           initials={initialsFromName(name)}
           logoUrl={member.photoUrl}
@@ -21,25 +31,31 @@ export function TeamMemberRow({ member, isYou, actions }: Props) {
         />
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate text-[13px] font-semibold text-ink">
+            <p className="truncate text-[14px] font-semibold text-ink">
               {name}
               {isYou ? (
-                <span className="ml-1.5 text-[11px] font-medium text-[#94a3b8]">
+                <span className="ml-1.5 text-[11px] font-medium text-muted">
                   (you)
                 </span>
               ) : null}
             </p>
-            <Badge tone="neutral">{member.role}</Badge>
+            <Badge tone={member.role === "owner" ? "success" : "neutral"}>
+              {roleLabel(member.role)}
+            </Badge>
             <Badge tone={member.publicVisible ? "success" : "neutral"}>
               {member.publicVisible ? "Public" : "Hidden"}
             </Badge>
           </div>
-          <p className="mt-0.5 truncate text-[12px] text-[#64748b]">
-            {member.displayTitle.trim() || "—"}
+          <p className="mt-0.5 truncate text-[12px] text-muted">
+            {member.displayTitle.trim() || "No title yet"}
           </p>
         </div>
       </div>
-      {actions}
+      {actions ? (
+        <div className="w-full min-w-0 sm:w-auto sm:max-w-sm sm:shrink-0">
+          {actions}
+        </div>
+      ) : null}
     </li>
   );
 }

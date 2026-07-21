@@ -14,19 +14,19 @@ export function GettingStartedCard({ checklist, className }: Props) {
   return (
     <section
       className={cn(
-        "rounded-2xl border border-[#e2e8f0] bg-white px-5 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] sm:px-6",
+        "rounded-2xl border border-line bg-white px-5 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] sm:px-6",
         className,
       )}
     >
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">
           Getting started
         </p>
-        <p className="text-[12px] font-semibold tabular-nums text-[#64748b]">
+        <p className="text-[12px] font-semibold tabular-nums text-muted">
           {checklist.doneCount}/{checklist.total}
         </p>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#f1f5f9]">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-paper">
         <div
           className="h-full rounded-full bg-[#0e1f1c] transition-[width] duration-300"
           style={{
@@ -34,7 +34,7 @@ export function GettingStartedCard({ checklist, className }: Props) {
           }}
         />
       </div>
-      <p className="mt-2 text-[13px] leading-relaxed text-[#64748b]">
+      <p className="mt-2 text-[13px] leading-relaxed text-muted">
         Each step fills your network with confirmed evidence.
       </p>
       <div className="mt-3">

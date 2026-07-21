@@ -181,7 +181,7 @@ function MobileNav({ pathname }: { pathname: string }) {
             "shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors",
             pathname === href
               ? "bg-navy font-semibold text-white"
-              : "text-ink-soft hover:text-ink",
+              : "text-muted hover:text-ink",
           )}
         >
           {label}

@@ -6,10 +6,10 @@ import {
   WORKSPACE_SECTIONS,
   type WorkspaceSection,
 } from "@/features/workspace/sections";
+import { cn } from "@/lib/cn";
 
 type Props = {
   defaultPermissions?: WorkspaceSection[];
-  /** When false, fields are hidden (admin role selected). */
   visible: boolean;
 };
 
@@ -17,41 +17,48 @@ export function SectionPermissionsFields({
   defaultPermissions = [],
   visible,
 }: Props) {
-  const [selected, setSelected] = useState<WorkspaceSection[]>(defaultPermissions);
+  const [selected, setSelected] =
+    useState<WorkspaceSection[]>(defaultPermissions);
 
   if (!visible) return null;
 
+  function toggle(key: WorkspaceSection) {
+    setSelected((prev) =>
+      prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key],
+    );
+  }
+
   return (
     <fieldset className="sm:col-span-2">
-      <legend className="mb-2 text-[12px] font-medium text-ink">
+      <legend className="mb-1.5 text-[12px] font-medium text-ink">
         Section access
       </legend>
-      <p className="mb-2 text-[11px] text-[#64748b]">
-        Members only see selected workspace sections.
+      <p className="mb-2.5 text-[11px] text-muted">
+        Sections this member can open.
       </p>
-      <div className="grid gap-1.5 sm:grid-cols-2">
+      <div className="flex flex-wrap gap-1.5">
         {WORKSPACE_SECTIONS.map((key) => {
-          const checked = selected.includes(key);
+          const on = selected.includes(key);
           return (
-            <label
-              key={key}
-              className="flex items-center gap-2 rounded-lg border border-[#e8eaee] bg-[#fafbfc] px-3 py-2 text-[12px] text-ink"
-            >
+            <label key={key} className="cursor-pointer">
               <input
                 type="checkbox"
                 name="permissions"
                 value={key}
-                checked={checked}
-                onChange={(e) => {
-                  setSelected((prev) =>
-                    e.target.checked
-                      ? [...prev, key]
-                      : prev.filter((s) => s !== key),
-                  );
-                }}
-                className="h-3.5 w-3.5 rounded border-line"
+                checked={on}
+                onChange={() => toggle(key)}
+                className="sr-only"
               />
-              {WORKSPACE_SECTION_LABELS[key]}
+              <span
+                className={cn(
+                  "inline-flex h-8 items-center rounded-lg border px-2.5 text-[11px] font-semibold transition-colors",
+                  on
+                    ? "border-navy/25 bg-navy/[0.08] text-ink"
+                    : "border-line bg-paper text-muted hover:border-ink/20 hover:text-ink",
+                )}
+              >
+                {WORKSPACE_SECTION_LABELS[key]}
+              </span>
             </label>
           );
         })}

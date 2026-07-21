@@ -51,7 +51,7 @@ export function DashboardAside({
             <li key={item.href}>
               <Link
                 href={item.href}
-                className="block py-1.5 text-[13px] font-medium text-ink-soft transition-colors hover:text-ink"
+                className="block py-1.5 text-[13px] font-medium text-muted transition-colors hover:text-ink"
               >
                 {item.label}
               </Link>
@@ -134,7 +134,7 @@ export function DashboardAside({
         <p className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">
           Ownership
         </p>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
+        <p className="mt-2 text-[13px] leading-relaxed text-muted">
           Transfer {company.name} to a new owner. Trust and references stay with
           the company.
         </p>

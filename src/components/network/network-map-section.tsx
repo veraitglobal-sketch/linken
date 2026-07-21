@@ -35,7 +35,7 @@ export async function NetworkMapSection({
           <h2 className="mt-2 font-display text-[clamp(1.5rem,2.4vw,1.9rem)] font-medium tracking-[-0.035em] text-ink">
             {title}
           </h2>
-          <p className="mt-2 max-w-[42rem] text-[14px] leading-relaxed text-ink-soft">
+          <p className="mt-2 max-w-[42rem] text-[14px] leading-relaxed text-muted">
             Confirmed relationships only — subsidiaries, partners, and clients.
             Evidence stays on each company; the map shows how they connect.
           </p>
@@ -81,7 +81,7 @@ export async function NetworkMapSection({
                     </span>
                   </Link>
                 ) : (
-                  <div className="rounded-2xl border border-line px-3 py-2.5 text-[13px] text-ink-soft">
+                  <div className="rounded-2xl border border-line px-3 py-2.5 text-[13px] text-muted">
                     {n.data.name}
                   </div>
                 )}

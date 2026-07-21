@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
 import { PendingGroupInvites } from "@/components/groups/pending-group-invites";
 import { NetworkMapCanvas } from "@/components/network/network-map-canvas";
-import { Button } from "@/components/ui/button";
 import { getDashboardSession } from "@/features/dashboard/session";
 import {
   getDashboardGroupById,
@@ -25,40 +26,56 @@ export default async function DashboardOverviewPage() {
 
   if (!user) {
     return (
-      <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-[-0.03em] text-ink">
-          Sign in to continue
-        </h1>
-        <Button href="/login?next=/dashboard" className="mt-6 h-11">
-          Sign in
-        </Button>
-      </div>
+      <WorkspacePage title="Network" description="Your company graph.">
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/login?next=/dashboard"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
+            Sign in
+          </Link>{" "}
+          to open the network map.
+        </p>
+      </WorkspacePage>
     );
   }
 
   if (active?.type === "group" && group) {
     const data = await getDashboardGroupById(group.id);
     return (
-      <div className="mx-auto max-w-3xl space-y-2 px-4 py-8 sm:px-6">
+      <WorkspacePage
+        title="Company group"
+        description="Manage members, brand, and subsidiaries."
+        action={
+          <Link
+            href="/dashboard/structure"
+            className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+          >
+            Structure tree
+          </Link>
+        }
+      >
         <DashboardGroupPanel data={data} backPath="/dashboard" />
-      </div>
+      </WorkspacePage>
     );
   }
 
   if (!company) {
     return (
-      <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-[-0.03em] text-ink">
-          Register your company
-        </h1>
-        <p className="mt-2 max-w-md text-[14px] text-[#5b6472]">
-          Then build the network graph — connect subsidiaries and partners by
-          dragging.
+      <WorkspacePage
+        title="Network"
+        description="Connect subsidiaries and partners on a live graph."
+      >
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/onboarding"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
+            Create your company
+          </Link>{" "}
+          first, then build the network graph.
         </p>
-        <Button href="/onboarding" className="mt-6 h-11">
-          Create company
-        </Button>
-      </div>
+      </WorkspacePage>
     );
   }
 

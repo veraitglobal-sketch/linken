@@ -18,24 +18,24 @@ export function WorkspaceAsideFooter({ active }: Props) {
         {active?.type === "company" ? (
           <Link
             href="/dashboard/settings"
-            className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.03] hover:text-ink"
+            className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-muted transition-colors hover:bg-black/[0.03] hover:text-ink"
           >
-            <IconSettings className="text-plus group-hover:text-ink-soft" />
+            <IconSettings className="text-plus group-hover:text-muted" />
             Edit profile
           </Link>
         ) : null}
         <Link
           href="/search"
-          className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.03] hover:text-ink"
+          className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-muted transition-colors hover:bg-black/[0.03] hover:text-ink"
         >
-          <IconSearch className="text-plus group-hover:text-ink-soft" />
+          <IconSearch className="text-plus group-hover:text-muted" />
           Directory
         </Link>
         <Link
           href="/"
-          className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.03] hover:text-ink"
+          className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-muted transition-colors hover:bg-black/[0.03] hover:text-ink"
         >
-          <IconHome className="text-plus group-hover:text-ink-soft" />
+          <IconHome className="text-plus group-hover:text-muted" />
           Home
         </Link>
       </div>

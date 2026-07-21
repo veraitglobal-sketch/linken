@@ -87,7 +87,7 @@ export function GettingStartedPill({ checklist }: Props) {
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <p className="mt-2 text-[12px] leading-relaxed text-ink-soft">
+            <p className="mt-2 text-[12px] leading-relaxed text-muted">
               Each step fills your network with confirmed evidence.
             </p>
           </div>

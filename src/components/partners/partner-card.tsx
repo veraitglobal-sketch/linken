@@ -24,7 +24,7 @@ export function PartnerCard({
     editable && Boolean(partner.partnershipId) && Boolean(manageBack);
 
   return (
-    <div className="rounded-2xl bg-[#f7f8fa] px-3.5 py-3.5 transition-colors hover:bg-[#eef1f3]">
+    <div className="rounded-2xl bg-[#f7f8fa] px-3.5 py-3.5 transition-colors hover:bg-paper">
       <div className="flex items-center gap-3.5">
         <Link
           href={`/c/${partner.slug}?src=partner`}
@@ -40,7 +40,7 @@ export function PartnerCard({
               </span>
             ) : null}
           </div>
-          <p className="mt-1 truncate text-[13px] text-ink-soft">
+          <p className="mt-1 truncate text-[13px] text-muted">
             {partner.category} company
           </p>
           {partner.sharedProjects > 0 ? (

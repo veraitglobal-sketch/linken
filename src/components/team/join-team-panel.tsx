@@ -77,7 +77,7 @@ export function JoinTeamPanel({
         <h2 className="mt-2 font-display text-2xl font-medium tracking-[-0.03em] text-ink">
           Join {preview.companyName}
         </h2>
-        <p className="mt-2 text-[14px] text-ink-soft">
+        <p className="mt-2 text-[14px] text-muted">
           You&apos;re joining as{" "}
           <span className="font-semibold text-ink">
             {preview.inviteTitle || preview.inviteName}
@@ -122,7 +122,7 @@ export function JoinTeamPanel({
       <h2 className="mt-2 font-display text-2xl font-medium tracking-[-0.03em] text-ink">
         Show me on the public company profile?
       </h2>
-      <p className="mt-2 text-[14px] text-ink-soft">
+      <p className="mt-2 text-[14px] text-muted">
         Only you decide. If enabled, visitors see your name, title, and photo on{" "}
         {preview.companyName}&apos;s public page. Default is off.
       </p>
@@ -164,7 +164,7 @@ export function JoinTeamPanel({
             type="file"
             name="photo"
             accept="image/jpeg,image/png,image/webp"
-            className="block w-full text-[13px] text-ink-soft file:mr-3 file:rounded-lg file:border-0 file:bg-[#f4f6f8] file:px-3 file:py-2 file:text-[12px] file:font-semibold file:text-ink"
+            className="block w-full text-[13px] text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-paper file:px-3 file:py-2 file:text-[12px] file:font-semibold file:text-ink"
           />
         </label>
 
@@ -192,7 +192,7 @@ function Status({ title, body }: { title: string; body: string }) {
       <h2 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
         {title}
       </h2>
-      <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-soft">{body}</p>
+      <p className="mx-auto mt-3 max-w-md text-[14px] text-muted">{body}</p>
     </div>
   );
 }

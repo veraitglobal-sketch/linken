@@ -56,7 +56,7 @@ export function GraphInviteTeamForm({
       className="mt-2 space-y-2.5 rounded-xl border border-line bg-[#f7f8fa] px-3 py-3"
     >
       <p className="text-[12px] font-semibold text-ink">Invite a teammate</p>
-      <p className="text-[11px] text-[#64748b]">
+      <p className="text-[11px] text-muted">
         They join after accepting the email link. Public profile stays off until
         they opt in.
       </p>
@@ -101,7 +101,7 @@ export function GraphInviteTeamForm({
         <select
           name="role"
           defaultValue="member"
-          className="h-9 w-full rounded-xl border border-[#e6eaf0] bg-white px-3 text-[13px] text-ink"
+          className="h-9 w-full rounded-xl border border-line bg-white px-3 text-[13px] text-ink"
         >
           <option value="member">Member</option>
           {canInviteAdmin ? <option value="admin">Admin</option> : null}

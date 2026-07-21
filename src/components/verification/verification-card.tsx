@@ -117,7 +117,7 @@ export function VerificationCard({
                     "rounded-xl px-2 py-2 text-center transition-colors",
                     method === id
                       ? "bg-navy text-white shadow-sm"
-                      : "text-ink-soft hover:bg-surface hover:text-ink",
+                      : "text-muted hover:bg-surface hover:text-ink",
                   )}
                 >
                   <span className="block text-[12px] font-semibold sm:text-[13px]">

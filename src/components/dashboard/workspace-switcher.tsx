@@ -141,7 +141,7 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
               <Link
                 href="/dashboard/settings"
                 onClick={() => setOpen(false)}
-                className="block rounded-lg px-2.5 py-2 text-[12px] font-semibold text-ink-soft transition-colors hover:bg-paper hover:text-ink"
+                className="block rounded-lg px-2.5 py-2 text-[12px] font-semibold text-muted transition-colors hover:bg-paper hover:text-ink"
               >
                 Company settings
               </Link>

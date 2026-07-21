@@ -37,17 +37,17 @@ export function WelcomeSetup({
       <h1 className="mt-3 font-display text-[clamp(1.75rem,4vw,2.35rem)] font-medium tracking-[-0.04em] text-ink">
         {heading}
       </h1>
-      <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">{sub}</p>
+      <p className="mt-3 text-[15px] leading-relaxed text-muted">{sub}</p>
 
       <ol className="mt-8 space-y-3">
         <li className="rounded-2xl border border-line bg-white px-4 py-4">
-          <p className="text-[10px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+          <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
             Step 1
           </p>
           <p className="mt-1 text-[15px] font-semibold text-ink">
             Verify your domain
           </p>
-          <p className="mt-1 text-[13px] text-[#64748b]">
+          <p className="mt-1 text-[13px] text-muted">
             {domainVerified
               ? "Already verified — you’re set."
               : "Required before partnerships become official."}
@@ -62,13 +62,13 @@ export function WelcomeSetup({
           ) : null}
         </li>
         <li className="rounded-2xl border border-line bg-white px-4 py-4">
-          <p className="text-[10px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+          <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
             Step 2
           </p>
           <p className="mt-1 text-[15px] font-semibold text-ink">
             Add your first reference
           </p>
-          <p className="mt-1 text-[13px] text-[#64748b]">
+          <p className="mt-1 text-[13px] text-muted">
             A confirmed client relationship is the strongest signal on Linken.
           </p>
           <Button
@@ -84,7 +84,7 @@ export function WelcomeSetup({
       <p className="mt-8 text-center text-[13px]">
         <Link
           href="/dashboard"
-          className="font-semibold text-[#64748b] underline-offset-2 hover:text-ink hover:underline"
+          className="font-semibold text-muted underline-offset-2 hover:text-ink hover:underline"
         >
           Go to network graph
         </Link>

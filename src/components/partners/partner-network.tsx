@@ -56,7 +56,7 @@ export function PartnerNetwork({ company, partners }: Props) {
             <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
               Sorted by trust
             </p>
-            <p className="mt-1 text-[13px] text-ink-soft">
+            <p className="mt-1 text-[13px] text-muted">
               Verified first, then shared case studies.
             </p>
           </div>

@@ -127,13 +127,13 @@ function NavLink({ item, pathname }: { item: Item; pathname: string }) {
         "group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium transition-colors",
         active
           ? "bg-navy/[0.07] font-semibold text-ink"
-          : "text-ink-soft hover:bg-black/[0.03] hover:text-ink",
+          : "text-muted hover:bg-black/[0.03] hover:text-ink",
       )}
     >
       <Icon
         className={cn(
           "shrink-0 transition-colors",
-          active ? "text-navy" : "text-plus group-hover:text-ink-soft",
+          active ? "text-navy" : "text-plus group-hover:text-muted",
         )}
       />
       {item.label}
@@ -210,9 +210,9 @@ export function WorkspaceNav({
             <li>
               <Link
                 href={publicHref}
-                className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium text-ink-soft transition-colors hover:bg-black/[0.03] hover:text-ink"
+                className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium text-muted transition-colors hover:bg-black/[0.03] hover:text-ink"
               >
-                <IconExternal className="text-plus group-hover:text-ink-soft" />
+                <IconExternal className="text-plus group-hover:text-muted" />
                 {groupSlug && !companySlug ? "Public group" : "Public profile"}
               </Link>
             </li>

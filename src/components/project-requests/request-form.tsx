@@ -17,7 +17,7 @@ export function ProjectRequestForm({ error, sent }: Props) {
         <h2 className="mt-2 font-display text-2xl font-medium tracking-[-0.03em] text-ink">
           We will let you know when firms respond
         </h2>
-        <p className="mt-2 text-[14px] text-ink-soft">
+        <p className="mt-2 text-[14px] text-muted">
           Check your email for a private link to track replies. Verified firms
           in your category and city can respond — up to five.
         </p>
@@ -53,7 +53,7 @@ export function ProjectRequestForm({ error, sent }: Props) {
         minLength={20}
         rows={5}
         placeholder="Describe the project, scope, and constraints"
-        className="min-h-[8rem] w-full resize-y rounded-xl border border-[#e6eaf0] bg-white px-3.5 py-3 text-sm leading-relaxed text-ink outline-none placeholder:text-[#94a3b8] focus:border-ink"
+        className="min-h-[8rem] w-full resize-y rounded-xl border border-line bg-white px-3.5 py-3 text-sm leading-relaxed text-ink outline-none placeholder:text-muted focus:border-ink"
       />
       <div className="grid gap-3 sm:grid-cols-2">
         <Input name="budget_hint" placeholder="Budget hint (optional)" />
@@ -70,7 +70,7 @@ export function ProjectRequestForm({ error, sent }: Props) {
       </div>
       <Input name="requester_company" placeholder="Your company (optional)" />
 
-      <p className="text-[12px] text-ink-soft">
+      <p className="text-[12px] text-muted">
         Your email stays private until a verified firm spends a credit to
         respond. Profile inquiries on company pages remain free for firms.
       </p>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WorkspacePage } from "@/components/dashboard/workspace-page";
 
 /** Shown on company-only pages when the active workspace is a group. */
 export function SwitchCompanyNotice({
@@ -7,19 +8,16 @@ export function SwitchCompanyNotice({
   title?: string;
 }) {
   return (
-    <div className="mx-auto max-w-lg px-6 py-16 text-center">
-      <h1 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
-        {title}
-      </h1>
-      <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">
-        Switch to a company workspace to use this page.
+    <WorkspacePage title={title} description="This page is company-only.">
+      <p className="text-[14px] text-muted">
+        Switch to a company workspace to use this page.{" "}
+        <Link
+          href="/dashboard"
+          className="font-semibold text-ink underline-offset-2 hover:underline"
+        >
+          Back to workspace
+        </Link>
       </p>
-      <Link
-        href="/dashboard"
-        className="mt-6 inline-flex h-10 items-center rounded-xl bg-ink px-4 text-[13px] font-semibold text-white"
-      >
-        Back to workspace
-      </Link>
-    </div>
+    </WorkspacePage>
   );
 }

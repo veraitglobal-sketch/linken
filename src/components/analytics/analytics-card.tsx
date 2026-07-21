@@ -55,7 +55,7 @@ export function AnalyticsCard({ analytics, plan }: Props) {
                 (key) => (
                   <li
                     key={key}
-                    className="flex items-center justify-between text-[13px] text-ink-soft"
+                    className="flex items-center justify-between text-[13px] text-muted"
                   >
                     <span>{SOURCE_LABELS[key]}</span>
                     <span className="font-medium text-ink">
@@ -90,7 +90,7 @@ export function AnalyticsCard({ analytics, plan }: Props) {
       ) : (
         <div className="relative mt-5 overflow-hidden rounded-2xl border border-line bg-[#f7f8fa] px-4 py-5">
           <div className="pointer-events-none select-none blur-[3px]" aria-hidden>
-            <p className="text-[13px] text-ink-soft">
+            <p className="text-[13px] text-muted">
               QR 12 · Search 8 · Partners 5 · Embed 3
             </p>
             <div className="mt-3 flex h-16 items-end gap-1">

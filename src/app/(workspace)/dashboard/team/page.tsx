@@ -1,21 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  WorkspaceCard,
-  WorkspacePage,
-} from "@/components/dashboard/workspace-page";
-import { EditMemberAccess } from "@/components/team/edit-member-access";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
+import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { EditMyTeamProfile } from "@/components/team/edit-my-team-profile";
 import { InviteTeamForm } from "@/components/team/invite-team-form";
-import { TeamMemberRow } from "@/components/team/team-member-row";
-import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
-import { cancelTeamInvitation } from "@/features/team/actions";
+import { TeamMembersSection } from "@/components/team/team-members-section";
+import { TeamPageFlashes } from "@/components/team/team-page-flashes";
+import { TeamPendingInvites } from "@/components/team/team-pending-invites";
+import { TeamTabs } from "@/components/team/team-tabs";
 import {
   listCompanyTeam,
   viewerCompanyMembership,
 } from "@/features/team/queries";
 import { assertCompanySection } from "@/features/workspace/company-gate";
-import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Team",
@@ -28,29 +25,34 @@ type Props = {
     cancelled?: string;
     joined?: string;
     profileUpdated?: string;
+    accessUpdated?: string;
+    tab?: string;
   }>;
 };
 
+function resolveTab(
+  tabRaw: string | undefined,
+  canManage: boolean,
+  hasYou: boolean,
+  needsSetup: boolean,
+): "people" | "invite" | "you" {
+  if (tabRaw === "invite" && canManage) return "invite";
+  if (tabRaw === "you" && hasYou) return "you";
+  if (tabRaw === "people") return "people";
+  if (needsSetup && hasYou) return "you";
+  return "people";
+}
+
 export default async function DashboardTeamPage({ searchParams }: Props) {
-  const {
-    error,
-    invited,
-    cancelled,
-    joined,
-    profileUpdated,
-  } = await searchParams;
+  const sp = await searchParams;
   const { needsCompanySwitch, company: sessionCompany } =
     await assertCompanySection("team");
+
   if (needsCompanySwitch) {
-    return (
-      <WorkspacePage title="Team" description="People in this workspace.">
-        <SwitchCompanyNotice title="Team" />
-      </WorkspacePage>
-    );
+    return <SwitchCompanyNotice title="Team" />;
   }
 
   const { user, membership, company } = await viewerCompanyMembership();
-
   const canManage =
     membership?.role === "owner" ||
     membership?.role === "admin" ||
@@ -65,44 +67,34 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
   const needsSetup = Boolean(
     me && (!me.displayName.trim() || !me.displayTitle.trim()),
   );
+  const tab = resolveTab(sp.tab, canManage, Boolean(me), needsSetup);
 
   return (
     <WorkspacePage
       title="Team"
-      description="Invite colleagues by email. They join only after accepting — and appear on the public profile only if they opt in."
+      description="People with access to this company. Public only if they opt in."
+      action={
+        company?.slug ? (
+          <Link
+            href={`/c/${company.slug}`}
+            className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+          >
+            Public profile
+          </Link>
+        ) : null
+      }
     >
-      <div className="space-y-5">
-        {error ? (
-          <p className="rounded-xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-            {error}
-          </p>
-        ) : null}
-        {invited ? (
-          <p className="rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm text-ink">
-            Invite sent. They become a member only after accepting the link.
-          </p>
-        ) : null}
-        {cancelled ? (
-          <p className="rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm text-ink">
-            Invite cancelled.
-          </p>
-        ) : null}
-        {joined ? (
-          <p className="rounded-xl border border-[#bbf7d0] bg-[#f0fdf4] px-4 py-3 text-sm text-ink">
-            You joined the team. Edit your card below anytime.
-          </p>
-        ) : null}
-        {profileUpdated ? (
-          <p className="rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm text-ink">
-            Profile updated.
-          </p>
-        ) : null}
+      <div className="space-y-8">
+        <TeamPageFlashes
+          params={sp}
+          needsSetup={Boolean(needsSetup && me && tab !== "you")}
+        />
 
         {!user ? (
-          <p className="text-sm text-[#64748b]">
+          <p className="text-[14px] text-muted">
             <Link
               href="/login?next=/dashboard/team"
-              className="font-semibold underline"
+              className="font-semibold text-ink underline-offset-2 hover:underline"
             >
               Sign in
             </Link>{" "}
@@ -111,8 +103,11 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
         ) : null}
 
         {user && !membership ? (
-          <p className="text-sm text-[#64748b]">
-            <Link href="/onboarding" className="font-semibold underline">
+          <p className="text-[14px] text-muted">
+            <Link
+              href="/onboarding"
+              className="font-semibold text-ink underline-offset-2 hover:underline"
+            >
               Create your company
             </Link>{" "}
             first, or accept a team invite from email.
@@ -121,92 +116,39 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
 
         {company && (me || canManage) ? (
           <>
-            {me ? (
+            <TeamTabs
+              active={tab}
+              membersCount={members.length}
+              pendingCount={pendingInvites.length}
+              showInvite={canManage}
+              showYou={Boolean(me)}
+              youNeedsSetup={needsSetup}
+            />
+            {tab === "people" ? (
+              <TeamMembersSection
+                members={members}
+                pendingInvites={pendingInvites}
+                currentUserId={user?.id}
+                canManage={canManage}
+                companyId={company.id}
+              />
+            ) : null}
+            {tab === "invite" && canManage ? (
+              <div className="space-y-10">
+                <InviteTeamForm companyId={company.id} />
+                <TeamPendingInvites
+                  pendingInvites={pendingInvites}
+                  back="/dashboard/team?tab=invite"
+                />
+              </div>
+            ) : null}
+            {tab === "you" && me ? (
               <EditMyTeamProfile
                 companyId={company.id}
                 me={me}
                 needsSetup={needsSetup}
               />
             ) : null}
-
-            <WorkspaceCard>
-              <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
-                Members
-              </h3>
-              <ul className="mt-4 space-y-2">
-                {members.map((m) => (
-                  <TeamMemberRow
-                    key={m.userId}
-                    member={m}
-                    isYou={m.userId === user?.id}
-                    actions={
-                      canManage && m.role === "member" ? (
-                        <EditMemberAccess
-                          companyId={company.id}
-                          userId={m.userId}
-                          permissions={m.permissions}
-                        />
-                      ) : undefined
-                    }
-                  />
-                ))}
-                {members.length === 0 ? (
-                  <li className="text-sm text-[#94a3b8]">No members yet.</li>
-                ) : null}
-              </ul>
-            </WorkspaceCard>
-
-            {canManage && pendingInvites.length > 0 ? (
-              <WorkspaceCard>
-                <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-ink">
-                  Pending invites
-                </h3>
-                <ul className="mt-4 space-y-2">
-                  {pendingInvites.map((inv) => (
-                    <li
-                      key={inv.id}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e8eaee] px-3 py-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="text-[13px] font-semibold text-ink">
-                          {inv.inviteName}
-                          {inv.inviteTitle ? (
-                            <span className="font-normal text-[#64748b]">
-                              {" "}
-                              · {inv.inviteTitle}
-                            </span>
-                          ) : null}
-                        </p>
-                        <p className="text-[11px] text-[#94a3b8]">
-                          {inv.inviteEmail} · {inv.role} · Pending
-                        </p>
-                      </div>
-                      <form action={cancelTeamInvitation}>
-                        <input
-                          type="hidden"
-                          name="invitation_id"
-                          value={inv.id}
-                        />
-                        <input
-                          type="hidden"
-                          name="back"
-                          value="/dashboard/team"
-                        />
-                        <Button
-                          type="submit"
-                          variant="ghost"
-                          className="h-8 px-3 text-[11px]"
-                        >
-                          Cancel
-                        </Button>
-                      </form>
-                    </li>
-                  ))}
-                </ul>
-              </WorkspaceCard>
-            ) : null}
-
-            {canManage ? <InviteTeamForm companyId={company.id} /> : null}
           </>
         ) : null}
       </div>

@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
-import { RadarSearch } from "@/components/intros/radar-search";
-import { RadarBoard } from "@/components/project-requests/radar-board";
+import { RadarPageBody } from "@/components/radar/radar-page-body";
 import { RadarPageFlashes } from "@/components/radar/radar-page-flashes";
 import { RadarTabs } from "@/components/radar/radar-tabs";
-import { CompanyLeadsFeed } from "@/components/radar-leads/company-leads-feed";
-import { SavedSearchesPanel } from "@/components/radar-leads/saved-searches-panel";
 import { getAnalytics } from "@/features/analytics/queries";
 import { searchRadarCompanies } from "@/features/intros/search";
 import { getEntitlements } from "@/features/plan/entitlements";
@@ -142,52 +139,21 @@ export default async function DashboardRadarPage({ searchParams }: Props) {
           />
         ) : null}
 
-        {tab === "leads" || !radarEnabled ? (
-          <div className="space-y-10">
-            <CompanyLeadsFeed
-              leads={leads}
-              searchesCount={searches.length}
-              radarEnabled={radarEnabled}
-              verified={Boolean(company.verified)}
-              balance={balance}
-              introSuspended={introSuspended}
-            />
-            <SavedSearchesPanel
-              searches={searches}
-              radarEnabled={radarEnabled}
-            />
-            {!radarEnabled ? (
-              <RadarBoard
-                openRequests={openRequests}
-                history={history}
-                balance={balance}
-                verified={Boolean(company.verified)}
-                radarEnabled={false}
-                analytics={analytics}
-                respondedIds={new Set(history.map((h) => h.requestId))}
-              />
-            ) : null}
-            <RadarSearch
-              hits={hits}
-              filters={filters}
-              radarEnabled={radarEnabled}
-              verified={Boolean(company.verified)}
-              balance={balance}
-              introSuspended={introSuspended}
-            />
-          </div>
-        ) : (
-          <RadarBoard
-            openRequests={openRequests}
-            history={history}
-            balance={balance}
-            verified={Boolean(company.verified)}
-            radarEnabled={radarEnabled}
-            analytics={analytics}
-            respondedIds={new Set(history.map((h) => h.requestId))}
-            responded={sp.responded === "1"}
-          />
-        )}
+        <RadarPageBody
+          tab={tab}
+          radarEnabled={radarEnabled}
+          verified={Boolean(company.verified)}
+          balance={balance}
+          introSuspended={introSuspended}
+          leads={leads}
+          searches={searches}
+          hits={hits}
+          filters={filters}
+          openRequests={openRequests}
+          history={history}
+          analytics={analytics}
+          responded={sp.responded === "1"}
+        />
       </div>
     </WorkspacePage>
   );

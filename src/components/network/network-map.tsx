@@ -402,7 +402,7 @@ export function NetworkMap({
             type: "smoothstep",
             animated: mode === "partner",
             style: {
-              stroke: "#64748b",
+              stroke: "#66706b",
               strokeWidth: 2,
               strokeDasharray: mode === "partner" ? "6 4" : undefined,
             },
@@ -565,7 +565,7 @@ export function NetworkMap({
         <Controls
           showInteractive={false}
           position="bottom-left"
-          className="!m-4 !overflow-hidden !rounded-2xl !border !border-white/80 !bg-white/78 !shadow-[0_10px_32px_rgba(8,20,18,0.07)] !backdrop-blur-xl [&>button]:!h-8 [&>button]:!w-8 [&>button]:!border-transparent [&>button]:!bg-transparent [&>button]:!fill-[var(--muted)]"
+          className="!m-4 !overflow-hidden !rounded-2xl !border !border-white/80 !bg-white/78 !shadow-[0_10px_32px_rgba(8,20,18,0.07)] !backdrop-blur-xl [&>button]:!h-8 [&>button]:!w-8 [&>button]:!border-transparent [&>button]:!bg-transparent [&>button]:!fill-muted"
         />
       </ReactFlow>
 

@@ -51,7 +51,7 @@ export function GraphTeamSection({
   if (members === null) {
     return (
       <div className="mt-3 border-t border-[#eef0f3] px-3 pt-3">
-        <p className="text-[11px] text-[#94a3b8]">Loading team…</p>
+        <p className="text-[11px] text-muted">Loading team…</p>
       </div>
     );
   }
@@ -62,7 +62,7 @@ export function GraphTeamSection({
 
   return (
     <div className="mt-3 border-t border-[#eef0f3] px-3 pt-3 pb-2">
-      <p className="text-[10px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+      <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
         Team
       </p>
       <ul className="mt-2 space-y-2">
@@ -84,7 +84,7 @@ export function GraphTeamSection({
                 }
                 className={cn(
                   "flex w-full items-center gap-2.5 rounded-xl px-1.5 py-1.5 text-left transition-colors",
-                  selected ? "bg-[#f1f5f9]" : "hover:bg-[#f8fafc]",
+                  selected ? "bg-paper" : "hover:bg-paper",
                 )}
                 title="Optional: route inquiry to this person"
               >
@@ -99,7 +99,7 @@ export function GraphTeamSection({
                     {m.displayName}
                   </p>
                   {m.displayTitle ? (
-                    <p className="truncate text-[11px] text-[#64748b]">
+                    <p className="truncate text-[11px] text-muted">
                       {m.displayTitle}
                     </p>
                   ) : null}
@@ -113,7 +113,7 @@ export function GraphTeamSection({
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="mt-2 text-[11px] font-semibold text-[#64748b] hover:text-ink"
+          className="mt-2 text-[11px] font-semibold text-muted hover:text-ink"
         >
           Show all ({members.length})
         </button>
@@ -122,7 +122,7 @@ export function GraphTeamSection({
         <button
           type="button"
           onClick={() => setExpanded(false)}
-          className="mt-2 text-[11px] font-semibold text-[#64748b] hover:text-ink"
+          className="mt-2 text-[11px] font-semibold text-muted hover:text-ink"
         >
           Show less
         </button>

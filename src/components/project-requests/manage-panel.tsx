@@ -32,7 +32,7 @@ export function ManageRequestPanel({
         </p>
       ) : null}
       {closed || request.status === "closed" ? (
-        <p className="rounded-xl border border-line bg-paper px-4 py-3 text-sm text-ink-soft">
+        <p className="rounded-xl border border-line bg-paper px-4 py-3 text-sm text-muted">
           This request is closed. Firms can no longer respond.
         </p>
       ) : null}
@@ -40,14 +40,14 @@ export function ManageRequestPanel({
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone={isOpen ? "success" : "neutral"}>{request.status}</Badge>
-          <span className="text-[12px] text-ink-soft">
+          <span className="text-[12px] text-muted">
             {request.responsesCount} of {request.maxResponses} responses
           </span>
         </div>
         <h2 className="mt-3 font-display text-2xl font-medium tracking-[-0.03em] text-ink">
           {request.title}
         </h2>
-        <p className="mt-1 text-[13px] text-ink-soft">
+        <p className="mt-1 text-[13px] text-muted">
           {request.category} · {request.city}
           {request.country ? `, ${request.country}` : ""}
         </p>
@@ -55,7 +55,7 @@ export function ManageRequestPanel({
           {request.description}
         </p>
         {(request.budgetHint || request.timeline) && (
-          <p className="mt-3 text-[13px] text-ink-soft">
+          <p className="mt-3 text-[13px] text-muted">
             {[request.budgetHint && `Budget: ${request.budgetHint}`, request.timeline && `Timeline: ${request.timeline}`]
               .filter(Boolean)
               .join(" · ")}
@@ -64,11 +64,11 @@ export function ManageRequestPanel({
       </div>
 
       <section>
-        <h3 className="text-[11px] font-semibold tracking-[0.14em] text-[#94a3b8] uppercase">
+        <h3 className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">
           Responses
         </h3>
         {responses.length === 0 ? (
-          <p className="mt-3 text-[14px] text-ink-soft">
+          <p className="mt-3 text-[14px] text-muted">
             No responses yet. We will email you when a firm replies.
           </p>
         ) : (

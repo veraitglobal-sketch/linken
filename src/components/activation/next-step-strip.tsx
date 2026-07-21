@@ -9,9 +9,9 @@ type Props = {
 export function NextStepStrip({ step }: Props) {
   return (
     <div className="mx-auto mt-4 max-w-6xl px-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e2e8f0] bg-[#fafbfc] px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-paper px-4 py-3">
         <div className="min-w-0">
-          <p className="text-[10px] font-semibold tracking-[0.12em] text-[#94a3b8] uppercase">
+          <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
             Next step
           </p>
           <p className="mt-0.5 truncate text-[13px] font-medium text-ink">

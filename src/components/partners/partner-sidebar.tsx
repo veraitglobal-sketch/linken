@@ -57,7 +57,7 @@ export function PartnerSidebar({
           </div>
         ) : (
           <div className="px-5 py-5">
-            <p className="text-[13px] text-ink-soft">No confirmed partners yet.</p>
+            <p className="text-[13px] text-muted">No confirmed partners yet.</p>
             <Link
               href={`/dashboard/partners?from=${companySlug}`}
               className="mt-2 inline-block text-[13px] font-semibold text-ink underline-offset-4 hover:underline"

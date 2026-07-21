@@ -47,7 +47,7 @@ function TreeNode({
           "flex items-center gap-3 rounded-xl border-l-[3px] bg-surface px-3 py-2.5 ring-1 transition-colors",
           active
             ? "border-l-blue bg-accent-soft/80 ring-blue/15"
-            : "border-l-transparent ring-line hover:bg-paper hover:ring-[#d5dbd6]",
+            : "border-l-transparent ring-line hover:bg-paper hover:ring-line",
           node.depth === 0 && !active && "border-l-navy/40",
         )}
         style={{ marginLeft: node.depth * 18 }}

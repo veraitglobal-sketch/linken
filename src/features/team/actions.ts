@@ -12,6 +12,15 @@ function safeBack(raw: string, fallback = "/dashboard/team") {
     : fallback;
 }
 
+/** Merge flash params onto a dashboard back path (keeps existing ?tab=). */
+function backWith(back: string, params: Record<string, string>) {
+  const url = new URL(back, "http://linken.local");
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
+  return `${url.pathname}${url.search}`;
+}
+
 function revalidateTeam(companySlug?: string | null) {
   revalidatePath("/dashboard/team");
   revalidatePath("/dashboard");
@@ -146,11 +155,11 @@ export async function inviteTeamMember(formData: FormData) {
   });
 
   if (!result.ok) {
-    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
+    redirect(backWith(back, { error: result.error }));
   }
 
   revalidateTeam(result.companySlug);
-  redirect(`${back}?invited=1`);
+  redirect(backWith(back, { invited: "1" }));
 }
 
 /** Network map side panel — same invite flow, no full-page redirect. */
@@ -185,16 +194,16 @@ export async function cancelTeamInvitation(formData: FormData) {
   const back = safeBack(String(formData.get("back") ?? "/dashboard/team"));
 
   if (!id) {
-    redirect(`${back}?error=${encodeURIComponent("Missing invitation.")}`);
+    redirect(backWith(back, { error: "Missing invitation." }));
   }
 
   const result = await cancelTeamInvitationCore(id);
   if (!result.ok) {
-    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
+    redirect(backWith(back, { error: result.error }));
   }
 
   revalidateTeam();
-  redirect(`${back}?cancelled=1`);
+  redirect(backWith(back, { cancelled: "1" }));
 }
 
 async function cancelTeamInvitationCore(
@@ -320,7 +329,7 @@ export async function updateMyTeamProfile(formData: FormData) {
   const back = safeBack(String(formData.get("back") ?? "/dashboard/team"));
 
   if (!companyId) {
-    redirect(`${back}?error=${encodeURIComponent("Missing company.")}`);
+    redirect(backWith(back, { error: "Missing company." }));
   }
 
   const supabase = await createClient();
@@ -349,9 +358,7 @@ export async function updateMyTeamProfile(formData: FormData) {
       .from("team-photos")
       .upload(path, photo, { upsert: true, contentType: photo.type });
     if (uploadError) {
-      redirect(
-        `${back}?error=${encodeURIComponent(uploadError.message)}`,
-      );
+      redirect(backWith(back, { error: uploadError.message }));
     }
     const { data: pub } = supabase.storage
       .from("team-photos")
@@ -378,11 +385,11 @@ export async function updateMyTeamProfile(formData: FormData) {
     .eq("user_id", user.id);
 
   if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    redirect(backWith(back, { error: error.message }));
   }
 
   revalidateTeam(company?.slug);
-  redirect(`${back}?profileUpdated=1`);
+  redirect(backWith(back, { profileUpdated: "1" }));
 }
 
 export async function leaveTeam(formData: FormData) {
@@ -390,7 +397,7 @@ export async function leaveTeam(formData: FormData) {
   const back = safeBack(String(formData.get("back") ?? "/dashboard/team"));
 
   if (!companyId) {
-    redirect(`${back}?error=${encodeURIComponent("Missing company.")}`);
+    redirect(backWith(back, { error: "Missing company." }));
   }
 
   const supabase = await createClient();
@@ -407,12 +414,10 @@ export async function leaveTeam(formData: FormData) {
     .maybeSingle();
 
   if (!row) {
-    redirect(`${back}?error=${encodeURIComponent("You are not on this team.")}`);
+    redirect(backWith(back, { error: "You are not on this team." }));
   }
   if (row.role === "owner") {
-    redirect(
-      `${back}?error=${encodeURIComponent("Owners must transfer ownership before leaving.")}`,
-    );
+    redirect(backWith(back, { error: "Owners must transfer ownership before leaving." }));
   }
 
   const { error } = await supabase
@@ -422,7 +427,7 @@ export async function leaveTeam(formData: FormData) {
     .eq("user_id", user.id);
 
   if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    redirect(backWith(back, { error: error.message }));
   }
 
   revalidatePath("/dashboard/team");
@@ -452,9 +457,9 @@ export async function updateMemberPermissions(formData: FormData) {
   });
 
   if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    redirect(backWith(back, { error: error.message }));
   }
 
   revalidateTeam();
-  redirect(`${back}?accessUpdated=1`);
+  redirect(backWith(back, { accessUpdated: "1" }));
 }

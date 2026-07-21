@@ -127,7 +127,7 @@ function ModeButton({
         "rounded-xl px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
         active
           ? "bg-navy text-white"
-          : "text-ink-soft hover:bg-paper hover:text-ink",
+          : "text-muted hover:bg-paper hover:text-ink",
       )}
     >
       {children}

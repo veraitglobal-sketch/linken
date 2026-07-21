@@ -69,7 +69,7 @@ export function GraphInspector({
             <p className="font-display text-lg font-medium tracking-[-0.03em] text-ink">
               {selected.name}
             </p>
-            <p className="mt-0.5 text-[12px] text-ink-soft">
+            <p className="mt-0.5 text-[12px] text-muted">
               {[selected.category, selected.city].filter(Boolean).join(" · ") ||
                 "—"}
             </p>
@@ -79,7 +79,7 @@ export function GraphInspector({
 
       <div className="space-y-3 px-4 py-3">
         {selected.kind !== "group" ? (
-          <p className="text-[12px] text-ink-soft">
+          <p className="text-[12px] text-muted">
             {selected.stats.confirmedPartners} partners ·{" "}
             {selected.stats.confirmedReferences} references
           </p>
@@ -210,7 +210,7 @@ export function GraphDetachDialog({ edge, onCancel }: DetachProps) {
           <p className="font-display text-lg font-medium text-ink">
             Can’t detach here
           </p>
-          <p className="mt-2 text-[13px] text-ink-soft">
+          <p className="mt-2 text-[13px] text-muted">
             Client links come from confirmed service references. Manage them on
             the company profile.
           </p>
@@ -231,7 +231,7 @@ export function GraphDetachDialog({ edge, onCancel }: DetachProps) {
         <p className="mt-2 font-display text-lg font-medium tracking-[-0.03em] text-ink">
           Remove this connection?
         </p>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
+        <p className="mt-2 text-[13px] leading-relaxed text-muted">
           {edge.type === "partner"
             ? "This removes the partnership from both profiles. Case study collaborations remain."
             : "This firm will leave the group structure (subsidiary / membership). Evidence on each profile stays."}

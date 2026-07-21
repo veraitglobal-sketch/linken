@@ -39,7 +39,7 @@ export function EndPartnershipButton({
     >
       <input type="hidden" name="partnership_id" value={partnershipId} />
       <input type="hidden" name="back" value={back} />
-      <p className="text-[12px] leading-relaxed text-ink-soft">
+      <p className="text-[12px] leading-relaxed text-muted">
         This removes the partnership from both profiles. Case study
         collaborations remain.
       </p>

@@ -32,7 +32,7 @@ export function GroupMemberCard({ member }: Props) {
               </span>
             )}
           </div>
-          <p className="mt-1 text-[13px] text-ink-soft">
+          <p className="mt-1 text-[13px] text-muted">
             {member.category}
             {member.city
               ? ` · ${member.city}${member.country ? `, ${member.country}` : ""}`

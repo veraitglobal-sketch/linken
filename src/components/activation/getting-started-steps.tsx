@@ -13,14 +13,14 @@ export function GettingStartedSteps({ steps, onNavigate }: Props) {
       {steps.map((step) => (
         <li key={step.id}>
           {step.done ? (
-            <div className="flex items-center gap-2.5 rounded-xl px-2 py-2 text-[13px] text-[#94a3b8]">
+            <div className="flex items-center gap-2.5 rounded-xl px-2 py-2 text-[13px] text-muted">
               <span
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e2e8f0] text-[11px] font-semibold text-[#64748b]"
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-line text-[11px] font-semibold text-muted"
                 aria-hidden
               >
                 ✓
               </span>
-              <span className="line-through decoration-[#cbd5e1]">
+              <span className="line-through decoration-line">
                 {step.label}
               </span>
             </div>
@@ -28,10 +28,10 @@ export function GettingStartedSteps({ steps, onNavigate }: Props) {
             <Link
               href={step.href}
               onClick={onNavigate}
-              className="flex items-center gap-2.5 rounded-xl px-2 py-2 text-[13px] font-medium text-ink transition-colors hover:bg-[#f8fafc]"
+              className="flex items-center gap-2.5 rounded-xl px-2 py-2 text-[13px] font-medium text-ink transition-colors hover:bg-paper"
             >
               <span
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#cbd5e1] text-[11px] font-semibold text-[#64748b]"
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-line text-[11px] font-semibold text-muted"
                 aria-hidden
               >
                 →

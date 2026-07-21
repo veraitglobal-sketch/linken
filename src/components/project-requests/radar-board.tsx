@@ -1,10 +1,10 @@
-import Link from "next/link";
 import type { AnalyticsSummary } from "@/features/analytics/queries";
 import { CreditsEmpty } from "@/components/project-requests/credits-empty";
 import { RadarLocked } from "@/components/project-requests/radar-locked";
 import { RadarSignals } from "@/components/project-requests/radar-signals";
 import { RespondForm } from "@/components/project-requests/respond-form";
 import { ResponseHistory } from "@/components/project-requests/response-history";
+import { RadarCreditsBar } from "@/components/radar/radar-credits-bar";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Badge } from "@/components/ui/badge";
 import type {
@@ -21,6 +21,8 @@ type Props = {
   analytics: AnalyticsSummary;
   respondedIds: Set<string>;
   responded?: boolean;
+  /** Hide credit strip when parent already renders it. */
+  hideCredits?: boolean;
 };
 
 export function RadarBoard({
@@ -32,48 +34,36 @@ export function RadarBoard({
   analytics,
   respondedIds,
   responded,
+  hideCredits = false,
 }: Props) {
   return (
     <div className="space-y-8">
       {responded ? (
         <p className="rounded-2xl border border-line bg-surface px-4 py-3 text-[13px] text-ink">
-          Response sent via Linken Radar. Buyer contact is in your history
-          below.
+          Response sent. Buyer contact is in Your responses below.
         </p>
       ) : null}
 
       {!radarEnabled ? <RadarLocked /> : null}
 
-      <RadarSignals analytics={analytics} />
-
-      {radarEnabled ? (
-        <WorkspaceCard className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="text-[10px] font-semibold tracking-[0.12em] text-plus uppercase">
-              Credit balance
-            </p>
-            <p className="mt-1 font-display text-[28px] font-semibold tracking-[-0.04em] text-ink">
-              {balance}
-            </p>
-          </div>
-          {!verified ? (
-            <Link
-              href="/dashboard/verification"
-              className="text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
-            >
-              Verify your domain to respond
-            </Link>
-          ) : null}
-        </WorkspaceCard>
+      {radarEnabled && !hideCredits ? (
+        <RadarCreditsBar balance={balance} verified={verified} />
       ) : null}
 
       {radarEnabled && balance < 1 ? <CreditsEmpty /> : null}
 
+      <RadarSignals analytics={analytics} />
+
       <section>
         <header className="mb-3 flex flex-wrap items-end justify-between gap-2">
-          <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
-            Open requests
-          </h2>
+          <div>
+            <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
+              Open requests
+            </h2>
+            <p className="mt-1 text-[12px] leading-relaxed text-muted">
+              Matched to your category and city. Respond for 1 credit.
+            </p>
+          </div>
           <p className="text-[12px] font-medium text-plus">
             {openRequests.length} open
           </p>
@@ -86,7 +76,7 @@ export function RadarBoard({
                 No matching requests
               </p>
               <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-muted">
-                No open requests match your category and city right now.
+                Nothing open in your category and city right now.
               </p>
             </div>
           ) : (
