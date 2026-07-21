@@ -1,12 +1,24 @@
 import Link from "next/link";
-import { AddPartnerButton } from "@/components/partners/add-partner-button";
+import {
+  AddPartnerButton,
+  AddPartnerTextLink,
+} from "@/components/partners/add-partner-button";
+import { CompanyAddPartner } from "@/components/partners/company-add-partner";
 import { PartnerCard } from "@/components/partners/partner-card";
+import { PRODUCT } from "@/lib/product-model";
+import type { Company } from "@/types/company";
 import type { Partner } from "@/types/partner";
 
 type Props = {
   companySlug: string;
   partners: Partner[];
   editable?: boolean;
+  showAdd?: boolean;
+  addQ?: string;
+  addResults?: Company[];
+  verified?: boolean;
+  statusBySlug?: Map<string, string>;
+  addMode?: "search" | "draft";
 };
 
 const PREVIEW = 4;
@@ -15,6 +27,12 @@ export function PartnerSidebar({
   companySlug,
   partners,
   editable = false,
+  showAdd = false,
+  addQ = "",
+  addResults = [],
+  verified = false,
+  statusBySlug = new Map(),
+  addMode = "search",
 }: Props) {
   if (partners.length === 0 && !editable) return null;
 
@@ -29,13 +47,13 @@ export function PartnerSidebar({
           <div className="relative z-10 flex items-start justify-between gap-3">
             <div>
               <p className="text-[11px] font-semibold tracking-[0.14em] text-white/55 uppercase">
-                Network{partners.length > 0 ? ` · ${partners.length}` : ""}
+                Partners{partners.length > 0 ? ` · ${partners.length}` : ""}
               </p>
               <h2 className="mt-2 font-display text-[1.45rem] font-medium tracking-[-0.03em]">
                 Verified partners
               </h2>
               <p className="mt-2 max-w-[220px] text-[12px] leading-relaxed text-white/60">
-                Listed only after both companies confirm.
+                {PRODUCT.partners.job}
               </p>
             </div>
             {editable ? (
@@ -57,15 +75,26 @@ export function PartnerSidebar({
           </div>
         ) : (
           <div className="px-5 py-5">
-            <p className="text-[13px] text-muted">No confirmed partners yet.</p>
-            <Link
-              href={`/dashboard/partners?from=${companySlug}`}
-              className="mt-2 inline-block text-[13px] font-semibold text-ink underline-offset-4 hover:underline"
-            >
-              Invite a partner
-            </Link>
+            <p className="text-[13px] text-muted">
+              No partners yet. Invite here — they show on {PRODUCT.map.label}{" "}
+              after they accept.
+            </p>
+            {editable && !showAdd ? (
+              <AddPartnerTextLink companySlug={companySlug} />
+            ) : null}
           </div>
         )}
+
+        {editable && showAdd ? (
+          <CompanyAddPartner
+            companySlug={companySlug}
+            q={addQ}
+            results={addResults}
+            verified={verified}
+            statusBySlug={statusBySlug}
+            mode={addMode}
+          />
+        ) : null}
 
         {partners.length > 0 ? (
           <div className="border-t border-line px-5 py-4">
@@ -75,7 +104,7 @@ export function PartnerSidebar({
             >
               {remaining > 0
                 ? `View all ${partners.length} partners`
-                : "View full network"}
+                : `View on ${PRODUCT.map.label}`}
             </Link>
           </div>
         ) : null}

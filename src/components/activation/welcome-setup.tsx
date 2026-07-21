@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { PRODUCT } from "@/lib/product-model";
 
 type Props = {
   companySlug: string;
@@ -10,8 +11,7 @@ type Props = {
 };
 
 /**
- * Post-claim / onboarding — shortest path to an active network node:
- * verify domain → invite first partner.
+ * Post-claim / onboarding — shortest path: verify → invite on profile.
  */
 export function WelcomeSetup({
   companySlug,
@@ -30,7 +30,7 @@ export function WelcomeSetup({
   const sub =
     from === "confirm"
       ? `You confirmed a relationship. Finish setup so ${companyName} can grow its own network.`
-      : `Two steps make ${companyName} an active node on the network.`;
+      : `${PRODUCT.oneLiner} Two steps make ${companyName} active.`;
 
   return (
     <section className="mx-auto max-w-lg px-5 py-14 sm:py-20">
@@ -73,20 +73,20 @@ export function WelcomeSetup({
           </p>
           <p className="mt-1 text-[13px] text-muted">
             {hasPartnership
-              ? "Partner request started — they appear on Network after they accept."
-              : "Search a firm or send a draft invite. Confirmed partners show on your graph."}
+              ? PRODUCT.partners.job
+              : "Invite from your profile. Confirmed partners show on Network."}
           </p>
           {!hasPartnership ? (
             <Button
               href={
                 domainVerified
-                  ? "/dashboard/partners"
+                  ? `/c/${companySlug}?add=1#add-partner`
                   : "/dashboard/verification"
               }
               variant={domainVerified ? "primary" : "secondary"}
               className="mt-3 h-10 px-4 text-[13px]"
             >
-              {domainVerified ? "Invite a partner" : "Verify first"}
+              {domainVerified ? "Invite on Company" : "Verify first"}
             </Button>
           ) : (
             <Button
@@ -94,26 +94,26 @@ export function WelcomeSetup({
               variant="secondary"
               className="mt-3 h-10 px-4 text-[13px]"
             >
-              Open network
+              Open {PRODUCT.map.label}
             </Button>
           )}
         </li>
       </ol>
 
       <p className="mt-8 text-center text-[13px] text-muted">
-        Later: add a{" "}
+        Later:{" "}
         <Link
           href={`/c/${companySlug}#references`}
           className="font-semibold text-ink underline-offset-2 hover:underline"
         >
-          confirmed reference
+          references
         </Link>{" "}
-        ·{" "}
+          on Company ·{" "}
         <Link
           href="/dashboard"
           className="font-semibold text-ink underline-offset-2 hover:underline"
         >
-          Network graph
+          {PRODUCT.map.label}
         </Link>
       </p>
     </section>

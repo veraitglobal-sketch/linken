@@ -5,9 +5,13 @@ import { Input } from "@/components/ui/input";
 
 type Props = {
   defaultName?: string;
+  backPath?: string;
 };
 
-export function CreateUnclaimedForm({ defaultName = "" }: Props) {
+export function CreateUnclaimedForm({
+  defaultName = "",
+  backPath = "/dashboard/partners",
+}: Props) {
   return (
     <section>
       <header className="mb-3">
@@ -24,6 +28,7 @@ export function CreateUnclaimedForm({ defaultName = "" }: Props) {
           action={createUnclaimedPartner}
           className="grid gap-3 sm:grid-cols-2"
         >
+          <input type="hidden" name="back" value={backPath} />
           <label className="block sm:col-span-2">
             <span className="mb-1.5 block text-[12px] font-medium text-ink">
               Company name

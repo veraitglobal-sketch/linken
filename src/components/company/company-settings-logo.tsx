@@ -18,6 +18,7 @@ type Props = {
   website?: string | null;
   logoSource?: string | null;
   initials: string;
+  backPath?: string;
 };
 
 /** Auto logo from website — remove with ×. No manual upload. */
@@ -27,6 +28,7 @@ export function CompanySettingsLogo({
   website,
   logoSource,
   initials,
+  backPath = "/dashboard/settings",
 }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -89,6 +91,7 @@ export function CompanySettingsLogo({
           />
           {showLogo ? (
             <form action={clearCompanyLogo}>
+              <input type="hidden" name="back" value={backPath} />
               <button
                 type="submit"
                 title="Remove logo"
@@ -127,7 +130,7 @@ export function CompanySettingsLogo({
           ) : null}
           {hasWebsite && (cleared || !showLogo) && !pending ? (
             <form action={refreshLogo}>
-              <input type="hidden" name="back" value="/dashboard/settings" />
+              <input type="hidden" name="back" value={backPath} />
               <button
                 type="submit"
                 className="text-[12px] font-semibold text-blue underline-offset-2 hover:underline"

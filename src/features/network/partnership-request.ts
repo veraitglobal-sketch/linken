@@ -3,23 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { sendPartnershipRequestEmail } from "@/lib/email";
+import { safeAppBack, withBackQuery } from "@/lib/safe-back";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-function safeBack(raw: string, fallback = "/dashboard/partners") {
-  const back = raw.trim();
-  if (
-    back.startsWith("/dashboard") ||
-    back.startsWith("/search") ||
-    back.startsWith("/c/")
-  ) {
-    return back;
-  }
-  return fallback;
-}
-
 function revalidateNetwork(paths: string[]) {
-  for (const p of paths) revalidatePath(p);
+  for (const p of paths) {
+    revalidatePath(p.split("?")[0]?.split("#")[0] || "/dashboard");
+  }
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/partners");
 }
@@ -32,10 +23,13 @@ export async function requestPartnership(formData: FormData) {
   const slug = String(formData.get("company_slug") ?? "")
     .trim()
     .toLowerCase();
-  const back = safeBack(String(formData.get("back") ?? "/dashboard/partners"));
+  const back = safeAppBack(
+    String(formData.get("back") ?? "/dashboard/partners"),
+    "/dashboard/partners",
+  );
 
   if (!slug) {
-    redirect(`${back}?error=${encodeURIComponent("Company slug is required.")}`);
+    redirect(withBackQuery(back, { error: "Company slug is required." }));
   }
 
   const supabase = await createClient();
@@ -52,11 +46,13 @@ export async function requestPartnership(formData: FormData) {
     .maybeSingle();
 
   if (!mine) {
-    redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
+    redirect(withBackQuery(back, { error: "Create your company first." }));
   }
   if (!mine.verified) {
     redirect(
-      `${back}?error=${encodeURIComponent("Verify your domain first, then send partner requests.")}`,
+      withBackQuery(back, {
+        error: "Verify your domain first, then send partner requests.",
+      }),
     );
   }
 
@@ -68,11 +64,14 @@ export async function requestPartnership(formData: FormData) {
 
   if (!target || target.claimed === false) {
     redirect(
-      `${back}?error=${encodeURIComponent("Company not found or not claimed yet — create a draft invite below.")}`,
+      withBackQuery(back, {
+        error:
+          "Company not found or not claimed yet — create a draft invite below.",
+      }),
     );
   }
   if (target.id === mine.id) {
-    redirect(`${back}?error=${encodeURIComponent("Cannot partner with yourself.")}`);
+    redirect(withBackQuery(back, { error: "Cannot partner with yourself." }));
   }
 
   const { data: existing } = await supabase
@@ -84,11 +83,13 @@ export async function requestPartnership(formData: FormData) {
     .maybeSingle();
 
   if (existing?.status === "accepted") {
-    redirect(`${back}?error=${encodeURIComponent("Already official partners.")}`);
+    redirect(withBackQuery(back, { error: "Already official partners." }));
   }
   if (existing?.status === "pending") {
     redirect(
-      `${back}?error=${encodeURIComponent("A partnership request is already pending.")}`,
+      withBackQuery(back, {
+        error: "A partnership request is already pending.",
+      }),
     );
   }
 
@@ -102,14 +103,14 @@ export async function requestPartnership(formData: FormData) {
         responded_at: null,
       })
       .eq("id", existing.id);
-    if (error) redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    if (error) redirect(withBackQuery(back, { error: error.message }));
   } else {
     const { error } = await supabase.from("partnerships").insert({
       requester_id: mine.id,
       recipient_id: target.id,
       status: "pending",
     });
-    if (error) redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    if (error) redirect(withBackQuery(back, { error: error.message }));
   }
 
   const admin = createAdminClient();
@@ -128,5 +129,5 @@ export async function requestPartnership(formData: FormData) {
   }
 
   revalidateNetwork([back, `/c/${mine.slug}`, `/c/${target.slug}`]);
-  redirect(`${back}?invited=${encodeURIComponent(target.slug)}`);
+  redirect(withBackQuery(back, { invited: target.slug }));
 }

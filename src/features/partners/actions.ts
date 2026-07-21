@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createUnclaimedPartnerCore } from "@/features/partners/core";
 import { sendClaimInviteEmail } from "@/lib/email";
+import { safeAppBack, withBackQuery } from "@/lib/safe-back";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -16,12 +17,17 @@ export async function createUnclaimedPartner(formData: FormData) {
   const inviteEmail = String(formData.get("invite_email") ?? "")
     .trim()
     .toLowerCase();
-  const back = "/dashboard/partners";
+  const back = safeAppBack(
+    String(formData.get("back") ?? "/dashboard/partners"),
+    "/dashboard/partners",
+  );
 
   const { supabase, user, company } = await getOperatorActiveCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company) {
-    redirect(`${back}?error=${encodeURIComponent("Create your company profile first.")}`);
+    redirect(
+      withBackQuery(back, { error: "Create your company profile first." }),
+    );
   }
 
   const result = await createUnclaimedPartnerCore(supabase, {
@@ -36,12 +42,12 @@ export async function createUnclaimedPartner(formData: FormData) {
   });
 
   if (!result.ok) {
-    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
+    redirect(withBackQuery(back, { error: result.error }));
   }
 
-  revalidatePath(back);
+  revalidatePath(back.split("?")[0]?.split("#")[0] || "/dashboard/partners");
   revalidatePath(`/c/${result.data.slug}`);
-  redirect(`${back}?created=${encodeURIComponent(result.data.slug)}`);
+  redirect(withBackQuery(back, { created: result.data.slug }));
 }
 
 export async function claimCompanyProfile(formData: FormData) {

@@ -11,6 +11,7 @@ export type NetworkNodeKind =
 export type NetworkEdgeType =
   | "member_of"
   | "subsidiary"
+  | "co_owner"
   | "partner"
   | "client";
 
@@ -54,6 +55,8 @@ export type NetworkEdgeMeta = {
   groupId?: string;
   /** Company removed when ending a group / subsidiary link. */
   memberCompanyId?: string;
+  /** company_co_owners row id — required to end a co_owner edge. */
+  coOwnerId?: string;
   label?: string;
 };
 

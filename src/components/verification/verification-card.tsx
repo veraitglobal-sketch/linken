@@ -101,7 +101,9 @@ export function VerificationCard({
             <VerificationSuccess message={successMessage} />
           ) : null}
           {flash?.error ? <VerificationError message={flash.error} /> : null}
-          {!domain ? <VerificationNoWebsite /> : null}
+          {!domain ? (
+            <VerificationNoWebsite companySlug={companySlug} />
+          ) : null}
 
           <div>
             <p className="text-[10px] font-semibold tracking-[0.12em] text-plus uppercase">
@@ -156,10 +158,10 @@ export function VerificationCard({
           <p className="text-[11px] text-muted">
             Logo in{" "}
             <Link
-              href="/dashboard/settings"
+              href={`/c/${companySlug}/edit`}
               className="font-semibold text-ink underline-offset-2 hover:underline"
             >
-              Settings
+              Edit profile
             </Link>
             {" · "}
             Max 5 checks / hour · {siteUrl.replace(/^https?:\/\//, "")}

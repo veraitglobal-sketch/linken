@@ -10,6 +10,8 @@ import { UnclaimedBanner } from "@/components/company/unclaimed-banner";
 import type { PublicTeamMember } from "@/features/team/types";
 import { InquirySentBanner } from "@/components/inquiries/inquiry-sent-banner";
 import { PartnerSidebar } from "@/components/partners/partner-sidebar";
+import { ProfilePartnerFlashes } from "@/components/partners/profile-partner-flashes";
+import { OwnerLoopBar } from "@/components/product/owner-loop-bar";
 import { ReferencesSection } from "@/components/references/references-section";
 import { TrustProgressCard } from "@/components/trust/trust-progress-card";
 import { TrustWhyCard } from "@/components/trust/trust-why-card";
@@ -34,13 +36,20 @@ type Props = {
   claimError?: string;
   inquirySent?: boolean;
   error?: string;
+  partnerInvited?: string;
+  partnerCreated?: string;
   siteUrl?: string;
   groupBadge?: ConfirmedGroupBadge | null;
   networkMap?: ReactNode;
   domainVerifiedJustNow?: boolean;
   teamMembers?: PublicTeamMember[];
-  /** Owner-only — next incomplete activation step. */
   nextActivationStep?: ActivationStep | null;
+  showAddPartner?: boolean;
+  addPartnerQ?: string;
+  addPartnerResults?: Company[];
+  addPartnerVerified?: boolean;
+  addPartnerStatus?: Map<string, string>;
+  addPartnerMode?: "search" | "draft";
 };
 
 export function CompanyProfile({
@@ -55,19 +64,27 @@ export function CompanyProfile({
   claimError,
   inquirySent = false,
   error,
+  partnerInvited,
+  partnerCreated,
   siteUrl = "",
   groupBadge = null,
   networkMap = null,
   domainVerifiedJustNow = false,
   teamMembers = [],
   nextActivationStep = null,
+  showAddPartner = false,
+  addPartnerQ = "",
+  addPartnerResults = [],
+  addPartnerVerified = false,
+  addPartnerStatus,
+  addPartnerMode = "search",
 }: Props) {
   const isUnclaimed = company.claimed === false;
   const confirmedRefs = references.filter((r) => r.status === "confirmed").length;
   const showPartners = partners.length > 0 || editable;
   const showCases = caseStudies.length > 0 || editable;
   const showRefs = references.length > 0 || editable;
-  const showTeam = teamMembers.length > 0;
+  const showTeam = teamMembers.length > 0 || (editable && !isUnclaimed);
   const showWhyPublic = trust.points > 0;
   const showOwnerProgress = editable && !isUnclaimed;
   const showSidebar =
@@ -85,6 +102,9 @@ export function CompanyProfile({
         siteUrl={siteUrl}
         groupBadge={groupBadge}
       />
+      {editable && !isUnclaimed ? (
+        <OwnerLoopBar companySlug={company.slug} active="company" />
+      ) : null}
       {editable && !isUnclaimed && nextActivationStep ? (
         <NextStepStrip step={nextActivationStep} />
       ) : null}
@@ -97,7 +117,14 @@ export function CompanyProfile({
           </p>
         </div>
       ) : null}
-      {error ? (
+      {editable ? (
+        <ProfilePartnerFlashes
+          companySlug={company.slug}
+          error={error}
+          invited={partnerInvited}
+          created={partnerCreated}
+        />
+      ) : error ? (
         <div className="mx-auto mt-4 max-w-6xl px-4">
           <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
             {error}
@@ -123,7 +150,13 @@ export function CompanyProfile({
       <div className="mx-auto mt-4 grid max-w-6xl gap-4 px-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-5">
         <div className="flex flex-col gap-4">
           <CompanyAbout company={company} />
-          {showTeam ? <CompanyTeamSection members={teamMembers} /> : null}
+          {showTeam ? (
+            <CompanyTeamSection
+              members={teamMembers}
+              companySlug={company.slug}
+              editable={editable && !isUnclaimed}
+            />
+          ) : null}
           <ClientHighlights summary={assessmentSummary} />
           {showRefs ? (
             <ReferencesSection
@@ -150,6 +183,12 @@ export function CompanyProfile({
                 companySlug={company.slug}
                 partners={partners}
                 editable={editable && !isUnclaimed}
+                showAdd={showAddPartner}
+                addQ={addPartnerQ}
+                addResults={addPartnerResults}
+                verified={addPartnerVerified}
+                statusBySlug={addPartnerStatus}
+                addMode={addPartnerMode}
               />
             ) : null}
           </div>

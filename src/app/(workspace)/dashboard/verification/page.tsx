@@ -114,10 +114,10 @@ export default async function DashboardVerificationPage({
       description="Verified companies earn stronger trust on the public profile. Subsidiaries verify their own domains separately."
       action={
         <Link
-          href="/dashboard/settings"
+          href={`/c/${company.slug}/edit`}
           className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
         >
-          Company settings
+          Edit profile
         </Link>
       }
     >

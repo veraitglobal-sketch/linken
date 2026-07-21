@@ -9,6 +9,7 @@ import { requireOperatorActiveCompany } from "@/features/workspace/require-opera
 function revalidateLogoPaths(slug: string) {
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings");
+  revalidatePath(`/c/${slug}/edit`);
   revalidatePath("/dashboard/verification");
   revalidatePath(`/c/${slug}`);
   revalidatePath(`/c/${slug}/one-pager`);
@@ -42,10 +43,16 @@ export async function ensureCompanyLogoFromWebsite(): Promise<{
   return { ok: true };
 }
 
-export async function clearCompanyLogo() {
+export async function clearCompanyLogo(formData?: FormData) {
+  const backRaw = String(formData?.get("back") ?? "").trim();
   const { supabase, company } = await requireOperatorActiveCompany({
-    loginNext: "/dashboard/settings",
+    loginNext: backRaw.startsWith("/") ? backRaw : "/dashboard/settings",
   });
+  const back =
+    backRaw.startsWith(`/c/${company.slug}`) || backRaw === "/dashboard/settings"
+      ? backRaw
+      : `/c/${company.slug}/edit`;
+  const sep = back.includes("?") ? "&" : "?";
 
   const { error } = await supabase
     .from("companies")
@@ -53,13 +60,12 @@ export async function clearCompanyLogo() {
     .eq("id", company.id);
 
   if (error) {
-    redirect(
-      `/dashboard/settings?error=${encodeURIComponent(error.message)}`,
-    );
+    redirect(`${back}${sep}error=${encodeURIComponent(error.message)}`);
   }
 
   revalidateLogoPaths(company.slug);
-  redirect("/dashboard/settings?ok=logo-cleared");
+  revalidatePath(`/c/${company.slug}/edit`);
+  redirect(`${back}${sep}ok=logo-cleared`);
 }
 
 export async function refreshLogo(formData: FormData) {

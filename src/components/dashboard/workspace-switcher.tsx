@@ -49,7 +49,9 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
 
   if (!multi) {
     const href =
-      active.type === "company" ? "/dashboard/settings" : "/dashboard/group";
+      active.type === "company"
+        ? `/c/${active.slug}/edit`
+        : "/dashboard/group";
     return (
       <Link
         href={href}
@@ -57,7 +59,7 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
           "group mb-4 flex items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-black/[0.03]",
           draftActive && "ring-1 ring-dashed ring-[#c5cdc8]",
         )}
-        title={active.type === "company" ? "Company settings" : "Group"}
+        title={active.type === "company" ? "Edit company" : "Group"}
       >
         <SwitcherMark ctx={active} />
         <SwitcherMeta
@@ -139,11 +141,11 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
           {active.type === "company" ? (
             <div className="border-t border-line px-1 py-1">
               <Link
-                href="/dashboard/settings"
+                href={`/c/${active.slug}/edit`}
                 onClick={() => setOpen(false)}
                 className="block rounded-lg px-2.5 py-2 text-[12px] font-semibold text-muted transition-colors hover:bg-paper hover:text-ink"
               >
-                Company settings
+                Edit company
               </Link>
             </div>
           ) : null}

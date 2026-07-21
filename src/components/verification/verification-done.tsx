@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { methodLabel } from "@/components/verification/verification-flash";
+import { PRODUCT } from "@/lib/product-model";
 
 type Props = {
   domain: string;
@@ -28,8 +29,7 @@ export function VerificationDone({
               {domain} is verified
             </h2>
             <p className="mt-1 text-[12px] leading-relaxed text-muted">
-              Next: invite a partner so they appear on your Network after they
-              accept.
+              Next: {PRODUCT.partners.job}
               {verifiedDate ? ` Confirmed ${verifiedDate}.` : ""}
             </p>
           </div>
@@ -44,16 +44,16 @@ export function VerificationDone({
       </div>
       <div className="flex flex-wrap gap-2 px-5 py-4 sm:px-6">
         <Link
-          href="/dashboard/partners?verified=1"
+          href={`/c/${companySlug}?add=1#add-partner`}
           className="inline-flex h-9 items-center rounded-xl bg-navy px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-hover"
         >
-          Invite a partner
+          Invite on Company
         </Link>
         <Link
           href={`/c/${companySlug}`}
           className="inline-flex h-9 items-center rounded-xl border border-line bg-surface px-3.5 text-[12px] font-semibold text-ink transition-colors hover:bg-paper"
         >
-          View public profile
+          Company
         </Link>
       </div>
     </section>

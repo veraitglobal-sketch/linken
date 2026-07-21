@@ -6,12 +6,18 @@ import { StructureTabs } from "@/components/dashboard/structure-tabs";
 import { StructureTreePanel } from "@/components/dashboard/structure-tree-panel";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
+import { SharedOwnershipPanel } from "@/components/groups/shared-ownership-panel";
 import { getDashboardSession } from "@/features/dashboard/session";
 import {
   getDashboardGroupById,
   getDashboardGroupForCreator,
 } from "@/features/groups/dashboard-group";
 import { flattenMemberTree } from "@/features/groups/tree";
+import {
+  getConfirmedCoOwnershipsForGroup,
+  getPendingCoOwnerProposals,
+} from "@/features/network/co-ownership-queries";
+import { PRODUCT } from "@/lib/product-model";
 
 export const metadata: Metadata = {
   title: "Structure",
@@ -88,16 +94,24 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
   if (!hasGroup) tab = "grow";
   if (hasGroup && !hasTree && tabRaw !== "tree") tab = "grow";
 
+  const [coOwnerProposals, confirmedCoOwnerships] =
+    tab === "tree" && hasGroup && company && data
+      ? await Promise.all([
+          getPendingCoOwnerProposals(company.id),
+          getConfirmedCoOwnershipsForGroup(data.group.id),
+        ])
+      : [[], []];
+
   return (
     <WorkspacePage
-      title="Structure"
-      description="Ownership tree — parent company and country branches. Partners are separate."
+      title={PRODUCT.structure.label}
+      description={PRODUCT.structure.job}
       action={
         <Link
           href="/dashboard"
           className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
         >
-          Network map
+          {PRODUCT.map.label}
         </Link>
       }
     >
@@ -116,18 +130,30 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
           pending={pending}
         />
         {tab === "tree" ? (
-          <StructureTreePanel
-            rootName={rootName}
-            groupName={data?.group.name}
-            groupSlug={data?.group.slug}
-            confirmed={confirmed}
-            pending={pending}
-            subsidiaries={subsidiaries}
-            hasGroup={hasGroup}
-            hasTree={hasTree}
-            roots={data?.tree ?? []}
-            highlightCompanyId={company?.id}
-          />
+          <>
+            <StructureTreePanel
+              rootName={rootName}
+              groupName={data?.group.name}
+              groupSlug={data?.group.slug}
+              confirmed={confirmed}
+              pending={pending}
+              subsidiaries={subsidiaries}
+              hasGroup={hasGroup}
+              hasTree={hasTree}
+              roots={data?.tree ?? []}
+              highlightCompanyId={company?.id}
+            />
+            {hasGroup && data ? (
+              <SharedOwnershipPanel
+                groupId={data.group.id}
+                members={data.confirmed}
+                proposals={coOwnerProposals}
+                confirmedLinks={confirmedCoOwnerships}
+                viewerCompanyId={company?.id ?? null}
+                backPath="/dashboard/structure"
+              />
+            ) : null}
+          </>
         ) : (
           <DashboardGroupPanel
             data={data}

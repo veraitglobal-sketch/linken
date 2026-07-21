@@ -23,15 +23,19 @@ export function VerificationError({ message }: { message: string }) {
   );
 }
 
-export function VerificationNoWebsite() {
+export function VerificationNoWebsite({
+  companySlug,
+}: {
+  companySlug: string;
+}) {
   return (
     <div className="rounded-xl border border-line bg-paper/60 px-3.5 py-3 text-[13px] text-muted">
       Add a company website in{" "}
       <Link
-        href="/dashboard/settings"
+        href={`/c/${companySlug}/edit`}
         className="font-semibold text-ink underline-offset-2 hover:underline"
       >
-        Settings
+        Edit profile
       </Link>
       , then return here to verify.
     </div>

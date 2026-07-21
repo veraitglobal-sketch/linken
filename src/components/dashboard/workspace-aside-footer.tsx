@@ -17,11 +17,11 @@ export function WorkspaceAsideFooter({ active }: Props) {
       <div className="mt-2 space-y-px border-t border-line/70 pt-2">
         {active?.type === "company" ? (
           <Link
-            href="/dashboard/settings"
+            href={`/c/${active.slug}/edit`}
             className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-muted transition-colors hover:bg-black/[0.03] hover:text-ink"
           >
             <IconSettings className="text-plus group-hover:text-muted" />
-            Edit profile
+            Edit company
           </Link>
         ) : null}
         <Link

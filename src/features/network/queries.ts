@@ -236,6 +236,7 @@ function trimGraph(
   const keep = new Set<string>([hubId]);
   const priority = [
     ...edges.filter((e) => e.type === "subsidiary"),
+    ...edges.filter((e) => e.type === "co_owner"),
     ...edges.filter((e) => e.type === "member_of"),
     ...edges.filter((e) => e.type === "client"),
     ...edges.filter((e) => e.type === "partner"),
@@ -277,6 +278,24 @@ function trimGraph(
     summary: summarize(keptNodes),
     context,
   };
+}
+
+type CoOwnerLink = { childId: string; coParentId: string; id: string };
+
+/** Confirmed extra owners (joint ventures) — additive on top of the primary tree. */
+async function loadConfirmedCoOwners(groupId: string): Promise<CoOwnerLink[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("company_co_owners")
+    .select("id, child_company_id, co_parent_company_id")
+    .eq("group_id", groupId)
+    .eq("status", "confirmed");
+
+  return (data ?? []).map((row) => ({
+    id: row.id as string,
+    childId: row.child_company_id as string,
+    coParentId: row.co_parent_company_id as string,
+  }));
 }
 
 async function loadGroupMembers(groupId: string): Promise<MemberRow[]> {
@@ -472,6 +491,27 @@ async function buildGroupGraph(
     edges,
     seen,
   );
+
+  // Shared ownership (joint ventures): child renders once, an extra "Owns"
+  // edge is drawn from each confirmed co-parent — additive, never repositions
+  // the child or duplicates the node.
+  const coOwners = await loadConfirmedCoOwners(group.id);
+  for (const link of coOwners) {
+    const childId = `company:${link.childId}`;
+    const parentId = `company:${link.coParentId}`;
+    if (!seen.has(childId) || !seen.has(parentId)) continue;
+    edges.push(
+      edge("co_owner", parentId, childId, {
+        detachable: true,
+        meta: {
+          groupId: group.id,
+          memberCompanyId: link.childId,
+          coOwnerId: link.id,
+          label: "Shared ownership",
+        },
+      }),
+    );
+  }
 
   return trimGraph(nodes, edges, hubId, {
     groupId: group.id,

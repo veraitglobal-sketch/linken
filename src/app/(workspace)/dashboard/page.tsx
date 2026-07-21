@@ -18,7 +18,7 @@ import { resolveWorkspaceGraphScope } from "@/features/network/queries";
 import { getPartnershipInbox } from "@/features/partners/inbox";
 
 export const metadata: Metadata = {
-  title: "Network graph",
+  title: "Map",
 };
 
 export default async function DashboardOverviewPage() {
@@ -26,7 +26,7 @@ export default async function DashboardOverviewPage() {
 
   if (!user) {
     return (
-      <WorkspacePage title="Network" description="Your company graph.">
+      <WorkspacePage title="Map" description="Who you’re connected to.">
         <p className="text-[14px] text-muted">
           <Link
             href="/login?next=/dashboard"
@@ -34,7 +34,7 @@ export default async function DashboardOverviewPage() {
           >
             Sign in
           </Link>{" "}
-          to open the network map.
+          to open the map.
         </p>
       </WorkspacePage>
     );
@@ -63,8 +63,8 @@ export default async function DashboardOverviewPage() {
   if (!company) {
     return (
       <WorkspacePage
-        title="Network"
-        description="Connect subsidiaries and partners on a live graph."
+        title="Map"
+        description="Who you’re connected to."
       >
         <p className="text-[14px] text-muted">
           <Link
@@ -73,7 +73,7 @@ export default async function DashboardOverviewPage() {
           >
             Create your company
           </Link>{" "}
-          first, then build the network graph.
+          first.
         </p>
       </WorkspacePage>
     );
@@ -115,9 +115,12 @@ export default async function DashboardOverviewPage() {
         editable
         viewerCompanyId={company.id}
         pendingInviteCount={inbox.outgoingPending.length}
-        emptyHref="/dashboard/partners"
-        emptyLabel="Invite a partner"
-        subtitle={groupSlug ? "Company network" : "Your network"}
+        companySlug={company.slug}
+        emptyHref={`/c/${company.slug}?add=1#add-partner`}
+        emptyLabel="Add on Company"
+        secondaryHref={`/c/${company.slug}`}
+        secondaryLabel="Company"
+        subtitle={groupSlug ? "Group map" : "Your map"}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import { EmbedAssessment } from "@/components/embed/embed-assessment";
 import { EmbedBadge } from "@/components/embed/embed-badge";
 import { EmbedCompact } from "@/components/embed/embed-compact";
@@ -141,7 +142,22 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
   } = await searchParams;
   const theme = parseEmbedTheme(themeRaw);
   const company = await getCompanyForPage(slug);
-  if (!company) notFound();
+  if (!company) {
+    const redirectSlug = await resolveCompanySlugRedirect(slug);
+    if (redirectSlug) {
+      const qs = new URLSearchParams();
+      if (variant) qs.set("variant", variant);
+      if (themeRaw) qs.set("theme", themeRaw);
+      if (w) qs.set("w", w);
+      if (labelRaw) qs.set("label", labelRaw);
+      if (monoRaw) qs.set("mono", monoRaw);
+      if (motionRaw) qs.set("motion", motionRaw);
+      if (sizeRaw) qs.set("size", sizeRaw);
+      const suffix = qs.toString();
+      permanentRedirect(`/embed/${redirectSlug}${suffix ? `?${suffix}` : ""}`);
+    }
+    notFound();
+  }
 
   // Gallery / studio previews must not inflate embed_view analytics.
   if (preview !== "1") {

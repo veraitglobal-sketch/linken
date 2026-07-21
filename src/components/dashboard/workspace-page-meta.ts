@@ -1,46 +1,52 @@
+import { PRODUCT } from "@/lib/product-model";
+
 export const WORKSPACE_PAGE_META: Record<
   string,
   { title: string; description?: string; actionHref?: string; actionLabel?: string }
 > = {
   "/dashboard": {
-    title: "Network",
-    description: "Map firms, subsidiaries, and partners.",
+    title: PRODUCT.map.label,
+    description: PRODUCT.map.job,
   },
   "/dashboard/structure": {
-    title: "Structure",
-    description: "Ownership tree, subsidiaries, and group invites.",
+    title: PRODUCT.structure.label,
+    description: PRODUCT.structure.job,
   },
   "/dashboard/verification": {
     title: "Verification",
-    description: "Prove domain ownership for the Verified badge.",
+    description: "Prove your domain for the Verified badge.",
   },
   "/dashboard/insights": {
     title: "Insights",
-    description: "Visits and inquiries on your public profile.",
+    description: "Visits and inquiries on your Company page.",
   },
   "/dashboard/inbox": {
-    title: "Inbox",
-    description: "Profile inquiries and Radar intros — separate tabs.",
+    title: PRODUCT.inbox.label,
+    description: PRODUCT.inbox.job,
   },
   "/dashboard/radar": {
     title: "Radar",
-    description: "Project requests and signals for your market.",
+    description: "Project requests in your market.",
+  },
+  "/dashboard/cases": {
+    title: "Case studies",
+    description: "Create a project and email the client for confirmation.",
   },
   "/dashboard/partners": {
-    title: "Partners",
-    description: "Invite firms and grow confirmed relationships.",
+    title: PRODUCT.partners.label,
+    description: PRODUCT.partners.job,
   },
   "/dashboard/settings": {
-    title: "Company settings",
-    description: "Edit the details on your public profile.",
+    title: "Edit company",
+    description: PRODUCT.company.job,
   },
   "/dashboard/group": {
-    title: "Company group",
-    description: "Members, invites, and hierarchy.",
+    title: "Group",
+    description: PRODUCT.structure.job,
   },
   "/dashboard/team": {
-    title: "Team",
-    description: "People who can operate this workspace.",
+    title: "Team access",
+    description: "Who can work in this workspace. Public team is on Company.",
   },
   "/dashboard/widgets": {
     title: "Widgets",
@@ -48,6 +54,6 @@ export const WORKSPACE_PAGE_META: Record<
   },
   "/dashboard/api": {
     title: "API",
-    description: "Agent keys and activity for your company.",
+    description: "Agent keys for your company.",
   },
 };

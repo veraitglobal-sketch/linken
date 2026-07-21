@@ -80,16 +80,19 @@ type Props = {
   /** Outgoing pending partner invites (not drawn on the map). */
   pendingInviteCount?: number;
   title?: string;
+  companySlug?: string;
 };
 
 function toFlowEdge(e: NetworkEdge, selected: boolean): Edge {
   const isOwns = e.type === "subsidiary";
+  const isCoOwner = e.type === "co_owner";
+  const isOwnership = isOwns || isCoOwner;
   const isStructure = isOwns || e.type === "member_of";
   const isPartner = e.type === "partner";
 
   const stroke = selected
     ? "#1a5c51"
-    : isOwns
+    : isOwnership
       ? "#0e1f1c"
       : isPartner
         ? "#a3aba6"
@@ -108,12 +111,18 @@ function toFlowEdge(e: NetworkEdge, selected: boolean): Edge {
     interactionWidth: 28,
     style: {
       stroke,
-      strokeWidth: selected ? 2 : isOwns ? 1.6 : 1.2,
-      strokeDasharray: isPartner || e.type === "client" ? "2.5 5" : undefined,
+      strokeWidth: selected ? 2 : isOwnership ? 1.6 : 1.2,
+      // Solid = primary owner. Long dash = shared/joint owner (same dark
+      // "owns" color family, distinct from the fine-dashed partner line).
+      strokeDasharray: isCoOwner
+        ? "7 3"
+        : isPartner || e.type === "client"
+          ? "2.5 5"
+          : undefined,
       opacity: selected ? 1 : isPartner ? 0.8 : 0.9,
     },
     animated: false,
-    markerEnd: isOwns
+    markerEnd: isOwnership
       ? {
           type: MarkerType.ArrowClosed,
           color: stroke,
@@ -136,6 +145,7 @@ export function NetworkMap({
   editable = false,
   pendingInviteCount = 0,
   title = "Network",
+  companySlug,
 }: Props) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -374,6 +384,7 @@ export function NetworkMap({
               partnershipId: raw.meta?.partnershipId,
               groupId: raw.meta?.groupId,
               memberCompanyId: raw.meta?.memberCompanyId,
+              coOwnerId: raw.meta?.coOwnerId,
             });
             if (!result.ok) {
               flash(result.error, true);
@@ -511,6 +522,7 @@ export function NetworkMap({
           }
         }}
         pendingInviteCount={pendingInviteCount}
+        companySlug={companySlug}
       />
 
       <NetworkHint visible={editable && firmCount === 1 && !panelOpen} />

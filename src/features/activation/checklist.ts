@@ -125,13 +125,13 @@ export async function getActivationChecklist(
       {
         id: "invite_partner",
         label: "Invite your first partner",
-        href: "/dashboard/partners",
+        href: `${profileHref}?add=1#add-partner`,
         done: hasPartnership,
       },
       {
         id: "add_evidence",
         label: "Add a reference or case study",
-        href: `${profileHref}#references`,
+        href: "/dashboard/cases",
         done: hasEvidence,
       },
       {

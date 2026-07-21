@@ -10,6 +10,9 @@ type Props = {
   emptySearch: boolean;
   verified: boolean;
   statusBySlug: Map<string, string>;
+  /** Return path after invite (e.g. /c/slug#partners). */
+  backPath?: string;
+  fromSlug?: string;
 };
 
 export function PartnerSearchSection({
@@ -18,6 +21,8 @@ export function PartnerSearchSection({
   emptySearch,
   verified,
   statusBySlug,
+  backPath = "/dashboard/partners",
+  fromSlug,
 }: Props) {
   return (
     <section>
@@ -26,12 +31,15 @@ export function PartnerSearchSection({
           Find a company
         </h2>
         <p className="mt-1 text-[12px] leading-relaxed text-muted">
-          Claimed firms only — they accept to become official.
+          Claimed firms only — they accept to become official on Network.
         </p>
       </header>
 
       <WorkspaceCard className="mb-4">
         <form action="/dashboard/partners" method="get">
+          {fromSlug ? (
+            <input type="hidden" name="from" value={fromSlug} />
+          ) : null}
           <Input
             name="q"
             defaultValue={q}
@@ -59,6 +67,7 @@ export function PartnerSearchSection({
                       <PartnerInviteButton
                         companySlug={company.slug}
                         companyName={company.name}
+                        back={backPath}
                         disabledReason={
                           !verified
                             ? "Verify first"

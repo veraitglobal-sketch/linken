@@ -182,6 +182,7 @@ export async function disconnectGraphEdge(input: {
   partnershipId?: string;
   groupId?: string;
   memberCompanyId?: string;
+  coOwnerId?: string;
 }): Promise<GraphActionResult> {
   const supabase = await createClient();
   const {
@@ -211,6 +212,22 @@ export async function disconnectGraphEdge(input: {
 
     revalidateGraph();
     return { ok: true, message: "Partnership detached." };
+  }
+
+  if (input.edgeType === "co_owner") {
+    if (!input.coOwnerId) {
+      return { ok: false, error: "Missing co-ownership link." };
+    }
+    const viewer = await requireViewerDomainVerified(user.id);
+    if (!viewer.ok) return viewer;
+
+    const { error } = await supabase.rpc("end_co_ownership", {
+      p_edge_id: input.coOwnerId,
+      p_as_company_id: viewer.companyId,
+    });
+    if (error) return { ok: false, error: error.message };
+    revalidateGraph();
+    return { ok: true, message: "Shared ownership ended." };
   }
 
   if (input.edgeType === "subsidiary" || input.edgeType === "member_of") {

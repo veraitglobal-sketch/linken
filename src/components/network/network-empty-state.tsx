@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import { PRODUCT } from "@/lib/product-model";
 
 type Props = {
   emptyHref?: string;
@@ -12,7 +13,7 @@ type Props = {
 /** Premium empty network — composed center, not dashed junk cards. */
 export function NetworkEmptyState({
   emptyHref = "/dashboard/partners",
-  emptyLabel = "Invite a partner",
+  emptyLabel = "Add on profile",
   secondaryHref = "/dashboard/structure",
   secondaryLabel = "Add subsidiary",
   className,
@@ -38,11 +39,10 @@ export function NetworkEmptyState({
 
       <div className="relative max-w-sm text-center">
         <p className="font-display text-[22px] font-semibold tracking-[-0.04em] text-ink">
-          Start your network
+          {PRODUCT.map.label}
         </p>
         <p className="mt-2 text-[13px] leading-relaxed text-muted">
-          Invite a partner or add a subsidiary, then drag between nodes to
-          connect.
+          {PRODUCT.oneLiner}
         </p>
       </div>
 

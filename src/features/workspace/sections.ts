@@ -16,17 +16,17 @@ export const WORKSPACE_SECTIONS = [
 export type WorkspaceSection = (typeof WORKSPACE_SECTIONS)[number];
 
 export const WORKSPACE_SECTION_LABELS: Record<WorkspaceSection, string> = {
-  network: "Network",
-  structure: "Structure",
+  network: "Map",
+  structure: "Branches",
   partners: "Partners",
-  team: "Team",
+  team: "Team access",
   verification: "Verification",
   widgets: "Widgets",
   api: "API",
   insights: "Insights",
   inbox: "Inbox",
   radar: "Radar",
-  settings: "Settings",
+  settings: "Company",
 };
 
 export const SECTION_BY_HREF: Record<string, WorkspaceSection> = {

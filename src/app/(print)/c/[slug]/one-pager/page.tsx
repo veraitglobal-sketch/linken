@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { OnePagerDocument } from "@/components/one-pager/one-pager-document";
 import { PrintButton } from "@/components/one-pager/print-button";
 import { logProfileEvent } from "@/features/analytics/log";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getOnePagerData } from "@/features/one-pager/queries";
+import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import { qrDataUri } from "@/lib/qr";
 import { getSiteUrl } from "@/lib/site";
 
@@ -27,7 +28,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function OnePagerPage({ params }: Props) {
   const { slug } = await params;
   const data = await getOnePagerData(slug);
-  if (!data) notFound();
+  if (!data) {
+    const redirectSlug = await resolveCompanySlugRedirect(slug);
+    if (redirectSlug) permanentRedirect(`/c/${redirectSlug}/one-pager`);
+    notFound();
+  }
 
   const isOwner = await isCompanyOwnerSlug(slug);
   if (!isOwner) {

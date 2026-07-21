@@ -4,11 +4,15 @@ import { InboxFlash } from "@/components/inbox/inbox-flash";
 import { InboxTabs } from "@/components/inbox/inbox-tabs";
 import { DashboardInquiries } from "@/components/inquiries/dashboard-inquiries";
 import { DashboardIntros } from "@/components/intros/dashboard-intros";
+import { PartnershipInbox } from "@/components/partners/partnership-inbox";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
+import { OwnerLoopBar } from "@/components/product/owner-loop-bar";
 import { getInquiriesForOwnerCompany } from "@/features/inquiries/queries";
 import { listReceivedIntros } from "@/features/intros/queries";
+import { getPartnershipInbox } from "@/features/partners/inbox";
 import { assertCompanySection } from "@/features/workspace/company-gate";
+import { PRODUCT } from "@/lib/product-model";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -21,7 +25,8 @@ type Props = {
 
 export default async function DashboardInboxPage({ searchParams }: Props) {
   const { error, tab } = await searchParams;
-  const active = tab === "intros" ? "intros" : "inquiries";
+  const active =
+    tab === "intros" ? "intros" : tab === "partners" ? "partners" : "inquiries";
   const { user, company, needsCompanySwitch } =
     await assertCompanySection("inbox");
 
@@ -61,10 +66,13 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
     );
   }
 
-  const [inquiryData, intros] = await Promise.all([
+  const [inquiryData, intros, partnerInbox] = await Promise.all([
     getInquiriesForOwnerCompany(company.id),
     listReceivedIntros(company.id),
+    getPartnershipInbox(company.id),
   ]);
+  const partnersPendingCount =
+    partnerInbox.incomingPending.length + partnerInbox.outgoingPending.length;
 
   if (active === "intros") {
     const supabase = await createClient();
@@ -77,22 +85,16 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
 
   return (
     <WorkspacePage
-      title="Inbox"
-      description="Inquiries from your profile. Intros from Radar — kept separate."
-      action={
-        <Link
-          href={`/c/${company.slug}`}
-          className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
-        >
-          Public profile
-        </Link>
-      }
+      title={PRODUCT.inbox.label}
+      description={PRODUCT.inbox.job}
     >
       <div className="space-y-5">
+        <OwnerLoopBar companySlug={company.slug} active="inbox" />
         <InboxTabs
           active={active}
           inquiryNew={inquiryData.newCount}
           introsCount={intros.length}
+          partnersCount={partnersPendingCount}
         />
 
         {error ? <InboxFlash tone="error">{error}</InboxFlash> : null}
@@ -104,6 +106,25 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
             monthCount={inquiryData.monthCount}
             companySlug={company.slug}
           />
+        ) : active === "partners" ? (
+          partnersPendingCount > 0 || partnerInbox.accepted.length > 0 ? (
+            <PartnershipInbox
+              incomingPending={partnerInbox.incomingPending}
+              outgoingPending={partnerInbox.outgoingPending}
+              accepted={partnerInbox.accepted}
+            />
+          ) : (
+            <p className="rounded-2xl border border-dashed border-line bg-surface/60 px-5 py-8 text-center text-[13px] text-muted">
+              No partner requests yet.{" "}
+              <Link
+                href={`/c/${company.slug}?add=1#add-partner`}
+                className="font-semibold text-ink underline-offset-2 hover:underline"
+              >
+                Invite a partner
+              </Link>{" "}
+              from your Company page.
+            </p>
+          )
         ) : (
           <DashboardIntros
             intros={intros}

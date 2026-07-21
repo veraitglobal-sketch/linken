@@ -13,9 +13,10 @@ import {
   viewerCompanyMembership,
 } from "@/features/team/queries";
 import { assertCompanySection } from "@/features/workspace/company-gate";
+import { PRODUCT } from "@/lib/product-model";
 
 export const metadata: Metadata = {
-  title: "Team",
+  title: "Team access",
 };
 
 type Props = {
@@ -71,15 +72,15 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
 
   return (
     <WorkspacePage
-      title="Team"
-      description="People with access to this company. Public only if they opt in."
+      title="Team access"
+      description={`Who can work here. Public team appears on ${PRODUCT.company.label} when they opt in.`}
       action={
         company?.slug ? (
           <Link
-            href={`/c/${company.slug}`}
+            href={`/c/${company.slug}#team`}
             className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
           >
-            Public profile
+            {PRODUCT.company.label}
           </Link>
         ) : null
       }

@@ -6,9 +6,16 @@ import { Button } from "@/components/ui/button";
 
 export type { SettingsCompany };
 
-type Props = { company: SettingsCompany };
+type Props = {
+  company: SettingsCompany;
+  /** Where to return after save — profile edit by default. */
+  backPath?: string;
+};
 
-export function CompanySettingsForm({ company }: Props) {
+export function CompanySettingsForm({
+  company,
+  backPath = `/c/${company.slug}/edit`,
+}: Props) {
   return (
     <WorkspaceCard padded={false}>
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line bg-paper/70 px-5 py-4 sm:px-6">
@@ -27,6 +34,7 @@ export function CompanySettingsForm({ company }: Props) {
       </div>
 
       <form action={updateCompanyProfile}>
+        <input type="hidden" name="back" value={backPath} />
         <div className="px-5 py-5 sm:px-6">
           <CompanySettingsFields company={company} />
         </div>

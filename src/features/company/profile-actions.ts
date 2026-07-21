@@ -12,18 +12,28 @@ import { uploadLogoCore } from "@/features/logo/core";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const SETTINGS = "/dashboard/settings";
-
-function fail(message: string): never {
-  redirect(`${SETTINGS}?error=${encodeURIComponent(message)}`);
+function safeBack(raw: string, slug: string) {
+  const back = raw.trim();
+  if (back.startsWith(`/c/${slug}`)) return back;
+  if (back === "/dashboard/settings") return `/c/${slug}/edit`;
+  return `/c/${slug}/edit`;
 }
 
-async function requireOperatorCompany() {
-  return requireOperatorActiveCompany({ loginNext: SETTINGS });
+function backWith(back: string, params: Record<string, string>) {
+  const url = new URL(back, "http://linken.local");
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
+  return `${url.pathname}${url.search}`;
+}
+
+async function requireOperatorCompany(loginNext: string) {
+  return requireOperatorActiveCompany({ loginNext });
 }
 
 function revalidateCompany(slug: string) {
-  revalidatePath(SETTINGS);
+  revalidatePath("/dashboard/settings");
+  revalidatePath(`/c/${slug}/edit`);
   revalidatePath("/dashboard");
   revalidatePath(`/c/${slug}`);
   revalidatePath(`/c/${slug}/one-pager`);
@@ -31,13 +41,22 @@ function revalidateCompany(slug: string) {
 }
 
 export async function updateCompanyProfile(formData: FormData) {
+  const backHint = String(formData.get("back") ?? "").trim();
+  const { supabase, company } = await requireOperatorCompany(
+    backHint.startsWith("/") ? backHint : "/dashboard/settings",
+  );
+  const back = safeBack(backHint, company.slug);
+
   const forbidden = hasForbiddenSettingsFields(formData);
-  if (forbidden) fail(`Field "${forbidden}" cannot be changed here.`);
+  if (forbidden) {
+    redirect(backWith(back, { error: `Field "${forbidden}" cannot be changed here.` }));
+  }
 
   const parsed = parseSettingsFormData(formData);
-  if (!parsed.ok) fail(parsed.error);
+  if (!parsed.ok) {
+    redirect(backWith(back, { error: parsed.error }));
+  }
 
-  const { supabase, company } = await requireOperatorCompany();
   const next = parsed.data;
   const domainShift =
     Boolean(company.verified) &&
@@ -62,18 +81,24 @@ export async function updateCompanyProfile(formData: FormData) {
     .select("id")
     .maybeSingle();
 
-  if (error) fail(error.message);
+  if (error) redirect(backWith(back, { error: error.message }));
   if (!updated) {
-    fail("Could not save profile — check you still have edit access.");
+    redirect(
+      backWith(back, {
+        error: "Could not save profile — check you still have edit access.",
+      }),
+    );
   }
 
   if (domainShift) {
     const admin = createAdminClient();
-    if (!admin) fail("Could not update domain verification status.");
+    if (!admin) {
+      redirect(backWith(back, { error: "Could not update domain verification status." }));
+    }
     const { error: rpcError } = await admin.rpc("set_domain_unverified", {
       p_company_id: company.id,
     });
-    if (rpcError) fail(rpcError.message);
+    if (rpcError) redirect(backWith(back, { error: rpcError.message }));
     revalidateCompany(company.slug);
     redirect("/dashboard/verification?domainChanged=1");
   }
@@ -83,18 +108,21 @@ export async function updateCompanyProfile(formData: FormData) {
   }
 
   revalidateCompany(company.slug);
-  redirect(`${SETTINGS}?saved=1`);
+  redirect(backWith(back, { saved: "1" }));
 }
 
 export async function uploadCompanyLogo(formData: FormData) {
-  const { user, company } = await requireOperatorCompany();
+  const { user, company } = await requireOperatorCompany("/dashboard/settings");
+  const back = safeBack(String(formData.get("back") ?? ""), company.slug);
   const file = formData.get("logo");
   if (!(file instanceof File) || file.size === 0) {
-    fail("Choose an image file to upload.");
+    redirect(backWith(back, { error: "Choose an image file to upload." }));
   }
 
   const admin = createAdminClient();
-  if (!admin) fail("Logo upload is temporarily unavailable.");
+  if (!admin) {
+    redirect(backWith(back, { error: "Logo upload is temporarily unavailable." }));
+  }
 
   const bytes = new Uint8Array(await file.arrayBuffer());
   const result = await uploadLogoCore(admin, company.id, {
@@ -103,8 +131,8 @@ export async function uploadCompanyLogo(formData: FormData) {
     ownerUserId: user.id,
   });
 
-  if (!result.ok) fail(result.error);
+  if (!result.ok) redirect(backWith(back, { error: result.error }));
 
   revalidateCompany(company.slug);
-  redirect(`${SETTINGS}?ok=logoUpload`);
+  redirect(backWith(back, { ok: "logoUpload" }));
 }

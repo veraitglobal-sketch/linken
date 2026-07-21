@@ -38,11 +38,11 @@ export function CompanyHeroActions({
       ) : null}
       {showEditProfile ? (
         <Button
-          href="/dashboard/settings"
+          href={`/c/${slug}/edit`}
           variant="secondary"
           className="h-11 min-w-[150px] px-5"
         >
-          Edit company profile
+          Edit company
         </Button>
       ) : null}
       {showOnePager ? (

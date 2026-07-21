@@ -14,21 +14,7 @@ export function CompanySettingsIdentity({
     <div className="space-y-4">
       <SectionLabel>Identity</SectionLabel>
 
-      <SettingsField
-        label="Company name"
-        hint={
-          <p
-            className="mt-1.5 text-[11px] text-plus"
-            title="Your public URL is permanent. Changing it would break QR codes and embeds on partner sites."
-          >
-            Public link:{" "}
-            <span className="font-mono text-[11px] text-ink">
-              {company.publicHost}/c/{company.slug}
-            </span>{" "}
-            — permanent
-          </p>
-        }
-      >
+      <SettingsField label="Company name">
         <Input name="name" required defaultValue={company.name} maxLength={120} />
       </SettingsField>
 

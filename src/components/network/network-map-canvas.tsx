@@ -10,11 +10,14 @@ type Props = {
   heightClass?: string;
   emptyHref?: string;
   emptyLabel?: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
   subtitle?: string;
   fullBleed?: boolean;
   editable?: boolean;
   viewerCompanyId?: string | null;
   pendingInviteCount?: number;
+  companySlug?: string;
 };
 
 export async function NetworkMapCanvas({
@@ -22,11 +25,14 @@ export async function NetworkMapCanvas({
   heightClass = "h-[min(68vh,640px)]",
   emptyHref,
   emptyLabel = "Invite a partner",
+  secondaryHref,
+  secondaryLabel,
   subtitle,
   fullBleed = false,
   editable = false,
   viewerCompanyId,
   pendingInviteCount = 0,
+  companySlug,
 }: Props) {
   const graph = await getNetworkGraph(scope, { viewerCompanyId });
   const publicHref =
@@ -75,6 +81,8 @@ export async function NetworkMapCanvas({
         <NetworkEmptyState
           emptyHref={emptyHref}
           emptyLabel={emptyLabel}
+          secondaryHref={secondaryHref}
+          secondaryLabel={secondaryLabel}
           className={fullBleed ? "min-h-0 flex-1" : heightClass}
         />
       ) : (
@@ -84,6 +92,7 @@ export async function NetworkMapCanvas({
             editable={editable}
             pendingInviteCount={pendingInviteCount}
             title={subtitle ?? "Network"}
+            companySlug={companySlug}
           />
         </div>
       )}

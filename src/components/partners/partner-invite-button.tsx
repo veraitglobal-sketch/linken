@@ -5,7 +5,7 @@ type Props = {
   companySlug: string;
   companyName: string;
   disabledReason?: string | null;
-  /** Safe redirect after send (must start with /dashboard or /search). */
+  /** Safe redirect after send (/dashboard, /search, or /c/…). */
   back?: string;
 };
 

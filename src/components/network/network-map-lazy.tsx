@@ -21,6 +21,7 @@ type Props = {
   editable?: boolean;
   pendingInviteCount?: number;
   title?: string;
+  companySlug?: string;
 };
 
 export function NetworkMapLazy({
@@ -28,6 +29,7 @@ export function NetworkMapLazy({
   editable,
   pendingInviteCount,
   title,
+  companySlug,
 }: Props) {
   return (
     <NetworkMap
@@ -35,6 +37,7 @@ export function NetworkMapLazy({
       editable={editable}
       pendingInviteCount={pendingInviteCount}
       title={title}
+      companySlug={companySlug}
     />
   );
 }

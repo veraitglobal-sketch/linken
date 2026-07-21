@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { GettingStartedPill } from "@/components/activation/getting-started-pill";
 import { WorkspaceAsideFooter } from "@/components/dashboard/workspace-aside-footer";
+import { WorkspaceMobileNav } from "@/components/dashboard/workspace-mobile-nav";
 import { WorkspaceNav } from "@/components/dashboard/workspace-nav";
 import { WORKSPACE_PAGE_META } from "@/components/dashboard/workspace-page-meta";
 import { WorkspaceSwitcher } from "@/components/dashboard/workspace-switcher";
@@ -12,7 +13,6 @@ import { NetworkMark } from "@/components/marketing/network-mark";
 import type { ActivationChecklist } from "@/features/activation/checklist";
 import type { WorkspaceSection } from "@/features/workspace/sections";
 import type { WorkspaceContext } from "@/features/workspace/types";
-import { cn } from "@/lib/cn";
 
 type Props = {
   children: ReactNode;
@@ -112,11 +112,14 @@ export function WorkspaceShell({
                   href={publicHref}
                   className="pointer-events-auto inline-flex h-8 shrink-0 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)] backdrop-blur-md transition-colors hover:bg-paper"
                 >
-                  Public profile
+                  Company
                 </Link>
               ) : null}
             </div>
-            <MobileNav pathname={pathname} />
+            <WorkspaceMobileNav
+              pathname={pathname}
+              companySlug={active?.type === "company" ? active.slug : null}
+            />
             <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
           </>
         ) : (
@@ -144,7 +147,7 @@ export function WorkspaceShell({
                   href={publicHref}
                   className="inline-flex h-8 shrink-0 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
                 >
-                  {active?.type === "group" ? "Public group" : "Public profile"}
+                  {active?.type === "group" ? "Public group" : "Company"}
                 </Link>
               ) : (
                 <Link
@@ -155,38 +158,14 @@ export function WorkspaceShell({
                 </Link>
               )}
             </header>
-            <MobileNav pathname={pathname} />
+            <WorkspaceMobileNav
+              pathname={pathname}
+              companySlug={active?.type === "company" ? active.slug : null}
+            />
             <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
           </>
         )}
       </div>
-    </div>
-  );
-}
-
-function MobileNav({ pathname }: { pathname: string }) {
-  return (
-    <div className="flex gap-1 overflow-x-auto border-b border-line/70 bg-[#f7f8f6] px-3 py-2 lg:hidden">
-      {[
-        ["/dashboard", "Network"],
-        ["/dashboard/structure", "Structure"],
-        ["/dashboard/insights", "Insights"],
-        ["/dashboard/inbox", "Inbox"],
-        ["/dashboard/partners", "Partners"],
-      ].map(([href, label]) => (
-        <Link
-          key={href}
-          href={href}
-          className={cn(
-            "shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors",
-            pathname === href
-              ? "bg-navy font-semibold text-white"
-              : "text-muted hover:text-ink",
-          )}
-        >
-          {label}
-        </Link>
-      ))}
     </div>
   );
 }

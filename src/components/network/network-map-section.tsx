@@ -2,6 +2,7 @@ import Link from "next/link";
 import { NetworkMapLazy } from "@/components/network/network-map-lazy";
 import { getNetworkGraph } from "@/features/network/queries";
 import type { NetworkScope } from "@/features/network/types";
+import { PRODUCT } from "@/lib/product-model";
 
 type Props = {
   scope: NetworkScope;
@@ -30,14 +31,13 @@ export async function NetworkMapSection({
       <div className="overflow-hidden rounded-[28px] border border-line bg-surface">
         <div className="border-b border-line px-5 py-5 sm:px-7">
           <p className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">
-            Structure
+            {PRODUCT.map.label}
           </p>
           <h2 className="mt-2 font-display text-[clamp(1.5rem,2.4vw,1.9rem)] font-medium tracking-[-0.035em] text-ink">
             {title}
           </h2>
           <p className="mt-2 max-w-[42rem] text-[14px] leading-relaxed text-muted">
-            Confirmed relationships only — subsidiaries, partners, and clients.
-            Evidence stays on each company; the map shows how they connect.
+            {PRODUCT.map.job}
           </p>
           {graph.summary.companies +
             graph.summary.subsidiaries +

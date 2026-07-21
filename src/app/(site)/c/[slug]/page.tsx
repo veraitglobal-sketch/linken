@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import { CompanyProfile } from "@/components/company/company-profile";
 import { NetworkMapSection } from "@/components/network/network-map-section";
+import { CompanyMapTeaser } from "@/components/product/company-map-teaser";
 import { logProfileEvent } from "@/features/analytics/log";
 import { parseProfileSource } from "@/features/analytics/sources";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getActivationChecklist } from "@/features/activation/checklist";
 import { getCaseStudiesForCompany } from "@/features/case-studies/queries";
-import { getCompanyForPage } from "@/features/companies/queries";
+import {
+  getCompanyForPage,
+  searchCompanies,
+} from "@/features/companies/queries";
 import { getConfirmedGroupForCompany } from "@/features/groups/queries";
+import { getPartnershipInbox } from "@/features/partners/inbox";
 import { getPartnersForCompany } from "@/features/partners/public-queries";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getPublicTeam } from "@/features/team/queries";
 import { getTrustProfile } from "@/features/trust/queries";
+import { PRODUCT } from "@/lib/product-model";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
@@ -21,12 +28,15 @@ type Props = {
   searchParams: Promise<{
     claimSent?: string;
     claimError?: string;
-    claimed?: string;
-    refAdded?: string;
     inquirySent?: string;
     error?: string;
+    invited?: string;
+    created?: string;
     src?: string;
     domainVerified?: string;
+    add?: string;
+    q?: string;
+    mode?: string;
   }>;
 };
 
@@ -34,19 +44,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const company = await getCompanyForPage(slug);
   if (!company) return { title: "Company not found" };
-
   const url = `${getSiteUrl()}/c/${company.slug}`;
-  const llmMd = `${url}/llm.md`;
-
   return {
     title: company.name,
     description: company.tagline,
-    alternates: {
-      canonical: url,
-      types: {
-        "text/markdown": llmMd,
-      },
-    },
+    alternates: { canonical: url },
     openGraph: {
       type: "profile",
       title: `${company.name} · Linken`,
@@ -58,10 +60,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CompanyPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { claimSent, claimError, inquirySent, error, src, domainVerified } =
-    await searchParams;
+  const sp = await searchParams;
   const company = await getCompanyForPage(slug);
-  if (!company) notFound();
+  if (!company) {
+    const redirectSlug = await resolveCompanySlugRedirect(slug);
+    if (redirectSlug) permanentRedirect(`/c/${redirectSlug}`);
+    notFound();
+  }
 
   const [
     partners,
@@ -84,10 +89,32 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     getConfirmedGroupForCompany(company.id),
     getPublicTeam(company.id),
   ]);
+
   const editable = isOwner;
-  const checklist = editable
-    ? await getActivationChecklist(company.id)
-    : null;
+  const showAdd = editable && sp.add === "1";
+  const addMode = sp.mode === "draft" ? "draft" : "search";
+  const q = showAdd && addMode === "search" ? (sp.q ?? "").trim() : "";
+
+  const [checklist, inbox, searchHits] = await Promise.all([
+    editable ? getActivationChecklist(company.id) : Promise.resolve(null),
+    showAdd ? getPartnershipInbox(company.id) : Promise.resolve(null),
+    showAdd && q ? searchCompanies(q) : Promise.resolve([]),
+  ]);
+
+  const statusBySlug = new Map<string, string>();
+  if (inbox) {
+    for (const row of inbox.outgoingPending) {
+      statusBySlug.set(row.other.slug, "Pending");
+    }
+    for (const row of inbox.incomingPending) {
+      statusBySlug.set(row.other.slug, "Incoming");
+    }
+    for (const row of inbox.accepted) {
+      statusBySlug.set(row.other.slug, "Official");
+    }
+  }
+
+  const addResults = searchHits.filter((c) => c.slug !== company.slug);
   const siteUrl = getSiteUrl();
   const confirmedLinks =
     trust.breakdown.confirmedPartners +
@@ -96,7 +123,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     (groupBadge ? 1 : 0);
 
   if (!isOwner && company.claimed !== false) {
-    const source = parseProfileSource(src);
+    const source = parseProfileSource(sp.src);
     await logProfileEvent(
       company.slug,
       source === "qr" ? "qr_scan" : "profile_view",
@@ -104,36 +131,19 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     );
   }
 
-  const confirmedClientRels =
-    trust.breakdown.confirmedReferences + trust.breakdown.ongoingReferences;
-  const networkSuffix =
-    trust.level === "Trusted" || trust.level === "Pillar"
-      ? ` Verified network: ${trust.breakdown.confirmedPartners} confirmed partners, ${confirmedClientRels} confirmed client relationships.`
-      : "";
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: company.name,
-    description: `${company.description}${networkSuffix}`,
-    url: company.website || undefined,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: company.city,
-      addressCountry: company.country,
-    },
-    sameAs: [
-      company.website,
-      ...partners.map((partner) => `${siteUrl}/c/${partner.slug}`),
-    ].filter(Boolean),
-  };
+  const networkMap =
+    confirmedLinks >= 2 ? (
+      <NetworkMapSection
+        scope={{ type: "company", slug: company.slug, expand: "full" }}
+        title={PRODUCT.map.label}
+        minHeightClass="h-[60vh]"
+      />
+    ) : editable ? (
+      <CompanyMapTeaser companySlug={company.slug} />
+    ) : null;
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <CompanyProfile
         company={company}
         partners={partners}
@@ -142,24 +152,24 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         trust={trust}
         assessmentSummary={assessmentSummary}
         editable={editable}
-        claimSent={claimSent === "1"}
-        claimError={claimError}
-        inquirySent={inquirySent === "1"}
-        error={error}
+        claimSent={sp.claimSent === "1"}
+        claimError={sp.claimError}
+        inquirySent={sp.inquirySent === "1"}
+        error={sp.error}
+        partnerInvited={sp.invited}
+        partnerCreated={sp.created}
         siteUrl={siteUrl}
-        domainVerifiedJustNow={domainVerified === "1"}
+        domainVerifiedJustNow={sp.domainVerified === "1"}
         groupBadge={groupBadge}
         teamMembers={teamMembers}
         nextActivationStep={checklist?.next ?? null}
-        networkMap={
-          confirmedLinks >= 2 ? (
-            <NetworkMapSection
-              scope={{ type: "company", slug: company.slug, expand: "full" }}
-              title="Network"
-              minHeightClass="h-[60vh]"
-            />
-          ) : null
-        }
+        showAddPartner={showAdd}
+        addPartnerQ={q}
+        addPartnerResults={addResults}
+        addPartnerVerified={Boolean(company.verified)}
+        addPartnerStatus={statusBySlug}
+        addPartnerMode={addMode}
+        networkMap={networkMap}
       />
     </>
   );
