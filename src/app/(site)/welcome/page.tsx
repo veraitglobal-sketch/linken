@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { WelcomeSetup } from "@/components/activation/welcome-setup";
+import { getActivationChecklist } from "@/features/activation/checklist";
 import { getDashboardSession } from "@/features/dashboard/session";
 import { getCompanyVerification } from "@/features/verification/queries";
 
@@ -24,17 +25,25 @@ export default async function WelcomePage({ searchParams }: Props) {
     redirect("/onboarding");
   }
 
-  const verification = await getCompanyVerification(company.id);
+  const [verification, checklist] = await Promise.all([
+    getCompanyVerification(company.id),
+    getActivationChecklist(company.id),
+  ]);
   const from =
     fromRaw === "confirm" || fromRaw === "onboarding" || fromRaw === "claim"
       ? fromRaw
       : "claim";
+
+  const inviteDone = Boolean(
+    checklist?.steps.find((s) => s.id === "invite_partner")?.done,
+  );
 
   return (
     <WelcomeSetup
       companySlug={company.slug}
       companyName={company.name}
       domainVerified={Boolean(verification?.verified)}
+      hasPartnership={inviteDone}
       from={from}
     />
   );

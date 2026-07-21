@@ -28,11 +28,15 @@ export function VerificationDone({
               {domain} is verified
             </h2>
             <p className="mt-1 text-[12px] leading-relaxed text-muted">
-              Your public profile can show the Verified badge.
+              Next: invite a partner so they appear on your Network after they
+              accept.
               {verifiedDate ? ` Confirmed ${verifiedDate}.` : ""}
             </p>
           </div>
-          <Badge tone="success" className="text-[10px] tracking-[0.06em] uppercase">
+          <Badge
+            tone="success"
+            className="text-[10px] tracking-[0.06em] uppercase"
+          >
             Verified
             {method ? ` · ${methodLabel(method)}` : ""}
           </Badge>
@@ -40,16 +44,16 @@ export function VerificationDone({
       </div>
       <div className="flex flex-wrap gap-2 px-5 py-4 sm:px-6">
         <Link
-          href={`/c/${companySlug}`}
+          href="/dashboard/partners?verified=1"
           className="inline-flex h-9 items-center rounded-xl bg-navy px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-hover"
         >
-          View public profile
+          Invite a partner
         </Link>
         <Link
-          href="/dashboard/settings"
+          href={`/c/${companySlug}`}
           className="inline-flex h-9 items-center rounded-xl border border-line bg-surface px-3.5 text-[12px] font-semibold text-ink transition-colors hover:bg-paper"
         >
-          Company settings
+          View public profile
         </Link>
       </div>
     </section>

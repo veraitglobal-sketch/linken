@@ -135,10 +135,10 @@ export async function createCompany(formData: FormData) {
   revalidatePath(`/c/${created.slug}`);
   revalidatePath("/dashboard");
 
-  // Mid-step when auto-verify did not pass — non-blocking “Do it later” on that page
+  // Mid-step when auto-verify did not pass — non-blocking “Do it later”
   if (!autoVerified) {
     redirect("/onboarding/verify");
   }
 
-  redirect(`/c/${created.slug}?domainVerified=1`);
+  redirect("/welcome?from=onboarding");
 }

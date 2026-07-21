@@ -87,9 +87,16 @@ export function GettingStartedPill({ checklist }: Props) {
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <p className="mt-2 text-[12px] leading-relaxed text-muted">
-              Each step fills your network with confirmed evidence.
-            </p>
+            {checklist.next ? (
+              <p className="mt-2 text-[12px] leading-relaxed text-ink">
+                Next:{" "}
+                <span className="font-semibold">{checklist.next.label}</span>
+              </p>
+            ) : (
+              <p className="mt-2 text-[12px] leading-relaxed text-muted">
+                Each step fills your network with confirmed evidence.
+              </p>
+            )}
           </div>
           <div className="px-2">
             <GettingStartedSteps

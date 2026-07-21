@@ -24,8 +24,8 @@ export function GroupAddForms({ groupId, confirmed, backPath }: Props) {
     <div className="space-y-10">
       <section>
         <GroupSection
-          title="Add subsidiary"
-          description="Unclaimed branch, auto-confirmed. Optionally nest under a parent."
+          title="Add a subsidiary"
+          description="Creates a new company profile under your group. It starts unclaimed — a local manager can claim it later. Nest under a parent to place it in the tree."
         />
         <WorkspaceCard>
           <form
@@ -34,7 +34,7 @@ export function GroupAddForms({ groupId, confirmed, backPath }: Props) {
           >
             <input type="hidden" name="group_id" value={groupId} />
             <input type="hidden" name="back" value={backPath} />
-            <Field label="Name" className="sm:col-span-2">
+            <Field label="Branch name" className="sm:col-span-2">
               <Input name="name" required placeholder="CleanCo Austria" />
             </Field>
             <Field label="Category">
@@ -49,7 +49,10 @@ export function GroupAddForms({ groupId, confirmed, backPath }: Props) {
             <Field label="Website (optional)" className="sm:col-span-2">
               <Input name="website" type="url" placeholder="https://" />
             </Field>
-            <Field label="Parent in group (optional)" className="sm:col-span-2">
+            <Field
+              label="Parent in the tree (optional)"
+              className="sm:col-span-2"
+            >
               <ParentSelect confirmed={confirmed} />
             </Field>
             <div className="sm:col-span-2">
@@ -63,20 +66,32 @@ export function GroupAddForms({ groupId, confirmed, backPath }: Props) {
 
       <section>
         <GroupSection
-          title="Invite company"
-          description="They must confirm. Optional parent nests them after confirmation."
+          title="Invite an existing company"
+          description="They already have a Linken profile. They must confirm the invite. After confirmation you can nest them under a parent."
         />
         <WorkspaceCard>
           <form action={inviteCompanyToGroup} className="grid gap-3">
             <input type="hidden" name="group_id" value={groupId} />
             <input type="hidden" name="back" value={backPath} />
             <Field label="Company slug">
-              <Input name="company_slug" required placeholder="company-slug" />
+              <Input
+                name="company_slug"
+                required
+                placeholder="cleanco-austria"
+              />
             </Field>
-            <Field label="Parent in group (optional)">
+            <p className="text-[12px] text-muted">
+              Find the slug on their public profile URL: linken…/c/
+              <span className="font-semibold text-ink">slug</span>
+            </p>
+            <Field label="Parent in the tree (optional)">
               <ParentSelect confirmed={confirmed} />
             </Field>
-            <Button type="submit" variant="secondary" className="h-10 w-fit px-4">
+            <Button
+              type="submit"
+              variant="secondary"
+              className="h-10 w-fit px-4"
+            >
               Send invite
             </Button>
           </form>
@@ -89,10 +104,10 @@ export function GroupAddForms({ groupId, confirmed, backPath }: Props) {
 function ParentSelect({ confirmed }: { confirmed: GroupMemberCard[] }) {
   return (
     <select name="parent_company_id" className={selectClass} defaultValue="">
-      <option value="">Directly under group</option>
+      <option value="">Top level under the group</option>
       {confirmed.map((m) => (
         <option key={m.companyId} value={m.companyId}>
-          {m.name}
+          Nest under {m.name}
         </option>
       ))}
     </select>

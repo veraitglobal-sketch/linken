@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 /**
  * Mid-step after company creation when auto email-domain verification did not pass.
- * Non-blocking — “Do it later” continues to the profile.
+ * Non-blocking — “Do it later” continues to welcome activation.
  */
 export default async function OnboardingVerifyPage() {
   const { user, company } = await getDashboardSession();
@@ -21,7 +21,7 @@ export default async function OnboardingVerifyPage() {
 
   const verification = await getCompanyVerification(company.id);
   if (verification?.verified) {
-    redirect(`/c/${company.slug}`);
+    redirect("/welcome?from=onboarding");
   }
 
   return (
@@ -32,11 +32,10 @@ export default async function OnboardingVerifyPage() {
       <h1 className="mt-3 font-display text-[clamp(1.75rem,4vw,2.35rem)] font-medium tracking-[-0.04em] text-ink">
         Verify your domain
       </h1>
-      <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-        Your work email didn’t match your website domain, so we couldn’t verify
-        automatically. Domain verification unlocks official partnerships and the
-        Verified badge — it takes a few minutes (DNS, meta tag, or matching
-        email).
+      <p className="mt-3 text-[15px] leading-relaxed text-muted">
+        Your work email didn&apos;t match your website domain, so we couldn&apos;t
+        verify automatically. Verification unlocks official partnerships and the
+        Verified badge.
       </p>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -44,7 +43,7 @@ export default async function OnboardingVerifyPage() {
           Verify now
         </Button>
         <Button
-          href={`/c/${company.slug}`}
+          href="/welcome?from=onboarding"
           variant="secondary"
           className="h-11 px-5"
         >
@@ -52,15 +51,15 @@ export default async function OnboardingVerifyPage() {
         </Button>
       </div>
 
-      <p className="mt-8 text-[13px] text-[#64748b]">
-        You can open your profile anytime — verification waits in{" "}
+      <p className="mt-8 text-[13px] text-muted">
+        You can open{" "}
         <Link
-          href="/dashboard/verification"
+          href={`/c/${company.slug}`}
           className="font-semibold text-ink underline-offset-2 hover:underline"
         >
-          Workspace → Verification
-        </Link>
-        .
+          your profile
+        </Link>{" "}
+        anytime — verification waits in Workspace → Verification.
       </p>
     </section>
   );

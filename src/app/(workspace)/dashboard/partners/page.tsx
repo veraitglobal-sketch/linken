@@ -24,12 +24,13 @@ type Props = {
     accepted?: string;
     declined?: string;
     resent?: string;
+    verified?: string;
   }>;
 };
 
 export default async function DashboardPartnersPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { q = "", error, created, invited, accepted, declined, resent } =
+  const { q = "", error, created, invited, accepted, declined, resent, verified: justVerified } =
     params;
   const { company: mine, needsCompanySwitch } =
     await assertCompanySection("partners");
@@ -94,6 +95,13 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
             >
               Verify domain
             </Link>
+          </PartnerFlash>
+        ) : null}
+
+        {justVerified === "1" && verified ? (
+          <PartnerFlash>
+            Domain verified. Search a firm below or create a draft invite —
+            official only after they accept.
           </PartnerFlash>
         ) : null}
 

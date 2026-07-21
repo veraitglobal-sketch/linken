@@ -115,8 +115,8 @@ export default async function DashboardOverviewPage() {
         editable
         viewerCompanyId={company.id}
         pendingInviteCount={inbox.outgoingPending.length}
-        emptyHref="/dashboard/structure"
-        emptyLabel="Add first subsidiary"
+        emptyHref="/dashboard/partners"
+        emptyLabel="Invite a partner"
         subtitle={groupSlug ? "Company network" : "Your network"}
       />
     </div>

@@ -38,6 +38,19 @@ function safeBack(formData: FormData, fallback = "/dashboard/group") {
   return raw.startsWith("/dashboard") ? raw : fallback;
 }
 
+/** Merge flash params onto a dashboard back path (keeps existing ?tab=). */
+function backWith(back: string, params: Record<string, string>) {
+  const url = new URL(back, "http://linken.local");
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
+  return `${url.pathname}${url.search}`;
+}
+
+function revalidateBack(back: string) {
+  revalidatePath(back.split("?")[0]?.split("#")[0] || "/dashboard");
+}
+
 export async function createGroup(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
@@ -45,7 +58,7 @@ export async function createGroup(formData: FormData) {
   const back = safeBack(formData);
 
   if (!name) {
-    redirect(`${back}?error=${encodeURIComponent("Group name is required.")}`);
+    redirect(backWith(back, { error: "Group name is required." }));
   }
 
   const supabase = await createClient();
@@ -68,16 +81,14 @@ export async function createGroup(formData: FormData) {
     .single();
 
   if (error || !data) {
-    redirect(
-      `${back}?error=${encodeURIComponent(error?.message ?? "Could not create group.")}`,
-    );
+    redirect(backWith(back, { error: error?.message ?? "Could not create group." }));
   }
 
   if (website) scheduleGroupLogoFetch(data.id);
 
-  revalidatePath(back);
+  revalidateBack(back);
   revalidatePath(`/g/${data.slug}`);
-  redirect(`${back}?created=1`);
+  redirect(backWith(back, { created: "1" }));
 }
 
 export async function inviteCompanyToGroup(formData: FormData) {
@@ -89,7 +100,7 @@ export async function inviteCompanyToGroup(formData: FormData) {
   const back = safeBack(formData);
 
   if (!groupId || !companySlug) {
-    redirect(`${back}?error=${encodeURIComponent("Group and company slug are required.")}`);
+    redirect(backWith(back, { error: "Group and company slug are required." }));
   }
 
   const supabase = await createClient();
@@ -105,7 +116,7 @@ export async function inviteCompanyToGroup(formData: FormData) {
     .maybeSingle();
 
   if (!group || group.created_by !== user.id) {
-    redirect(`${back}?error=${encodeURIComponent("Only the group creator can invite.")}`);
+    redirect(backWith(back, { error: "Only the group creator can invite." }));
   }
 
   const { data: company } = await supabase
@@ -115,12 +126,10 @@ export async function inviteCompanyToGroup(formData: FormData) {
     .maybeSingle();
 
   if (!company) {
-    redirect(`${back}?error=${encodeURIComponent("Company not found.")}`);
+    redirect(backWith(back, { error: "Company not found." }));
   }
   if (company.claimed === false || !company.owner_id) {
-    redirect(
-      `${back}?error=${encodeURIComponent("Invite claimed companies only — or add a subsidiary.")}`,
-    );
+    redirect(backWith(back, { error: "Invite claimed companies only — or add a subsidiary." }));
   }
 
   const { error } = await supabase.rpc("upsert_group_invite", {
@@ -130,7 +139,7 @@ export async function inviteCompanyToGroup(formData: FormData) {
   });
 
   if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    redirect(backWith(back, { error: error.message }));
   }
 
   const admin = createAdminClient();
@@ -149,9 +158,9 @@ export async function inviteCompanyToGroup(formData: FormData) {
     }
   }
 
-  revalidatePath(back);
+  revalidateBack(back);
   revalidatePath(`/g/${group.slug}`);
-  redirect(`${back}?invited=${encodeURIComponent(company.slug)}`);
+  redirect(backWith(back, { invited: company.slug }));
 }
 
 export async function respondGroupMembership(formData: FormData) {
@@ -161,7 +170,7 @@ export async function respondGroupMembership(formData: FormData) {
   const back = "/dashboard";
 
   if (!groupId || !companyId || !["confirmed", "declined"].includes(decision)) {
-    redirect(`${back}?error=${encodeURIComponent("Invalid group response.")}`);
+    redirect(backWith(back, { error: "Invalid group response." }));
   }
 
   const supabase = await createClient();
@@ -177,7 +186,7 @@ export async function respondGroupMembership(formData: FormData) {
   });
 
   if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    redirect(backWith(back, { error: error.message }));
   }
 
   const { data: group } = await supabase
@@ -186,13 +195,16 @@ export async function respondGroupMembership(formData: FormData) {
     .eq("id", groupId)
     .maybeSingle();
 
-  revalidatePath(back);
+  revalidateBack(back);
   revalidatePath("/dashboard/group");
   if (group?.slug) revalidatePath(`/g/${group.slug}`);
   redirect(
-    decision === "confirmed"
-      ? `${back}?groupJoined=1`
-      : `${back}?groupDeclined=1`,
+    backWith(
+      back,
+      decision === "confirmed"
+        ? { groupJoined: "1" }
+        : { groupDeclined: "1" },
+    ),
   );
 }
 
@@ -203,7 +215,7 @@ export async function respondGroupParent(formData: FormData) {
   const back = "/dashboard";
 
   if (!groupId || !companyId || !["confirmed", "declined"].includes(decision)) {
-    redirect(`${back}?error=${encodeURIComponent("Invalid parent response.")}`);
+    redirect(backWith(back, { error: "Invalid parent response." }));
   }
 
   const supabase = await createClient();
@@ -218,7 +230,7 @@ export async function respondGroupParent(formData: FormData) {
     p_decision: decision,
   });
 
-  if (error) redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(backWith(back, { error: error.message }));
 
   const { data: group } = await supabase
     .from("company_groups")
@@ -226,7 +238,7 @@ export async function respondGroupParent(formData: FormData) {
     .eq("id", groupId)
     .maybeSingle();
 
-  revalidatePath(back);
+  revalidateBack(back);
   revalidatePath("/dashboard/group");
   if (group?.slug) revalidatePath(`/g/${group.slug}`);
   redirect(back);
@@ -244,9 +256,7 @@ export async function createSubsidiary(formData: FormData) {
   const back = backRaw.startsWith("/dashboard") ? backRaw : "/dashboard/group";
 
   if (!groupId || !name || !category || !city) {
-    redirect(
-      `${back}?error=${encodeURIComponent("Name, category, and city are required.")}`,
-    );
+    redirect(backWith(back, { error: "Name, category, and city are required." }));
   }
 
   const supabase = await createClient();
@@ -262,7 +272,7 @@ export async function createSubsidiary(formData: FormData) {
     .maybeSingle();
 
   if (!group) {
-    redirect(`${back}?error=${encodeURIComponent("Group not found.")}`);
+    redirect(backWith(back, { error: "Group not found." }));
   }
 
   // Ghost subsidiary counts toward the creator firm's daily unclaimed quota.
@@ -278,7 +288,7 @@ export async function createSubsidiary(formData: FormData) {
   if (seedCompany?.id) {
     const quota = await assertGhostDailyQuota(supabase, seedCompany.id);
     if (!quota.ok) {
-      redirect(`${back}?error=${encodeURIComponent(quota.error)}`);
+      redirect(backWith(back, { error: quota.error }));
     }
   }
 
@@ -298,7 +308,7 @@ export async function createSubsidiary(formData: FormData) {
   });
 
   if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    redirect(backWith(back, { error: error.message }));
   }
 
   const row = Array.isArray(data) ? data[0] : data;
@@ -309,13 +319,13 @@ export async function createSubsidiary(formData: FormData) {
     scheduleCompanyLogoFetch(companyId);
   }
 
-  revalidatePath(back);
+  revalidateBack(back);
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/structure");
   revalidatePath("/dashboard/group");
   revalidatePath(`/g/${group.slug}`);
   revalidatePath(`/c/${companySlug}`);
-  redirect(`${back}?subsidiary=${encodeURIComponent(companySlug)}`);
+  redirect(backWith(back, { subsidiary: companySlug }));
 }
 
 export async function endGroupMembership(formData: FormData) {
@@ -325,7 +335,7 @@ export async function endGroupMembership(formData: FormData) {
   const back = backRaw.startsWith("/dashboard") ? backRaw : "/dashboard";
 
   if (!groupId || !companyId) {
-    redirect(`${back}?error=${encodeURIComponent("Missing group or company.")}`);
+    redirect(backWith(back, { error: "Missing group or company." }));
   }
 
   const supabase = await createClient();
@@ -340,7 +350,7 @@ export async function endGroupMembership(formData: FormData) {
   });
 
   if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+    redirect(backWith(back, { error: error.message }));
   }
 
   const { data: group } = await supabase
@@ -349,11 +359,11 @@ export async function endGroupMembership(formData: FormData) {
     .eq("id", groupId)
     .maybeSingle();
 
-  revalidatePath(back);
+  revalidateBack(back);
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/group");
   if (group?.slug) revalidatePath(`/g/${group.slug}`);
-  redirect(`${back}?leftGroup=1`);
+  redirect(backWith(back, { leftGroup: "1" }));
 }
 
 export async function proposeGroupParent(formData: FormData) {
@@ -363,7 +373,7 @@ export async function proposeGroupParent(formData: FormData) {
   const back = "/dashboard/group";
 
   if (!groupId || !companyId || !parentCompanyId) {
-    redirect(`${back}?error=${encodeURIComponent("Parent and company required.")}`);
+    redirect(backWith(back, { error: "Parent and company required." }));
   }
 
   const supabase = await createClient();
@@ -378,10 +388,10 @@ export async function proposeGroupParent(formData: FormData) {
     p_parent_company_id: parentCompanyId,
   });
 
-  if (error) redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(backWith(back, { error: error.message }));
 
-  revalidatePath(back);
-  redirect(`${back}?parentProposed=1`);
+  revalidateBack(back);
+  redirect(backWith(back, { parentProposed: "1" }));
 }
 
 export async function addTeamMember(formData: FormData) {
@@ -392,7 +402,7 @@ export async function addTeamMember(formData: FormData) {
   const back = "/dashboard/team";
 
   if (!companyId || !email) {
-    redirect(`${back}?error=${encodeURIComponent("Company and email are required.")}`);
+    redirect(backWith(back, { error: "Company and email are required." }));
   }
 
   const supabase = await createClient();
@@ -410,14 +420,12 @@ export async function addTeamMember(formData: FormData) {
     .maybeSingle();
 
   if (!company) {
-    redirect(`${back}?error=${encodeURIComponent("Only the company owner can invite teammates.")}`);
+    redirect(backWith(back, { error: "Only the company owner can invite teammates." }));
   }
 
   const admin = createAdminClient();
   if (!admin) {
-    redirect(
-      `${back}?error=${encodeURIComponent("Team invites need SUPABASE_SERVICE_ROLE_KEY.")}`,
-    );
+    redirect(backWith(back, { error: "Team invites need SUPABASE_SERVICE_ROLE_KEY." }));
   }
 
   const { data: existingUserId } = await admin.rpc("lookup_user_id_by_email", {
@@ -431,12 +439,10 @@ export async function addTeamMember(formData: FormData) {
       role: "member",
     });
     if (error) {
-      redirect(
-        `${back}?error=${encodeURIComponent(error.message.includes("duplicate") ? "Already a member." : error.message)}`,
-      );
+      redirect(backWith(back, { error: error.message.includes("duplicate") ? "Already a member." : error.message }));
     }
-    revalidatePath(back);
-    redirect(`${back}?added=1`);
+    revalidateBack(back);
+    redirect(backWith(back, { added: "1" }));
   }
 
   // TODO: auto-link membership when this email registers (webhook / onboarding hook).
@@ -446,6 +452,6 @@ export async function addTeamMember(formData: FormData) {
     inviterHint: user.email ?? "A teammate",
   });
 
-  revalidatePath(back);
-  redirect(`${back}?invitedEmail=1`);
+  revalidateBack(back);
+  redirect(backWith(back, { invitedEmail: "1" }));
 }

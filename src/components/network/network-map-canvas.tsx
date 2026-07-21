@@ -21,7 +21,7 @@ export async function NetworkMapCanvas({
   scope,
   heightClass = "h-[min(68vh,640px)]",
   emptyHref,
-  emptyLabel = "Add subsidiary",
+  emptyLabel = "Invite a partner",
   subtitle,
   fullBleed = false,
   editable = false,

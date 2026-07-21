@@ -10,8 +10,8 @@ export function GroupCreateEmpty({ backPath }: Props) {
   return (
     <section>
       <GroupSection
-        title="Create a group"
-        description="One group for country branches. Evidence stays on each company profile."
+        title="Create your group"
+        description="Think of a group as the holding name for your country branches. Each branch keeps its own profile and evidence."
       />
       <WorkspaceCard>
         <form action={createGroup} className="grid gap-3">
@@ -24,7 +24,7 @@ export function GroupCreateEmpty({ backPath }: Props) {
           </label>
           <label className="block">
             <span className="mb-1.5 block text-[12px] font-medium text-ink">
-              Description
+              Short description
             </span>
             <Input
               name="description"
@@ -33,10 +33,14 @@ export function GroupCreateEmpty({ backPath }: Props) {
           </label>
           <label className="block">
             <span className="mb-1.5 block text-[12px] font-medium text-ink">
-              Website
+              Website (optional)
             </span>
             <Input name="website" type="url" placeholder="https://" />
           </label>
+          <p className="text-[12px] text-muted">
+            After you create the group, add a subsidiary (new country firm) or
+            invite a company that already has a Linken profile.
+          </p>
           <Button type="submit" className="h-10 w-fit px-4">
             Create group
           </Button>

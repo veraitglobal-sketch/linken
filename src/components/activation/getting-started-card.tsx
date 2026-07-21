@@ -28,15 +28,22 @@ export function GettingStartedCard({ checklist, className }: Props) {
       </div>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-paper">
         <div
-          className="h-full rounded-full bg-[#0e1f1c] transition-[width] duration-300"
+          className="h-full rounded-full bg-navy transition-[width] duration-300"
           style={{
             width: `${Math.round((checklist.doneCount / checklist.total) * 100)}%`,
           }}
         />
       </div>
-      <p className="mt-2 text-[13px] leading-relaxed text-muted">
-        Each step fills your network with confirmed evidence.
-      </p>
+      {checklist.next ? (
+        <p className="mt-2 text-[13px] leading-relaxed text-ink">
+          Next:{" "}
+          <span className="font-semibold">{checklist.next.label}</span>
+        </p>
+      ) : (
+        <p className="mt-2 text-[13px] leading-relaxed text-muted">
+          Each step fills your network with confirmed evidence.
+        </p>
+      )}
       <div className="mt-3">
         <GettingStartedSteps steps={checklist.steps} />
       </div>

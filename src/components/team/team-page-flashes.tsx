@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import Link from "next/link";
 import { TeamFlash } from "@/components/team/team-flash";
 
@@ -51,12 +50,4 @@ export function TeamPageFlashes({
       ) : null}
     </>
   );
-}
-
-export function TeamGateCopy({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  return <p className="text-[14px] text-muted">{children}</p>;
 }

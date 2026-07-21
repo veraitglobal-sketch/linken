@@ -4,13 +4,17 @@ import { cn } from "@/lib/cn";
 type Props = {
   emptyHref?: string;
   emptyLabel?: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
   className?: string;
 };
 
 /** Premium empty network — composed center, not dashed junk cards. */
 export function NetworkEmptyState({
-  emptyHref = "/dashboard/structure",
-  emptyLabel = "Add subsidiary",
+  emptyHref = "/dashboard/partners",
+  emptyLabel = "Invite a partner",
+  secondaryHref = "/dashboard/structure",
+  secondaryLabel = "Add subsidiary",
   className,
 }: Props) {
   return (
@@ -37,7 +41,8 @@ export function NetworkEmptyState({
           Start your network
         </p>
         <p className="mt-2 text-[13px] leading-relaxed text-muted">
-          Add a firm, then drag between nodes to connect ownership or partners.
+          Invite a partner or add a subsidiary, then drag between nodes to
+          connect.
         </p>
       </div>
 
@@ -49,10 +54,10 @@ export function NetworkEmptyState({
           {emptyLabel}
         </Link>
         <Link
-          href="/dashboard/group"
+          href={secondaryHref}
           className="inline-flex h-10 items-center rounded-2xl border border-white/80 bg-white/80 px-4 text-[12px] font-semibold text-ink shadow-[0_8px_20px_rgba(8,20,18,0.05)] backdrop-blur-md transition-colors hover:bg-white"
         >
-          Set up group
+          {secondaryLabel}
         </Link>
       </div>
     </div>

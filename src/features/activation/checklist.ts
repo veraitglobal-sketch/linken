@@ -2,10 +2,10 @@ import { createClient } from "@/lib/supabase/server";
 
 export type ActivationStepId =
   | "verify_domain"
+  | "invite_partner"
   | "add_evidence"
   | "send_confirmation"
   | "get_confirmation"
-  | "invite_partner"
   | "embed_badge";
 
 export type ActivationStep = {
@@ -28,6 +28,7 @@ export type ActivationChecklist = {
 
 /**
  * Derive activation progress from live data — never stored separately.
+ * Order: verify → partner (network) → evidence → confirmations → badge.
  */
 export async function getActivationChecklist(
   companyId: string,
@@ -97,10 +98,15 @@ export async function getActivationChecklist(
       confReqs.some((r) => Boolean((r.email as string | null)?.trim()));
 
     const hasConfirmedRef = refs.some((r) => r.status === "confirmed");
-    const hasAcceptedPartner = partnerships.some((r) => r.status === "accepted");
+    const hasAcceptedPartner = partnerships.some(
+      (r) => r.status === "accepted",
+    );
     const hasConfirmedCase =
       confReqs.some((r) => r.status === "confirmed") ||
-      (await hasConfirmedCaseStudyPartner(supabase, cases.map((c) => c.id as string)));
+      (await hasConfirmedCaseStudyPartner(
+        supabase,
+        cases.map((c) => c.id as string),
+      ));
 
     const hasAnyConfirmation =
       hasConfirmedRef || hasAcceptedPartner || hasConfirmedCase;
@@ -117,8 +123,14 @@ export async function getActivationChecklist(
         done: Boolean(company.verified),
       },
       {
+        id: "invite_partner",
+        label: "Invite your first partner",
+        href: "/dashboard/partners",
+        done: hasPartnership,
+      },
+      {
         id: "add_evidence",
-        label: "Add your first reference or case study",
+        label: "Add a reference or case study",
         href: `${profileHref}#references`,
         done: hasEvidence,
       },
@@ -131,14 +143,8 @@ export async function getActivationChecklist(
       {
         id: "get_confirmation",
         label: "Get your first confirmation",
-        href: `${profileHref}`,
+        href: profileHref,
         done: hasAnyConfirmation,
-      },
-      {
-        id: "invite_partner",
-        label: "Invite a partner",
-        href: "/dashboard/partners",
-        done: hasPartnership,
       },
       {
         id: "embed_badge",

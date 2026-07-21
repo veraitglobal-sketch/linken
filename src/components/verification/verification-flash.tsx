@@ -44,7 +44,9 @@ export function flashSuccessMessage(
   if (!ok) return null;
   if (ok === "linked") return "Website link found on your homepage.";
   if (ok === "logo") return "Logo refreshed from your website.";
-  return `Domain verified via ${ok === "email" ? "email" : ok === "dns" ? "DNS TXT" : "meta / file"}.`;
+  const via =
+    ok === "email" ? "email" : ok === "dns" ? "DNS TXT" : "meta / file";
+  return `Domain verified via ${via}. Next: invite a partner.`;
 }
 
 export function methodLabel(method: string) {

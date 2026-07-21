@@ -5,16 +5,19 @@ type Props = {
   companySlug: string;
   companyName: string;
   domainVerified: boolean;
+  hasPartnership?: boolean;
   from?: "claim" | "confirm" | "onboarding";
 };
 
 /**
- * Post-claim / post-confirm — shortest path for invitees to become an active node.
+ * Post-claim / onboarding — shortest path to an active network node:
+ * verify domain → invite first partner.
  */
 export function WelcomeSetup({
   companySlug,
   companyName,
   domainVerified,
+  hasPartnership = false,
   from = "claim",
 }: Props) {
   const heading =
@@ -26,8 +29,8 @@ export function WelcomeSetup({
 
   const sub =
     from === "confirm"
-      ? `You confirmed a relationship. Finish two steps so ${companyName} can grow its own network — not only appear on someone else’s.`
-      : `Two steps make ${companyName} an active, trusted node.`;
+      ? `You confirmed a relationship. Finish setup so ${companyName} can grow its own network.`
+      : `Two steps make ${companyName} an active node on the network.`;
 
   return (
     <section className="mx-auto max-w-lg px-5 py-14 sm:py-20">
@@ -40,7 +43,7 @@ export function WelcomeSetup({
       <p className="mt-3 text-[15px] leading-relaxed text-muted">{sub}</p>
 
       <ol className="mt-8 space-y-3">
-        <li className="rounded-2xl border border-line bg-white px-4 py-4">
+        <li className="rounded-2xl border border-line bg-surface px-4 py-4">
           <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
             Step 1
           </p>
@@ -49,8 +52,8 @@ export function WelcomeSetup({
           </p>
           <p className="mt-1 text-[13px] text-muted">
             {domainVerified
-              ? "Already verified — you’re set."
-              : "Required before partnerships become official."}
+              ? "Verified — partnerships can become official."
+              : "Required before partner requests become official."}
           </p>
           {!domainVerified ? (
             <Button
@@ -61,32 +64,56 @@ export function WelcomeSetup({
             </Button>
           ) : null}
         </li>
-        <li className="rounded-2xl border border-line bg-white px-4 py-4">
+        <li className="rounded-2xl border border-line bg-surface px-4 py-4">
           <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
             Step 2
           </p>
           <p className="mt-1 text-[15px] font-semibold text-ink">
-            Add your first reference
+            Invite your first partner
           </p>
           <p className="mt-1 text-[13px] text-muted">
-            A confirmed client relationship is the strongest signal on Linken.
+            {hasPartnership
+              ? "Partner request started — they appear on Network after they accept."
+              : "Search a firm or send a draft invite. Confirmed partners show on your graph."}
           </p>
-          <Button
-            href={`/c/${companySlug}#references`}
-            variant="secondary"
-            className="mt-3 h-10 px-4 text-[13px]"
-          >
-            Add a reference
-          </Button>
+          {!hasPartnership ? (
+            <Button
+              href={
+                domainVerified
+                  ? "/dashboard/partners"
+                  : "/dashboard/verification"
+              }
+              variant={domainVerified ? "primary" : "secondary"}
+              className="mt-3 h-10 px-4 text-[13px]"
+            >
+              {domainVerified ? "Invite a partner" : "Verify first"}
+            </Button>
+          ) : (
+            <Button
+              href="/dashboard"
+              variant="secondary"
+              className="mt-3 h-10 px-4 text-[13px]"
+            >
+              Open network
+            </Button>
+          )}
         </li>
       </ol>
 
-      <p className="mt-8 text-center text-[13px]">
+      <p className="mt-8 text-center text-[13px] text-muted">
+        Later: add a{" "}
+        <Link
+          href={`/c/${companySlug}#references`}
+          className="font-semibold text-ink underline-offset-2 hover:underline"
+        >
+          confirmed reference
+        </Link>{" "}
+        ·{" "}
         <Link
           href="/dashboard"
-          className="font-semibold text-muted underline-offset-2 hover:text-ink hover:underline"
+          className="font-semibold text-ink underline-offset-2 hover:underline"
         >
-          Go to network graph
+          Network graph
         </Link>
       </p>
     </section>
