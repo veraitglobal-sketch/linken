@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import {
   computeTrustScore,
@@ -22,7 +23,7 @@ function emptyTrust(companySlug: string): TrustProfile {
 }
 
 /** Confirmed-evidence counts only — never select token/email columns. */
-export async function getTrustProfile(
+async function getTrustProfileUncached(
   companyId: string,
   companySlug: string,
 ): Promise<TrustProfile> {
@@ -74,22 +75,24 @@ export async function getTrustProfile(
     let partnerConfirmedCaseStudies = 0;
 
     if (caseIds.length > 0) {
-      const { data: clientConfirmed } = await supabase
-        .from("case_study_client_confirmation_requests")
-        .select("case_study_id")
-        .eq("status", "confirmed")
-        .in("case_study_id", caseIds);
+      const [{ data: clientConfirmed }, { data: partnerConfirmed }] =
+        await Promise.all([
+          supabase
+            .from("case_study_client_confirmation_requests")
+            .select("case_study_id")
+            .eq("status", "confirmed")
+            .in("case_study_id", caseIds),
+          supabase
+            .from("case_study_partners")
+            .select("case_study_id")
+            .eq("confirmed", true)
+            .in("case_study_id", caseIds),
+        ]);
 
       const clientSet = new Set(
         (clientConfirmed ?? []).map((row) => row.case_study_id as string),
       );
       clientConfirmedCaseStudies = clientSet.size;
-
-      const { data: partnerConfirmed } = await supabase
-        .from("case_study_partners")
-        .select("case_study_id")
-        .eq("confirmed", true)
-        .in("case_study_id", caseIds);
 
       const partnerOnly = new Set<string>();
       for (const row of partnerConfirmed ?? []) {
@@ -115,3 +118,11 @@ export async function getTrustProfile(
     return emptyTrust(companySlug);
   }
 }
+
+/**
+ * Same company's trust profile is often requested more than once while
+ * rendering a single page (hero band, sidebar, network node, JSON-LD...).
+ * React's cache() deduplicates identical calls within one request — no
+ * staleness risk, it never persists across requests.
+ */
+export const getTrustProfile = cache(getTrustProfileUncached);

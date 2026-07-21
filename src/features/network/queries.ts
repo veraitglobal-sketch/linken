@@ -347,29 +347,60 @@ async function attachPartnersAndClients(
   }
 
   const companyCache = await fetchCompaniesByIds([...missingIds]);
-  const partnerEdgeSeen = new Set<string>();
 
+  // Pass 1 (sync, no awaits): decide each missing id's node "kind" using the
+  // EXACT same first-occurrence-wins order as the original sequential loop
+  // (partners before clients, member by member) — without doing any DB work
+  // yet, so the ordering logic stays correct while the slow part (trust
+  // profile lookups inside companyNode) can run in parallel below.
+  const kindById = new Map<string, NetworkNodeKind>();
+  const resolvedIds = new Set<string>(seen);
+  for (const memberId of memberIds) {
+    for (const link of partnerMap.get(memberId) ?? []) {
+      const targetId = `company:${link.partnerId}`;
+      if (resolvedIds.has(targetId)) continue;
+      resolvedIds.add(targetId);
+      kindById.set(
+        link.partnerId,
+        memberIdSet.has(link.partnerId) ? "company" : "partner",
+      );
+    }
+    for (const client of clientMap.get(memberId) ?? []) {
+      const targetId = `company:${client.id}`;
+      if (resolvedIds.has(targetId)) continue;
+      resolvedIds.add(targetId);
+      kindById.set(
+        client.id,
+        memberIdSet.has(client.id) ? "company" : "client",
+      );
+    }
+  }
+
+  // Pass 2 (parallel): build every missing node's data at once instead of
+  // one round-trip at a time.
+  const builtNodes = await Promise.all(
+    [...kindById.entries()].map(async ([id, kind]) => {
+      const row = companyCache.get(id);
+      if (!row) return null;
+      return companyNode(row, kind);
+    }),
+  );
+  for (const node of builtNodes) {
+    if (!node) continue;
+    nodes.push(node);
+    seen.add(node.id);
+  }
+
+  // Pass 3 (sync): edges only — no awaits, cheap.
+  const partnerEdgeSeen = new Set<string>();
   for (const memberId of memberIds) {
     const sourceId = `company:${memberId}`;
 
     for (const link of partnerMap.get(memberId) ?? []) {
       if (partnerEdgeSeen.has(link.partnershipId)) continue;
       partnerEdgeSeen.add(link.partnershipId);
-
-      const targetId = `company:${link.partnerId}`;
-      if (!seen.has(targetId)) {
-        const row = companyCache.get(link.partnerId);
-        if (!row) continue;
-        const kind: NetworkNodeKind = memberIdSet.has(link.partnerId)
-          ? "company"
-          : "partner";
-        const pNode = await companyNode(row, kind);
-        nodes.push(pNode);
-        seen.add(pNode.id);
-      }
-
       edges.push(
-        edge("partner", sourceId, targetId, {
+        edge("partner", sourceId, `company:${link.partnerId}`, {
           detachable: true,
           meta: {
             partnershipId: link.partnershipId,
@@ -380,19 +411,8 @@ async function attachPartnersAndClients(
     }
 
     for (const client of clientMap.get(memberId) ?? []) {
-      const targetId = `company:${client.id}`;
-      if (!seen.has(targetId)) {
-        const row = companyCache.get(client.id);
-        if (!row) continue;
-        const kind: NetworkNodeKind = memberIdSet.has(client.id)
-          ? "company"
-          : "client";
-        const cNode = await companyNode(row, kind);
-        nodes.push(cNode);
-        seen.add(cNode.id);
-      }
       edges.push(
-        edge("client", sourceId, targetId, {
+        edge("client", sourceId, `company:${client.id}`, {
           detachable: false,
           meta: { label: "Client (confirmed reference)" },
         }),
@@ -449,11 +469,19 @@ async function buildGroupGraph(
   const seen = new Set<string>([hubId]);
   const memberIdSet = new Set(members.map((m) => m.id));
 
-  for (const member of members) {
-    const kind: NetworkNodeKind = member.parentCompanyId
-      ? "subsidiary"
-      : "company";
-    const node = await companyNode(member, kind);
+  // Members are unique by id — safe to build every node in parallel instead
+  // of one trust-profile round-trip at a time.
+  const memberNodes = await Promise.all(
+    members.map((member) =>
+      companyNode(
+        member,
+        member.parentCompanyId ? "subsidiary" : "company",
+      ),
+    ),
+  );
+
+  members.forEach((member, i) => {
+    const node = memberNodes[i];
     if (!seen.has(node.id)) {
       nodes.push(node);
       seen.add(node.id);
@@ -482,7 +510,7 @@ async function buildGroupGraph(
         }),
       );
     }
-  }
+  });
 
   await attachPartnersAndClients(
     members.map((m) => m.id),
@@ -603,8 +631,16 @@ async function buildLocalCompanyGraph(
     );
   }
 
-  for (const child of options.descendants) {
-    const node = await companyNode(child, "subsidiary");
+  // Build every descendant node in parallel first (each is unique) — then a
+  // fast, sync pass for edges, which still needs to run in list order since
+  // it resolves each child's parent against the progressively-growing
+  // `seen` set (a parent may itself be an earlier descendant in this list).
+  const descendantNodes = await Promise.all(
+    options.descendants.map((child) => companyNode(child, "subsidiary")),
+  );
+
+  options.descendants.forEach((child, i) => {
+    const node = descendantNodes[i];
     if (!seen.has(node.id)) {
       nodes.push(node);
       seen.add(node.id);
@@ -625,7 +661,7 @@ async function buildLocalCompanyGraph(
           : undefined,
       }),
     );
-  }
+  });
 
   await attachPartnersAndClients(
     [company.id, ...options.descendants.map((d) => d.id)],

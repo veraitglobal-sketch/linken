@@ -78,43 +78,55 @@ export async function getPartnersForCompany(
 
     const shared = new Map<string, number>();
 
-    const { data: ownedCases } = await supabase
-      .from("case_studies")
-      .select("id")
-      .eq("company_id", companyId);
-    const ownedIds = (ownedCases ?? []).map((c) => c.id as string);
+    // Two independent chains (outbound tags on our case studies, inbound
+    // tags on theirs) — run them concurrently instead of four round-trips
+    // in a row.
+    const [outboundCount, inboundCount] = await Promise.all([
+      (async () => {
+        const { data: ownedCases } = await supabase
+          .from("case_studies")
+          .select("id")
+          .eq("company_id", companyId);
+        const ownedIds = (ownedCases ?? []).map((c) => c.id as string);
+        if (ownedIds.length === 0) return [];
 
-    if (ownedIds.length > 0) {
-      const { data: outbound } = await supabase
-        .from("case_study_partners")
-        .select("partner_company_id")
-        .eq("confirmed", true)
-        .in("case_study_id", ownedIds)
-        .in("partner_company_id", otherIds);
-      for (const row of outbound ?? []) {
-        const id = row.partner_company_id as string;
-        shared.set(id, (shared.get(id) ?? 0) + 1);
-      }
+        const { data: outbound } = await supabase
+          .from("case_study_partners")
+          .select("partner_company_id")
+          .eq("confirmed", true)
+          .in("case_study_id", ownedIds)
+          .in("partner_company_id", otherIds);
+        return outbound ?? [];
+      })(),
+      (async () => {
+        const { data: inboundLinks } = await supabase
+          .from("case_study_partners")
+          .select("case_study_id")
+          .eq("confirmed", true)
+          .eq("partner_company_id", companyId);
+        const inboundCaseIds = [
+          ...new Set(
+            (inboundLinks ?? []).map((r) => r.case_study_id as string),
+          ),
+        ];
+        if (inboundCaseIds.length === 0) return [];
+
+        const { data: theirCases } = await supabase
+          .from("case_studies")
+          .select("id, company_id")
+          .in("id", inboundCaseIds)
+          .in("company_id", otherIds);
+        return theirCases ?? [];
+      })(),
+    ]);
+
+    for (const row of outboundCount) {
+      const id = row.partner_company_id as string;
+      shared.set(id, (shared.get(id) ?? 0) + 1);
     }
-
-    const { data: inboundLinks } = await supabase
-      .from("case_study_partners")
-      .select("case_study_id")
-      .eq("confirmed", true)
-      .eq("partner_company_id", companyId);
-    const inboundCaseIds = [
-      ...new Set((inboundLinks ?? []).map((r) => r.case_study_id as string)),
-    ];
-    if (inboundCaseIds.length > 0) {
-      const { data: theirCases } = await supabase
-        .from("case_studies")
-        .select("id, company_id")
-        .in("id", inboundCaseIds)
-        .in("company_id", otherIds);
-      for (const c of theirCases ?? []) {
-        const id = c.company_id as string;
-        shared.set(id, (shared.get(id) ?? 0) + 1);
-      }
+    for (const c of inboundCount) {
+      const id = c.company_id as string;
+      shared.set(id, (shared.get(id) ?? 0) + 1);
     }
 
     for (const p of partners) {

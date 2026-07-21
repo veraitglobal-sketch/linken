@@ -81,8 +81,11 @@ async function assembleDashboardGroup(
     )
     .eq("group_id", group.id);
 
-  const confirmed: GroupMemberCard[] = [];
   const pending: DashboardGroup["pending"] = [];
+  const confirmedRows: {
+    company: CompanyJoin;
+    parentCompanyId: string | null;
+  }[] = [];
 
   for (const row of rows ?? []) {
     const company = unwrapCompany(
@@ -91,12 +94,10 @@ async function assembleDashboardGroup(
     if (!company) continue;
 
     if (row.status === "confirmed") {
-      confirmed.push(
-        await toMemberCard({
-          ...company,
-          parentCompanyId: row.parent_company_id as string | null,
-        }),
-      );
+      confirmedRows.push({
+        company,
+        parentCompanyId: (row.parent_company_id as string | null) ?? null,
+      });
     } else if (row.status === "pending") {
       pending.push({
         companyId: company.id,
@@ -108,6 +109,14 @@ async function assembleDashboardGroup(
       });
     }
   }
+
+  // Each card resolves a trust profile (several queries) — build them all
+  // in parallel instead of one member at a time.
+  const confirmed: GroupMemberCard[] = await Promise.all(
+    confirmedRows.map((r) =>
+      toMemberCard({ ...r.company, parentCompanyId: r.parentCompanyId }),
+    ),
+  );
 
   return {
     group: {
