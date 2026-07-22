@@ -102,7 +102,7 @@ export function ShareMomentGraph() {
       {/* Soft glow behind the cluster */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-[12%] rounded-[40%] bg-[radial-gradient(ellipse_at_center,rgba(15,23,42,0.08),transparent_70%)]"
+        className="pointer-events-none absolute inset-[12%] rounded-[40%] bg-[radial-gradient(ellipse_at_center,rgba(14,31,28,0.07),transparent_70%)]"
       />
 
       {/* Dot grid */}
@@ -111,7 +111,7 @@ export function ShareMomentGraph() {
         className="pointer-events-none absolute inset-0 rounded-3xl opacity-80"
         style={{
           backgroundImage:
-            "radial-gradient(circle, #d4d9e2 1px, transparent 1px)",
+            "radial-gradient(circle, #d2d8d3 1px, transparent 1px)",
           backgroundSize: "18px 18px",
         }}
       />
@@ -128,17 +128,30 @@ export function ShareMomentGraph() {
           const y2 = to.py;
           const mx = (x1 + x2) / 2;
           const my = (y1 + y2) / 2 - Math.min(28, Math.abs(x2 - x1) * 0.08);
+          // Point on the quadratic at t=0.5 — where the confirmation seal sits.
+          const cx = (x1 + 2 * mx + x2) / 4;
+          const cy = (y1 + 2 * my + y2) / 4;
           return (
-            <path
-              key={`${from.id}-${to.id}`}
-              d={`M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`}
-              fill="none"
-              stroke="#94a3b8"
-              strokeWidth="2"
-              strokeDasharray="6 7"
-              strokeLinecap="round"
-              className="transition-[d] duration-75"
-            />
+            <g key={`${from.id}-${to.id}`}>
+              <path
+                d={`M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`}
+                fill="none"
+                stroke="#a3b1a9"
+                strokeWidth="2"
+                strokeDasharray="6 7"
+                strokeLinecap="round"
+                className="transition-[d] duration-75"
+              />
+              <circle cx={cx} cy={cy} r="9" fill="#fff" stroke="#7eb8a4" strokeWidth="1.5" />
+              <path
+                d={`M ${cx - 3.5} ${cy} l 2.5 2.5 l 4.5 -5`}
+                stroke="#1a5c51"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </g>
           );
         })}
       </svg>
@@ -150,7 +163,7 @@ export function ShareMomentGraph() {
           aria-label="Drag to rearrange"
           onPointerDown={(e) => onPointerDown(e, n.id)}
           className={cn(
-            "absolute touch-none overflow-hidden rounded-[22px] border border-white bg-white shadow-[0_12px_40px_rgba(15,23,42,0.12)] transition-shadow",
+            "absolute touch-none overflow-hidden rounded-[22px] border border-white bg-white shadow-[0_12px_40px_rgba(8,20,18,0.12)] transition-shadow",
             "cursor-grab active:cursor-grabbing",
             dragId === n.id &&
               "z-10 shadow-[0_16px_48px_rgba(8,20,18,0.2)] ring-2 ring-blue-soft/45",
@@ -174,7 +187,7 @@ export function ShareMomentGraph() {
         </button>
       ))}
 
-      <p className="pointer-events-none absolute right-3 bottom-2 text-[10px] font-medium tracking-[0.04em] text-[#94a3b8]">
+      <p className="pointer-events-none absolute right-3 bottom-2 text-[10px] font-medium tracking-[0.04em] text-muted/70">
         Drag to rearrange
       </p>
     </div>

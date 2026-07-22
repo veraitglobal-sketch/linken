@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { TravelingTags } from "@/components/marketing/traveling-tags";
 
 const places = [
   "Website",
@@ -13,26 +14,14 @@ export function HomeHighlights() {
     <section className="px-4 pb-24">
       <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <p className="text-[12px] font-semibold tracking-[0.14em] text-blue uppercase">
-            Highlights
-          </p>
-          <h2 className="mt-3 font-display text-4xl font-medium tracking-[-0.042em] text-ink sm:text-5xl">
+          <h2 className="font-display text-4xl font-medium tracking-[-0.042em] text-ink sm:text-5xl">
             One link firms are proud to send.
           </h2>
           <p className="mt-5 max-w-md text-[16px] leading-relaxed text-ink-soft">
             Partners get relevant visibility. You look like a complete delivery
             team — with proof, not decoration.
           </p>
-          <ul className="mt-8 flex flex-wrap gap-2">
-            {places.map((place) => (
-              <li
-                key={place}
-                className="rounded-full border border-line bg-surface px-3 py-1.5 text-[12px] font-medium text-ink-soft"
-              >
-                {place}
-              </li>
-            ))}
-          </ul>
+          <TravelingTags items={places} />
         </div>
         <div className="group relative aspect-[5/4] overflow-hidden rounded-[32px] shadow-[0_24px_60px_rgba(8,20,18,0.14)] ring-1 ring-line">
           <Image

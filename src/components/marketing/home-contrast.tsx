@@ -1,15 +1,64 @@
 import { ConfirmChecklist } from "@/components/marketing/confirm-checklist";
 
+/** A wall of anonymous logo tiles — washed out, one missing. */
+function LogoWallGlyph() {
+  return (
+    <div aria-hidden className="mt-8 flex h-16 items-center gap-2.5">
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          className="flex h-11 w-16 items-center justify-center gap-1.5 rounded-lg border border-line bg-paper"
+        >
+          <span className="h-2.5 w-2.5 rounded-full bg-[#c9cfcb]" />
+          <span className="h-1.5 w-5 rounded-full bg-[#d8ddd9]" />
+        </div>
+      ))}
+      <div className="h-11 w-16 rounded-lg border border-dashed border-[#cfd5d1]" />
+    </div>
+  );
+}
+
+/** A claim that goes one way and never lands — the far side stays hollow. */
+function OneWayGlyph() {
+  return (
+    <div aria-hidden className="mt-8 flex h-16 items-center gap-3">
+      <div className="flex h-11 w-16 items-center justify-center gap-1.5 rounded-lg border border-line bg-paper">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#c9cfcb]" />
+        <span className="h-1.5 w-5 rounded-full bg-[#d8ddd9]" />
+      </div>
+      <svg width="52" height="12" viewBox="0 0 52 12" fill="none" className="shrink-0">
+        <path
+          d="M2 6h40"
+          stroke="#c2c9c4"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M42 1.5l6 4.5-6 4.5"
+          stroke="#c2c9c4"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      </svg>
+      <div className="h-11 w-16 rounded-lg border border-dashed border-[#cfd5d1]" />
+    </div>
+  );
+}
+
 const weak = [
   {
     n: "01",
     title: "Logo walls",
     body: "Anyone can drop a logo. Clients cannot tell what is real.",
+    glyph: <LogoWallGlyph />,
   },
   {
     n: "02",
     title: "One-sided claims",
     body: "Name-dropping without confirmation. No shared proof of work.",
+    glyph: <OneWayGlyph />,
   },
 ];
 
@@ -28,6 +77,7 @@ export function HomeContrast() {
             <h3 className="mt-6 font-display text-3xl font-medium tracking-[-0.038em] text-ink">
               {item.title}
             </h3>
+            {item.glyph}
             <p className="mt-auto pt-10 text-sm leading-relaxed text-muted">
               {item.body}
             </p>
