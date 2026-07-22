@@ -1,3 +1,5 @@
+import { ConfirmChecklist } from "@/components/marketing/confirm-checklist";
+
 const weak = [
   {
     n: "01",
@@ -39,20 +41,13 @@ export function HomeContrast() {
           <h3 className="relative mt-6 font-display text-3xl font-medium tracking-[-0.038em]">
             Mutual confirmation
           </h3>
-          <ul className="relative mt-auto space-y-3.5 pt-10 text-sm text-white/88">
-            <li className="flex gap-2.5">
-              <span className="text-blue-soft">✓</span>
-              Both companies must confirm
-            </li>
-            <li className="flex gap-2.5">
-              <span className="text-blue-soft">✓</span>
-              Case studies credit both sides
-            </li>
-            <li className="flex gap-2.5">
-              <span className="text-blue-soft">✓</span>
-              Partners get relevant visibility
-            </li>
-          </ul>
+          <ConfirmChecklist
+            items={[
+              "Both companies must confirm",
+              "Case studies credit both sides",
+              "Partners get relevant visibility",
+            ]}
+          />
         </article>
       </div>
     </section>
