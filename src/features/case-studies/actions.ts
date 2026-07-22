@@ -7,10 +7,12 @@ import {
   requestClientConfirmationCore,
   tagCaseStudyPartnerCore,
 } from "@/features/case-studies/core";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { requireOwnedActiveCompany } from "@/features/workspace/require-owned";
 import { requireOperatorForCompanySlug } from "@/features/workspace/require-operator-slug";
 import { setWorkspacePreference } from "@/features/workspace/set-preference";
 import { safeAppBack, withBackQuery } from "@/lib/safe-back";
+import { createClient } from "@/lib/supabase/server";
 
 /** One step: create case study + email client for confirmation. */
 export async function createCaseStudyWithConfirm(formData: FormData) {
@@ -161,4 +163,36 @@ async function respondClientRequest(
   revalidatePath(`/c/${company.slug}`);
   revalidatePath("/welcome");
   redirect(withBackQuery(path, { done: response }));
+}
+
+/** Partner confirms their tagged role on someone else's case study — RLS
+ * only allows this from the tagged partner's own owner, never the case
+ * study's own operator (sacred rule: never self-confirm). */
+export async function confirmCaseStudyPartnerRole(formData: FormData) {
+  const caseStudyId = String(formData.get("case_study_id") ?? "").trim();
+  const back = safeAppBack(String(formData.get("back") ?? ""), "/dashboard/inbox");
+
+  const { user, company } = await getOperatorActiveCompany();
+  if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
+  if (!company) {
+    redirect(withBackQuery(back, { error: "Switch to a company workspace first." }));
+  }
+  if (!caseStudyId) {
+    redirect(withBackQuery(back, { error: "Missing case study." }));
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("case_study_partners")
+    .update({ confirmed: true, confirmed_at: new Date().toISOString() })
+    .eq("case_study_id", caseStudyId)
+    .eq("partner_company_id", company.id);
+
+  if (error) {
+    redirect(withBackQuery(back, { error: error.message }));
+  }
+
+  revalidatePath(back);
+  revalidatePath("/dashboard/inbox");
+  redirect(withBackQuery(back, { caseStudyConfirmed: "1" }));
 }

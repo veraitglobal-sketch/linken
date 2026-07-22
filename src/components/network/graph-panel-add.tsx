@@ -159,6 +159,17 @@ export function GraphPanelAdd({
                   placeholder="Website (optional)"
                   className="h-9 w-full rounded-xl border border-line bg-surface px-3 text-[12px] outline-none focus:border-blue"
                 />
+                <input
+                  name="services"
+                  placeholder="Services, comma separated (optional)"
+                  className="h-9 w-full rounded-xl border border-line bg-surface px-3 text-[12px] outline-none focus:border-blue"
+                />
+                <input
+                  name="invite_email"
+                  type="email"
+                  placeholder="Invite email (optional)"
+                  className="h-9 w-full rounded-xl border border-line bg-surface px-3 text-[12px] outline-none focus:border-blue"
+                />
                 <button
                   type="submit"
                   className="h-9 w-full rounded-xl bg-navy text-[12px] font-semibold text-white transition-colors hover:bg-accent-hover"

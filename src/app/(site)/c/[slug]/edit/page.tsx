@@ -76,7 +76,7 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
   const { data: full } = await supabase
     .from("companies")
     .select(
-      "name, slug, tagline, description, category, city, country, website, linkedin_url, facebook_url, services, accepting_clients, verified, logo_url, logo_source",
+      "name, slug, tagline, description, category, city, country, website, linkedin_url, facebook_url, services, accepting_clients, verified, logo_url, logo_source, cover_image_url",
     )
     .eq("id", company.id)
     .maybeSingle();
@@ -102,6 +102,7 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
       logoUrl={full.logo_url}
       website={full.website}
       logoSource={full.logo_source}
+      coverImageUrl={full.cover_image_url}
       initials={initials(full.name)}
       domain={extractDomain(full.website ?? "")}
       verified={Boolean(full.verified)}

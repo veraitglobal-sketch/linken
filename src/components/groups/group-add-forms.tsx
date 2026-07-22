@@ -50,6 +50,25 @@ export function GroupAddForms({ groupId, confirmed, backPath }: Props) {
               <Input name="website" type="url" placeholder="https://" />
             </Field>
             <Field
+              label="Services, comma separated (optional)"
+              className="sm:col-span-2"
+            >
+              <Input
+                name="services"
+                placeholder="Office cleaning, Facade cleaning, Window cleaning"
+              />
+            </Field>
+            <Field
+              label="Invite email (optional — sends a claim link now)"
+              className="sm:col-span-2"
+            >
+              <Input
+                name="invite_email"
+                type="email"
+                placeholder="owner@branch-company.com"
+              />
+            </Field>
+            <Field
               label="Parent in the tree (optional)"
               className="sm:col-span-2"
             >

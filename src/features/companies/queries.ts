@@ -73,7 +73,7 @@ export async function getCompanyForPage(slug: string): Promise<Company | null> {
     const { data, error } = await supabase
       .from("companies")
       .select(
-        "id, slug, name, tagline, description, category, city, country, website, logo_url, linkedin_url, facebook_url, services, verified, claimed, accepting_clients, plan, created_by:companies!created_by_company_id(slug, name)",
+        "id, slug, name, tagline, description, category, city, country, website, logo_url, cover_image_url, linkedin_url, facebook_url, services, verified, claimed, accepting_clients, plan, created_by:companies!created_by_company_id(slug, name)",
       )
       .eq("slug", slug)
       .maybeSingle();

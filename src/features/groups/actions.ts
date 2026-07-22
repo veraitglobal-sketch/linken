@@ -8,7 +8,11 @@ import {
 } from "@/features/logo/schedule";
 import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
-import { sendGroupInviteEmail, sendTeamInviteEmail } from "@/lib/email";
+import {
+  sendClaimInviteEmail,
+  sendGroupInviteEmail,
+  sendTeamInviteEmail,
+} from "@/lib/email";
 import { toSlug } from "@/lib/slug";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -251,6 +255,13 @@ export async function createSubsidiary(formData: FormData) {
   const city = String(formData.get("city") ?? "").trim();
   const country = String(formData.get("country") ?? "").trim();
   const website = String(formData.get("website") ?? "").trim();
+  const services = String(formData.get("services") ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const inviteEmail = String(formData.get("invite_email") ?? "")
+    .trim()
+    .toLowerCase();
   const parentCompanyId = String(formData.get("parent_company_id") ?? "").trim();
   const backRaw = String(formData.get("back") ?? "").trim();
   const back = backRaw.startsWith("/dashboard") ? backRaw : "/dashboard/group";
@@ -278,7 +289,7 @@ export async function createSubsidiary(formData: FormData) {
   // Ghost subsidiary counts toward the creator firm's daily unclaimed quota.
   const { data: seedCompany } = await supabase
     .from("companies")
-    .select("id")
+    .select("id, name")
     .eq("owner_id", user.id)
     .eq("claimed", true)
     .order("created_at", { ascending: true })
@@ -305,6 +316,8 @@ export async function createSubsidiary(formData: FormData) {
     p_claim_token: claimToken,
     p_parent_company_id: parentCompanyId || null,
     p_website: website || null,
+    p_services: services,
+    p_invite_email: inviteEmail || null,
   });
 
   if (error) {
@@ -317,6 +330,15 @@ export async function createSubsidiary(formData: FormData) {
 
   if (website && companyId) {
     scheduleCompanyLogoFetch(companyId);
+  }
+
+  if (inviteEmail) {
+    await sendClaimInviteEmail({
+      to: inviteEmail,
+      inviterName: seedCompany?.name ?? "A company on Hansala",
+      companyName: name,
+      claimToken,
+    });
   }
 
   revalidateBack(back);

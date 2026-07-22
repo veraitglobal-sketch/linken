@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DashboardRequests } from "@/components/inbox/dashboard-requests";
 import { InboxFlash } from "@/components/inbox/inbox-flash";
 import { InboxTabs } from "@/components/inbox/inbox-tabs";
 import { DashboardInquiries } from "@/components/inquiries/dashboard-inquiries";
@@ -8,8 +9,14 @@ import { PartnershipInbox } from "@/components/partners/partnership-inbox";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { OwnerLoopBar } from "@/components/product/owner-loop-bar";
+import { getPendingCaseStudyConfirmations } from "@/features/case-studies/pending-confirmations";
+import {
+  getPendingGroupInvitesForOwner,
+  getPendingParentProposalsForOwner,
+} from "@/features/groups/queries";
 import { getInquiriesForOwnerCompany } from "@/features/inquiries/queries";
 import { listReceivedIntros } from "@/features/intros/queries";
+import { getPendingCoOwnerProposals } from "@/features/network/co-ownership-queries";
 import { getPartnershipInbox } from "@/features/partners/inbox";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { PRODUCT } from "@/lib/product-model";
@@ -26,7 +33,13 @@ type Props = {
 export default async function DashboardInboxPage({ searchParams }: Props) {
   const { error, tab } = await searchParams;
   const active =
-    tab === "intros" ? "intros" : tab === "partners" ? "partners" : "inquiries";
+    tab === "intros"
+      ? "intros"
+      : tab === "partners"
+        ? "partners"
+        : tab === "requests"
+          ? "requests"
+          : "inquiries";
   const { user, company, needsCompanySwitch } =
     await assertCompanySection("inbox");
 
@@ -66,13 +79,30 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
     );
   }
 
-  const [inquiryData, intros, partnerInbox] = await Promise.all([
+  const [
+    inquiryData,
+    intros,
+    partnerInbox,
+    groupInvites,
+    parentProposals,
+    coOwnerProposals,
+    caseStudyConfirmations,
+  ] = await Promise.all([
     getInquiriesForOwnerCompany(company.id),
     listReceivedIntros(company.id),
     getPartnershipInbox(company.id),
+    getPendingGroupInvitesForOwner(),
+    getPendingParentProposalsForOwner(),
+    getPendingCoOwnerProposals(company.id),
+    getPendingCaseStudyConfirmations(company.id),
   ]);
   const partnersPendingCount =
     partnerInbox.incomingPending.length + partnerInbox.outgoingPending.length;
+  const requestsPendingCount =
+    groupInvites.length +
+    parentProposals.length +
+    coOwnerProposals.length +
+    caseStudyConfirmations.length;
 
   if (active === "intros") {
     const supabase = await createClient();
@@ -95,6 +125,7 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
           inquiryNew={inquiryData.newCount}
           introsCount={intros.length}
           partnersCount={partnersPendingCount}
+          requestsCount={requestsPendingCount}
         />
 
         {error ? <InboxFlash tone="error">{error}</InboxFlash> : null}
@@ -125,6 +156,14 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
               from your Company page.
             </p>
           )
+        ) : active === "requests" ? (
+          <DashboardRequests
+            groupInvites={groupInvites}
+            parentProposals={parentProposals}
+            coOwnerProposals={coOwnerProposals}
+            caseStudyConfirmations={caseStudyConfirmations}
+            viewerCompanyId={company.id}
+          />
         ) : (
           <DashboardIntros
             intros={intros}

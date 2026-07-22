@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 
-type Tab = "inquiries" | "intros" | "partners";
+type Tab = "inquiries" | "intros" | "partners" | "requests";
 
 type Props = {
   active: Tab;
   inquiryNew?: number;
   introsCount?: number;
   partnersCount?: number;
+  requestsCount?: number;
 };
 
 export function InboxTabs({
@@ -15,6 +16,7 @@ export function InboxTabs({
   inquiryNew = 0,
   introsCount = 0,
   partnersCount = 0,
+  requestsCount = 0,
 }: Props) {
   const tabs: { id: Tab; label: string; href: string; meta?: string }[] = [
     {
@@ -28,6 +30,12 @@ export function InboxTabs({
       label: "Partner requests",
       href: "/dashboard/inbox?tab=partners",
       meta: partnersCount > 0 ? String(partnersCount) : undefined,
+    },
+    {
+      id: "requests",
+      label: "Requests",
+      href: "/dashboard/inbox?tab=requests",
+      meta: requestsCount > 0 ? String(requestsCount) : undefined,
     },
     {
       id: "intros",
