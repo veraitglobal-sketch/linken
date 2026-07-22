@@ -62,7 +62,7 @@ async function requireViewerDomainVerified(userId: string): Promise<ViewerGate> 
  * - partner: pending/accepted partnership request
  */
 export async function connectGraphNodes(input: {
-  mode: "structure" | "partner";
+  mode: "structure" | "partner" | "co_owner";
   sourceNodeId: string;
   targetNodeId: string;
   groupId?: string | null;
@@ -103,6 +103,26 @@ export async function connectGraphNodes(input: {
     if (error) return { ok: false, error: error.message };
     revalidateGraph();
     return { ok: true, message: "Child firm attached under parent." };
+  }
+
+  if (input.mode === "co_owner") {
+    if (!input.groupId) {
+      return {
+        ok: false,
+        error: "Shared ownership needs a group — create one first.",
+      };
+    }
+
+    const { error } = await supabase.rpc("propose_co_ownership", {
+      p_group_id: input.groupId,
+      p_child_company_id: childId,
+      p_co_parent_company_id: parentId,
+      p_as_company_id: viewer.companyId,
+    });
+
+    if (error) return { ok: false, error: error.message };
+    revalidateGraph();
+    return { ok: true, message: "Shared ownership proposed — waiting on the other side to confirm." };
   }
 
   // Partner mode — prefer viewer company as requester when it is an endpoint

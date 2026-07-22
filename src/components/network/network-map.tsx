@@ -74,7 +74,7 @@ const nodeTypes = {
   clusterHalo: NetworkClusterHalo,
 };
 
-type ConnectMode = "structure" | "partner";
+type ConnectMode = "structure" | "partner" | "co_owner";
 
 type Props = {
   graph: NetworkGraph;
@@ -447,9 +447,10 @@ export function NetworkMap({
             type: "smoothstep",
             animated: mode === "partner",
             style: {
-              stroke: "#66706b",
+              stroke: mode === "co_owner" ? "#0e1f1c" : "#66706b",
               strokeWidth: 2,
-              strokeDasharray: mode === "partner" ? "6 4" : undefined,
+              strokeDasharray:
+                mode === "partner" ? "6 4" : mode === "co_owner" ? "7 3" : undefined,
             },
           },
           eds,

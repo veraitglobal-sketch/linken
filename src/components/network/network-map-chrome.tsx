@@ -5,7 +5,7 @@ import Link from "next/link";
 import { OwnerLoopBar } from "@/components/product/owner-loop-bar";
 import { cn } from "@/lib/cn";
 
-type ConnectMode = "structure" | "partner";
+type ConnectMode = "structure" | "partner" | "co_owner";
 
 type Props = {
   title?: string;
@@ -99,6 +99,13 @@ export function NetworkMapChrome({
                 title="Request partnership"
               >
                 Partner
+              </ModeButton>
+              <ModeButton
+                active={mode === "co_owner"}
+                onClick={() => onMode("co_owner")}
+                title="Propose shared ownership — the other side must confirm"
+              >
+                Shared
               </ModeButton>
               <span className="mx-1 h-3.5 w-px bg-line" aria-hidden />
               <button
