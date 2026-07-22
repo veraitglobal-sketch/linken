@@ -38,6 +38,7 @@ import {
   isClusterNodeId,
   toHaloNodes,
 } from "@/components/network/network-cluster-nodes";
+import { NetworkEdgeLine } from "@/components/network/network-edge";
 import { NetworkHint } from "@/components/network/network-hint";
 import { NetworkMapLegend } from "@/components/network/network-map-legend";
 import type { OwnershipSlice } from "@/components/network/network-ownership-chart";
@@ -74,6 +75,10 @@ const nodeTypes = {
   clusterHalo: NetworkClusterHalo,
 };
 
+const edgeTypes = {
+  network: NetworkEdgeLine,
+};
+
 type ConnectMode = "structure" | "partner" | "co_owner";
 
 type Props = {
@@ -85,7 +90,7 @@ type Props = {
   companySlug?: string;
 };
 
-function toFlowEdge(e: NetworkEdge, selected: boolean): Edge {
+function toFlowEdge(e: NetworkEdge, selected: boolean, editable = false): Edge {
   const isOwns = e.type === "subsidiary";
   const isCoOwner = e.type === "co_owner";
   const isOwnership = isOwns || isCoOwner;
@@ -104,11 +109,11 @@ function toFlowEdge(e: NetworkEdge, selected: boolean): Edge {
     id: e.id,
     source: e.source,
     target: e.target,
-    type: "smoothstep",
+    type: "network",
     data: e,
     selectable: true,
     focusable: true,
-    deletable: Boolean(e.detachable),
+    deletable: Boolean(e.detachable) && editable,
     reconnectable: isStructure,
     interactionWidth: 28,
     style: {
@@ -277,7 +282,7 @@ export function NetworkMap({
     );
 
     setNodes([...toHaloNodes(clusters), ...companyNodes]);
-    setEdges(graph.edges.map((e) => toFlowEdge(e, false)));
+    setEdges(graph.edges.map((e) => toFlowEdge(e, false, editable)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signature, layoutKey, editable, onSelect, onAdd, setNodes, setEdges]);
 
@@ -312,6 +317,7 @@ export function NetworkMap({
             type: "partner",
           },
           hot,
+          editable,
         );
       }),
     );
@@ -579,6 +585,7 @@ export function NetworkMap({
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={editable ? onConnect : undefined}
