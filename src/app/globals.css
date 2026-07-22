@@ -186,80 +186,11 @@ a {
     linear-gradient(158deg, #070f0d 0%, #0e1f1c 44%, #142a25 100%);
 }
 
-/* Living gradient hero — slow-drifting blurred blobs, not a static photo. */
+/* One clean color. No blobs, no drift — just the brand navy and the grain. */
 .hero-live {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(160deg, #060e0c 0%, #0e1f1c 48%, #10241f 100%);
-}
-
-.hero-live::before {
-  content: "";
-  position: absolute;
-  inset: -20%;
-  background-image:
-    radial-gradient(closest-side, rgba(126, 184, 164, 0.55), transparent),
-    radial-gradient(closest-side, rgba(26, 92, 81, 0.5), transparent),
-    radial-gradient(closest-side, rgba(184, 137, 90, 0.28), transparent),
-    radial-gradient(closest-side, rgba(126, 184, 164, 0.32), transparent);
-  background-repeat: no-repeat;
-  background-size:
-    46% 46%,
-    56% 56%,
-    38% 38%,
-    42% 42%;
-  background-position:
-    12% 18%,
-    82% 12%,
-    70% 82%,
-    18% 78%;
-  filter: blur(60px) saturate(115%);
-  animation: hero-drift 26s ease-in-out infinite;
-  will-change: background-position;
-}
-
-@keyframes hero-drift {
-  0% {
-    background-position:
-      12% 18%,
-      82% 12%,
-      70% 82%,
-      18% 78%;
-  }
-  25% {
-    background-position:
-      20% 32%,
-      70% 26%,
-      80% 68%,
-      10% 62%;
-  }
-  50% {
-    background-position:
-      8% 44%,
-      88% 40%,
-      62% 90%,
-      26% 84%;
-  }
-  75% {
-    background-position:
-      24% 14%,
-      76% 34%,
-      74% 74%,
-      14% 70%;
-  }
-  100% {
-    background-position:
-      12% 18%,
-      82% 12%,
-      70% 82%,
-      18% 78%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-live::before {
-    animation: none;
-  }
+  background: var(--navy);
 }
 
 .glass-nav {

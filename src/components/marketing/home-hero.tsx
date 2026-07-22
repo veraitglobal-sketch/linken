@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { IndustryMark } from "@/components/marketing/industry-mark";
 import { NetworkMark } from "@/components/marketing/network-mark";
 
-const INDUSTRIES = ["Architecture", "Construction", "Electrical"];
+const INDUSTRIES = [
+  { key: "architecture", label: "Architecture" },
+  { key: "construction", label: "Construction" },
+  { key: "electrical", label: "Electrical" },
+] as const;
 
 export function HomeHero() {
   return (
@@ -19,10 +24,11 @@ export function HomeHero() {
           <div className="flex flex-wrap gap-1.5">
             {INDUSTRIES.map((industry) => (
               <span
-                key={industry}
-                className="rounded-full border border-white/14 bg-[#081412]/48 px-3 py-1.5 text-[12px] font-medium text-white/75 backdrop-blur-md"
+                key={industry.key}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/14 bg-[#081412]/48 px-3 py-1.5 text-[12px] font-medium text-white/75 backdrop-blur-md"
               >
-                {industry}
+                <IndustryMark type={industry.key} size={13} />
+                {industry.label}
               </span>
             ))}
           </div>
