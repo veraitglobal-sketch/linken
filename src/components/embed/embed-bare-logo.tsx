@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { faviconFallbackUrls } from "@/features/logo/display-url";
 import type { LogoSize } from "@/features/widgets/logo-motion";
 import { LOGO_SIZE_PX } from "@/features/widgets/logo-motion";
@@ -55,6 +55,16 @@ export function EmbedBareLogo({
   const src = index < candidates.length ? candidates[index]! : null;
   const mark = (initials || "?").slice(0, 2).toUpperCase();
 
+  // A cached/instant 404 can fail before React attaches the onError
+  // listener during hydration — catch that missed error after mount.
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth === 0) {
+      setIndex((i) => i + 1);
+    }
+  }, [src]);
+
   return (
     <span
       className={cn(
@@ -67,8 +77,10 @@ export function EmbedBareLogo({
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
+          ref={imgRef}
           src={src}
           alt={name}
+          loading="lazy"
           className={cn(
             "h-full w-auto max-w-full object-contain",
             mono && theme === "dark" && "brightness-0 invert",

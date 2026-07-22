@@ -150,7 +150,7 @@ export function CompanyHeroBand({
         <div className="group relative min-h-[220px] overflow-hidden lg:min-h-full">
           <Image
             src={company.coverImageUrl || "/images/hero-network.jpg"}
-            alt=""
+            alt={`${company.name} cover photo`}
             fill
             priority
             className="media-zoom object-cover"

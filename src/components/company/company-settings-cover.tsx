@@ -29,7 +29,7 @@ export function CompanySettingsCover({ coverImageUrl, backPath }: Props) {
         <div className="relative mb-4 h-32 w-full overflow-hidden rounded-2xl bg-[#0e1f1c] sm:h-40">
           <Image
             src={coverImageUrl || "/images/hero-network.jpg"}
-            alt=""
+            alt="Current cover photo preview"
             fill
             className="object-cover"
             sizes="100vw"

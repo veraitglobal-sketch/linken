@@ -66,6 +66,7 @@ export function LogoMark({
         <img
           src={src!}
           alt=""
+          loading="lazy"
           className="h-full w-full object-contain"
           onError={() => {
             setIndex((i) => i + 1);

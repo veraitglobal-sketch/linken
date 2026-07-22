@@ -1,4 +1,5 @@
 import { HomeContrast } from "@/components/marketing/home-contrast";
+import { HomeFaq } from "@/components/marketing/home-faq";
 import { HomeHero } from "@/components/marketing/home-hero";
 import { HomeHighlights } from "@/components/marketing/home-highlights";
 import { HomeIconLine } from "@/components/marketing/home-icon-line";
@@ -16,6 +17,7 @@ export default function HomePage() {
       <HomeStories />
       <HomeTalks />
       <HomeHighlights />
+      <HomeFaq />
     </>
   );
 }

@@ -1,13 +1,5 @@
 import Image from "next/image";
-import { TravelingTags } from "@/components/marketing/traveling-tags";
-
-const places = [
-  "Website",
-  "Google Business",
-  "Proposals",
-  "WhatsApp",
-  "Email signature",
-];
+import { EmbedCodePreview } from "@/components/marketing/embed-code-preview";
 
 export function HomeHighlights() {
   return (
@@ -21,7 +13,7 @@ export function HomeHighlights() {
             Partners get relevant visibility. You look like a complete delivery
             team — with proof, not decoration.
           </p>
-          <TravelingTags items={places} />
+          <EmbedCodePreview />
         </div>
         <div className="group relative aspect-[5/4] overflow-hidden rounded-[32px] shadow-[0_24px_60px_rgba(8,20,18,0.14)] ring-1 ring-line">
           <Image

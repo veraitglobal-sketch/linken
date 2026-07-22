@@ -54,6 +54,7 @@ export function NetworkNodeTeam({ companyId, avatars, count }: Props) {
                 key={`${a.initials}-${i}`}
                 src={a.photoUrl}
                 alt=""
+                loading="lazy"
                 className="h-4 w-4 rounded-full border border-white object-cover"
               />
             ) : (
@@ -108,6 +109,7 @@ function TeamSatelliteArc({ members }: { members: PublicTeamMember[] }) {
               <img
                 src={m.photoUrl}
                 alt=""
+                loading="lazy"
                 className="h-6 w-6 rounded-full border-2 border-white object-cover shadow-md"
               />
             ) : (
