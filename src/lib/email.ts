@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { getSiteUrl } from "@/lib/site";
+import { getEmailSiteUrl } from "@/lib/site";
 
 async function sendTextEmail(input: {
   to: string;
@@ -45,7 +45,7 @@ export async function sendClientConfirmationEmail({
   caseTitle,
   token,
 }: ConfirmationEmailInput) {
-  const confirmUrl = `${getSiteUrl()}/confirm/${token}`;
+  const confirmUrl = `${getEmailSiteUrl()}/confirm/${token}`;
   return sendTextEmail({
     to,
     subject: `${requesterName} asks you to confirm a project on Hansala`,
@@ -75,7 +75,7 @@ export async function sendClaimInviteEmail({
   companyName,
   claimToken,
 }: ClaimEmailInput) {
-  const claimUrl = `${getSiteUrl()}/claim/${claimToken}`;
+  const claimUrl = `${getEmailSiteUrl()}/claim/${claimToken}`;
   return sendTextEmail({
     to,
     subject: `${inviterName} listed ${companyName} as a partner on Hansala`,
@@ -104,7 +104,7 @@ export async function sendPartnershipRequestEmail({
   requesterName,
   recipientName,
 }: PartnershipRequestEmailInput) {
-  const inboxUrl = `${getSiteUrl()}/dashboard/partners`;
+  const inboxUrl = `${getEmailSiteUrl()}/dashboard/partners`;
   return sendTextEmail({
     to,
     subject: `${requesterName} wants to partner with ${recipientName} on Hansala`,
@@ -127,7 +127,7 @@ export async function sendPartnershipEndedEmail(input: {
   actorName: string;
   peerName: string;
 }) {
-  const partnersUrl = `${getSiteUrl()}/dashboard/partners`;
+  const partnersUrl = `${getEmailSiteUrl()}/dashboard/partners`;
   return sendTextEmail({
     to: input.to,
     subject: `Partnership update on Hansala: ${input.actorName}`,
@@ -162,7 +162,7 @@ export async function sendReferenceConfirmEmail({
   startedYear,
   token,
 }: ReferenceEmailInput) {
-  const url = `${getSiteUrl()}/confirm-reference/${token}`;
+  const url = `${getEmailSiteUrl()}/confirm-reference/${token}`;
   return sendTextEmail({
     to,
     subject: `${providerName} asks you to confirm a service relationship on Hansala`,
@@ -200,7 +200,7 @@ export async function sendInquiryNotifyEmail({
   companyName,
   companySlug,
 }: InquiryNotifyInput) {
-  const dashboardUrl = `${getSiteUrl()}/dashboard`;
+  const dashboardUrl = `${getEmailSiteUrl()}/dashboard`;
   return sendTextEmail({
     to,
     subject: `New inquiry via your Hansala profile from ${senderName}`,
@@ -218,7 +218,7 @@ export async function sendInquiryNotifyEmail({
       "Reply by email, or review in your dashboard:",
       dashboardUrl,
       "",
-      `Profile: ${getSiteUrl()}/c/${companySlug}`,
+      `Profile: ${getEmailSiteUrl()}/c/${companySlug}`,
     ]
       .filter((line) => line !== null)
       .join("\n"),
@@ -233,8 +233,8 @@ export async function sendGroupInviteEmail(input: {
   companyName: string;
   groupSlug: string;
 }) {
-  const dashboardUrl = `${getSiteUrl()}/dashboard`;
-  const groupUrl = `${getSiteUrl()}/g/${input.groupSlug}`;
+  const dashboardUrl = `${getEmailSiteUrl()}/dashboard`;
+  const groupUrl = `${getEmailSiteUrl()}/g/${input.groupSlug}`;
   return sendTextEmail({
     to: input.to,
     subject: `${input.groupName} invited ${input.companyName} to join on Hansala`,
@@ -258,7 +258,7 @@ export async function sendOwnershipTransferEmail(input: {
   companyName: string;
   token: string;
 }) {
-  const url = `${getSiteUrl()}/transfer/${input.token}`;
+  const url = `${getEmailSiteUrl()}/transfer/${input.token}`;
   return sendTextEmail({
     to: input.to,
     subject: `Accept ownership of ${input.companyName} on Hansala`,
@@ -282,7 +282,7 @@ export async function sendTeamInviteEmail(input: {
   companyName: string;
   inviterHint: string;
 }) {
-  const loginUrl = `${getSiteUrl()}/login?next=/dashboard`;
+  const loginUrl = `${getEmailSiteUrl()}/login?next=/dashboard`;
   return sendTextEmail({
     to: input.to,
     subject: `You're invited to ${input.companyName} on Hansala`,
@@ -314,7 +314,7 @@ export async function sendTeamJoinInviteEmail({
   companyName,
   token,
 }: TeamJoinInviteEmailInput) {
-  const joinUrl = `${getSiteUrl()}/join/${token}`;
+  const joinUrl = `${getEmailSiteUrl()}/join/${token}`;
   return sendTextEmail({
     to,
     subject: `${inviterName} te poziva u tim firme ${companyName} na Hansala-u`,
@@ -339,7 +339,7 @@ export async function sendProjectRequestManageEmail(input: {
   title: string;
   manageToken: string;
 }) {
-  const manageUrl = `${getSiteUrl()}/requests/manage/${input.manageToken}`;
+  const manageUrl = `${getEmailSiteUrl()}/requests/manage/${input.manageToken}`;
   return sendTextEmail({
     to: input.to,
     subject: `Your project request on Hansala: ${input.title}`,
@@ -363,7 +363,7 @@ export async function sendProjectRequestDigestEmail(input: {
   companyName: string;
   requestTitles: string[];
 }) {
-  const radarUrl = `${getSiteUrl()}/dashboard/radar`;
+  const radarUrl = `${getEmailSiteUrl()}/dashboard/radar`;
   const list = input.requestTitles.map((t) => `• ${t}`).join("\n");
   return sendTextEmail({
     to: input.to,
@@ -394,9 +394,9 @@ export async function sendRadarWeeklyDigestEmail(input: {
   projectRequests: number;
   unsubscribeUrl?: string;
 }) {
-  const radarUrl = `${getSiteUrl()}/dashboard/radar`;
+  const radarUrl = `${getEmailSiteUrl()}/dashboard/radar`;
   const unsub =
-    input.unsubscribeUrl ?? `${getSiteUrl()}/dashboard/radar?unsubscribe=1`;
+    input.unsubscribeUrl ?? `${getEmailSiteUrl()}/dashboard/radar?unsubscribe=1`;
   const leads = input.companyLeads;
   const reqs = input.projectRequests;
 
@@ -426,10 +426,10 @@ export async function sendIntroNotifyEmail(input: {
   senderSlug: string;
   offer: string;
 }) {
-  const inboxUrl = `${getSiteUrl()}/dashboard/inbox?tab=intros`;
+  const inboxUrl = `${getEmailSiteUrl()}/dashboard/inbox?tab=intros`;
   const profileUrl = input.senderSlug
-    ? `${getSiteUrl()}/c/${input.senderSlug}`
-    : getSiteUrl();
+    ? `${getEmailSiteUrl()}/c/${input.senderSlug}`
+    : getEmailSiteUrl();
   return sendTextEmail({
     to: input.to,
     subject: `New intro via Hansala Radar from ${input.senderName}`,
@@ -459,8 +459,8 @@ export async function sendProjectResponseBuyerEmail(input: {
   message: string;
   manageToken: string;
 }) {
-  const manageUrl = `${getSiteUrl()}/requests/manage/${input.manageToken}`;
-  const profileUrl = `${getSiteUrl()}/c/${input.companySlug}`;
+  const manageUrl = `${getEmailSiteUrl()}/requests/manage/${input.manageToken}`;
+  const profileUrl = `${getEmailSiteUrl()}/c/${input.companySlug}`;
   return sendTextEmail({
     to: input.to,
     subject: `${input.companyName} responded to “${input.requestTitle}”`,
