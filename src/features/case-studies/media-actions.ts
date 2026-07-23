@@ -152,3 +152,34 @@ export async function clearCaseStudyCover(formData: FormData) {
   revalidatePath(`/c/${company.slug}/case-studies/${caseSlug}`);
   redirect(`${back}?saved=1`);
 }
+
+export async function removeCaseStudyGalleryPhoto(formData: FormData) {
+  const back = safeBack(String(formData.get("back") ?? ""));
+  const caseSlug = String(formData.get("case_slug") ?? "").trim();
+  const url = String(formData.get("url") ?? "").trim();
+  const { user, company } = await getOperatorActiveCompany();
+  if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
+  if (!company) redirect(`${back}?error=${encodeURIComponent("Switch workspace first.")}`);
+  if (!url) redirect(`${back}?error=${encodeURIComponent("Missing image.")}`);
+
+  const loaded = await loadCase(company.id, caseSlug);
+  if (loaded.error || !loaded.admin || !loaded.row) {
+    redirect(`${back}?error=${encodeURIComponent(loaded.error ?? "Not found.")}`);
+  }
+
+  const existing = (loaded.row.gallery_urls as string[]) ?? [];
+  const next = existing.filter((item) => item !== url);
+  if (next.length === existing.length) {
+    redirect(`${back}?error=${encodeURIComponent("Image not found in gallery.")}`);
+  }
+
+  const { error: dbError } = await loaded.admin
+    .from("case_studies")
+    .update({ gallery_urls: next })
+    .eq("id", loaded.row.id);
+  if (dbError) redirect(`${back}?error=${encodeURIComponent(dbError.message)}`);
+
+  revalidatePath(back);
+  revalidatePath(`/c/${company.slug}/case-studies/${caseSlug}`);
+  redirect(`${back}?saved=1`);
+}

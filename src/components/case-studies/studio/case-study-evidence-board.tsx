@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { CaseStudyDossier } from "@/components/case-studies/dossier/case-study-dossier";
+import { useEffect, useMemo, useState } from "react";
+import { CaseStudyStudioPreview } from "@/components/case-studies/studio/case-study-studio-preview";
 import { CaseStudyStudioClient } from "@/components/case-studies/studio/case-study-studio-client";
 import { CaseStudyStudioProof } from "@/components/case-studies/studio/case-study-studio-proof";
 import { CaseStudyStudioStory } from "@/components/case-studies/studio/case-study-studio-story";
@@ -43,6 +43,11 @@ const LAYERS: {
 export function CaseStudyEvidenceBoard({ company, caseStudy, back, flash, error }: Props) {
   const [open, setOpen] = useState<CaseStudyStudioTab>("visual");
   const [draft, setDraft] = useState<CaseStudyDraft>(() => draftFromCaseStudy(caseStudy));
+
+  useEffect(() => {
+    setDraft(draftFromCaseStudy(caseStudy));
+  }, [caseStudy]);
+
   const previewCase = useMemo(() => mergeDraft(caseStudy, draft), [caseStudy, draft]);
   const { done, total } = blueprintScore(caseStudyBlueprint(previewCase, company.verified));
   const patch = (p: Partial<CaseStudyDraft>) => setDraft((d) => ({ ...d, ...p }));
@@ -74,8 +79,8 @@ export function CaseStudyEvidenceBoard({ company, caseStudy, back, flash, error 
         {flash ? <p className="mt-4 border-l-2 border-[var(--cf-accent)] pl-4 text-[14px]">{flash}</p> : null}
       </header>
 
-      <div className="grid lg:grid-cols-2">
-        <div className="border-[var(--cf-line)] px-6 lg:border-r">
+      <div className="grid lg:grid-cols-2 lg:items-start">
+        <div className="min-w-0 border-[var(--cf-line)] px-6 lg:border-r">
           {LAYERS.map((layer) => (
             <StudioLayer
               key={layer.id}
@@ -101,10 +106,8 @@ export function CaseStudyEvidenceBoard({ company, caseStudy, back, flash, error 
             </StudioLayer>
           ))}
         </div>
-        <div className="hidden overflow-hidden bg-[#eceae4] lg:block">
-          <div className="origin-top scale-[0.55] xl:scale-[0.62]">
-            <CaseStudyDossier company={companyAsFull(company)} caseStudy={previewCase} index={0} />
-          </div>
+        <div className="sticky top-0 hidden h-[calc(100dvh-11rem)] min-h-[420px] border-[var(--cf-line)] bg-[#eceae4] lg:block">
+          <CaseStudyStudioPreview draft={draft} company={company} caseStudy={previewCase} />
         </div>
       </div>
     </div>
@@ -131,22 +134,5 @@ function mergeDraft(cs: CaseStudy, draft: CaseStudyDraft): CaseStudy {
     services: draft.services.split(",").map((s) => s.trim()).filter(Boolean),
     coverImageUrl: draft.coverImageUrl,
     galleryUrls: draft.galleryUrls,
-  };
-}
-
-function companyAsFull(c: DossierCompany) {
-  return {
-    id: "",
-    slug: c.slug,
-    name: c.name,
-    verified: c.verified,
-    tagline: "",
-    description: "",
-    category: "",
-    city: "",
-    country: "",
-    website: "",
-    services: [],
-    logoInitials: c.name.slice(0, 2).toUpperCase(),
   };
 }

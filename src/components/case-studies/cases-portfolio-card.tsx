@@ -2,16 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { caseStudyCoverFocus, caseStudyCoverUrl } from "@/lib/case-study-cover";
 import type { CaseStudy } from "@/types/case-study";
-import type { Company } from "@/types/company";
 
 type Props = {
   companySlug: string;
-  company: Pick<Company, "verified" | "name">;
   caseStudy: CaseStudy;
   index: number;
 };
 
-export function CasesPortfolioCard({ companySlug, company, caseStudy, index }: Props) {
+export function CasesPortfolioCard({ companySlug, caseStudy, index }: Props) {
   const cover = caseStudyCoverUrl(caseStudy.coverImageUrl, index);
   const confirmed = caseStudy.clientConfirmation?.status === "confirmed";
 

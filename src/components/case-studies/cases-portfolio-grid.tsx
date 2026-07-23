@@ -5,11 +5,10 @@ import type { CaseStudy } from "@/types/case-study";
 
 type Props = {
   companySlug: string;
-  companyVerified: boolean;
   cases: CaseStudy[];
 };
 
-export function CasesPortfolioGrid({ companySlug, companyVerified, cases }: Props) {
+export function CasesPortfolioGrid({ companySlug, cases }: Props) {
   if (cases.length === 0) {
     return (
       <div className="relative overflow-hidden rounded-[28px] border border-line bg-surface px-6 py-14 text-center shadow-[0_14px_48px_rgba(8,20,18,0.05)] sm:px-10">
@@ -39,7 +38,6 @@ export function CasesPortfolioGrid({ companySlug, companyVerified, cases }: Prop
         <CasesPortfolioCard
           key={c.id}
           companySlug={companySlug}
-          company={{ verified: companyVerified, name: "" }}
           caseStudy={c}
           index={i}
         />
