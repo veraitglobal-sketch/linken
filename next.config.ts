@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  experimental: {
+    serverActions: {
+      // Cover/gallery uploads via FormData — default 1MB causes opaque 500 errors.
+      bodySizeLimit: "10mb",
+    },
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

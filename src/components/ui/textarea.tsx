@@ -1,7 +1,7 @@
-import type { InputHTMLAttributes } from "react";
+import type { TextareaHTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
 
-type Props = InputHTMLAttributes<HTMLTextAreaElement>;
+type Props = TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 export function Textarea({ className, ...props }: Props) {
   return (

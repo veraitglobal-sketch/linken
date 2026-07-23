@@ -82,7 +82,11 @@ export function ProfileEditHub({
           initials={initials}
           backPath={backPath}
         />
-        <CompanySettingsCover coverImageUrl={coverImageUrl} backPath={backPath} />
+        <CompanySettingsCover
+          coverImageUrl={coverImageUrl}
+          backPath={backPath}
+          companySlug={slug}
+        />
         <CompanySettingsForm company={company} backPath={backPath} />
       </div>
     </div>

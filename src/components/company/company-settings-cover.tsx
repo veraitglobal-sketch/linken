@@ -6,10 +6,15 @@ import { Button } from "@/components/ui/button";
 type Props = {
   coverImageUrl?: string | null;
   backPath: string;
+  companySlug: string;
 };
 
 /** LinkedIn-style banner — same spot/shape as the public hero, replaceable per company. */
-export function CompanySettingsCover({ coverImageUrl, backPath }: Props) {
+export function CompanySettingsCover({
+  coverImageUrl,
+  backPath,
+  companySlug,
+}: Props) {
   return (
     <WorkspaceCard padded={false}>
       <div className="border-b border-line bg-paper/70 px-5 py-4 sm:px-6">
@@ -41,6 +46,7 @@ export function CompanySettingsCover({ coverImageUrl, backPath }: Props) {
           className="flex flex-wrap items-center gap-3"
         >
           <input type="hidden" name="back" value={backPath} />
+          <input type="hidden" name="company_slug" value={companySlug} />
           <input
             type="file"
             name="cover"
@@ -56,6 +62,7 @@ export function CompanySettingsCover({ coverImageUrl, backPath }: Props) {
         {coverImageUrl ? (
           <form action={clearCompanyCover} className="mt-2.5">
             <input type="hidden" name="back" value={backPath} />
+          <input type="hidden" name="company_slug" value={companySlug} />
             <button
               type="submit"
               className="text-[12px] font-semibold text-muted underline-offset-2 hover:text-ink hover:underline"
