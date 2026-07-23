@@ -1,6 +1,7 @@
 import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
 import { LogoMark } from "@/components/ui/logo-mark";
 import type { OnePagerData } from "@/features/one-pager/queries";
+import { COMPANY_SHARE_PREFIX } from "@/lib/site";
 
 type Props = {
   data: OnePagerData;
@@ -146,7 +147,7 @@ export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
       <footer className="mt-12 flex flex-wrap items-end justify-between gap-6 border-t border-line pt-8">
         <div className="max-w-md">
           <p className="font-display text-lg tracking-[-0.03em] text-ink">
-            hansala.com/
+            {COMPANY_SHARE_PREFIX}/
             <span className="text-[#1a5c51]">{company.slug}</span>
           </p>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">

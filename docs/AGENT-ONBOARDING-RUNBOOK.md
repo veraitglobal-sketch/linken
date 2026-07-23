@@ -18,8 +18,14 @@ curl -X PUT "$BASE/logo" -H "Authorization: Bearer $KEY" \
 
 curl -X PUT "$BASE/company/cover" -H "Authorization: Bearer $KEY" \
   -H "Content-Type: application/json" \
-  -d '{"image_url":"https://verait.de/assets/og-image.png"}'
+  -d '{"image_url":"https://example.com/cover-portrait-1200x1400.jpg"}'
 ```
+
+Cover must be **1200 × 1400 px** portrait (6∶7). Wide banners and logos will be cropped badly.
+
+```bash
+# wrong — 1200×630 OG / website banner
+# right — 1200×1400 vertical team/office/project photo
 
 ## 2. Case studies (4 projects)
 

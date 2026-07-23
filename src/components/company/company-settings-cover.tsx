@@ -2,6 +2,7 @@ import Image from "next/image";
 import { clearCompanyCover, updateCompanyCover } from "@/features/company/cover-actions";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Button } from "@/components/ui/button";
+import { MEDIA_SPECS, mediaSpecHint } from "@/lib/media-specs";
 
 type Props = {
   coverImageUrl?: string | null;
@@ -25,8 +26,8 @@ export function CompanySettingsCover({
           Cover photo
         </h2>
         <p className="mt-1 max-w-lg text-[12px] leading-relaxed text-muted">
-          Shown behind your name on the public profile. Defaults to a generic
-          photo until you add your own.
+          Shown on the right side of your public profile hero.{" "}
+          {mediaSpecHint(MEDIA_SPECS.companyCover)}
         </p>
       </div>
 

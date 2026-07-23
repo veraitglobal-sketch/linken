@@ -8,6 +8,7 @@ import { VerifiedBadge } from "@/components/ui/verified-badge";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
 import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
+import { COMPANY_SHARE_PREFIX } from "@/lib/site";
 
 type Props = {
   company: Company;
@@ -128,7 +129,7 @@ export function CompanyHeroBand({
                 Shareable address
               </p>
               <p className="mt-1 font-display text-lg tracking-[-0.03em] text-white sm:text-xl">
-                hansala.com/
+                {COMPANY_SHARE_PREFIX}/
                 <span className="text-[#7eb8a4]">{company.slug}</span>
               </p>
             </div>

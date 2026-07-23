@@ -119,7 +119,10 @@ export function companyProfilePath(slug: string) {
   return `/c/${slug}`;
 }
 
+/** Host + path prefix for shareable address display (no protocol, no trailing slug). */
+export const COMPANY_SHARE_PREFIX = "hansala.com/c";
+
 /** Display label for shareable address (no protocol). */
 export function companyShareLabel(slug: string) {
-  return `hansala.com/${slug}`;
+  return `${COMPANY_SHARE_PREFIX}/${slug}`;
 }

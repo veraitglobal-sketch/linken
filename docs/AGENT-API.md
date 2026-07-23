@@ -33,6 +33,20 @@ Or remote fetch:
 
 Or multipart field `file`.
 
+## Image dimensions (match these to avoid bad crops)
+
+| Asset | Size | Ratio | Formats | Max |
+|-------|------|-------|---------|-----|
+| Company cover | **1200 × 1400 px** | 6∶7 portrait | JPG, PNG, WEBP | 8 MB |
+| Company logo | **512 × 512 px** | 1∶1 square | PNG, SVG | 1 MB |
+| Case study cover | **1920 × 1200 px** | 16∶10 landscape | JPG, PNG, WEBP | 8 MB |
+| Case study gallery | **1200 × 900 px** | 4∶3 landscape | JPG, PNG, WEBP | 8 MB |
+| Team photo | **400 × 400 px** | 1∶1 square | JPG, PNG, WEBP | 2 MB |
+
+Company cover fills a **vertical panel** on the profile hero (`object-cover`). Do not upload wide banners, OG images, or logos — use a portrait photo. Keep the subject centered.
+
+Source of truth: `src/lib/media-specs.ts`.
+
 ## Company profile
 
 ```bash

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createCompany } from "@/features/company/actions";
+import { COMPANY_SHARE_PREFIX } from "@/lib/site";
 import { toSlug } from "@/lib/slug";
 
 type Props = {
@@ -34,7 +35,7 @@ export function OnboardingForm({ error }: Props) {
           Your link
         </p>
         <p className="mt-1 font-display text-lg tracking-[-0.03em]">
-          hansala.com/<span className="text-[#7eb8a4]">{slug}</span>
+          {COMPANY_SHARE_PREFIX}/<span className="text-[#7eb8a4]">{slug}</span>
         </p>
       </div>
 

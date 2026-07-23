@@ -8,6 +8,7 @@ import {
   updateCaseStudyCover,
 } from "@/features/case-studies/media-actions";
 import { caseStudyCoverUrl } from "@/lib/case-study-cover";
+import { MEDIA_SPECS, mediaSpecHint } from "@/lib/media-specs";
 import type { CaseStudyDraft } from "@/components/case-studies/studio/case-study-draft";
 
 type Props = {
@@ -38,7 +39,8 @@ export function CaseStudyStudioVisual({ draft, caseSlug, back }: Props) {
           Cover
         </p>
         <p className="mt-1 text-[13px] text-[var(--cf-muted)]">
-          Full-width hero on the public case file.
+          Full-width hero on the public case file.{" "}
+          {mediaSpecHint(MEDIA_SPECS.caseStudyCover)}
         </p>
 
         <div className="group relative mt-4 overflow-hidden bg-[#0a1210]">
@@ -83,7 +85,8 @@ export function CaseStudyStudioVisual({ draft, caseSlug, back }: Props) {
               Gallery
             </p>
             <p className="mt-1 text-[13px] text-[var(--cf-muted)]">
-              On-site photos · {draft.galleryUrls.length}/8
+              On-site photos · {draft.galleryUrls.length}/8.{" "}
+              {mediaSpecHint(MEDIA_SPECS.caseStudyGallery)}
             </p>
           </div>
         </div>

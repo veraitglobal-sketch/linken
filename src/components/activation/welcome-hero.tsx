@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { ActivationChecklist } from "@/features/activation/checklist";
-import { getSiteUrl } from "@/lib/site";
+import { getSiteUrl, companyShareLabel } from "@/lib/site";
 
 type Props = {
   companyName: string;
@@ -13,7 +13,8 @@ type Props = {
 export function WelcomeHero({ companyName, companySlug, checklist, from }: Props) {
   const profileUrl = `/c/${companySlug}`;
   const siteUrl = getSiteUrl();
-  const publicUrl = `${siteUrl}/c/${companySlug}`;
+  const publicUrl = `${siteUrl}${profileUrl}`;
+  const publicLabel = companyShareLabel(companySlug);
 
   const heading =
     from === "confirm"
@@ -75,7 +76,7 @@ export function WelcomeHero({ companyName, companySlug, checklist, from }: Props
             href={profileUrl}
             className="font-semibold text-white/75 underline-offset-2 hover:text-white hover:underline"
           >
-            {publicUrl.replace(/^https?:\/\//, "")}
+            {publicLabel}
           </Link>
         </p>
       </div>

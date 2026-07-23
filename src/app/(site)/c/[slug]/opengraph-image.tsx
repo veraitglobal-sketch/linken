@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { getTrustProfile } from "@/features/trust/queries";
+import { companyShareLabel } from "@/lib/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -156,7 +157,7 @@ export default async function Image({ params }: Props) {
             Hansala
           </span>
           <span style={{ fontSize: 22, color: "rgba(255,255,255,0.45)" }}>
-            hansala.com/{company.slug}
+            {companyShareLabel(company.slug)}
           </span>
         </div>
       </div>
