@@ -25,8 +25,8 @@ const stories = [
     href: "/search",
     cta: "Find companies",
     image: "/images/story-collaboration.jpg",
-    imageAlt: "Two business partners in a working meeting across industries",
-    focus: "object-[center_35%]",
+    imageAlt: "Business professional holding a Hansala portfolio outside a modern building",
+    focus: "object-[center_20%]",
   },
   {
     tone: "bg-[#1a3530]",
