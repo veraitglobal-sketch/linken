@@ -455,11 +455,47 @@ export default function DevelopersPage() {
                 <li>6. <code className="text-ink">GET /widgets</code> — pick embed snippet</li>
               </ul>
               <p className="text-[13px] text-muted">
-                Cursor / Claude: copy <code className="text-[12px]">.cursor/mcp.json.example</code> →{" "}
-                <code className="text-[12px]">.cursor/mcp.json</code>, run{" "}
-                <code className="text-[12px]">npm install</code> in{" "}
-                <code className="text-[12px]">mcp/hansala</code> — exposes{" "}
-                <code className="text-[12px]">hansala_*</code> tools for case studies, photos, and team.
+                Create your key in{" "}
+                <Link href="/dashboard/api" className="font-semibold text-ink underline-offset-2 hover:underline">
+                  Workspace → API
+                </Link>{" "}
+                — choose preset <strong className="font-semibold text-ink-soft">AI agent</strong>.
+              </p>
+            </div>
+
+            <div id="agent-mcp" className="mt-10 scroll-mt-28 space-y-4">
+              <h3 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
+                Cursor & Claude (MCP)
+              </h3>
+              <p className="text-[14px] text-ink-soft">
+                MCP is a local bridge — there is <strong className="font-semibold text-ink">no separate MCP key</strong>.
+                Use the same Agent API key (<code className="text-[12px]">lk_…</code>) as{" "}
+                <code className="text-[12px]">HANSALA_AGENT_API_KEY</code>.
+              </p>
+              <div className="rounded-2xl border border-line bg-[#fafbfc] px-5 py-4 text-[13px] text-ink-soft">
+                <p className="font-semibold text-ink">1. Create key</p>
+                <p className="mt-1">
+                  <Link href="/dashboard/api" className="text-ink underline-offset-2 hover:underline">
+                    /dashboard/api
+                  </Link>{" "}
+                  → Create key → <strong className="text-ink">AI agent</strong>
+                </p>
+                <p className="mt-4 font-semibold text-ink">2. Configure MCP</p>
+                <p className="mt-1">
+                  Copy <code className="text-[12px]">.cursor/mcp.json.example</code> →{" "}
+                  <code className="text-[12px]">.cursor/mcp.json</code>, run{" "}
+                  <code className="text-[12px]">npm install</code> in{" "}
+                  <code className="text-[12px]">mcp/hansala</code>
+                </p>
+                <p className="mt-4 font-semibold text-ink">3. Tools exposed</p>
+                <p className="mt-1">
+                  <code className="text-[12px]">hansala_create_case_study</code>, cover/gallery uploads,
+                  team invites, logo upload — same permissions as the key scopes.
+                </p>
+              </div>
+              <p className="text-[13px] text-muted">
+                Direct HTTP? Call <code className="text-[12px]">{siteUrl}/api/v1/agent</code> with{" "}
+                <code className="text-[12px]">Authorization: Bearer lk_…</code> — no MCP required.
               </p>
             </div>
 
