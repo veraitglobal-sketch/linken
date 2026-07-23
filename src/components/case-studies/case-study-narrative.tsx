@@ -7,6 +7,7 @@ type Props = {
   challenge: string;
   outcome: string;
   process: string;
+  clientConfirmed?: boolean;
 };
 
 function NarrativeBlock({ label, body }: Block) {
@@ -34,7 +35,12 @@ function NarrativeBlock({ label, body }: Block) {
   );
 }
 
-export function CaseStudyNarrative({ challenge, outcome, process }: Props) {
+export function CaseStudyNarrative({
+  challenge,
+  outcome,
+  process,
+  clientConfirmed = false,
+}: Props) {
   const blocks = [
     { label: "The challenge", body: challenge },
     { label: "The outcome", body: outcome },
@@ -52,6 +58,11 @@ export function CaseStudyNarrative({ challenge, outcome, process }: Props) {
         <h2 className="mt-2 font-display text-[clamp(1.6rem,3vw,2.2rem)] font-medium tracking-[-0.035em] text-ink">
           What was built, and why it mattered.
         </h2>
+        <p className="mt-2 text-[13px] text-muted">
+          {clientConfirmed
+            ? "Narrative by the publisher — client confirmed the delivery separately."
+            : "Self-reported narrative — invite the client to confirm on Hansala."}
+        </p>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         {blocks.map((block) => (

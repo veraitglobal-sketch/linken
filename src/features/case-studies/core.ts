@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { ensureCaseStudyRow } from "@/features/case-studies/ensure-case-study";
 import { sendClientConfirmationEmail } from "@/lib/email";
 import { toSlug } from "@/lib/slug";
+import type { CaseStudyMetric } from "@/types/case-study";
 
 export type CoreFail = { ok: false; error: string };
 export type CoreOk<T> = { ok: true; data: T };
@@ -39,6 +40,13 @@ export type CreateCaseStudyInput = {
   process?: string;
   location?: string;
   year?: string;
+  duration?: string;
+  sector?: string;
+  scope?: string;
+  clientLabel?: string;
+  highlightStat?: string;
+  clientQuote?: string;
+  metrics?: CaseStudyMetric[];
   services?: string[];
 };
 
@@ -65,6 +73,13 @@ export async function createCaseStudyCore(
       process: (input.process ?? "").trim(),
       location: (input.location ?? "").trim(),
       year: (input.year ?? "").trim(),
+      duration: (input.duration ?? "").trim(),
+      sector: (input.sector ?? "").trim(),
+      scope: (input.scope ?? "").trim(),
+      client_label: (input.clientLabel ?? "").trim(),
+      highlight_stat: (input.highlightStat ?? "").trim(),
+      client_quote: (input.clientQuote ?? "").trim(),
+      metrics: input.metrics ?? [],
       services: Array.isArray(input.services)
         ? input.services.map((s) => String(s).trim()).filter(Boolean)
         : [],
@@ -94,6 +109,13 @@ export type UpdateCaseStudyInput = {
   process?: string;
   location?: string;
   year?: string;
+  duration?: string;
+  sector?: string;
+  scope?: string;
+  clientLabel?: string;
+  highlightStat?: string;
+  clientQuote?: string;
+  metrics?: CaseStudyMetric[];
   services?: string[];
 };
 
@@ -125,6 +147,20 @@ export async function updateCaseStudyCore(
   if (input.process !== undefined) patch.process = input.process.trim();
   if (input.location !== undefined) patch.location = input.location.trim();
   if (input.year !== undefined) patch.year = input.year.trim();
+  if (input.duration !== undefined) patch.duration = input.duration.trim();
+  if (input.sector !== undefined) patch.sector = input.sector.trim();
+  if (input.scope !== undefined) patch.scope = input.scope.trim();
+  if (input.clientLabel !== undefined) patch.client_label = input.clientLabel.trim();
+  if (input.highlightStat !== undefined) {
+    patch.highlight_stat = input.highlightStat.trim();
+  }
+  if (input.clientQuote !== undefined) patch.client_quote = input.clientQuote.trim();
+  if (input.metrics !== undefined) {
+    if (!Array.isArray(input.metrics)) {
+      return { ok: false, error: "metrics must be an array." };
+    }
+    patch.metrics = input.metrics;
+  }
   if (input.services !== undefined) {
     if (!Array.isArray(input.services)) {
       return { ok: false, error: "services must be an array of strings." };

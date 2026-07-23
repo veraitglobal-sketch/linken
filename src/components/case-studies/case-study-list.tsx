@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { CaseStudyCard } from "@/components/case-studies/case-study-card";
 import type { CaseStudy } from "@/types/case-study";
+import type { Company } from "@/types/company";
 
 type Props = {
+  company: Company;
   companySlug: string;
   caseStudies: CaseStudy[];
   editable?: boolean;
 };
 
 export function CaseStudyList({
+  company,
   companySlug,
   caseStudies,
   editable = false,
@@ -20,11 +23,11 @@ export function CaseStudyList({
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3 px-0.5">
         <div>
           <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-            Case studies
+            Verified dossiers
           </p>
           <h2 className="mt-2 font-display text-[clamp(1.55rem,2.5vw,1.95rem)] font-medium tracking-[-0.035em] text-ink">
-            Work worth showing —
-            <span className="text-ink/35"> confirmed by clients.</span>
+            Case files —
+            <span className="text-ink/35"> not marketing pages.</span>
           </h2>
         </div>
         {editable ? (
@@ -42,6 +45,7 @@ export function CaseStudyList({
           {caseStudies.map((caseStudy, index) => (
             <CaseStudyCard
               key={caseStudy.id}
+              company={company}
               companySlug={companySlug}
               caseStudy={caseStudy}
               index={index}

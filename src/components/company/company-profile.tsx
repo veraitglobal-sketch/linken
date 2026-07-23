@@ -167,6 +167,7 @@ export function CompanyProfile({
           ) : null}
           {showCases ? (
             <CaseStudyList
+              company={company}
               companySlug={company.slug}
               caseStudies={caseStudies}
               editable={editable}

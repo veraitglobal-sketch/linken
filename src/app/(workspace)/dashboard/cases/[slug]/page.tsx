@@ -43,8 +43,11 @@ export default async function DashboardCaseStudioPage({
   return (
     <CaseStudyStudio
       key={studioKey}
-      companySlug={company.slug}
-      companyName={company.name}
+      company={{
+        slug: company.slug,
+        name: company.name,
+        verified: company.verified,
+      }}
       caseStudy={caseStudy}
       back={back}
       flash={flashMessage(q)}

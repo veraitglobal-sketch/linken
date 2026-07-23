@@ -67,10 +67,27 @@ export function CaseStudyHero({ company, caseStudy, index = 0 }: Props) {
                   <span>{caseStudy.location}</span>
                 </>
               ) : null}
+              {caseStudy.sector ? (
+                <>
+                  <span className="text-white/25">·</span>
+                  <span>{caseStudy.sector}</span>
+                </>
+              ) : null}
+              {caseStudy.duration ? (
+                <>
+                  <span className="text-white/25">·</span>
+                  <span>{caseStudy.duration}</span>
+                </>
+              ) : null}
             </div>
             <h1 className="mt-5 font-display text-[clamp(2.2rem,5.5vw,4rem)] leading-[0.95] font-medium tracking-[-0.045em] text-white">
               {caseStudy.title}
             </h1>
+            {caseStudy.highlightStat ? (
+              <p className="mt-4 font-display text-[clamp(1.25rem,2.5vw,1.75rem)] font-medium tracking-[-0.03em] text-ember">
+                {caseStudy.highlightStat}
+              </p>
+            ) : null}
             <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-white/68">
               {caseStudy.summary}
             </p>

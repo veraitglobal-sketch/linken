@@ -3,7 +3,10 @@
 import Image from "next/image";
 import { caseStudyCoverFocus, caseStudyCoverUrl } from "@/lib/case-study-cover";
 import type { CaseStudyDraft } from "@/components/case-studies/studio/case-study-draft";
-import { servicesList } from "@/components/case-studies/studio/case-study-draft";
+import {
+  draftMetrics,
+  servicesList,
+} from "@/components/case-studies/studio/case-study-draft";
 
 type Props = {
   draft: CaseStudyDraft;
@@ -14,6 +17,7 @@ type Props = {
 export function CaseStudyLivePreview({ draft, companyName }: Props) {
   const cover = caseStudyCoverUrl(draft.coverImageUrl, 0);
   const services = servicesList(draft.services);
+  const metrics = draftMetrics(draft);
   const title = draft.title.trim() || "Project title";
   const summary =
     draft.summary.trim() ||
@@ -41,15 +45,56 @@ export function CaseStudyLivePreview({ draft, companyName }: Props) {
             <p className="text-[10px] font-semibold tracking-[0.12em] text-white/45 uppercase">
               Case study · {draft.year || "2025"}
               {draft.location ? ` · ${draft.location}` : ""}
+            {draft.sector ? ` · ${draft.sector}` : ""}
+            {draft.duration ? ` · ${draft.duration}` : ""}
             </p>
             <p className="mt-2 font-display text-2xl font-medium leading-tight tracking-[-0.04em] text-white">
               {title}
             </p>
+            {draft.highlightStat ? (
+              <p className="mt-2 font-display text-lg font-medium text-ember">
+                {draft.highlightStat}
+              </p>
+            ) : null}
             <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-white/65">
               {summary}
             </p>
             <p className="mt-3 text-[11px] text-white/40">{companyName}</p>
           </div>
+        </div>
+
+        {metrics.length > 0 || draft.highlightStat ? (
+          <div className="grid grid-cols-2 gap-px bg-line">
+            {draft.highlightStat ? (
+              <div className="col-span-2 bg-surface px-4 py-3">
+                <p className="text-[9px] font-semibold tracking-[0.12em] text-ember uppercase">
+                  Headline result
+                </p>
+                <p className="mt-1 font-display text-xl font-medium text-ink">
+                  {draft.highlightStat}
+                </p>
+              </div>
+            ) : null}
+            {metrics.map((m) => (
+              <div key={m.label} className="bg-surface px-3 py-2.5">
+                <p className="text-[9px] font-semibold tracking-[0.12em] text-muted uppercase">
+                  {m.label}
+                </p>
+                <p className="mt-0.5 font-display text-lg font-medium text-ink">
+                  {m.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        <div className="border-b border-line bg-paper/80 px-4 py-3">
+          <p className="text-[9px] font-semibold tracking-[0.12em] text-blue uppercase">
+            Hansala proof stack
+          </p>
+          <p className="mt-1 text-[11px] text-muted">
+            Client · Partners · Verified · Metrics
+          </p>
         </div>
 
         {(draft.challenge || draft.outcome || draft.process) && (
@@ -65,6 +110,14 @@ export function CaseStudyLivePreview({ draft, companyName }: Props) {
             ) : null}
           </div>
         )}
+
+        {draft.clientQuote ? (
+          <blockquote className="border-b border-line bg-paper px-4 py-4">
+            <p className="text-[12px] leading-relaxed text-ink-soft italic">
+              &ldquo;{draft.clientQuote}&rdquo;
+            </p>
+          </blockquote>
+        ) : null}
 
         {draft.galleryUrls.length > 0 ? (
           <div className="grid grid-cols-2 gap-1 bg-paper p-1">

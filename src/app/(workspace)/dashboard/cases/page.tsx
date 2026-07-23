@@ -41,14 +41,14 @@ export default async function DashboardCasesPage({ searchParams }: Props) {
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-[11px] font-semibold tracking-[0.14em] text-blue uppercase">
-            Studio
+            Evidence board
           </p>
           <h1 className="mt-2 font-display text-[28px] font-medium tracking-[-0.04em] text-ink">
-            Case studies
+            Verified dossiers
           </h1>
           <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-muted">
-            Build portfolio pieces with cover, gallery, and story — live preview
-            as you work. Client confirmation when you&apos;re ready.
+            Build case files layer by layer — visuals, record, impact data, client
+            seal. Live dossier preview as you work.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -59,7 +59,7 @@ export default async function DashboardCasesPage({ searchParams }: Props) {
             Public profile
           </Link>
           <Button href="/dashboard/cases/new" className="h-10 px-4 text-[12px]">
-            New case study
+            New dossier
           </Button>
         </div>
       </header>
@@ -70,7 +70,11 @@ export default async function DashboardCasesPage({ searchParams }: Props) {
         </p>
       ) : null}
 
-      <CasesPortfolioGrid companySlug={company.slug} cases={cases} />
+      <CasesPortfolioGrid
+        companySlug={company.slug}
+        companyVerified={company.verified}
+        cases={cases}
+      />
     </div>
   );
 }

@@ -13,6 +13,7 @@ import { requireOwnedActiveCompany } from "@/features/workspace/require-owned";
 import { requireOperatorForCompanySlug } from "@/features/workspace/require-operator-slug";
 import { setWorkspacePreference } from "@/features/workspace/set-preference";
 import { safeAppBack, withBackQuery } from "@/lib/safe-back";
+import { parseMetricsFromForm } from "@/lib/case-study-metrics";
 import { createClient } from "@/lib/supabase/server";
 
 /** One step: create case study + email client for confirmation. */
@@ -146,6 +147,13 @@ export async function updateCaseStudyContent(formData: FormData) {
     process: String(formData.get("process") ?? "").trim(),
     location: String(formData.get("location") ?? "").trim(),
     year: String(formData.get("year") ?? "").trim(),
+    duration: String(formData.get("duration") ?? "").trim(),
+    sector: String(formData.get("sector") ?? "").trim(),
+    scope: String(formData.get("scope") ?? "").trim(),
+    clientLabel: String(formData.get("client_label") ?? "").trim(),
+    highlightStat: String(formData.get("highlight_stat") ?? "").trim(),
+    clientQuote: String(formData.get("client_quote") ?? "").trim(),
+    metrics: parseMetricsFromForm(formData),
     services: parseServices(String(formData.get("services") ?? "")),
   });
 

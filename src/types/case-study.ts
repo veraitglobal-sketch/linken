@@ -1,5 +1,7 @@
 import type { ClientConfirmation } from "@/types/client-confirmation";
 
+export type CaseStudyMetric = { label: string; value: string };
+
 export type CaseStudyPartner = {
   slug: string;
   name: string;
@@ -19,10 +21,21 @@ export type CaseStudy = {
   process: string;
   location: string;
   year: string;
+  duration: string;
+  /** Client industry — e.g. Logistics, Healthcare */
+  sector: string;
+  /** Deliverables — one item per line in studio */
+  scope: string;
+  /** Display name before client confirms — e.g. "European logistics group" */
+  clientLabel: string;
+  /** Hero highlight — e.g. "40% faster delivery" */
+  highlightStat: string;
+  /** Shown when client confirmed — optional pull quote */
+  clientQuote: string;
+  metrics: CaseStudyMetric[];
   services: string[];
   coverImageUrl: string | null;
   galleryUrls: string[];
   partners: CaseStudyPartner[];
-  /** Highest trust layer — confirmed by the client company. */
   clientConfirmation?: ClientConfirmation | null;
 };

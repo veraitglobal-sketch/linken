@@ -34,6 +34,18 @@ export function CaseStudyStudioStory({
       <input type="hidden" name="location" value={draft.location} />
       <input type="hidden" name="year" value={draft.year} />
       <input type="hidden" name="services" value={draft.services} />
+      <input type="hidden" name="duration" value={draft.duration} />
+      <input type="hidden" name="highlight_stat" value={draft.highlightStat} />
+      <input type="hidden" name="client_quote" value={draft.clientQuote} />
+      <input type="hidden" name="metric_1_label" value={draft.metric1Label} />
+      <input type="hidden" name="metric_1_value" value={draft.metric1Value} />
+      <input type="hidden" name="metric_2_label" value={draft.metric2Label} />
+      <input type="hidden" name="metric_2_value" value={draft.metric2Value} />
+      <input type="hidden" name="metric_3_label" value={draft.metric3Label} />
+      <input type="hidden" name="metric_3_value" value={draft.metric3Value} />
+      <input type="hidden" name="sector" value={draft.sector} />
+      <input type="hidden" name="scope" value={draft.scope} />
+      <input type="hidden" name="client_label" value={draft.clientLabel} />
 
       <StoryBlock label="Headline">
         <Input
@@ -70,6 +82,41 @@ export function CaseStudyStudioStory({
           />
         </StoryBlock>
       </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <StoryBlock label="Sector" hint="Client industry — e.g. Logistics, Healthcare.">
+          <Input
+            value={draft.sector}
+            onChange={(e) => onChange({ sector: e.target.value })}
+            className="border-0 bg-paper/60 px-0 focus:ring-0"
+            placeholder="Commercial real estate"
+          />
+        </StoryBlock>
+        <StoryBlock
+          label="Client label"
+          hint="Before confirmation — e.g. European logistics group."
+        >
+          <Input
+            value={draft.clientLabel}
+            onChange={(e) => onChange({ clientLabel: e.target.value })}
+            className="border-0 bg-paper/60 px-0 focus:ring-0"
+            placeholder="Confidential until confirmed"
+          />
+        </StoryBlock>
+      </div>
+
+      <StoryBlock
+        label="Scope & deliverables"
+        hint="One line per item — what you actually delivered."
+      >
+        <Textarea
+          value={draft.scope}
+          rows={4}
+          onChange={(e) => onChange({ scope: e.target.value })}
+          placeholder={"HQ fit-out across 4 floors\nMEP coordination\nHandover in 8 weeks"}
+          className="border-0 bg-paper/60 px-0 focus:ring-0"
+        />
+      </StoryBlock>
 
       <StoryBlock label="Services">
         <Input
