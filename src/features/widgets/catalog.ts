@@ -5,12 +5,20 @@ import {
 } from "@/features/widgets/logo-motion";
 
 export type WidgetVariant =
+  | "verified"
   | "compact"
+  | "proof-panel"
+  | "trust-card"
+  | "network-card"
+  | "credentials"
+  | "signature"
   | "badge"
   | "references"
   | "assessment"
   | "logo-wall";
+
 export type WidgetTheme = "light" | "dark";
+export type WidgetSection = "essential" | "proof" | "signature";
 export type LogoWallLabel = "none" | "partners" | "clients" | "both";
 /** @deprecated kept for old embeds — ignored by clean logo wall */
 export type LogoWallDensity = "tiles+names" | "tiles";
@@ -31,7 +39,7 @@ export type WidgetDefinition = {
   id: WidgetVariant;
   name: string;
   description: string;
-  section: "status" | "evidence";
+  section: WidgetSection;
   recommended?: boolean;
   pro?: boolean;
   height: number;
@@ -42,25 +50,75 @@ export type WidgetDefinition = {
 
 export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
+    id: "verified",
+    name: "Verified",
+    description: "Clean Hansala Verified lockup — minimal footer mark.",
+    section: "essential",
+    recommended: true,
+    height: 44,
+  },
+  {
     id: "compact",
     name: "Compact",
     description: "Trust bar with seal and sliding partner logos.",
-    section: "status",
-    recommended: true,
+    section: "essential",
     height: 48,
+  },
+  {
+    id: "proof-panel",
+    name: "Proof panel",
+    description: "Company card with partner slide and confirmed count.",
+    section: "proof",
+    pro: true,
+    height: 88,
+    requirementHint: "Best with at least one confirmed relationship.",
+    unavailableCtaHref: "/dashboard/partners",
+    unavailableCtaLabel: "Confirm partners",
+  },
+  {
+    id: "trust-card",
+    name: "Trust card",
+    description: "Hansala Level, evidence breakdown, and partner row.",
+    section: "proof",
+    pro: true,
+    height: 140,
+    requirementHint: "Earn level points via confirmed evidence.",
+    unavailableCtaHref: "/dashboard",
+    unavailableCtaLabel: "Build proof",
+  },
+  {
+    id: "network-card",
+    name: "Network card",
+    description: "Large confirmed count with overlapping partner stack.",
+    section: "proof",
+    pro: true,
+    height: 88,
+    requirementHint: "Requires at least one confirmed relationship.",
+    unavailableCtaHref: "/dashboard/partners",
+    unavailableCtaLabel: "Confirm partners",
+  },
+  {
+    id: "credentials",
+    name: "Credentials",
+    description: "Compact partners · clients · projects strip.",
+    section: "proof",
+    pro: true,
+    height: 64,
   },
   {
     id: "badge",
     name: "Badge",
-    description: "Company card with partner logos and Hansala seal.",
-    section: "status",
+    description: "Classic trust card with partner logos and seal.",
+    section: "proof",
+    pro: true,
     height: 88,
   },
   {
     id: "references",
     name: "References",
     description: "Confirmed client relationships from your profile.",
-    section: "evidence",
+    section: "proof",
+    pro: true,
     height: 160,
     requirementHint: "Requires at least one confirmed client reference.",
     unavailableCtaHref: "/dashboard/partners",
@@ -70,17 +128,26 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     id: "assessment",
     name: "Client assessment",
     description: "Would-work-again score and top strengths.",
-    section: "evidence",
+    section: "proof",
+    pro: true,
     height: 120,
     requirementHint: "Requires ≥3 client answers",
     unavailableCtaHref: "/dashboard",
     unavailableCtaLabel: "Invite clients",
   },
   {
+    id: "signature",
+    name: "Signature seal",
+    description: "Centered premium seal with level and confirmed count.",
+    section: "signature",
+    pro: true,
+    height: 160,
+  },
+  {
     id: "logo-wall",
     name: "Logo wall",
     description: "Partner logos only — row, stack, fade, or grid.",
-    section: "evidence",
+    section: "signature",
     pro: true,
     height: 72,
     requirementHint: "Requires at least one confirmed partnership or client.",
@@ -130,7 +197,6 @@ export function buildEmbedSrc(input: {
     if (input.label && input.label !== "both") {
       url.searchParams.set("label", input.label);
     }
-    // mono defaults on for clean walls — only send when off
     if (input.mono === false) {
       url.searchParams.set("mono", "0");
     }

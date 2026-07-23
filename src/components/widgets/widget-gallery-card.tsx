@@ -65,6 +65,7 @@ export function WidgetGalleryCard({
               scale={widget.id === "references" ? 0.8 : 1}
               className="w-full bg-transparent"
               eager={
+                widget.id === "verified" ||
                 widget.id === "compact" ||
                 widget.id === "badge" ||
                 widget.id === "logo-wall"

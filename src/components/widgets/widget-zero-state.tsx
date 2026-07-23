@@ -1,8 +1,14 @@
 import type { WidgetVariant } from "@/features/widgets/catalog";
 import { cn } from "@/lib/cn";
 
-const COPY: Record<WidgetVariant, string> = {
+const COPY: Partial<Record<WidgetVariant, string>> = {
+  verified: "Ready once your profile is claimed.",
   compact: "Ready with your company name.",
+  "proof-panel": "Confirm a partner or client to unlock.",
+  "trust-card": "Build confirmed evidence to show level.",
+  "network-card": "Confirm relationships to show the network.",
+  credentials: "Ready once your profile is claimed.",
+  signature: "Ready once your profile is claimed.",
   badge: "Ready with your company name.",
   references: "Confirm a client reference to unlock.",
   assessment: "Needs 3+ client assessment answers.",
@@ -26,7 +32,7 @@ export function WidgetZeroState({ variant, className }: Props) {
         Not ready
       </span>
       <p className="mt-2.5 max-w-[14rem] text-[12px] leading-snug text-muted">
-        {COPY[variant]}
+        {COPY[variant] ?? "Not ready yet."}
       </p>
     </div>
   );

@@ -94,7 +94,13 @@ export default async function DashboardWidgetsPage({ searchParams }: Props) {
   const wallSettings = parseWidgetSettings(optRow?.widget_settings);
 
   const availability = {
+    verified: true,
     compact: true,
+    "proof-panel": confirmedRefs.length > 0 || logoConfirmed.length > 0,
+    "trust-card": true,
+    "network-card": confirmedRefs.length > 0 || logoConfirmed.length > 0,
+    credentials: true,
+    signature: true,
     badge: true,
     references: confirmedRefs.length > 0,
     assessment: assessment.wouldWorkAgainTotal >= 3,

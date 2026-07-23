@@ -36,21 +36,25 @@ export function WidgetsStudio({
   logoWallExcludedIds,
 }: Props) {
   const [active, setActive] = useState<WidgetDefinition | null>(null);
-  const status = useMemo(
-    () => WIDGET_CATALOG.filter((w) => w.section === "status"),
+  const essential = useMemo(
+    () => WIDGET_CATALOG.filter((w) => w.section === "essential"),
     [],
   );
-  const evidence = useMemo(
-    () => WIDGET_CATALOG.filter((w) => w.section === "evidence"),
+  const proof = useMemo(
+    () => WIDGET_CATALOG.filter((w) => w.section === "proof"),
+    [],
+  );
+  const signature = useMemo(
+    () => WIDGET_CATALOG.filter((w) => w.section === "signature"),
     [],
   );
 
   return (
     <>
       <Section
-        title="Status"
-        meta={`${status.filter((w) => availability[w.id]).length} of ${status.length} ready`}
-        items={status}
+        title="Essential"
+        meta={`${essential.filter((w) => availability[w.id]).length} of ${essential.length} ready`}
+        items={essential}
         columns="two"
         availability={availability}
         siteUrl={siteUrl}
@@ -59,9 +63,9 @@ export function WidgetsStudio({
         onConfigure={setActive}
       />
       <Section
-        title="Evidence"
-        meta={`${evidence.filter((w) => availability[w.id]).length} of ${evidence.length} ready`}
-        items={evidence}
+        title="Proof"
+        meta={`${proof.filter((w) => availability[w.id]).length} of ${proof.length} ready`}
+        items={proof}
         columns="three"
         className="mt-10"
         availability={availability}
@@ -69,7 +73,20 @@ export function WidgetsStudio({
         slug={slug}
         isPro={isPro}
         onConfigure={setActive}
-        indexOffset={status.length}
+        indexOffset={essential.length}
+      />
+      <Section
+        title="Signature"
+        meta={`${signature.filter((w) => availability[w.id]).length} of ${signature.length} ready`}
+        items={signature}
+        columns="two"
+        className="mt-10"
+        availability={availability}
+        siteUrl={siteUrl}
+        slug={slug}
+        isPro={isPro}
+        onConfigure={setActive}
+        indexOffset={essential.length + proof.length}
       />
 
       {active ? (
