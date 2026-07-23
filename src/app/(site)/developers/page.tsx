@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   agentRequestTabs,
   requestTabs,
@@ -13,6 +12,7 @@ import {
   VERIFY_FIELDS,
 } from "@/components/developers/docs-content";
 import { CodePanel } from "@/components/developers/code-panel";
+import { DocsDashboardApiLink } from "@/components/developers/docs-dashboard-api-link";
 import { DocsHero } from "@/components/developers/docs-hero";
 import { DocsSectionHeading } from "@/components/developers/docs-section-heading";
 import { DocsShell } from "@/components/developers/docs-shell";
@@ -457,9 +457,9 @@ export default function DevelopersPage() {
               </ul>
               <p className="text-[13px] text-muted">
                 Create your key in{" "}
-                <Link href="/dashboard/api" className="font-semibold text-ink underline-offset-2 hover:underline">
+                <DocsDashboardApiLink className="font-semibold text-ink">
                   Workspace → API
-                </Link>{" "}
+                </DocsDashboardApiLink>{" "}
                 — choose preset <strong className="font-semibold text-ink-soft">AI agent</strong>.
               </p>
             </div>
@@ -476,9 +476,9 @@ export default function DevelopersPage() {
               <div className="rounded-2xl border border-line bg-[#fafbfc] px-5 py-4 text-[13px] text-ink-soft">
                 <p className="font-semibold text-ink">1. Create key</p>
                 <p className="mt-1">
-                  <Link href="/dashboard/api" className="text-ink underline-offset-2 hover:underline">
+                  <DocsDashboardApiLink className="text-ink">
                     /dashboard/api
-                  </Link>{" "}
+                  </DocsDashboardApiLink>{" "}
                   → Create key → <strong className="text-ink">AI agent</strong>
                 </p>
                 <p className="mt-4 font-semibold text-ink">2. Configure MCP</p>
