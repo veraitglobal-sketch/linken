@@ -8,6 +8,7 @@ import { getAgentCompanyOwnerMeta } from "@/features/agent-api/company-meta";
 import { parseJsonBody, withAgentAuth } from "@/features/agent-api/handler";
 import { agentOptions } from "@/features/agent-api/http";
 import { inviteTeamMemberCore } from "@/features/team/core";
+import { parseSectionPermissions } from "@/features/workspace/sections";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export function OPTIONS() {
@@ -43,6 +44,7 @@ export async function POST(request: NextRequest) {
       title?: string;
       email?: string;
       role?: string;
+      permissions?: string[];
     }>(req);
 
     if (!parsed.ok) {
@@ -67,6 +69,7 @@ export async function POST(request: NextRequest) {
       title: String(parsed.data.title ?? ""),
       email,
       role,
+      permissions: parseSectionPermissions(parsed.data.permissions),
     });
 
     if (!result.ok) {

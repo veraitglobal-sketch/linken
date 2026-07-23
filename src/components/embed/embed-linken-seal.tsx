@@ -17,7 +17,7 @@ type Props = {
 export function EmbedHansalaSeal({
   theme,
   href,
-  title = "Verified on Hansala",
+  title = "Hansala verified network",
   className,
 }: Props) {
   const dark = theme === "dark";

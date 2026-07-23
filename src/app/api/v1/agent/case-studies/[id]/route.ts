@@ -1,11 +1,14 @@
 /**
- * Agent API — case study update/delete.
- * Checklist: every DB query is hard-scoped to ctx.companyId from the API key.
- * Content only — never touches confirmation flags on partners/clients.
+ * Agent API — case study read/update/delete.
  */
 import type { NextRequest } from "next/server";
+import {
+  mapCaseStudyAgentInput,
+  type CaseStudyAgentJson,
+} from "@/features/agent-api/case-study-body";
 import { parseJsonBody, withAgentAuth } from "@/features/agent-api/handler";
 import { agentOptions } from "@/features/agent-api/http";
+import { getAgentCaseStudy } from "@/features/agent-api/queries";
 import {
   deleteCaseStudyCore,
   updateCaseStudyCore,
@@ -18,6 +21,33 @@ export function OPTIONS() {
   return agentOptions();
 }
 
+export async function GET(request: NextRequest, { params }: Ctx) {
+  const { id } = await params;
+  return withAgentAuth(request, "read", async (_req, ctx) => {
+    const admin = createAdminClient();
+    if (!admin) {
+      return {
+        status: 503,
+        body: { error: { code: "service_unavailable", message: "Unavailable." } },
+      };
+    }
+
+    const caseStudy = await getAgentCaseStudy(admin, ctx.companyId, id);
+    if (!caseStudy) {
+      return {
+        status: 404,
+        body: { error: { code: "not_found", message: "Case study not found." } },
+      };
+    }
+
+    return {
+      status: 200,
+      body: { data: { case_study: caseStudy } },
+      skipAudit: true,
+    };
+  });
+}
+
 export async function PATCH(request: NextRequest, { params }: Ctx) {
   const { id } = await params;
   return withAgentAuth(request, "content:write", async (req, ctx) => {
@@ -25,31 +55,15 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
     if (!admin) {
       return {
         status: 503,
-        body: {
-          error: {
-            code: "service_unavailable",
-            message: "Agent API is unavailable.",
-          },
-        },
+        body: { error: { code: "service_unavailable", message: "Unavailable." } },
       };
     }
 
-    const parsed = await parseJsonBody<{
-      title?: string;
-      summary?: string;
-      challenge?: string;
-      outcome?: string;
-      location?: string;
-      year?: string;
-      services?: string[];
-    }>(req);
-
+    const parsed = await parseJsonBody<CaseStudyAgentJson>(req);
     if (!parsed.ok) {
       return {
         status: 422,
-        body: {
-          error: { code: "invalid_request", message: parsed.message },
-        },
+        body: { error: { code: "invalid_request", message: parsed.message } },
         auditAction: "case_study.update",
         auditSummary: "Rejected invalid body",
       };
@@ -58,7 +72,7 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
     const result = await updateCaseStudyCore(admin, {
       companyId: ctx.companyId,
       caseStudyId: id,
-      ...parsed.data,
+      ...mapCaseStudyAgentInput(parsed.data),
     });
 
     if (!result.ok) {
@@ -76,9 +90,10 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
       };
     }
 
+    const caseStudy = await getAgentCaseStudy(admin, ctx.companyId, id);
     return {
       status: 200,
-      body: { data: { id: result.data.id } },
+      body: { data: { id: result.data.id, case_study: caseStudy } },
       auditAction: "case_study.update",
       auditSummary: `Updated case study ${id}`,
     };
@@ -92,12 +107,7 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
     if (!admin) {
       return {
         status: 503,
-        body: {
-          error: {
-            code: "service_unavailable",
-            message: "Agent API is unavailable.",
-          },
-        },
+        body: { error: { code: "service_unavailable", message: "Unavailable." } },
       };
     }
 
@@ -105,9 +115,7 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
     if (!result.ok) {
       return {
         status: 404,
-        body: {
-          error: { code: "not_found", message: result.error },
-        },
+        body: { error: { code: "not_found", message: result.error } },
         auditAction: "case_study.delete",
         auditSummary: result.error,
       };

@@ -406,10 +406,12 @@ export default function DevelopersPage() {
                       ["Add / edit / delete reference", "POST|PATCH|DELETE /references", "content:write"],
                       ["Send reference invite", "POST /references/{id}/invite", "invites:send"],
                       ["Case studies + partner tags", "…/case-studies · …/partners", "content:write"],
+                      ["Case study cover + gallery", "PUT|DELETE …/case-studies/{id}/cover · …/gallery", "content:write"],
                       ["Client confirmation request", "POST /client-confirmations", "invites:send"],
                       ["Invite partner (ghost)", "POST /partner-invites", "invites:send"],
                       ["Verify domain / backlink", "GET|POST /verification…", "verification:run"],
                       ["Team invite / remove", "…/team…", "team:manage"],
+                      ["Team profile + photo + permissions", "PATCH …/team/members/{id} · PUT …/photo", "team:manage"],
                       ["Group / subsidiary / hierarchy", "…/group…", "structure:manage"],
                       ["Widgets & logo wall", "GET|PATCH /widget-settings · GET /widgets", "settings:write"],
                       ["Triage inquiries", "GET /inquiries · PATCH /inquiries/{id}", "read · inquiries:manage"],
@@ -447,11 +449,18 @@ export default function DevelopersPage() {
               <ul className="space-y-1.5 rounded-2xl border border-line bg-[#fafbfc] px-5 py-4 text-[13px] text-ink-soft">
                 <li>1. <code className="text-ink">PATCH /company</code> — tagline & city</li>
                 <li>2. <code className="text-ink">POST /logo/refresh</code> — pull logo from domain</li>
-                <li>3. <code className="text-ink">POST /references</code> ×3 — pending evidence</li>
-                <li>4. <code className="text-ink">POST /references/{"{id}"}/invite</code> — send confirms</li>
-                <li>5. <code className="text-ink">GET /widgets</code> — pick embed snippet</li>
-                <li>6. <code className="text-ink">PATCH /widget-settings</code> — logo wall exclusions</li>
+                <li>3. <code className="text-ink">POST /case-studies</code> — dossier text</li>
+                <li>4. <code className="text-ink">PUT …/case-studies/{"{id}"}/cover</code> — hero photo (base64 or multipart)</li>
+                <li>5. <code className="text-ink">POST /team/invitations</code> — invite teammates</li>
+                <li>6. <code className="text-ink">GET /widgets</code> — pick embed snippet</li>
               </ul>
+              <p className="text-[13px] text-muted">
+                Cursor / Claude: copy <code className="text-[12px]">.cursor/mcp.json.example</code> →{" "}
+                <code className="text-[12px]">.cursor/mcp.json</code>, run{" "}
+                <code className="text-[12px]">npm install</code> in{" "}
+                <code className="text-[12px]">mcp/hansala</code> — exposes{" "}
+                <code className="text-[12px]">hansala_*</code> tools for case studies, photos, and team.
+              </p>
             </div>
 
             <div id="agent-endpoints" className="mt-10 scroll-mt-28 space-y-6">

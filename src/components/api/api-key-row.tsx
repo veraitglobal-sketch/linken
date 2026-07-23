@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { AgentApiKeyRow } from "@/features/agent-api/types";
 
@@ -20,6 +21,13 @@ export function CreatedKeyBanner({
       <code className="mt-2 block break-all font-mono text-[12px] text-ink">
         {value}
       </code>
+      <p className="mt-2 text-[12px] leading-relaxed text-muted">
+        REST:{" "}
+        <code className="text-ink">Authorization: Bearer {value.slice(0, 11)}…</code>
+        {" · "}
+        Cursor MCP:{" "}
+        <code className="text-ink">HANSALA_AGENT_API_KEY</code>
+      </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button type="button" className="h-9 px-3.5 text-[13px]" onClick={onCopy}>
           {copied ? "Copied" : "Copy key"}
@@ -32,6 +40,12 @@ export function CreatedKeyBanner({
         >
           Done
         </Button>
+        <Link
+          href="/developers#agent-mcp"
+          className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+        >
+          MCP setup
+        </Link>
       </div>
     </div>
   );

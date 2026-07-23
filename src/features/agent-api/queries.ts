@@ -185,15 +185,54 @@ export async function listAgentReferences(
   return { references, count: count ?? references.length };
 }
 
+function mapAgentCaseStudyRow(
+  r: Record<string, unknown>,
+  companySlug?: string,
+): AgentCaseStudy {
+  const slug = r.slug as string;
+  return {
+    id: r.id as string,
+    slug,
+    title: r.title as string,
+    summary: r.summary as string,
+    challenge: (r.challenge as string) ?? "",
+    outcome: (r.outcome as string) ?? "",
+    process: (r.process as string) ?? "",
+    location: (r.location as string) ?? "",
+    year: (r.year as string) ?? "",
+    duration: (r.duration as string) ?? "",
+    sector: (r.sector as string) ?? "",
+    scope: (r.scope as string) ?? "",
+    client_label: (r.client_label as string) ?? "",
+    highlight_stat: (r.highlight_stat as string) ?? "",
+    client_quote: (r.client_quote as string) ?? "",
+    metrics: (r.metrics as AgentCaseStudy["metrics"]) ?? [],
+    services: (r.services as string[]) ?? [],
+    cover_image_url: (r.cover_image_url as string | null) ?? null,
+    gallery_urls: (r.gallery_urls as string[]) ?? [],
+    created_at: r.created_at as string,
+    ...(companySlug
+      ? { public_url: `/c/${companySlug}/case-studies/${slug}` }
+      : {}),
+  };
+}
+
+const CASE_STUDY_AGENT_SELECT =
+  "id, slug, title, summary, challenge, outcome, process, location, year, duration, sector, scope, client_label, highlight_stat, client_quote, metrics, services, cover_image_url, gallery_urls, created_at";
+
 export async function listAgentCaseStudies(
   admin: SupabaseClient,
   companyId: string,
 ): Promise<AgentCaseStudy[]> {
+  const { data: company } = await admin
+    .from("companies")
+    .select("slug")
+    .eq("id", companyId)
+    .maybeSingle();
+
   const { data, error } = await admin
     .from("case_studies")
-    .select(
-      "id, slug, title, summary, challenge, outcome, location, year, services, created_at",
-    )
+    .select(CASE_STUDY_AGENT_SELECT)
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
 
@@ -202,18 +241,30 @@ export async function listAgentCaseStudies(
     return [];
   }
 
-  return (data ?? []).map((r) => ({
-    id: r.id as string,
-    slug: r.slug as string,
-    title: r.title as string,
-    summary: r.summary as string,
-    challenge: (r.challenge as string) ?? "",
-    outcome: (r.outcome as string) ?? "",
-    location: (r.location as string) ?? "",
-    year: (r.year as string) ?? "",
-    services: (r.services as string[]) ?? [],
-    created_at: r.created_at as string,
-  }));
+  const slug = (company?.slug as string) ?? "";
+  return (data ?? []).map((r) => mapAgentCaseStudyRow(r, slug));
+}
+
+export async function getAgentCaseStudy(
+  admin: SupabaseClient,
+  companyId: string,
+  caseStudyId: string,
+): Promise<AgentCaseStudy | null> {
+  const { data: company } = await admin
+    .from("companies")
+    .select("slug")
+    .eq("id", companyId)
+    .maybeSingle();
+
+  const { data, error } = await admin
+    .from("case_studies")
+    .select(CASE_STUDY_AGENT_SELECT)
+    .eq("company_id", companyId)
+    .eq("id", caseStudyId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return mapAgentCaseStudyRow(data, (company?.slug as string) ?? "");
 }
 
 export async function listAgentPartnerships(

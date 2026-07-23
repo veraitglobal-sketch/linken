@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "hansala": {
+      "command": "node",
+      "args": ["mcp/hansala/index.mjs"],
+      "env": {
+        "HANSALA_AGENT_API_KEY": "lk_your_key_here",
+        "HANSALA_API_BASE": "http://localhost:3000"
+      }
+    }
+  }
+}

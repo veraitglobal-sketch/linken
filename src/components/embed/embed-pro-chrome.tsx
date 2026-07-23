@@ -7,19 +7,18 @@ type Props = {
   className?: string;
 };
 
-/** Single-line attribution — no duplicate icon row. */
+/** Single-line brand footer — headline already carries Verified/trust level. */
 export function EmbedAttribution({ theme = "light", className }: Props) {
   const dark = theme === "dark";
   return (
     <span
       className={cn(
-        "text-[10px] font-semibold tracking-[0.1em] uppercase",
+        "font-display text-[10px] font-semibold tracking-[0.08em] uppercase",
         dark ? "text-white/45" : embedMutedClass(theme),
         className,
       )}
     >
-      Verified on{" "}
-      <span className={dark ? "text-white/75" : "text-ink-soft"}>Hansala</span>
+      Hansala
     </span>
   );
 }

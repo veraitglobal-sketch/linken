@@ -1,6 +1,8 @@
 import "server-only";
 import { createHash } from "crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { parseSectionPermissions } from "@/features/workspace/sections";
+import type { WorkspaceSection } from "@/features/workspace/sections";
 import { sendTeamJoinInviteEmail } from "@/lib/email";
 
 export type CoreResult<T> =
@@ -27,6 +29,7 @@ export async function listTeamCore(
       display_title: string;
       photo_url: string | null;
       public_visible: boolean;
+      permissions: WorkspaceSection[];
       created_at: string;
     }[];
     pending_invitations: {
@@ -43,7 +46,7 @@ export async function listTeamCore(
     admin
       .from("company_members")
       .select(
-        "user_id, role, display_name, display_title, photo_url, public_visible, created_at",
+        "user_id, role, display_name, display_title, photo_url, public_visible, permissions, created_at",
       )
       .eq("company_id", companyId)
       .order("created_at", { ascending: true }),
@@ -68,6 +71,7 @@ export async function listTeamCore(
     display_title: (m.display_title as string) ?? "",
     photo_url: (m.photo_url as string | null) ?? null,
     public_visible: Boolean(m.public_visible),
+    permissions: parseSectionPermissions(m.permissions),
     created_at: m.created_at as string,
   }));
 
@@ -94,6 +98,7 @@ export async function inviteTeamMemberCore(
     title: string;
     email: string;
     role: "admin" | "member";
+    permissions?: WorkspaceSection[];
   },
 ): Promise<CoreResult<{ email: string }>> {
   const name = [input.firstName, input.lastName]
@@ -105,17 +110,29 @@ export async function inviteTeamMemberCore(
     return { ok: false, error: "first_name/last_name and email are required." };
   }
 
+  const role = input.role === "admin" ? "admin" : "member";
+  const permissions =
+    role === "member" ? parseSectionPermissions(input.permissions ?? []) : [];
+
   const { data: token, error } = await admin.rpc("agent_create_team_invitation", {
     p_company_id: input.companyId,
     p_invited_by: input.ownerUserId,
     p_invite_name: name,
     p_invite_title: input.title.trim(),
     p_invite_email: email,
-    p_role: input.role === "admin" ? "admin" : "member",
+    p_role: role,
   });
 
   if (error || !token) {
     return { ok: false, error: error?.message ?? "Could not create invite." };
+  }
+
+  if (permissions.length > 0) {
+    await admin
+      .from("team_invitations")
+      .update({ permissions })
+      .eq("company_id", input.companyId)
+      .eq("token", token);
   }
 
   await sendTeamJoinInviteEmail({

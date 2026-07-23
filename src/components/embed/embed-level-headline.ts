@@ -6,7 +6,7 @@ export function levelHeadline(level: TrustLevel, verified: boolean): string {
   if (level === "Trusted") return "Trusted";
   if (level === "Established") return "Established";
   if (verified) return "Verified";
-  return "On Hansala";
+  return "Profile";
 }
 
 export function levelSubline(level: TrustLevel): string | null {

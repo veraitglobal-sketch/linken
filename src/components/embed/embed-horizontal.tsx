@@ -54,7 +54,11 @@ export function EmbedHorizontal({
         </span>
       ) : null}
       <span className="ml-auto shrink-0">
-        <EmbedVerifiedLockup theme={theme} size="sm" subtitle="On Hansala" />
+        <EmbedVerifiedLockup
+          theme={theme}
+          size="sm"
+          subtitle={verified ? "Verified" : "Network"}
+        />
       </span>
     </a>
   );

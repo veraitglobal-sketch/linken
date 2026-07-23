@@ -74,7 +74,7 @@ export function EmbedCompact({
               embedMutedClass(theme),
             )}
           >
-            {claimed && verified ? "Verified" : claimed ? "On Hansala" : "Unclaimed"}
+            {claimed && verified ? "Verified" : claimed ? "Profile" : "Unclaimed"}
           </span>
         </span>
       </a>

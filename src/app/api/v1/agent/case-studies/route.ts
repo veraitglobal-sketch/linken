@@ -6,7 +6,11 @@
 import type { NextRequest } from "next/server";
 import { parseJsonBody, withAgentAuth } from "@/features/agent-api/handler";
 import { agentOptions } from "@/features/agent-api/http";
-import { listAgentCaseStudies } from "@/features/agent-api/queries";
+import {
+  mapCaseStudyAgentInput,
+  type CaseStudyAgentJson,
+} from "@/features/agent-api/case-study-body";
+import { getAgentCaseStudy, listAgentCaseStudies } from "@/features/agent-api/queries";
 import { createCaseStudyCore } from "@/features/case-studies/core";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -53,15 +57,7 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    const parsed = await parseJsonBody<{
-      title?: string;
-      summary?: string;
-      challenge?: string;
-      outcome?: string;
-      location?: string;
-      year?: string;
-      services?: string[];
-    }>(req);
+    const parsed = await parseJsonBody<CaseStudyAgentJson>(req);
 
     if (!parsed.ok) {
       return {
@@ -76,13 +72,9 @@ export async function POST(request: NextRequest) {
 
     const result = await createCaseStudyCore(admin, {
       companyId: ctx.companyId,
+      ...mapCaseStudyAgentInput(parsed.data),
       title: String(parsed.data.title ?? ""),
       summary: String(parsed.data.summary ?? ""),
-      challenge: parsed.data.challenge,
-      outcome: parsed.data.outcome,
-      location: parsed.data.location,
-      year: parsed.data.year,
-      services: parsed.data.services,
     });
 
     if (!result.ok) {
@@ -96,9 +88,11 @@ export async function POST(request: NextRequest) {
       };
     }
 
+    const caseStudy = await getAgentCaseStudy(admin, ctx.companyId, result.data.id);
+
     return {
       status: 201,
-      body: { data: result.data },
+      body: { data: { ...result.data, case_study: caseStudy } },
       auditAction: "case_study.create",
       auditSummary: `Created case study: ${String(parsed.data.title ?? "")}`,
     };

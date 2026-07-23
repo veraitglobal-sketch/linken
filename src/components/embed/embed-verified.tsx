@@ -14,7 +14,7 @@ export function EmbedVerified({ profileUrl, theme = "light" }: Props) {
       href={profileUrl}
       target="_blank"
       rel="noopener noreferrer"
-      title="Verified on Hansala"
+      title="Hansala verified badge"
       className={cn(
         "inline-flex items-center px-1 py-0.5 no-underline",
         "transition-opacity duration-150 hover:opacity-90",

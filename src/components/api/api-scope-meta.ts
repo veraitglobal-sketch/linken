@@ -17,7 +17,8 @@ export const SCOPE_META: {
   {
     id: "content:write",
     label: "Content write",
-    description: "References, case studies, logo, profile fields, partner tags.",
+    description:
+      "Profile, references, case studies (text + photos), logo, partner tags.",
   },
   {
     id: "invites:send",
@@ -27,7 +28,7 @@ export const SCOPE_META: {
   {
     id: "team:manage",
     label: "Team",
-    description: "Invite and remove teammates (they accept via /join).",
+    description: "Invite teammates, update profiles, upload avatars, permissions.",
   },
   {
     id: "structure:manage",
@@ -68,7 +69,8 @@ export const KEY_PRESETS: {
   },
   {
     id: "full_access",
-    label: "Full access",
-    description: "All scopes — full owner parity except confirmations.",
+    label: "AI agent",
+    description:
+      "Recommended for Cursor, Claude MCP, and automation — all scopes.",
   },
 ];

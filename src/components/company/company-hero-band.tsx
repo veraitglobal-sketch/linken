@@ -159,7 +159,7 @@ export function CompanyHeroBand({
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10 lg:bg-gradient-to-l lg:from-transparent lg:via-transparent lg:to-[rgba(10,20,18,0.5)]" />
           <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/15 bg-black/40 px-4 py-3.5 backdrop-blur-md">
             <p className="text-[11px] font-semibold tracking-[0.12em] text-[#7eb8a4] uppercase">
-              On Hansala
+              Hansala
             </p>
             <p className="mt-1 text-sm font-medium text-white">
               Profile · Case studies · Mutual partners

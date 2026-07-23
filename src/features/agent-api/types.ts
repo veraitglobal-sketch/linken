@@ -94,10 +94,21 @@ export type AgentCaseStudy = {
   summary: string;
   challenge: string;
   outcome: string;
+  process: string;
   location: string;
   year: string;
+  duration: string;
+  sector: string;
+  scope: string;
+  client_label: string;
+  highlight_stat: string;
+  client_quote: string;
+  metrics: { label: string; value: string }[];
   services: string[];
+  cover_image_url: string | null;
+  gallery_urls: string[];
   created_at: string;
+  public_url?: string;
 };
 
 export type AgentPartnership = {
