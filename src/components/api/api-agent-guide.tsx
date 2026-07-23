@@ -8,7 +8,7 @@ export function ApiAgentGuide() {
       title="Cursor & Claude (MCP)"
       description="One Hansala API key — no separate MCP key."
     >
-      <WorkspaceCard className="space-y-4 p-5 sm:p-6">
+      <WorkspaceCard padded={false} className="space-y-4 p-5 sm:p-6">
         <dl className="grid gap-3 text-[13px] leading-relaxed text-ink-soft sm:grid-cols-2">
           <div>
             <dt className="font-semibold text-ink">Agent API key (`lk_…`)</dt>
