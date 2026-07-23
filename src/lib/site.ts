@@ -28,16 +28,18 @@ function isDeployedRuntime() {
 }
 
 /**
- * Canonical public origin for emails, embeds, sitemap, API links, and metadata.
- * Never returns localhost on deployed runtimes; never returns *.vercel.app previews.
+ * Public origin for auth redirects and outbound email links.
+ * Priority: AUTH_SITE_URL (server) → NEXT_PUBLIC_SITE_URL → Vercel prod → canonical.
  */
-export function getSiteUrl() {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  const configuredOk =
-    configured && !(isDeployedRuntime() && isLocalhostOrigin(configured));
+function resolvePublicOrigin(): string {
+  const authSite = process.env.AUTH_SITE_URL?.trim();
+  if (authSite && !isLocalhostOrigin(authSite)) {
+    return normalizeOrigin(authSite);
+  }
 
-  if (configuredOk) {
-    return normalizeOrigin(configured!);
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configured && !(isDeployedRuntime() && isLocalhostOrigin(configured))) {
+    return normalizeOrigin(configured);
   }
 
   const vercelHost = process.env.VERCEL_URL?.trim()?.replace(/^https?:\/\//, "");
@@ -45,11 +47,7 @@ export function getSiteUrl() {
     return `https://${vercelHost}`;
   }
 
-  if (
-    process.env.VERCEL_ENV === "production" ||
-    (vercelHost && isVercelPreviewHost(vercelHost)) ||
-    isDeployedRuntime()
-  ) {
+  if (isDeployedRuntime()) {
     return CANONICAL_ORIGIN;
   }
 
@@ -57,14 +55,51 @@ export function getSiteUrl() {
 }
 
 /**
- * Origin for outbound email links — never localhost when Resend is configured.
- * Prevents confirm/claim URLs pointing at dev server when testing mail locally.
+ * Canonical public origin for emails, embeds, sitemap, API links, and metadata.
+ * Never returns localhost on deployed runtimes; never returns *.vercel.app previews.
+ */
+export function getSiteUrl() {
+  const origin = resolvePublicOrigin();
+  if (isDeployedRuntime() && isLocalhostOrigin(origin)) {
+    return CANONICAL_ORIGIN;
+  }
+  return origin;
+}
+
+/**
+ * Reachable origin for auth + transactional email links (must match Supabase redirect allow-list).
+ */
+export function getAuthSiteUrl() {
+  const authSite = process.env.AUTH_SITE_URL?.trim();
+  if (authSite) {
+    return normalizeOrigin(authSite);
+  }
+
+  const vercelHost = process.env.VERCEL_URL?.trim()?.replace(/^https?:\/\//, "");
+  if (vercelHost && isDeployedRuntime()) {
+    return `https://${vercelHost}`;
+  }
+
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configured && !isLocalhostOrigin(configured)) {
+    return normalizeOrigin(configured);
+  }
+
+  if (isDeployedRuntime()) {
+    return CANONICAL_ORIGIN;
+  }
+
+  return "http://localhost:3000";
+}
+
+/**
+ * Origin for outbound email links (Resend).
  */
 export function getEmailSiteUrl() {
-  const origin = getSiteUrl();
+  const origin = getAuthSiteUrl();
   if (
     isLocalhostOrigin(origin) &&
-    process.env.RESEND_API_KEY?.trim()
+    (process.env.RESEND_API_KEY?.trim() || isDeployedRuntime())
   ) {
     return CANONICAL_ORIGIN;
   }

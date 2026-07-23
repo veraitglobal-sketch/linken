@@ -8,17 +8,27 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    verify?: string;
+    email?: string;
+    resent?: string;
+  }>;
 };
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { error } = await searchParams;
+  const { error, verify, email, resent } = await searchParams;
 
   return (
     <section className="flex flex-1 items-center px-4 py-6">
       <div className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-[32px] lg:min-h-[min(68vh,680px)] lg:grid-cols-[0.95fr_1.05fr]">
         <LoginStage />
-        <LoginPanel error={error} />
+        <LoginPanel
+          error={error}
+          verify={verify}
+          email={email}
+          resent={resent}
+        />
       </div>
     </section>
   );
