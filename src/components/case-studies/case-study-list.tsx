@@ -23,11 +23,10 @@ export function CaseStudyList({
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3 px-0.5">
         <div>
           <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-            Verified dossiers
+            Selected work
           </p>
           <h2 className="mt-2 font-display text-[clamp(1.55rem,2.5vw,1.95rem)] font-medium tracking-[-0.035em] text-ink">
-            Case files —
-            <span className="text-ink/35"> not marketing pages.</span>
+            Case files
           </h2>
         </div>
         {editable ? (

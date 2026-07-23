@@ -10,26 +10,20 @@ export function DossierClientSeal({ caseStudy }: Props) {
   if (!confirmed || !client) return null;
 
   return (
-    <section className="rounded-[24px] border-2 border-dashed border-blue/30 bg-[#1a5c51]/6 p-6 sm:p-8">
-      <p className="font-mono text-[11px] tracking-[0.18em] text-blue uppercase">
-        Client seal applied
-      </p>
-      <Link
-        href={`/c/${client.slug}`}
-        className="mt-4 inline-flex items-center gap-4"
-      >
-        <span className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-surface shadow-md">
+    <section className="mb-12 flex items-center gap-4 border-b border-[var(--cf-line)] pb-10">
+      <Link href={`/c/${client.slug}`} className="flex items-center gap-3 group">
+        <span className="flex h-12 w-12 items-center justify-center overflow-hidden bg-white">
           {client.logoUrl ? (
-            <Image src={client.logoUrl} alt="" width={56} height={56} className="object-cover" />
+            <Image src={client.logoUrl} alt="" width={48} height={48} className="object-cover" />
           ) : (
-            <span className="text-sm font-bold">{client.logoInitials}</span>
+            <span className="text-[12px] font-semibold">{client.logoInitials}</span>
           )}
         </span>
         <span>
-          <span className="block font-display text-xl font-medium text-ink">
+          <span className="block text-[15px] font-medium text-[var(--cf-ink)] group-hover:underline">
             {client.name}
           </span>
-          <span className="text-[13px] text-blue">Verified receiving company →</span>
+          <span className="text-[12px] text-[var(--cf-muted)]">Confirmed client</span>
         </span>
       </Link>
     </section>

@@ -61,31 +61,51 @@ export async function createCaseStudyCore(
   }
 
   const slug = await uniqueCaseSlug(supabase, input.companyId, title);
-  const { data, error } = await supabase
+  const row = {
+    company_id: input.companyId,
+    title,
+    slug,
+    summary,
+    challenge: (input.challenge ?? "").trim(),
+    outcome: (input.outcome ?? "").trim(),
+    process: (input.process ?? "").trim(),
+    location: (input.location ?? "").trim(),
+    year: (input.year ?? "").trim() || new Date().getFullYear().toString(),
+    duration: (input.duration ?? "").trim(),
+    sector: (input.sector ?? "").trim(),
+    scope: (input.scope ?? "").trim(),
+    client_label: (input.clientLabel ?? "").trim(),
+    highlight_stat: (input.highlightStat ?? "").trim(),
+    client_quote: (input.clientQuote ?? "").trim(),
+    metrics: input.metrics ?? [],
+    services: Array.isArray(input.services)
+      ? input.services.map((s) => String(s).trim()).filter(Boolean)
+      : [],
+  };
+
+  let { data, error } = await supabase
     .from("case_studies")
-    .insert({
-      company_id: input.companyId,
-      title,
-      slug,
-      summary,
-      challenge: (input.challenge ?? "").trim(),
-      outcome: (input.outcome ?? "").trim(),
-      process: (input.process ?? "").trim(),
-      location: (input.location ?? "").trim(),
-      year: (input.year ?? "").trim(),
-      duration: (input.duration ?? "").trim(),
-      sector: (input.sector ?? "").trim(),
-      scope: (input.scope ?? "").trim(),
-      client_label: (input.clientLabel ?? "").trim(),
-      highlight_stat: (input.highlightStat ?? "").trim(),
-      client_quote: (input.clientQuote ?? "").trim(),
-      metrics: input.metrics ?? [],
-      services: Array.isArray(input.services)
-        ? input.services.map((s) => String(s).trim()).filter(Boolean)
-        : [],
-    })
+    .insert(row)
     .select("id, slug")
     .single();
+
+  if (error?.message?.includes("schema cache") || error?.message?.includes("Could not find")) {
+    ({ data, error } = await supabase
+      .from("case_studies")
+      .insert({
+        company_id: input.companyId,
+        title,
+        slug,
+        summary,
+        challenge: row.challenge,
+        outcome: row.outcome,
+        location: row.location,
+        year: row.year,
+        services: row.services,
+      })
+      .select("id, slug")
+      .single());
+  }
 
   if (error || !data) {
     return {

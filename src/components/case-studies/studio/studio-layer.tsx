@@ -12,7 +12,6 @@ type Props = {
   children: ReactNode;
 };
 
-/** Single manila-folder layer on the evidence board. */
 export function StudioLayer({
   index,
   title,
@@ -23,42 +22,24 @@ export function StudioLayer({
   children,
 }: Props) {
   return (
-    <div className="relative">
+    <div className="border-b border-[var(--cf-line)]">
       <button
         type="button"
         onClick={onToggle}
-        className={`group flex w-full items-start gap-4 rounded-t-[20px] border px-5 py-4 text-left transition-colors ${
-          open
-            ? "border-white/15 bg-[#142a25] text-white"
-            : "border-white/8 bg-[#0e1f1c] text-white/80 hover:border-white/14 hover:bg-[#122822]"
-        }`}
+        className="flex w-full items-baseline gap-6 py-5 text-left transition-colors hover:bg-white/50"
       >
-        <span
-          className={`mt-0.5 font-mono text-[12px] tracking-[0.14em] ${
-            done ? "text-blue-soft" : "text-white/30"
-          }`}
-        >
+        <span className="w-8 shrink-0 text-[12px] tabular-nums text-[var(--cf-muted)]">
           {index}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block font-display text-[17px] font-medium tracking-[-0.03em]">
+          <span className="block font-display text-lg font-medium tracking-[-0.03em] text-[var(--cf-ink)]">
             {title}
           </span>
-          <span className="mt-0.5 block text-[12px] text-white/45">{subtitle}</span>
+          <span className="mt-0.5 block text-[13px] text-[var(--cf-muted)]">{subtitle}</span>
         </span>
-        <span
-          className={`rounded-full px-2.5 py-1 text-[10px] font-bold tracking-[0.1em] uppercase ${
-            done ? "bg-blue/20 text-blue-soft" : "bg-white/6 text-white/35"
-          }`}
-        >
-          {done ? "Filed" : "Open"}
-        </span>
+        <span className="text-[11px] text-[var(--cf-muted)]">{done ? "Done" : "—"}</span>
       </button>
-      {open ? (
-        <div className="rounded-b-[20px] border border-t-0 border-white/10 bg-[#f4f6f4] p-5 sm:p-6">
-          {children}
-        </div>
-      ) : null}
+      {open ? <div className="border-t border-[var(--cf-line)] bg-white px-6 py-6">{children}</div> : null}
     </div>
   );
 }

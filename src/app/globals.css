@@ -166,6 +166,109 @@ a {
   }
 }
 
+.dossier-stamp-in {
+  animation: dossier-stamp-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes dossier-stamp-in {
+  from {
+    opacity: 0;
+    transform: scale(1.35) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(-4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dossier-stamp-in {
+    animation: none;
+  }
+}
+
+/* Case file — premium editorial surface (public + studio) */
+.case-file {
+  --cf-paper: #f6f4ef;
+  --cf-ink: #0d1210;
+  --cf-muted: #6b736e;
+  --cf-line: rgba(13, 18, 16, 0.1);
+  --cf-accent: #1a5c51;
+  background: var(--cf-paper);
+  color: var(--cf-ink);
+}
+
+.case-file-hero {
+  position: relative;
+  min-height: min(92svh, 920px);
+  overflow: hidden;
+  background: #0a1210;
+}
+
+.case-file-hero-copy {
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+  max-width: 42rem;
+  padding: 0 1.5rem 4rem;
+}
+
+.case-file-rule {
+  height: 1px;
+  background: var(--cf-line);
+  border: 0;
+}
+
+.case-file-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--cf-line);
+  background: transparent;
+  padding: 0.75rem 0;
+  color: var(--cf-ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.case-file-input:focus {
+  outline: none;
+  border-bottom-color: var(--cf-accent);
+}
+
+.case-file-input::placeholder {
+  color: rgba(13, 18, 16, 0.28);
+}
+
+.case-file-body-input {
+  width: 100%;
+  resize: none;
+  border: 0;
+  border-bottom: 1px solid var(--cf-line);
+  background: transparent;
+  padding: 0.75rem 0 1rem;
+  color: var(--cf-ink);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.case-file-body-input:focus {
+  outline: none;
+  border-bottom-color: var(--cf-accent);
+}
+
+.case-file-prose {
+  font-size: 1.125rem;
+  line-height: 1.85;
+  color: #3a423e;
+}
+
+.case-file-prose p + p {
+  margin-top: 1.25rem;
+}
+
 .animate-rise {
   animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
