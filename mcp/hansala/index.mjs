@@ -3,7 +3,7 @@
  * Hansala Agent MCP — stdio server wrapping /api/v1/agent/*
  *
  * Env:
- *   HANSALA_AGENT_API_KEY=lk_...
+ *   HANSALA_AGENT_API_KEY=hs_...
  *   HANSALA_API_BASE=https://hansala.com  (or http://localhost:3000)
  */
 import { readFile } from "node:fs/promises";

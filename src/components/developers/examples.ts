@@ -144,7 +144,7 @@ export function curlBearer(
 ) {
   const lines = [
     `curl -sS -X ${method} "${url}" \\`,
-    `  -H "Authorization: Bearer lk_…" \\`,
+    `  -H "Authorization: Bearer hs_…" \\`,
     `  -H "Accept: application/json"`,
   ];
   if (body) {

@@ -11,7 +11,7 @@ export function ApiAgentGuide() {
       <WorkspaceCard padded={false} className="space-y-4 p-5 sm:p-6">
         <dl className="grid gap-3 text-[13px] leading-relaxed text-ink-soft sm:grid-cols-2">
           <div>
-            <dt className="font-semibold text-ink">Agent API key (`lk_…`)</dt>
+            <dt className="font-semibold text-ink">Agent API key (`hs_…`)</dt>
             <dd className="mt-1">
               Your password for{" "}
               <code className="text-[12px] text-ink">/api/v1/agent</code>. Use
@@ -22,7 +22,7 @@ export function ApiAgentGuide() {
             <dt className="font-semibold text-ink">MCP (Model Context Protocol)</dt>
             <dd className="mt-1">
               A bridge inside Cursor or Claude — not a second key. Paste the same{" "}
-              <code className="text-[12px] text-ink">lk_…</code> into MCP config as{" "}
+              <code className="text-[12px] text-ink">hs_…</code> into MCP config as{" "}
               <code className="text-[12px] text-ink">HANSALA_AGENT_API_KEY</code>.
             </dd>
           </div>
@@ -40,6 +40,10 @@ export function ApiAgentGuide() {
             (see developer docs).
           </li>
         </ol>
+        <p className="text-[12px] leading-relaxed text-muted">
+          New keys start with <code className="text-ink">hs_</code>. Legacy{" "}
+          <code className="text-ink">lk_</code> keys still work until revoked.
+        </p>
 
         <div className="flex flex-wrap gap-2 pt-1">
           <Link

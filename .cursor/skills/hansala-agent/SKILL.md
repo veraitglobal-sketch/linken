@@ -1,27 +1,27 @@
 ---
 name: hansala-agent
 description: >-
-  Manage Hansala company content via Agent API (lk_ keys) or the hansala MCP
+  Manage Hansala company content via Agent API (hs_ keys) or the hansala MCP
   server. Use when creating case studies, uploading photos, inviting team
   members, or populating a Hansala profile programmatically from Cursor/Claude.
 ---
 
 # Hansala Agent API
 
-`lk_` keys are **Hansala Agent API keys** — not Linkup, Clado, or other services.
+New keys use prefix **`hs_`** (Hansala). Legacy **`lk_`** keys still work until revoked.
 
 ## Setup
 
-1. Dashboard → **API** → create key with **Full access** (or `content:write` + `team:manage`).
-2. Add to `.env.local` (never paste keys in chat):
-   - `HANSALA_AGENT_API_KEY=lk_...`
+1. Dashboard → **API** → create key with **AI agent** preset.
+2. Add to env (never paste keys in chat):
+   - `HANSALA_AGENT_API_KEY=hs_...`
    - `HANSALA_API_BASE=http://localhost:3000` (or `https://hansala.com`)
 3. Optional MCP: copy `.cursor/mcp.json.example` → `.cursor/mcp.json`, run `npm install` in `mcp/hansala/`.
 
 ## Auth
 
 ```
-Authorization: Bearer lk_...
+Authorization: Bearer hs_...
 Base: /api/v1/agent
 ```
 

@@ -344,7 +344,7 @@ export default function DevelopersPage() {
               </h3>
               <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">
                 Send{" "}
-                <code className="text-[12px]">Authorization: Bearer lk_…</code>.
+                <code className="text-[12px]">Authorization: Bearer hs_…</code>.
                 The raw key is shown once at creation; we store only a SHA-256
                 hash. Revoke instantly from the dashboard.
               </p>
@@ -470,7 +470,7 @@ export default function DevelopersPage() {
               </h3>
               <p className="text-[14px] text-ink-soft">
                 MCP is a local bridge — there is <strong className="font-semibold text-ink">no separate MCP key</strong>.
-                Use the same Agent API key (<code className="text-[12px]">lk_…</code>) as{" "}
+                Use the same Agent API key (<code className="text-[12px]">hs_…</code>) as{" "}
                 <code className="text-[12px]">HANSALA_AGENT_API_KEY</code>.
               </p>
               <div className="rounded-2xl border border-line bg-[#fafbfc] px-5 py-4 text-[13px] text-ink-soft">
@@ -496,7 +496,7 @@ export default function DevelopersPage() {
               </div>
               <p className="text-[13px] text-muted">
                 Direct HTTP? Call <code className="text-[12px]">{siteUrl}/api/v1/agent</code> with{" "}
-                <code className="text-[12px]">Authorization: Bearer lk_…</code> — no MCP required.
+                <code className="text-[12px]">Authorization: Bearer hs_…</code> — no MCP required.
               </p>
             </div>
 

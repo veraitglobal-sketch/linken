@@ -31,6 +31,17 @@ export type AuthSuccess = {
 
 export type AuthResult = AuthSuccess | AuthFailure;
 
+/** Current prefix for new keys — Hansala. Legacy `lk_` (Linken) still validates. */
+export const AGENT_KEY_PREFIX = "hs_";
+
+const LEGACY_AGENT_KEY_PREFIX = "lk_";
+
+export function isAgentApiKey(raw: string): boolean {
+  return (
+    raw.startsWith(AGENT_KEY_PREFIX) || raw.startsWith(LEGACY_AGENT_KEY_PREFIX)
+  );
+}
+
 export function hashApiKey(rawKey: string): string {
   return createHash("sha256").update(rawKey).digest("hex");
 }
@@ -38,10 +49,10 @@ export function hashApiKey(rawKey: string): string {
 export function generateApiKey(): { raw: string; prefix: string; hash: string } {
   const bytes = crypto.getRandomValues(new Uint8Array(20));
   const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
-  const raw = `lk_${hex}`;
+  const raw = `${AGENT_KEY_PREFIX}${hex}`;
   return {
     raw,
-    prefix: raw.slice(0, 11), // "lk_" + 8 hex
+    prefix: raw.slice(0, 11), // "hs_" + 8 hex
     hash: hashApiKey(raw),
   };
 }
@@ -73,7 +84,7 @@ export async function authenticateAgentRequest(
   }
 
   const raw = extractBearer(request);
-  if (!raw || !raw.startsWith("lk_")) {
+  if (!raw || !isAgentApiKey(raw)) {
     return {
       ok: false,
       status: 401,

@@ -72,7 +72,7 @@ async function createCompanyUi(page, name, website) {
 }
 
 function genKey() {
-  const raw = `lk_${randomBytes(24).toString("hex")}`;
+  const raw = `hs_${randomBytes(24).toString("hex")}`;
   const hash = createHash("sha256").update(raw).digest("hex");
   return { raw, hash, prefix: raw.slice(0, 11) };
 }
