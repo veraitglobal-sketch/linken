@@ -28,6 +28,7 @@ export const DOCS_NAV: NavItem[] = [
       { id: "agent-auth", label: "Auth & scopes" },
       { id: "agent-parity", label: "Owner → API map" },
       { id: "agent-setup", label: "Setup script" },
+      { id: "agent-mcp", label: "Cursor MCP" },
       { id: "agent-endpoints", label: "Endpoints" },
       { id: "agent-cannot", label: "What agents cannot do" },
     ],

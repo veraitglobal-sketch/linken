@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ApiAgentGuide } from "@/components/api/api-agent-guide";
 import { ApiAuditList } from "@/components/api/api-audit-list";
 import { ApiKeysPanel } from "@/components/api/api-keys-panel";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
@@ -67,6 +68,7 @@ export default async function DashboardApiPage() {
       }
     >
       <div className="space-y-10">
+        <ApiAgentGuide />
         <ApiKeysPanel keys={keys} />
         <ApiAuditList
           rows={audit.map((row) => ({

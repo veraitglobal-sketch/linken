@@ -30,7 +30,7 @@ export function ApiKeysPanel({ keys }: Props) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [scopes, setScopes] = useState<AgentScope[]>([
-    ...AGENT_SCOPE_PRESETS.content_manager,
+    ...AGENT_SCOPE_PRESETS.full_access,
   ]);
   const [error, setError] = useState<string | null>(null);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
