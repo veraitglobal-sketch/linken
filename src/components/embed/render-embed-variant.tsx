@@ -116,8 +116,12 @@ export function renderEmbedVariant(input: EmbedRenderInput): ReactNode {
   if (variant === "trust-card") {
     return (
       <EmbedTrustCard
-        {...base}
+        name={company.name}
+        level={trust.level}
+        confirmedCount={confirmedCount}
         breakdown={trust.breakdown}
+        profileUrl={profileUrl}
+        theme={theme}
       />
     );
   }
@@ -146,7 +150,6 @@ export function renderEmbedVariant(input: EmbedRenderInput): ReactNode {
         wouldTotal={assessment.wouldWorkAgainTotal}
         topStrengths={assessment.topStrengths.slice(0, 3)}
         confirmedCount={confirmedCount}
-        verified={company.verified}
         profileUrl={profileUrl}
         theme={theme}
       />

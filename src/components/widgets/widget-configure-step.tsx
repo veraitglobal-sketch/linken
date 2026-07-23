@@ -5,17 +5,7 @@ import { PreviewStage } from "@/components/widgets/preview-stage";
 import { WidgetConfigAside } from "@/components/widgets/widget-config-aside";
 import { WidgetSegmented } from "@/components/widgets/widget-segmented";
 import { Button } from "@/components/ui/button";
-import type {
-  LogoMotion,
-  LogoSize,
-  LogoWallLabel,
-  WidgetDefinition,
-  WidgetTheme,
-} from "@/features/widgets/catalog";
-import type {
-  LogoWallEntry,
-  LogoWallPendingInvite,
-} from "@/features/widgets/logo-wall";
+import type { WidgetDefinition, WidgetTheme } from "@/features/widgets/catalog";
 import { cn } from "@/lib/cn";
 
 type Props = {
@@ -33,18 +23,6 @@ type Props = {
   previewSrc: string;
   height: number;
   proLocked: boolean;
-  isLogoWall: boolean;
-  label: LogoWallLabel;
-  onLabel: (v: LogoWallLabel) => void;
-  motion: LogoMotion;
-  onMotion: (v: LogoMotion) => void;
-  logoSize: LogoSize;
-  onLogoSize: (v: LogoSize) => void;
-  mono: boolean;
-  onMono: (v: boolean) => void;
-  logoWallConfirmed: LogoWallEntry[];
-  logoWallPending: LogoWallPendingInvite[];
-  logoWallExcludedIds: string[];
   onClose: () => void;
   onGetCode: () => void;
 };
@@ -60,13 +38,30 @@ export function WidgetConfigureStep(props: Props) {
     stageBg,
     onClose,
     onGetCode,
+    theme,
+    onTheme,
+    widthMode,
+    onWidthMode,
+    widthPx,
+    onWidthPx,
+    onStageBg,
   } = props;
   const stageWidth = viewport === "mobile" ? 375 : "100%";
 
   return (
     <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[280px_minmax(0,1fr)]">
       <div className="min-h-0 overflow-y-auto">
-        <WidgetConfigAside {...props} />
+        <WidgetConfigAside
+          theme={theme}
+          onTheme={onTheme}
+          widthMode={widthMode}
+          onWidthMode={onWidthMode}
+          widthPx={widthPx}
+          onWidthPx={onWidthPx}
+          stageBg={stageBg}
+          onStageBg={onStageBg}
+          height={height}
+        />
       </div>
 
       <div className="flex min-h-0 flex-col">
@@ -82,46 +77,46 @@ export function WidgetConfigureStep(props: Props) {
                 { id: "mobile", label: "Mobile" },
               ]}
               onChange={onViewport}
-              compact
             />
           </div>
 
           <PreviewStage
-            color={stageBg}
-            className={cn(
-              "mt-3 min-h-[220px] flex-1",
-              widget.id === "compact" ? "items-center" : "items-start",
-            )}
+            color={stageBg ?? (theme === "dark" ? "#081412" : null)}
+            className={cn("mt-4 min-h-[220px] items-center justify-center")}
           >
             <div
-              className="overflow-hidden rounded-xl transition-[width] duration-200"
+              className={cn(viewport === "mobile" && "mx-auto")}
               style={{ width: stageWidth, maxWidth: "100%" }}
             >
               <LazyEmbedPreview
-                key={previewSrc}
                 src={previewSrc}
                 height={height}
-                title={`${widget.name} live preview`}
-                className="rounded-xl bg-transparent"
+                title={`${widget.name} preview`}
+                className="w-full bg-transparent"
                 eager
               />
             </div>
-            {proLocked ? (
-              <span className="pointer-events-none absolute right-5 bottom-5 rounded-md bg-navy-deep/80 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] text-white uppercase">
-                Pro preview
-              </span>
-            ) : null}
           </PreviewStage>
+
+          {proLocked ? (
+            <p className="mt-4 rounded-xl border border-line bg-paper px-4 py-3 text-[13px] text-muted">
+              Pro widget —{" "}
+              <a href="/dashboard/billing" className="font-semibold text-ink underline-offset-2 hover:underline">
+                upgrade on Billing
+              </a>{" "}
+              to copy embed code. Preview uses your live profile data.
+            </p>
+          ) : null}
         </div>
 
-        <div className="flex flex-wrap justify-end gap-2 border-t border-line bg-paper/40 px-5 py-3.5 sm:px-6">
-          <Button type="button" variant="ghost" className="h-10" onClick={onClose}>
+        <footer className="flex flex-wrap items-center justify-end gap-2 border-t border-line px-5 py-4 sm:px-6">
+          <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="button" className="h-10 px-5" onClick={onGetCode}>
-            Get code
+          <Button type="button" onClick={onGetCode} disabled={proLocked}>
+            Get embed code
           </Button>
-        </div>
+        </footer>
       </div>
     </div>
   );

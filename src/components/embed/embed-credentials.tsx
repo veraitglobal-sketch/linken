@@ -1,3 +1,4 @@
+import { EmbedAttribution, EmbedProBadge } from "@/components/embed/embed-pro-chrome";
 import { EmbedLevelMark } from "@/components/embed/embed-level-mark";
 import {
   embedInkClass,
@@ -20,26 +21,14 @@ function Cell({
   value,
   label,
   theme,
-  dark,
 }: {
   value: number;
   label: string;
   theme: EmbedTheme;
-  dark: boolean;
 }) {
   return (
-    <div
-      className={cn(
-        "flex flex-1 flex-col items-center justify-center px-2 py-2.5 text-center",
-        dark ? "border-white/10" : "border-[#0e1f1c]/08",
-      )}
-    >
-      <span
-        className={cn(
-          "font-display text-[1.15rem] font-medium leading-none tracking-[-0.03em] tabular-nums",
-          embedInkClass(theme),
-        )}
-      >
+    <div className="flex flex-1 flex-col items-center justify-center px-2 py-3 text-center">
+      <span className={cn("font-display text-[1.2rem] font-medium leading-none tabular-nums", embedInkClass(theme))}>
         {value}
       </span>
       <span className={cn("mt-1 text-[9px] font-semibold tracking-[0.1em] uppercase", embedMutedClass(theme))}>
@@ -49,7 +38,7 @@ function Cell({
   );
 }
 
-/** Pro — compact credentials strip for footers. */
+/** Pro credentials strip — three numbers, one Pro badge. */
 export function EmbedCredentials({
   name,
   level,
@@ -66,13 +55,13 @@ export function EmbedCredentials({
       href={profileUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn(
-        "block w-full overflow-hidden no-underline",
-        embedPremiumShell(theme, "pro"),
-      )}
+      className={cn("block w-full overflow-hidden no-underline", embedPremiumShell(theme, "pro"))}
     >
-      <div className="flex items-center justify-between gap-2 px-3.5 py-2">
-        <p className={cn("truncate text-[11px] font-medium", embedInkClass(theme))}>{name}</p>
+      <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <EmbedProBadge dark={dark} />
+          <p className={cn("truncate text-[12px] font-medium", embedInkClass(theme))}>{name}</p>
+        </div>
         <EmbedLevelMark level={level} theme={theme} />
       </div>
       <div
@@ -81,14 +70,12 @@ export function EmbedCredentials({
           dark ? "divide-white/10 border-white/10" : "divide-[#0e1f1c]/08 border-[#0e1f1c]/08",
         )}
       >
-        <Cell value={breakdown.confirmedPartners} label="Partners" theme={theme} dark={dark} />
-        <Cell
-          value={breakdown.confirmedReferences + breakdown.ongoingReferences}
-          label="Clients"
-          theme={theme}
-          dark={dark}
-        />
-        <Cell value={projects} label="Projects" theme={theme} dark={dark} />
+        <Cell value={breakdown.confirmedPartners} label="Partners" theme={theme} />
+        <Cell value={breakdown.confirmedReferences + breakdown.ongoingReferences} label="Clients" theme={theme} />
+        <Cell value={projects} label="Projects" theme={theme} />
+      </div>
+      <div className="flex justify-end px-3 py-2">
+        <EmbedAttribution theme={theme} />
       </div>
     </a>
   );

@@ -5,10 +5,6 @@ import { WidgetCodeStep } from "@/components/widgets/widget-code-step";
 import { WidgetConfigureStep } from "@/components/widgets/widget-configure-step";
 import { useWidgetStudio } from "@/components/widgets/use-widget-studio";
 import type { WidgetDefinition } from "@/features/widgets/catalog";
-import type {
-  LogoWallEntry,
-  LogoWallPendingInvite,
-} from "@/features/widgets/logo-wall";
 import { cn } from "@/lib/cn";
 
 type Props = {
@@ -17,9 +13,6 @@ type Props = {
   slug: string;
   isPro: boolean;
   onClose: () => void;
-  logoWallConfirmed?: LogoWallEntry[];
-  logoWallPending?: LogoWallPendingInvite[];
-  logoWallExcludedIds?: string[];
 };
 
 type Step = "configure" | "code";
@@ -30,9 +23,6 @@ export function WidgetConfigurator({
   slug,
   isPro,
   onClose,
-  logoWallConfirmed = [],
-  logoWallPending = [],
-  logoWallExcludedIds = [],
 }: Props) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -148,18 +138,6 @@ export function WidgetConfigurator({
             previewSrc={studio.previewSrc}
             height={studio.height}
             proLocked={proLocked}
-            isLogoWall={studio.isLogoWall}
-            label={studio.label}
-            onLabel={studio.setLabel}
-            motion={studio.motion}
-            onMotion={studio.setMotion}
-            logoSize={studio.logoSize}
-            onLogoSize={studio.setLogoSize}
-            mono={studio.mono}
-            onMono={studio.setMono}
-            logoWallConfirmed={logoWallConfirmed}
-            logoWallPending={logoWallPending}
-            logoWallExcludedIds={logoWallExcludedIds}
             onClose={onClose}
             onGetCode={() => setStep("code")}
           />

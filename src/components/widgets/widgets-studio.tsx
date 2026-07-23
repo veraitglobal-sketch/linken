@@ -8,10 +8,6 @@ import {
   type WidgetDefinition,
   type WidgetVariant,
 } from "@/features/widgets/catalog";
-import type {
-  LogoWallEntry,
-  LogoWallPendingInvite,
-} from "@/features/widgets/logo-wall";
 import { cn } from "@/lib/cn";
 
 type Availability = Record<WidgetVariant, boolean>;
@@ -21,9 +17,6 @@ type Props = {
   slug: string;
   availability: Availability;
   isPro: boolean;
-  logoWallConfirmed: LogoWallEntry[];
-  logoWallPending: LogoWallPendingInvite[];
-  logoWallExcludedIds: string[];
 };
 
 export function WidgetsStudio({
@@ -31,9 +24,6 @@ export function WidgetsStudio({
   slug,
   availability,
   isPro,
-  logoWallConfirmed,
-  logoWallPending,
-  logoWallExcludedIds,
 }: Props) {
   const [active, setActive] = useState<WidgetDefinition | null>(null);
   const essential = useMemo(
@@ -55,7 +45,7 @@ export function WidgetsStudio({
         title="Essential"
         meta={`${essential.filter((w) => availability[w.id]).length} of ${essential.length} ready`}
         items={essential}
-        columns="two"
+        columns="three"
         availability={availability}
         siteUrl={siteUrl}
         slug={slug}
@@ -96,9 +86,6 @@ export function WidgetsStudio({
           slug={slug}
           isPro={isPro}
           onClose={() => setActive(null)}
-          logoWallConfirmed={logoWallConfirmed}
-          logoWallPending={logoWallPending}
-          logoWallExcludedIds={logoWallExcludedIds}
         />
       ) : null}
     </>

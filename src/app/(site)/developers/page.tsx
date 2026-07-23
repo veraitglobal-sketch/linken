@@ -56,14 +56,24 @@ export default function DevelopersPage() {
 
   const embeds = [
     {
-      id: "badge",
-      title: "Badge",
+      id: "micro",
+      title: "Micro",
       requirement:
-        "Compact verified mark. Default for existing embeds — no query param required.",
-      height: 72,
+        "Free status bar with proof strip — no partner logos. Default: ?variant=micro",
+      height: 52,
+      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?variant=micro&preview=1`,
+      snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "micro", 52),
+      tokens: tokenizeShell(embedSnippet(siteUrl, EXAMPLE_SLUG, "micro", 52)),
+    },
+    {
+      id: "horizontal",
+      title: "Horizontal",
+      requirement:
+        "Full-width trust bar with level, proof strip, and confirmed count.",
+      height: 56,
       previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?preview=1`,
-      snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "badge", 72),
-      tokens: tokenizeShell(embedSnippet(siteUrl, EXAMPLE_SLUG, "badge", 72)),
+      snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "horizontal", 56),
+      tokens: tokenizeShell(embedSnippet(siteUrl, EXAMPLE_SLUG, "horizontal", 56)),
     },
     {
       id: "assessment",
@@ -269,7 +279,7 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="05"
               title="Embeds"
-              description="Drop an iframe on your site. Variants via ?variant=compact|badge|assessment|references and ?theme=light|dark. Links back with ?src=embed."
+              description="Drop an iframe on your site. Variants via ?variant=micro|horizontal|starter|score and ?theme=light|dark. No partner logos — proof strip only. Links back with ?src=embed."
             />
             <p className="mt-4 text-[14px] text-ink-soft">
               Prefer a visual configurator?{" "}

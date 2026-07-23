@@ -40,7 +40,7 @@ export function WidgetGalleryCard({
   });
 
   const showProWatermark = Boolean(widget.pro && !isPro && available);
-  const canConfigure = available || widget.id === "logo-wall";
+  const canConfigure = available;
   const ctaHref = widget.unavailableCtaHref ?? `/c/${slug}`;
   const ctaLabel = widget.unavailableCtaLabel ?? "Set up";
 
@@ -64,12 +64,7 @@ export function WidgetGalleryCard({
               title={`${widget.name} preview`}
               scale={widget.id === "references" ? 0.8 : 1}
               className="w-full bg-transparent"
-              eager={
-                widget.id === "verified" ||
-                widget.id === "compact" ||
-                widget.id === "badge" ||
-                widget.id === "logo-wall"
-              }
+              eager={widget.id === "verified" || widget.id === "micro"}
             />
           </div>
         ) : (

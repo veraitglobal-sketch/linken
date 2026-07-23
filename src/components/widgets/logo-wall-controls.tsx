@@ -4,8 +4,8 @@ import {
   LOGO_MOTION_OPTIONS,
   type LogoMotion,
   type LogoSize,
-  type LogoWallLabel,
-} from "@/features/widgets/catalog";
+} from "@/features/widgets/logo-motion";
+import type { LogoWallLabel } from "@/features/widgets/logo-wall";
 import { LogoWallPicker } from "@/components/widgets/logo-wall-picker";
 import type {
   LogoWallEntry,

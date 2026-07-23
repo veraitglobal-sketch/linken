@@ -21,14 +21,14 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
   const snippet = buildEmbedSnippet({
     siteUrl,
     slug: companySlug,
-    variant: "compact",
+    variant: "micro",
     theme: "light",
     width: "100%",
   });
   const previewSrc = buildEmbedSrc({
     siteUrl,
     slug: companySlug,
-    variant: "compact",
+    variant: "micro",
     theme: "light",
     preview: true,
   });
@@ -55,16 +55,16 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
             Embed on your website
           </p>
           <p className="mt-1 text-[12px] leading-relaxed text-muted">
-            Quick copy for the recommended Compact widget — or open the studio
+            Quick copy for the Micro widget — or open the studio
             for themes, sizes, and every variant.
           </p>
 
           <div className="mt-3 overflow-hidden rounded-xl border border-line bg-[#f7f8fa]">
             <iframe
               src={previewSrc}
-              title="Compact embed preview"
+              title="Micro embed preview"
               width="100%"
-              height={48}
+              height={52}
               className="block w-full border-0"
             />
           </div>
@@ -75,7 +75,7 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
             className="mt-3 h-10 w-full"
             onClick={copy}
           >
-            {copied ? "Copied ✓" : "Copy Compact snippet"}
+            {copied ? "Copied ✓" : "Copy Micro snippet"}
           </Button>
 
           <Link

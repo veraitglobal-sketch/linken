@@ -6,9 +6,6 @@ import {
   buildEmbedSnippet,
   buildEmbedSrc,
   widgetHeight,
-  type LogoMotion,
-  type LogoSize,
-  type LogoWallLabel,
   type WidgetDefinition,
   type WidgetTheme,
 } from "@/features/widgets/catalog";
@@ -23,17 +20,9 @@ export function useWidgetStudio(
   const [widthPx, setWidthPx] = useState("320");
   const [stageBg, setStageBg] = useState<string | null>(null);
   const [viewport, setViewport] = useState<"desktop" | "mobile">("desktop");
-  const [label, setLabel] = useState<LogoWallLabel>("both");
-  const [mono, setMono] = useState(true);
-  const [motion, setMotion] = useState<LogoMotion>("row");
-  const [logoSize, setLogoSize] = useState<LogoSize>("md");
 
-  const isLogoWall = widget.id === "logo-wall";
   const width = widthMode === "100%" ? "100%" : `${widthPx || "320"}px`;
-  const height = widgetHeight(widget.id, {
-    motion: isLogoWall ? motion : undefined,
-    size: isLogoWall ? logoSize : undefined,
-  });
+  const height = widgetHeight(widget.id);
 
   const previewSrc = useMemo(
     () =>
@@ -44,24 +33,8 @@ export function useWidgetStudio(
         theme,
         width: widthMode === "100%" ? undefined : widthPx,
         preview: true,
-        label: isLogoWall ? label : undefined,
-        mono: isLogoWall ? mono : undefined,
-        motion: isLogoWall ? motion : undefined,
-        size: isLogoWall ? logoSize : undefined,
       }),
-    [
-      siteUrl,
-      slug,
-      widget.id,
-      theme,
-      widthMode,
-      widthPx,
-      isLogoWall,
-      label,
-      mono,
-      motion,
-      logoSize,
-    ],
+    [siteUrl, slug, widget.id, theme, widthMode, widthPx],
   );
 
   const snippet = useMemo(
@@ -72,23 +45,8 @@ export function useWidgetStudio(
         variant: widget.id,
         theme,
         width,
-        label: isLogoWall ? label : undefined,
-        mono: isLogoWall ? mono : undefined,
-        motion: isLogoWall ? motion : undefined,
-        size: isLogoWall ? logoSize : undefined,
       }),
-    [
-      siteUrl,
-      slug,
-      widget.id,
-      theme,
-      width,
-      isLogoWall,
-      label,
-      mono,
-      motion,
-      logoSize,
-    ],
+    [siteUrl, slug, widget.id, theme, width],
   );
 
   const tokens = useMemo(() => tokenizeShell(snippet), [snippet]);
@@ -104,15 +62,6 @@ export function useWidgetStudio(
     setStageBg,
     viewport,
     setViewport,
-    label,
-    setLabel,
-    mono,
-    setMono,
-    motion,
-    setMotion,
-    logoSize,
-    setLogoSize,
-    isLogoWall,
     height,
     previewSrc,
     snippet,

@@ -1,5 +1,5 @@
-import { EmbedProofStrip } from "@/components/embed/embed-proof-strip";
 import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
+import { levelHeadline } from "@/components/embed/embed-level-headline";
 import {
   embedInkClass,
   embedMutedClass,
@@ -19,12 +19,7 @@ type Props = {
   theme?: EmbedTheme;
 };
 
-function levelLabel(level: TrustLevel): string | null {
-  if (level === "Member") return null;
-  return level;
-}
-
-/** Free — Trustpilot Micro: status word + proof strip + Hansala. No logos. */
+/** Free micro bar — one status word, one seal. No icon rows. */
 export function EmbedMicro({
   name,
   verified,
@@ -34,9 +29,7 @@ export function EmbedMicro({
   profileUrl,
   theme = "light",
 }: Props) {
-  const dark = theme === "dark";
-  const stripFill = confirmedCount > 0 ? Math.min(5, confirmedCount) : verified ? 5 : 0;
-  const status = levelLabel(level) ?? (verified ? "Verified" : claimed ? "On Hansala" : "Unclaimed");
+  const status = levelHeadline(level, verified && claimed);
 
   return (
     <a
@@ -44,29 +37,16 @@ export function EmbedMicro({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "flex h-[52px] w-full items-center gap-3 px-3.5 no-underline",
+        "flex h-[48px] w-full items-center gap-3 px-3.5 no-underline",
         embedShellClass(theme),
       )}
     >
-      <span
-        className={cn(
-          "shrink-0 text-[13px] font-semibold tracking-[-0.02em]",
-          embedInkClass(theme),
-        )}
-      >
+      <span className={cn("shrink-0 text-[13px] font-semibold tracking-[-0.02em]", embedInkClass(theme))}>
         {status}
       </span>
-      <EmbedProofStrip filled={stripFill} theme={theme} size="sm" />
-      <span className={cn("min-w-0 flex-1 truncate text-[12px]", embedMutedClass(theme))}>
-        {name}
-      </span>
+      <span className={cn("min-w-0 flex-1 truncate text-[12px]", embedMutedClass(theme))}>{name}</span>
       {confirmedCount > 0 ? (
-        <span
-          className={cn(
-            "shrink-0 text-[11px] tabular-nums",
-            dark ? "text-white/55" : "text-muted",
-          )}
-        >
+        <span className={cn("shrink-0 text-[11px] tabular-nums", embedMutedClass(theme))}>
           {confirmedCount} confirmed
         </span>
       ) : null}

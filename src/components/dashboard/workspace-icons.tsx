@@ -158,3 +158,13 @@ export function IconSettings({ className }: { className?: string }) {
     </svg>
   );
 }
+
+export function IconBilling({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M3 10h18" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M7 15h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}

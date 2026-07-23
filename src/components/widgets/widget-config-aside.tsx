@@ -1,22 +1,10 @@
 "use client";
 
-import { LogoWallControls } from "@/components/widgets/logo-wall-controls";
 import { WidgetSegmented } from "@/components/widgets/widget-segmented";
 import { Input } from "@/components/ui/input";
-import type {
-  LogoMotion,
-  LogoSize,
-  LogoWallLabel,
-  WidgetDefinition,
-  WidgetTheme,
-} from "@/features/widgets/catalog";
-import type {
-  LogoWallEntry,
-  LogoWallPendingInvite,
-} from "@/features/widgets/logo-wall";
+import type { WidgetTheme } from "@/features/widgets/catalog";
 
 type Props = {
-  widget: WidgetDefinition;
   theme: WidgetTheme;
   onTheme: (t: WidgetTheme) => void;
   widthMode: "100%" | "px";
@@ -26,34 +14,19 @@ type Props = {
   stageBg: string | null;
   onStageBg: (v: string | null) => void;
   height: number;
-  isLogoWall: boolean;
-  label: LogoWallLabel;
-  onLabel: (v: LogoWallLabel) => void;
-  motion: LogoMotion;
-  onMotion: (v: LogoMotion) => void;
-  logoSize: LogoSize;
-  onLogoSize: (v: LogoSize) => void;
-  mono: boolean;
-  onMono: (v: boolean) => void;
-  logoWallConfirmed: LogoWallEntry[];
-  logoWallPending: LogoWallPendingInvite[];
-  logoWallExcludedIds: string[];
 };
 
-export function WidgetConfigAside(props: Props) {
-  const {
-    theme,
-    onTheme,
-    widthMode,
-    onWidthMode,
-    widthPx,
-    onWidthPx,
-    stageBg,
-    onStageBg,
-    height,
-    isLogoWall,
-  } = props;
-
+export function WidgetConfigAside({
+  theme,
+  onTheme,
+  widthMode,
+  onWidthMode,
+  widthPx,
+  onWidthPx,
+  stageBg,
+  onStageBg,
+  height,
+}: Props) {
   return (
     <aside className="space-y-5 border-b border-line bg-paper/30 px-5 py-5 sm:px-6 lg:border-r lg:border-b-0">
       <WidgetSegmented
@@ -65,23 +38,6 @@ export function WidgetConfigAside(props: Props) {
         ]}
         onChange={onTheme}
       />
-
-      {isLogoWall ? (
-        <LogoWallControls
-          label={props.label}
-          onLabel={props.onLabel}
-          motion={props.motion}
-          onMotion={props.onMotion}
-          size={props.logoSize}
-          onSize={props.onLogoSize}
-          mono={props.mono}
-          onMono={props.onMono}
-          height={height}
-          confirmed={props.logoWallConfirmed}
-          pending={props.logoWallPending}
-          excludedIds={props.logoWallExcludedIds}
-        />
-      ) : null}
 
       <div>
         <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">
@@ -105,9 +61,7 @@ export function WidgetConfigAside(props: Props) {
             />
           ) : null}
         </div>
-        {!isLogoWall ? (
-          <p className="mt-2 text-[12px] text-plus">Height fixed at {height}px</p>
-        ) : null}
+        <p className="mt-2 text-[12px] text-plus">Height fixed at {height}px</p>
       </div>
 
       <div>

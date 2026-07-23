@@ -177,11 +177,11 @@ console.log(json.data);`;
 export function embedSnippet(
   siteUrl: string,
   slug: string,
-  variant: "badge" | "assessment" | "references",
+  variant: "horizontal" | "assessment" | "references" | "micro" | "verified",
   height: number,
 ) {
   const src =
-    variant === "badge"
+    variant === "horizontal"
       ? `${siteUrl}/embed/${slug}`
       : `${siteUrl}/embed/${slug}?variant=${variant}`;
   return `<iframe src="${src}" width="320" height="${height}" style="border:0" title="Verified on Hansala" loading="lazy"></iframe>`;

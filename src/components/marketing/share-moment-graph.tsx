@@ -17,8 +17,8 @@ const NODE = 88;
 const STAGE_H = 220;
 
 const INITIAL: NodePos[] = [
-  { id: "a", src: "/images/story-plans.jpg", x: 0.18, y: 0.42 },
-  { id: "b", src: "/images/story-partners.jpg", x: 0.5, y: 0.5 },
+  { id: "a", src: "/images/story-projects.jpg", x: 0.18, y: 0.42 },
+  { id: "b", src: "/images/story-collaboration.jpg", x: 0.5, y: 0.5 },
   { id: "c", src: "/images/story-team.jpg", x: 0.82, y: 0.4 },
 ];
 

@@ -1,6 +1,6 @@
 const FALLBACKS = [
-  "/images/story-plans.jpg",
-  "/images/story-partners.jpg",
+  "/images/story-projects.jpg",
+  "/images/story-collaboration.jpg",
   "/images/story-team.jpg",
   "/images/hero-partner.jpg",
 ] as const;
@@ -15,7 +15,7 @@ export function caseStudyCoverUrl(
 
 export function caseStudyCoverFocus(index = 0): string {
   const focuses = [
-    "object-[center_38%]",
+    "object-[center_42%]",
     "object-[center_28%]",
     "object-center",
     "object-[center_35%]",

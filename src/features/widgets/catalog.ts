@@ -73,7 +73,7 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     description: "Dark premium bar — Trustpilot-style, no partner logos.",
     section: "proof",
     pro: true,
-    height: 96,
+    height: 120,
   },
   {
     id: "score",
@@ -81,7 +81,7 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     description: "Large confirmed count with proof strip and level.",
     section: "proof",
     pro: true,
-    height: 72,
+    height: 88,
   },
   {
     id: "trust-card",
@@ -97,7 +97,7 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     description: "Compact partners · clients · projects strip.",
     section: "proof",
     pro: true,
-    height: 64,
+    height: 76,
   },
   {
     id: "references",

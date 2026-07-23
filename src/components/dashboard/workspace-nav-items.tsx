@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import {
+  IconBilling,
   IconChart,
   IconGraph,
   IconGroup,
@@ -117,6 +118,13 @@ export const MORE_NAV: NavItem[] = [
     icon: IconRadar,
     companyOnly: true,
     section: "radar",
+  },
+  {
+    href: "/dashboard/billing",
+    label: "Billing",
+    icon: IconBilling,
+    companyOnly: true,
+    section: "settings",
   },
   {
     href: "/dashboard/widgets",

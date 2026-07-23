@@ -3,16 +3,15 @@ import { cn } from "@/lib/cn";
 
 const COPY: Partial<Record<WidgetVariant, string>> = {
   verified: "Ready once your profile is claimed.",
-  compact: "Ready with your company name.",
-  "proof-panel": "Confirm a partner or client to unlock.",
+  micro: "Ready once your profile is claimed.",
+  horizontal: "Ready once your profile is claimed.",
+  starter: "Ready once your profile is claimed.",
+  score: "Confirm a relationship to show the count.",
   "trust-card": "Build confirmed evidence to show level.",
-  "network-card": "Confirm relationships to show the network.",
   credentials: "Ready once your profile is claimed.",
   signature: "Ready once your profile is claimed.",
-  badge: "Ready with your company name.",
   references: "Confirm a client reference to unlock.",
   assessment: "Needs 3+ client assessment answers.",
-  "logo-wall": "Confirm a partner or client to unlock.",
 };
 
 type Props = {
