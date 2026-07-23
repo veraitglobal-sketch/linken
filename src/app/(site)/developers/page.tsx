@@ -31,7 +31,7 @@ import { FieldTable } from "@/components/developers/field-table";
 import { tokenizeJson, tokenizeShell } from "@/components/developers/highlight";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
-import { getSiteUrl } from "@/lib/site";
+import { getDocsSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Developers",
@@ -42,17 +42,18 @@ export const metadata: Metadata = {
 const EXAMPLE_SLUG = "example-architecture";
 
 export default function DevelopersPage() {
-  const siteUrl = getSiteUrl();
+  /** Public API + embed examples — always hansala.com (never *.vercel.app). */
+  const docsUrl = getDocsSiteUrl();
   const basePath = "/api/v1";
-  const companyUrl = `${siteUrl}${basePath}/companies/${EXAMPLE_SLUG}`;
+  const companyUrl = `${docsUrl}${basePath}/companies/${EXAMPLE_SLUG}`;
   const referencesUrl = `${companyUrl}/references`;
   const caseStudiesUrl = `${companyUrl}/case-studies`;
-  const verifyUrl = `${siteUrl}${basePath}/verify?domain=example.com`;
+  const verifyUrl = `${docsUrl}${basePath}/verify?domain=example.com`;
 
-  const companyJson = companyExample(siteUrl);
+  const companyJson = companyExample(docsUrl);
   const referencesJson = referencesExample();
-  const caseStudiesJson = caseStudiesExample(siteUrl);
-  const verifyJson = verifyExample(siteUrl);
+  const caseStudiesJson = caseStudiesExample(docsUrl);
+  const verifyJson = verifyExample(docsUrl);
   const errorJson = errorExample();
 
   const embeds = [
@@ -62,9 +63,9 @@ export default function DevelopersPage() {
       requirement:
         "Free status bar with proof strip — no partner logos. Default: ?variant=micro",
       height: 52,
-      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?variant=micro&preview=1`,
-      snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "micro", 52),
-      tokens: tokenizeShell(embedSnippet(siteUrl, EXAMPLE_SLUG, "micro", 52)),
+      previewSrc: `${docsUrl}/embed/${EXAMPLE_SLUG}?variant=micro&preview=1`,
+      snippet: embedSnippet(docsUrl, EXAMPLE_SLUG, "micro", 52),
+      tokens: tokenizeShell(embedSnippet(docsUrl, EXAMPLE_SLUG, "micro", 52)),
     },
     {
       id: "horizontal",
@@ -72,9 +73,9 @@ export default function DevelopersPage() {
       requirement:
         "Full-width trust bar with level, proof strip, and confirmed count.",
       height: 56,
-      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?preview=1`,
-      snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "horizontal", 56),
-      tokens: tokenizeShell(embedSnippet(siteUrl, EXAMPLE_SLUG, "horizontal", 56)),
+      previewSrc: `${docsUrl}/embed/${EXAMPLE_SLUG}?preview=1`,
+      snippet: embedSnippet(docsUrl, EXAMPLE_SLUG, "horizontal", 56),
+      tokens: tokenizeShell(embedSnippet(docsUrl, EXAMPLE_SLUG, "horizontal", 56)),
     },
     {
       id: "assessment",
@@ -82,10 +83,10 @@ export default function DevelopersPage() {
       requirement:
         "Would-work-again rate and top strengths. Needs ≥3 client assessment answers on the profile.",
       height: 120,
-      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?variant=assessment&preview=1`,
-      snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "assessment", 120),
+      previewSrc: `${docsUrl}/embed/${EXAMPLE_SLUG}?variant=assessment&preview=1`,
+      snippet: embedSnippet(docsUrl, EXAMPLE_SLUG, "assessment", 120),
       tokens: tokenizeShell(
-        embedSnippet(siteUrl, EXAMPLE_SLUG, "assessment", 120),
+        embedSnippet(docsUrl, EXAMPLE_SLUG, "assessment", 120),
       ),
     },
     {
@@ -94,10 +95,10 @@ export default function DevelopersPage() {
       requirement:
         "Up to five confirmed client references. Empty profiles show a quiet fallback.",
       height: 160,
-      previewSrc: `${siteUrl}/embed/${EXAMPLE_SLUG}?variant=references&preview=1`,
-      snippet: embedSnippet(siteUrl, EXAMPLE_SLUG, "references", 160),
+      previewSrc: `${docsUrl}/embed/${EXAMPLE_SLUG}?variant=references&preview=1`,
+      snippet: embedSnippet(docsUrl, EXAMPLE_SLUG, "references", 160),
       tokens: tokenizeShell(
-        embedSnippet(siteUrl, EXAMPLE_SLUG, "references", 160),
+        embedSnippet(docsUrl, EXAMPLE_SLUG, "references", 160),
       ),
     },
   ];
@@ -105,7 +106,7 @@ export default function DevelopersPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 pt-3 sm:px-5">
       <DocsHero
-        siteUrl={siteUrl}
+        siteUrl={docsUrl}
         basePath={basePath}
         previewTokens={tokenizeJson(companyJson)}
       />
@@ -186,7 +187,7 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="03"
               title="Endpoints"
-              description={`Base path ${siteUrl}${basePath}. All responses are JSON. Fields match the public contract in types.ts.`}
+              description={`Base path ${docsUrl}${basePath}. All responses are JSON. Fields match the public contract in types.ts.`}
             />
 
             <EndpointSection
@@ -440,7 +441,7 @@ export default function DevelopersPage() {
               <CodePanel
                 tabs={agentRequestTabs(
                   "PATCH",
-                  `${siteUrl}/api/v1/agent/company`,
+                  `${docsUrl}/api/v1/agent/company`,
                   {
                     tagline: "Verified B2B network",
                     city: "Berlin",
@@ -495,7 +496,7 @@ export default function DevelopersPage() {
                 </p>
               </div>
               <p className="text-[13px] text-muted">
-                Direct HTTP? Call <code className="text-[12px]">{siteUrl}/api/v1/agent</code> with{" "}
+                Direct HTTP? Call <code className="text-[12px]">{docsUrl}/api/v1/agent</code> with{" "}
                 <code className="text-[12px]">Authorization: Bearer hs_…</code> — no MCP required.
               </p>
             </div>
@@ -507,7 +508,7 @@ export default function DevelopersPage() {
               <p className="text-[14px] text-ink-soft">
                 Base path{" "}
                 <code className="text-[12px]">
-                  {siteUrl}/api/v1/agent
+                  {docsUrl}/api/v1/agent
                 </code>
                 . Successes return{" "}
                 <code className="text-[12px]">{"{ data: … }"}</code>. Mutations
@@ -527,7 +528,7 @@ export default function DevelopersPage() {
                   <CodePanel
                     tabs={agentRequestTabs(
                       "GET",
-                      `${siteUrl}/api/v1/agent/company`,
+                      `${docsUrl}/api/v1/agent/company`,
                     )}
                   />
                 </div>
@@ -544,7 +545,7 @@ export default function DevelopersPage() {
                   <CodePanel
                     tabs={agentRequestTabs(
                       "POST",
-                      `${siteUrl}/api/v1/agent/references`,
+                      `${docsUrl}/api/v1/agent/references`,
                       {
                         client_name: "CleanCo",
                         service: "Office cleaning",

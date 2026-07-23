@@ -4,13 +4,21 @@
  */
 import type { NextRequest } from "next/server";
 import { getAgentCompanyOwnerMeta } from "@/features/agent-api/company-meta";
-import { parseJsonBody, withAgentAuth } from "@/features/agent-api/handler";
-import { agentOptions } from "@/features/agent-api/http";
+import { parseImageBody } from "@/features/agent-api/parse-image";
+import { withAgentAuth } from "@/features/agent-api/handler";
+import { agentMethodNotAllowed, agentOptions } from "@/features/agent-api/http";
 import { uploadLogoCore } from "@/features/logo/core";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export function OPTIONS() {
   return agentOptions();
+}
+
+export function POST() {
+  return agentMethodNotAllowed(
+    "PUT, OPTIONS",
+    "Use PUT with image_base64, image_url, or multipart file field 'file' (or 'logo').",
+  );
 }
 
 export async function PUT(request: NextRequest) {
@@ -59,39 +67,19 @@ export async function PUT(request: NextRequest) {
       bytes = new Uint8Array(await file.arrayBuffer());
       imageType = file.type || "image/png";
     } else {
-      const parsed = await parseJsonBody<{
-        image_base64?: string;
-        content_type?: string;
-      }>(req);
-      if (!parsed.ok) {
+      const image = await parseImageBody(req);
+      if (!image.ok) {
         return {
           status: 422,
           body: {
-            error: { code: "invalid_request", message: parsed.message },
+            error: { code: "invalid_request", message: image.message },
           },
           auditAction: "logo.upload",
-          auditSummary: "Invalid body",
+          auditSummary: image.message,
         };
       }
-      const raw = String(parsed.data.image_base64 ?? "").replace(
-        /^data:[^;]+;base64,/,
-        "",
-      );
-      if (!raw) {
-        return {
-          status: 422,
-          body: {
-            error: {
-              code: "invalid_request",
-              message: "image_base64 is required for JSON uploads.",
-            },
-          },
-          auditAction: "logo.upload",
-          auditSummary: "Missing image_base64",
-        };
-      }
-      bytes = Uint8Array.from(Buffer.from(raw, "base64"));
-      imageType = String(parsed.data.content_type ?? "image/png");
+      bytes = image.bytes;
+      imageType = image.contentType;
     }
 
     const result = await uploadLogoCore(admin, ctx.companyId, {

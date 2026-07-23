@@ -1,23 +1,52 @@
+const CANONICAL_ORIGIN = "https://hansala.com";
+
+function normalizeOrigin(value: string) {
+  return value.replace(/\/$/, "");
+}
+
+function isVercelPreviewHost(host: string) {
+  return host.includes(".vercel.app");
+}
+
 /**
- * Canonical public origin for emails, embeds, sitemap, and API links.
- * Set NEXT_PUBLIC_SITE_URL in production — never rely on localhost there.
+ * Canonical public origin for emails, embeds, sitemap, API links, and metadata.
+ * Never returns a transient *.vercel.app preview host.
  */
 export function getSiteUrl() {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (configured) return configured.replace(/\/$/, "");
-
-  // Vercel preview deployments expose a host when the public URL isn't set.
-  const vercelHost = process.env.VERCEL_URL?.trim();
-  if (vercelHost) {
-    return `https://${vercelHost.replace(/^https?:\/\//, "")}`;
+  if (configured) {
+    return normalizeOrigin(configured);
   }
 
-  if (process.env.VERCEL_ENV === "production") {
-    console.error(
-      "[linken] CRITICAL: NEXT_PUBLIC_SITE_URL is unset in production. " +
-        "Email and embed links will incorrectly point at localhost.",
-    );
+  const vercelHost = process.env.VERCEL_URL?.trim()?.replace(/^https?:\/\//, "");
+  if (vercelHost && !isVercelPreviewHost(vercelHost)) {
+    return `https://${vercelHost}`;
+  }
+
+  if (
+    process.env.VERCEL_ENV === "production" ||
+    (vercelHost && isVercelPreviewHost(vercelHost))
+  ) {
+    return CANONICAL_ORIGIN;
   }
 
   return "http://localhost:3000";
+}
+
+/** Same as getSiteUrl — kept for /developers and docs call sites. */
+export function getDocsSiteUrl() {
+  const origin = getSiteUrl();
+  return origin === "http://localhost:3000" ? CANONICAL_ORIGIN : origin;
+}
+
+export { CANONICAL_ORIGIN };
+
+/** Public company profile path — always /c/{slug}. */
+export function companyProfilePath(slug: string) {
+  return `/c/${slug}`;
+}
+
+/** Display label for shareable address (no protocol). */
+export function companyShareLabel(slug: string) {
+  return `hansala.com/${slug}`;
 }

@@ -6,7 +6,7 @@ import type { NextRequest } from "next/server";
 import { parseJsonBody, withAgentAuth } from "@/features/agent-api/handler";
 import { agentOptions } from "@/features/agent-api/http";
 import { getAgentCompany } from "@/features/agent-api/queries";
-import { updateCompanyProfileCore } from "@/features/company/core";
+import { updateCompanyAgentCore } from "@/features/company/agent-patch";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export function OPTIONS() {
@@ -69,7 +69,7 @@ export async function PATCH(request: NextRequest) {
       };
     }
 
-    const result = await updateCompanyProfileCore(
+    const result = await updateCompanyAgentCore(
       admin,
       ctx.companyId,
       parsed.data,
@@ -88,7 +88,12 @@ export async function PATCH(request: NextRequest) {
 
     return {
       status: 200,
-      body: { data: { updated: result.data.updated } },
+      body: {
+        data: {
+          updated: result.data.updated,
+          ...(result.data.slug ? { slug: result.data.slug } : {}),
+        },
+      },
       auditAction: "company.update",
       auditSummary: `Updated fields: ${result.data.updated.join(", ")}`,
     };

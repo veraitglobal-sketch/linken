@@ -6,8 +6,8 @@ if (
   !process.env.NEXT_PUBLIC_SITE_URL?.trim()
 ) {
   console.warn(
-    "[linken] NEXT_PUBLIC_SITE_URL is not set for production. " +
-      "Outbound email/embed links will fall back incorrectly — set it on Vercel before launch.",
+    "[hansala] NEXT_PUBLIC_SITE_URL is not set for production. " +
+      "Outbound links will use https://hansala.com — set NEXT_PUBLIC_SITE_URL on Vercel to match your domain.",
   );
 }
 

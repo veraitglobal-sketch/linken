@@ -164,7 +164,7 @@ export function jsBearer(
   return `const res = await fetch("${url}", {
   method: "${method}",
   headers: {
-    Authorization: \`Bearer \${process.env.LINKEN_API_KEY}\`,
+    Authorization: \`Bearer \${process.env.HANSALA_AGENT_API_KEY}\`,
     Accept: "application/json",${hasBody ? `\n    "Content-Type": "application/json",` : ""}
   },${hasBody ? `\n  body: JSON.stringify(${JSON.stringify(body, null, 2).split("\n").join("\n  ")}),` : ""}
 });

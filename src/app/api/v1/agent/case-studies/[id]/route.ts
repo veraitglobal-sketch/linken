@@ -9,6 +9,10 @@ import {
 import { parseJsonBody, withAgentAuth } from "@/features/agent-api/handler";
 import { agentOptions } from "@/features/agent-api/http";
 import { getAgentCaseStudy } from "@/features/agent-api/queries";
+import { fetchRemoteImage } from "@/features/agent-api/fetch-image";
+import {
+  uploadCaseStudyCoverCore,
+} from "@/features/case-studies/media-core";
 import {
   deleteCaseStudyCore,
   updateCaseStudyCore,
@@ -59,7 +63,7 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
       };
     }
 
-    const parsed = await parseJsonBody<CaseStudyAgentJson>(req);
+    const parsed = await parseJsonBody<CaseStudyAgentJson & { cover_image_url?: string }>(req);
     if (!parsed.ok) {
       return {
         status: 422,
@@ -69,33 +73,90 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
       };
     }
 
-    const result = await updateCaseStudyCore(admin, {
-      companyId: ctx.companyId,
-      caseStudyId: id,
-      ...mapCaseStudyAgentInput(parsed.data),
-    });
+    const { cover_image_url, ...content } = parsed.data;
+    if (cover_image_url) {
+      const remote = await fetchRemoteImage(String(cover_image_url));
+      if (!remote.ok) {
+        return {
+          status: 422,
+          body: { error: { code: "invalid_request", message: remote.message } },
+          auditAction: "case_study.cover.upload",
+          auditSummary: remote.message,
+        };
+      }
+      const coverResult = await uploadCaseStudyCoverCore(admin, {
+        companyId: ctx.companyId,
+        caseStudyId: id,
+        bytes: remote.bytes,
+        contentType: remote.contentType,
+      });
+      if (!coverResult.ok) {
+        const status = coverResult.error === "Case study not found." ? 404 : 422;
+        return {
+          status,
+          body: {
+            error: {
+              code: status === 404 ? "not_found" : "invalid_request",
+              message: coverResult.error,
+            },
+          },
+          auditAction: "case_study.cover.upload",
+          auditSummary: coverResult.error,
+        };
+      }
+    }
 
-    if (!result.ok) {
-      const status = result.error === "Case study not found." ? 404 : 422;
+    const mapped = mapCaseStudyAgentInput(content);
+    const hasContent = Object.values(mapped).some((v) => v !== undefined);
+
+    if (!hasContent && !cover_image_url) {
       return {
-        status,
+        status: 422,
         body: {
           error: {
-            code: status === 404 ? "not_found" : "invalid_request",
-            message: result.error,
+            code: "invalid_request",
+            message:
+              "No fields to update. Send content fields or cover_image_url (remote URL). For binary uploads use PUT /case-studies/{id}/cover.",
           },
         },
         auditAction: "case_study.update",
-        auditSummary: result.error,
+        auditSummary: "No fields to update",
       };
     }
 
-    const caseStudy = await getAgentCaseStudy(admin, ctx.companyId, id);
+    let caseStudyId = id;
+    if (hasContent) {
+      const result = await updateCaseStudyCore(admin, {
+        companyId: ctx.companyId,
+        caseStudyId: id,
+        ...mapped,
+      });
+
+      if (!result.ok) {
+        const status = result.error === "Case study not found." ? 404 : 422;
+        return {
+          status,
+          body: {
+            error: {
+              code: status === 404 ? "not_found" : "invalid_request",
+              message: result.error,
+            },
+          },
+          auditAction: "case_study.update",
+          auditSummary: result.error,
+        };
+      }
+      caseStudyId = result.data.id;
+    }
+
+    const caseStudy = await getAgentCaseStudy(admin, ctx.companyId, caseStudyId);
     return {
       status: 200,
-      body: { data: { id: result.data.id, case_study: caseStudy } },
-      auditAction: "case_study.update",
-      auditSummary: `Updated case study ${id}`,
+      body: { data: { id: caseStudyId, case_study: caseStudy } },
+      auditAction: cover_image_url ? "case_study.cover.upload" : "case_study.update",
+      auditSummary: cover_image_url
+        ? `Updated cover for case study ${id}`
+        : `Updated case study ${id}`,
     };
   });
 }

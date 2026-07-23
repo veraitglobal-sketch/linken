@@ -33,6 +33,6 @@ export function agentError(
   });
 }
 
-export function agentData<T>(data: T, status = 200) {
-  return agentJson({ data }, status);
+export function agentMethodNotAllowed(allowed: string, hint: string) {
+  return agentError("invalid_request", hint, 405, { Allow: allowed });
 }

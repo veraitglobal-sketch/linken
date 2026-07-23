@@ -37,7 +37,7 @@ export async function createReferenceCore(
   if (!clientName || !service || !startedYear) {
     return {
       ok: false,
-      error: "Client, service, and start year are required.",
+      error: `Required fields: client_name, service, started_year.`,
     };
   }
 

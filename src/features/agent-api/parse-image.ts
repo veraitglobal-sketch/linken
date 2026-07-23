@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { parseJsonBody } from "@/features/agent-api/handler";
+import { fetchRemoteImage } from "@/features/agent-api/fetch-image";
 
 export type ParsedImage =
   | { ok: true; bytes: Uint8Array; contentType: string }
@@ -12,7 +13,11 @@ export async function parseImageBody(req: NextRequest): Promise<ParsedImage> {
     const form = await req.formData();
     const file = form.get("file") ?? form.get("photo") ?? form.get("image");
     if (!(file instanceof File)) {
-      return { ok: false, message: "multipart field 'file' is required." };
+      return {
+        ok: false,
+        message:
+          "multipart field 'file' is required. Image uploads use PUT, not POST.",
+      };
     }
     return {
       ok: true,
@@ -23,16 +28,25 @@ export async function parseImageBody(req: NextRequest): Promise<ParsedImage> {
 
   const parsed = await parseJsonBody<{
     image_base64?: string;
+    image_url?: string;
     content_type?: string;
   }>(req);
   if (!parsed.ok) return { ok: false, message: parsed.message };
+
+  if (parsed.data.image_url) {
+    return fetchRemoteImage(String(parsed.data.image_url));
+  }
 
   const raw = String(parsed.data.image_base64 ?? "").replace(
     /^data:[^;]+;base64,/,
     "",
   );
   if (!raw) {
-    return { ok: false, message: "image_base64 is required for JSON uploads." };
+    return {
+      ok: false,
+      message:
+        "Provide image_base64 or image_url. Image uploads use PUT, not POST.",
+    };
   }
 
   return {

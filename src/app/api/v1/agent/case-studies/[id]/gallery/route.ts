@@ -4,7 +4,7 @@
 import type { NextRequest } from "next/server";
 import { parseImageBody } from "@/features/agent-api/parse-image";
 import { withAgentAuth } from "@/features/agent-api/handler";
-import { agentOptions } from "@/features/agent-api/http";
+import { agentMethodNotAllowed, agentOptions } from "@/features/agent-api/http";
 import {
   addCaseStudyGalleryCore,
   removeCaseStudyGalleryCore,
@@ -13,8 +13,15 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 type Ctx = { params: Promise<{ id: string }> };
 
+const UPLOAD_HINT =
+  "Use PUT with image_base64, image_url, or multipart file field 'file'. DELETE removes ?url=..." ;
+
 export function OPTIONS() {
   return agentOptions();
+}
+
+export function POST() {
+  return agentMethodNotAllowed("PUT, DELETE, OPTIONS", UPLOAD_HINT);
 }
 
 export async function PUT(request: NextRequest, { params }: Ctx) {

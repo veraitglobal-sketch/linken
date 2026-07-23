@@ -54,6 +54,8 @@ export type AgentCompanyResponse = {
   city: string;
   country: string;
   website: string;
+  logo_url: string | null;
+  cover_image_url: string | null;
   linkedin_url: string | null;
   facebook_url: string | null;
   services: string[];

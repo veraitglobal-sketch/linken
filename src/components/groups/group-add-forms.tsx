@@ -100,7 +100,7 @@ export function GroupAddForms({ groupId, confirmed, backPath }: Props) {
               />
             </Field>
             <p className="text-[12px] text-muted">
-              Find the slug on their public profile URL: linken…/c/
+              Find the slug on their public profile URL: hansala.com/c/
               <span className="font-semibold text-ink">slug</span>
             </p>
             <Field label="Parent in the tree (optional)">

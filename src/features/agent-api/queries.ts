@@ -19,7 +19,7 @@ export async function getAgentCompany(
   const { data: company } = await admin
     .from("companies")
     .select(
-      "id, slug, name, tagline, description, category, city, country, website, linkedin_url, facebook_url, services, verified, accepting_clients, claimed",
+      "id, slug, name, tagline, description, category, city, country, website, logo_url, cover_image_url, linkedin_url, facebook_url, services, verified, accepting_clients, claimed",
     )
     .eq("id", companyId)
     .maybeSingle();
@@ -45,6 +45,8 @@ export async function getAgentCompany(
     city: (company.city as string) ?? "",
     country: (company.country as string) ?? "",
     website: (company.website as string) ?? "",
+    logo_url: (company.logo_url as string | null) ?? null,
+    cover_image_url: (company.cover_image_url as string | null) ?? null,
     linkedin_url: (company.linkedin_url as string | null) ?? null,
     facebook_url: (company.facebook_url as string | null) ?? null,
     services: (company.services as string[]) ?? [],

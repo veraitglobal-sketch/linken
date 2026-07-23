@@ -1,17 +1,15 @@
 /**
- * Agent API — case study cover upload/clear.
+ * Agent API — company cover upload/clear.
  */
 import type { NextRequest } from "next/server";
 import { parseImageBody } from "@/features/agent-api/parse-image";
 import { withAgentAuth } from "@/features/agent-api/handler";
 import { agentMethodNotAllowed, agentOptions } from "@/features/agent-api/http";
 import {
-  clearCaseStudyCoverCore,
-  uploadCaseStudyCoverCore,
-} from "@/features/case-studies/media-core";
+  clearCompanyCoverCore,
+  uploadCompanyCoverCore,
+} from "@/features/company/cover-core";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-type Ctx = { params: Promise<{ id: string }> };
 
 const UPLOAD_HINT =
   "Use PUT with image_base64, image_url, or multipart file field 'file'. DELETE clears the cover.";
@@ -24,8 +22,7 @@ export function POST() {
   return agentMethodNotAllowed("PUT, DELETE, OPTIONS", UPLOAD_HINT);
 }
 
-export async function PUT(request: NextRequest, { params }: Ctx) {
-  const { id } = await params;
+export async function PUT(request: NextRequest) {
   return withAgentAuth(request, "content:write", async (req, ctx) => {
     const admin = createAdminClient();
     if (!admin) {
@@ -40,29 +37,22 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       return {
         status: 422,
         body: { error: { code: "invalid_request", message: image.message } },
-        auditAction: "case_study.cover.upload",
+        auditAction: "company.cover.upload",
         auditSummary: image.message,
       };
     }
 
-    const result = await uploadCaseStudyCoverCore(admin, {
+    const result = await uploadCompanyCoverCore(admin, {
       companyId: ctx.companyId,
-      caseStudyId: id,
       bytes: image.bytes,
       contentType: image.contentType,
     });
 
     if (!result.ok) {
-      const status = result.error === "Case study not found." ? 404 : 422;
       return {
-        status,
-        body: {
-          error: {
-            code: status === 404 ? "not_found" : "invalid_request",
-            message: result.error,
-          },
-        },
-        auditAction: "case_study.cover.upload",
+        status: 422,
+        body: { error: { code: "invalid_request", message: result.error } },
+        auditAction: "company.cover.upload",
         auditSummary: result.error,
       };
     }
@@ -70,15 +60,14 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
     return {
       status: 200,
       body: { data: result.data },
-      auditAction: "case_study.cover.upload",
-      auditSummary: `Cover uploaded for ${id}`,
+      auditAction: "company.cover.upload",
+      auditSummary: "Uploaded company cover",
     };
   });
 }
 
-export async function DELETE(request: NextRequest, { params }: Ctx) {
-  const { id } = await params;
-  return withAgentAuth(request, "content:write", async (_req, ctx) => {
+export async function DELETE(_request: NextRequest) {
+  return withAgentAuth(_request, "content:write", async (_req, ctx) => {
     const admin = createAdminClient();
     if (!admin) {
       return {
@@ -87,12 +76,12 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
       };
     }
 
-    const result = await clearCaseStudyCoverCore(admin, ctx.companyId, id);
+    const result = await clearCompanyCoverCore(admin, ctx.companyId);
     if (!result.ok) {
       return {
-        status: 404,
-        body: { error: { code: "not_found", message: result.error } },
-        auditAction: "case_study.cover.clear",
+        status: 422,
+        body: { error: { code: "invalid_request", message: result.error } },
+        auditAction: "company.cover.clear",
         auditSummary: result.error,
       };
     }
@@ -100,8 +89,8 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
     return {
       status: 200,
       body: { data: result.data },
-      auditAction: "case_study.cover.clear",
-      auditSummary: `Cover cleared for ${id}`,
+      auditAction: "company.cover.clear",
+      auditSummary: "Cleared company cover",
     };
   });
 }

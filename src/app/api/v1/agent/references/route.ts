@@ -10,7 +10,12 @@ import {
   getCompanyMetaForAgent,
   listAgentReferences,
 } from "@/features/agent-api/queries";
-import { createReferenceCore } from "@/features/references/core";
+import {
+  normalizeReferenceCreateBody,
+  REFERENCE_REQUIRED_FIELDS,
+  type ReferenceCreateJson,
+} from "@/features/agent-api/reference-body";
+import { createReferenceCore, inviteReferenceCore } from "@/features/references/core";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export function OPTIONS() {
@@ -79,13 +84,7 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    const parsed = await parseJsonBody<{
-      client_name?: string;
-      service?: string;
-      started_year?: string;
-      ongoing?: boolean;
-      ended_year?: string;
-    }>(req);
+    const parsed = await parseJsonBody<ReferenceCreateJson>(req);
 
     if (!parsed.ok) {
       return {
@@ -98,18 +97,32 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    const body = parsed.data;
+    const normalized = normalizeReferenceCreateBody(parsed.data);
+    if (!normalized.clientName || !normalized.service || !normalized.startedYear) {
+      return {
+        status: 422,
+        body: {
+          error: {
+            code: "invalid_request",
+            message: `Required fields: ${REFERENCE_REQUIRED_FIELDS}.`,
+          },
+        },
+        auditAction: "reference.create",
+        auditSummary: "Missing required reference fields",
+      };
+    }
+
     const result = await createReferenceCore(admin, {
       companyId: ctx.companyId,
       companyName: meta.name,
-      clientName: String(body.client_name ?? ""),
-      service: String(body.service ?? ""),
-      startedYear: String(body.started_year ?? ""),
-      ongoing: body.ongoing !== false,
-      endedYear: body.ended_year ?? null,
-      // Invites require invites:send — never send email from content:write
+      clientName: normalized.clientName,
+      service: normalized.service,
+      startedYear: normalized.startedYear,
+      ongoing: normalized.ongoing,
+      endedYear: normalized.endedYear,
       inviteEmail: null,
       createGhost: false,
+      website: normalized.website,
     });
 
     if (!result.ok) {
@@ -123,11 +136,44 @@ export async function POST(request: NextRequest) {
       };
     }
 
+    let invited = false;
+    let inviteSkipped: string | undefined;
+    if (normalized.inviteEmail) {
+      if (!ctx.scopes.includes("invites:send")) {
+        inviteSkipped =
+          "invite_email ignored — key needs invites:send scope. Use POST /references/{id}/invite.";
+      } else {
+        const invite = await inviteReferenceCore(admin, {
+          companyId: ctx.companyId,
+          companyName: meta.name,
+          referenceId: result.data.id,
+          email: normalized.inviteEmail,
+        });
+        if (!invite.ok) {
+          return {
+            status: 422,
+            body: {
+              error: { code: "invalid_request", message: invite.error },
+            },
+            auditAction: "reference.create",
+            auditSummary: invite.error,
+          };
+        }
+        invited = true;
+      }
+    }
+
     return {
       status: 201,
-      body: { data: { id: result.data.id } },
+      body: {
+        data: {
+          id: result.data.id,
+          ...(invited ? { invited: true } : {}),
+          ...(inviteSkipped ? { invite_skipped: inviteSkipped } : {}),
+        },
+      },
       auditAction: "reference.create",
-      auditSummary: `Added reference: ${String(body.service ?? "")} for ${String(body.client_name ?? "")}`,
+      auditSummary: `Added reference: ${normalized.service} for ${normalized.clientName}`,
     };
   });
 }
