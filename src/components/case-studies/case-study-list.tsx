@@ -23,8 +23,8 @@ export function CaseStudyList({
             Case studies
           </p>
           <h2 className="mt-2 font-display text-[clamp(1.55rem,2.5vw,1.95rem)] font-medium tracking-[-0.035em] text-ink">
-            Delivered with
-            <span className="text-ink/35"> confirmed clients.</span>
+            Work worth showing —
+            <span className="text-ink/35"> confirmed by clients.</span>
           </h2>
         </div>
         {editable ? (

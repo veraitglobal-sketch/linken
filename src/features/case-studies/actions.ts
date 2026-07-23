@@ -6,6 +6,7 @@ import {
   createCaseStudyCore,
   requestClientConfirmationCore,
   tagCaseStudyPartnerCore,
+  updateCaseStudyCore,
 } from "@/features/case-studies/core";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { requireOwnedActiveCompany } from "@/features/workspace/require-owned";
@@ -18,6 +19,15 @@ import { createClient } from "@/lib/supabase/server";
 export async function createCaseStudyWithConfirm(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   const summary = String(formData.get("summary") ?? "").trim();
+  const challenge = String(formData.get("challenge") ?? "").trim();
+  const outcome = String(formData.get("outcome") ?? "").trim();
+  const process = String(formData.get("process") ?? "").trim();
+  const location = String(formData.get("location") ?? "").trim();
+  const year = String(formData.get("year") ?? "").trim();
+  const servicesRaw = String(formData.get("services") ?? "").trim();
+  const services = servicesRaw
+    ? servicesRaw.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const partnerSlug = String(formData.get("partner_slug") ?? "")
     .trim()
@@ -52,6 +62,12 @@ export async function createCaseStudyWithConfirm(formData: FormData) {
     companyId: company.id,
     title,
     summary,
+    challenge,
+    outcome,
+    process,
+    location,
+    year: year || new Date().getFullYear().toString(),
+    services,
   });
 
   if (!created.ok) {
@@ -79,18 +95,69 @@ export async function createCaseStudyWithConfirm(formData: FormData) {
   revalidatePath(`/c/${company.slug}`);
   revalidatePath(`/c/${company.slug}/case-studies/${created.data.slug}`);
 
-  if (!confirm.ok) {
-    redirect(
-      withBackQuery(back, {
-        error: `Case created, but email failed: ${confirm.error}`,
-        created: created.data.slug,
-      }),
-    );
+  redirect(
+    withBackQuery(`/dashboard/cases/${created.data.slug}`, {
+      created: created.data.slug,
+      ...(confirm.ok ? { sent: "1" } : { error: `Case created, but email failed: ${confirm.error}` }),
+    }),
+  );
+}
+
+function parseServices(raw: string) {
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+export async function updateCaseStudyContent(formData: FormData) {
+  const caseSlug = String(formData.get("case_slug") ?? "").trim();
+  const back = safeAppBack(
+    String(formData.get("back") ?? `/dashboard/cases/${caseSlug}`),
+    `/dashboard/cases/${caseSlug}`,
+  );
+  const companySlugField = String(formData.get("company_slug") ?? "").trim();
+
+  const { supabase, company } = companySlugField
+    ? await requireOperatorForCompanySlug({
+        slug: companySlugField,
+        loginNext: back,
+      })
+    : await requireOwnedActiveCompany({ loginNext: back });
+
+  const { data: existing } = await supabase
+    .from("case_studies")
+    .select("id")
+    .eq("company_id", company.id)
+    .eq("slug", caseSlug)
+    .maybeSingle();
+
+  if (!existing) {
+    redirect(withBackQuery(back, { error: "Case study not found." }));
   }
 
-  redirect(
-    withBackQuery(back, { sent: "1", created: created.data.slug }),
-  );
+  const result = await updateCaseStudyCore(supabase, {
+    companyId: company.id,
+    caseStudyId: existing.id as string,
+    title: String(formData.get("title") ?? "").trim(),
+    summary: String(formData.get("summary") ?? "").trim(),
+    challenge: String(formData.get("challenge") ?? "").trim(),
+    outcome: String(formData.get("outcome") ?? "").trim(),
+    process: String(formData.get("process") ?? "").trim(),
+    location: String(formData.get("location") ?? "").trim(),
+    year: String(formData.get("year") ?? "").trim(),
+    services: parseServices(String(formData.get("services") ?? "")),
+  });
+
+  if (!result.ok) {
+    redirect(withBackQuery(back, { error: result.error }));
+  }
+
+  revalidatePath(back);
+  revalidatePath("/dashboard/cases");
+  revalidatePath(`/c/${company.slug}`);
+  revalidatePath(`/c/${company.slug}/case-studies/${caseSlug}`);
+  redirect(withBackQuery(back, { saved: "1" }));
 }
 
 export async function requestClientConfirmation(formData: FormData) {

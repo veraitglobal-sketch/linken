@@ -101,7 +101,23 @@ export async function getCompanyForPage(slug: string): Promise<Company | null> {
   }
 }
 
-export async function searchCompanies(query: string): Promise<Company[]> {
+export type SearchFilters = {
+  verifiedOnly?: boolean;
+  hasPartners?: boolean;
+  hasCaseStudies?: boolean;
+};
+
+/** Verified + claimed profiles first, then claimed, then unclaimed drafts. */
+function claimRank(company: Company): number {
+  if (company.claimed && company.verified) return 0;
+  if (company.claimed) return 1;
+  return 2;
+}
+
+export async function searchCompanies(
+  query: string,
+  filters: SearchFilters = {},
+): Promise<Company[]> {
   const q = query.trim().toLowerCase();
 
   try {
@@ -112,7 +128,11 @@ export async function searchCompanies(query: string): Promise<Company[]> {
         "id, slug, name, tagline, description, category, city, country, website, logo_url, linkedin_url, facebook_url, services, verified, claimed, accepting_clients, plan",
       )
       .order("name")
-      .limit(40);
+      .limit(60);
+
+    if (filters.verifiedOnly) {
+      req = req.eq("verified", true).eq("claimed", true);
+    }
 
     if (q) {
       // Include slug so dashboard partner search works with public URLs / slugs.
@@ -126,9 +146,60 @@ export async function searchCompanies(query: string): Promise<Company[]> {
       console.error("[searchCompanies]", error.message);
       return [];
     }
-    return (data ?? []).map((row) =>
+
+    let companies = (data ?? []).map((row) =>
       mapRow({ ...row, invite_email: null, created_by: null }),
     );
+
+    const ids = companies.map((c) => c.id);
+    if (ids.length) {
+      const [asRequester, asRecipient, caseRows] = await Promise.all([
+        supabase
+          .from("partnerships")
+          .select("requester_id")
+          .eq("status", "accepted")
+          .in("requester_id", ids),
+        supabase
+          .from("partnerships")
+          .select("recipient_id")
+          .eq("status", "accepted")
+          .in("recipient_id", ids),
+        supabase.from("case_studies").select("company_id").in("company_id", ids),
+      ]);
+
+      const partnerCounts = new Map<string, number>();
+      const bump = (map: Map<string, number>, id: string | null) => {
+        if (!id) return;
+        map.set(id, (map.get(id) ?? 0) + 1);
+      };
+      for (const row of asRequester.data ?? []) {
+        bump(partnerCounts, row.requester_id as string);
+      }
+      for (const row of asRecipient.data ?? []) {
+        bump(partnerCounts, row.recipient_id as string);
+      }
+      const caseCounts = new Map<string, number>();
+      for (const row of caseRows.data ?? []) {
+        bump(caseCounts, row.company_id as string);
+      }
+
+      companies = companies.map((c) => ({
+        ...c,
+        confirmedPartnerCount: partnerCounts.get(c.id) ?? 0,
+        caseStudyCount: caseCounts.get(c.id) ?? 0,
+      }));
+    }
+
+    if (filters.hasPartners) {
+      companies = companies.filter((c) => (c.confirmedPartnerCount ?? 0) > 0);
+    }
+    if (filters.hasCaseStudies) {
+      companies = companies.filter((c) => (c.caseStudyCount ?? 0) > 0);
+    }
+
+    companies.sort((a, b) => claimRank(a) - claimRank(b));
+
+    return companies.slice(0, 40);
   } catch (err) {
     console.error("[searchCompanies]", err);
     return [];

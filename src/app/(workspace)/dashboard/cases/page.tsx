@@ -52,7 +52,7 @@ export default async function DashboardCasesPage({ searchParams }: Props) {
   return (
     <WorkspacePage
       title="Case studies"
-      description="Create a project story and email the client for confirmation in one step. It appears on Company after you save."
+      description="Portfolio pieces with verified client confirmation — cover photo, gallery, and full story."
       action={
         <Link
           href={`/c/${company.slug}#case-studies`}
@@ -70,12 +70,12 @@ export default async function DashboardCasesPage({ searchParams }: Props) {
         ) : null}
         {sent === "1" && created ? (
           <p className="rounded-2xl border border-line bg-surface px-4 py-3 text-[13px] text-ink">
-            Case created and confirmation email sent.{" "}
+            Case created. Add cover and gallery photos next.{" "}
             <Link
-              href={`/c/${company.slug}/case-studies/${created}`}
+              href={`/dashboard/cases/${created}`}
               className="font-semibold underline-offset-2 hover:underline"
             >
-              View case
+              Open editor →
             </Link>
           </p>
         ) : null}
@@ -86,7 +86,7 @@ export default async function DashboardCasesPage({ searchParams }: Props) {
               New case study
             </h2>
             <p className="mt-1 text-[12px] text-muted">
-              One form — create + ask the client to confirm by email.
+              Write the story first — then upload photos on the edit page.
             </p>
           </header>
           <CaseStudyCreateForm companySlug={company.slug} />
@@ -95,7 +95,7 @@ export default async function DashboardCasesPage({ searchParams }: Props) {
         <section>
           <header className="mb-3">
             <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
-              On your Company page
+              Your portfolio
             </h2>
           </header>
           <WorkspaceCard padded={false}>
@@ -108,14 +108,14 @@ export default async function DashboardCasesPage({ searchParams }: Props) {
                 {cases.map((c) => (
                   <li key={c.id}>
                     <Link
-                      href={`/c/${company.slug}/case-studies/${c.slug}`}
+                      href={`/dashboard/cases/${c.slug}`}
                       className="flex items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-paper"
                     >
                       <span className="min-w-0 truncate text-[13px] font-semibold text-ink">
                         {c.title}
                       </span>
                       <span className="shrink-0 text-[12px] text-muted">
-                        Open →
+                        Edit →
                       </span>
                     </Link>
                   </li>

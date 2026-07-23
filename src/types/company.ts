@@ -29,4 +29,7 @@ export type Company = {
   inviteEmail?: string | null;
   createdBySlug?: string | null;
   createdByName?: string | null;
+  /** Directory search annotations — only set by searchCompanies. */
+  confirmedPartnerCount?: number;
+  caseStudyCount?: number;
 };

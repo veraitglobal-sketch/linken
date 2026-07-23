@@ -1,23 +1,23 @@
 import type { ReactNode } from "react";
 
-type IndustryKey = "architecture" | "construction" | "electrical";
+type IndustryKey = "services" | "technology" | "trades";
 
 const PATHS: Record<IndustryKey, ReactNode> = {
-  architecture: (
+  services: (
     <>
-      <path d="M4 19h16" />
-      <path d="M6.5 19V9.5L12 5l5.5 4.5V19" />
-      <path d="M12 19v-6" />
+      <path d="M4 8h16v11H4Z" />
+      <path d="M9 8V6a3 3 0 0 1 3-3v0a3 3 0 0 1 3 3v2" />
     </>
   ),
-  construction: (
+  technology: (
     <>
-      <path d="M12 4 8.4 18.5h7.2L12 4Z" />
-      <path d="M9.7 12.8h4.6" />
-      <path d="M6.8 19h10.4" />
+      <path d="m8 8-4 4 4 4" />
+      <path d="m16 8 4 4-4 4" />
     </>
   ),
-  electrical: <path d="M12.5 3 6 13h4.6l-1.1 8L17 11h-4.6l1.1-8Z" />,
+  trades: (
+    <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6Z" />
+  ),
 };
 
 type Props = {

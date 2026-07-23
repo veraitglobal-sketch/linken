@@ -4,9 +4,9 @@ import { IndustryMark } from "@/components/marketing/industry-mark";
 import { NetworkMark } from "@/components/marketing/network-mark";
 
 const INDUSTRIES = [
-  { key: "architecture", label: "Architecture" },
-  { key: "construction", label: "Construction" },
-  { key: "electrical", label: "Electrical" },
+  { key: "services", label: "Professional services" },
+  { key: "technology", label: "Technology" },
+  { key: "trades", label: "Trades & field services" },
 ] as const;
 
 export function HomeHero() {

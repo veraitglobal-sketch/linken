@@ -1,4 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import {
+  CASE_STUDY_SELECT,
+  mapCaseStudyRow,
+} from "@/lib/case-study-row";
 import { loadClientConfirmationsForCases } from "@/features/case-studies/load-client-confirmations";
 import { loadPartnersForCases } from "@/features/case-studies/load-partners";
 import type { CaseStudy } from "@/types/case-study";
@@ -53,9 +57,7 @@ export async function getCaseStudiesForCompany(
     const supabase = await createClient();
     const { data: cases, error } = await supabase
       .from("case_studies")
-      .select(
-        "id, slug, title, summary, challenge, outcome, location, year, services",
-      )
+      .select(CASE_STUDY_SELECT)
       .eq("company_id", companyId)
       .order("year", { ascending: false });
 
@@ -71,19 +73,13 @@ export async function getCaseStudiesForCompany(
       loadClientConfirmationsForCases(ids),
     ]);
 
-    return cases.map((c) => ({
-      id: c.id as string,
-      slug: c.slug as string,
-      title: c.title as string,
-      summary: (c.summary as string) ?? "",
-      challenge: (c.challenge as string) ?? "",
-      outcome: (c.outcome as string) ?? "",
-      location: (c.location as string) ?? "",
-      year: (c.year as string) ?? "",
-      services: (c.services as string[]) ?? [],
-      partners: partnersByCase.get(c.id as string) ?? [],
-      clientConfirmation: confirmByCase.get(c.id as string) ?? null,
-    }));
+    return cases.map((c) =>
+      mapCaseStudyRow(
+        c,
+        partnersByCase.get(c.id as string) ?? [],
+        confirmByCase.get(c.id as string) ?? null,
+      ),
+    );
   } catch (err) {
     console.error("[getCaseStudiesForCompany]", err);
     return [];
@@ -112,9 +108,7 @@ export async function getCaseStudyForPage(
 
     const { data: cs, error } = await supabase
       .from("case_studies")
-      .select(
-        "id, slug, title, summary, challenge, outcome, location, year, services",
-      )
+      .select(CASE_STUDY_SELECT)
       .eq("company_id", company.id)
       .eq("slug", caseSlug)
       .maybeSingle();
@@ -130,21 +124,45 @@ export async function getCaseStudyForPage(
       loadClientConfirmationsForCases([cs.id as string]),
     ]);
 
-    return {
-      id: cs.id as string,
-      slug: cs.slug as string,
-      title: cs.title as string,
-      summary: (cs.summary as string) ?? "",
-      challenge: (cs.challenge as string) ?? "",
-      outcome: (cs.outcome as string) ?? "",
-      location: (cs.location as string) ?? "",
-      year: (cs.year as string) ?? "",
-      services: (cs.services as string[]) ?? [],
-      partners: partnersByCase.get(cs.id as string) ?? [],
-      clientConfirmation: confirmByCase.get(cs.id as string) ?? null,
-    };
+    return mapCaseStudyRow(
+      cs,
+      partnersByCase.get(cs.id as string) ?? [],
+      confirmByCase.get(cs.id as string) ?? null,
+    );
   } catch (err) {
     console.error("[getCaseStudyForPage]", err);
+    return null;
+  }
+}
+
+export async function getCaseStudyForDashboard(
+  companyId: string,
+  caseSlug: string,
+): Promise<CaseStudy | null> {
+  if (!companyId || !caseSlug) return null;
+
+  try {
+    const supabase = await createClient();
+    const { data: cs, error } = await supabase
+      .from("case_studies")
+      .select(CASE_STUDY_SELECT)
+      .eq("company_id", companyId)
+      .eq("slug", caseSlug)
+      .maybeSingle();
+
+    if (error || !cs) return null;
+
+    const [partnersByCase, confirmByCase] = await Promise.all([
+      loadPartnersForCases([cs.id as string]),
+      loadClientConfirmationsForCases([cs.id as string]),
+    ]);
+
+    return mapCaseStudyRow(
+      cs,
+      partnersByCase.get(cs.id as string) ?? [],
+      confirmByCase.get(cs.id as string) ?? null,
+    );
+  } catch {
     return null;
   }
 }

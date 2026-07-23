@@ -36,6 +36,7 @@ export type CreateCaseStudyInput = {
   summary: string;
   challenge?: string;
   outcome?: string;
+  process?: string;
   location?: string;
   year?: string;
   services?: string[];
@@ -61,6 +62,7 @@ export async function createCaseStudyCore(
       summary,
       challenge: (input.challenge ?? "").trim(),
       outcome: (input.outcome ?? "").trim(),
+      process: (input.process ?? "").trim(),
       location: (input.location ?? "").trim(),
       year: (input.year ?? "").trim(),
       services: Array.isArray(input.services)
@@ -89,6 +91,7 @@ export type UpdateCaseStudyInput = {
   summary?: string;
   challenge?: string;
   outcome?: string;
+  process?: string;
   location?: string;
   year?: string;
   services?: string[];
@@ -119,6 +122,7 @@ export async function updateCaseStudyCore(
   if (input.summary !== undefined) patch.summary = input.summary.trim();
   if (input.challenge !== undefined) patch.challenge = input.challenge.trim();
   if (input.outcome !== undefined) patch.outcome = input.outcome.trim();
+  if (input.process !== undefined) patch.process = input.process.trim();
   if (input.location !== undefined) patch.location = input.location.trim();
   if (input.year !== undefined) patch.year = input.year.trim();
   if (input.services !== undefined) {
