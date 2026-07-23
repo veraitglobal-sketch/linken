@@ -1,25 +1,18 @@
 import type { ReactNode } from "react";
 import { EmbedAssessment } from "@/components/embed/embed-assessment";
-import { EmbedBadge } from "@/components/embed/embed-badge";
-import type { EmbedProofCompany } from "@/components/embed/embed-brand";
-import { EmbedCompact } from "@/components/embed/embed-compact";
 import { EmbedCredentials } from "@/components/embed/embed-credentials";
-import {
-  EmbedLogoWall,
-  EmbedLogoWallProFallback,
-} from "@/components/embed/embed-logo-wall";
-import { EmbedNetworkCard } from "@/components/embed/embed-network-card";
-import { EmbedProofPanel } from "@/components/embed/embed-proof-panel";
+import { EmbedHorizontal } from "@/components/embed/embed-horizontal";
+import { EmbedMicro } from "@/components/embed/embed-micro";
 import { EmbedReferences } from "@/components/embed/embed-references";
+import { EmbedScoreBar } from "@/components/embed/embed-score-bar";
 import { EmbedSignatureSeal } from "@/components/embed/embed-signature-seal";
+import { EmbedStarter } from "@/components/embed/embed-starter";
 import { EmbedTrustCard } from "@/components/embed/embed-trust-card";
 import { EmbedVerified } from "@/components/embed/embed-verified";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 import type { ClientAssessmentSummary } from "@/features/assessments/queries";
-import type { Company } from "@/types/company";
 import type { TrustProfile } from "@/features/trust/queries";
-import type { LogoWallEntry } from "@/features/widgets/logo-wall";
-import type { LogoMotion, LogoSize } from "@/features/widgets/logo-motion";
+import type { Company } from "@/types/company";
 
 type ReferenceRow = {
   clientName: string;
@@ -27,8 +20,6 @@ type ReferenceRow = {
   startedYear: string;
   endedYear: string | null;
   ongoing: boolean;
-  clientLogoUrl?: string | null;
-  clientWebsite?: string | null;
 };
 
 export type EmbedRenderInput = {
@@ -36,20 +27,11 @@ export type EmbedRenderInput = {
   company: Company;
   theme: EmbedTheme;
   profileUrl: string;
-  siteUrl: string;
   claimed: boolean;
-  isPreview: boolean;
-  canLogoWall: boolean;
   trust: TrustProfile;
   assessment: ClientAssessmentSummary;
   confirmedRefs: ReferenceRow[];
-  proofCompanies: EmbedProofCompany[];
   confirmedCount: number;
-  wallEntries: LogoWallEntry[];
-  logoWallLabel: string | null;
-  logoMono: boolean;
-  logoMotion: LogoMotion;
-  logoSize: LogoSize;
 };
 
 function periodLabel(ref: ReferenceRow) {
@@ -67,153 +49,75 @@ function initialsFrom(name: string) {
     .toUpperCase();
 }
 
+/** Legacy embed params map to logo-free widgets. */
+function normalizeVariant(raw: string): string {
+  const map: Record<string, string> = {
+    compact: "micro",
+    badge: "horizontal",
+    "proof-panel": "horizontal",
+    "network-card": "score",
+    "logo-wall": "starter",
+  };
+  return map[raw] ?? raw;
+}
+
 export function renderEmbedVariant(input: EmbedRenderInput): ReactNode {
+  const variant = normalizeVariant(input.variant);
   const {
-    variant,
     company,
     theme,
     profileUrl,
-    siteUrl,
     claimed,
-    isPreview,
-    canLogoWall,
     trust,
     assessment,
     confirmedRefs,
-    proofCompanies,
     confirmedCount,
-    wallEntries,
-    logoWallLabel,
-    logoMono,
-    logoMotion,
-    logoSize,
   } = input;
+
+  const base = {
+    name: company.name,
+    verified: company.verified,
+    level: trust.level,
+    confirmedCount,
+    profileUrl,
+    theme,
+  };
 
   if (variant === "verified") {
     return <EmbedVerified profileUrl={profileUrl} theme={theme} />;
   }
 
-  if (variant === "logo-wall") {
-    if (!canLogoWall) {
-      return (
-        <EmbedLogoWallProFallback
-          name={company.name}
-          initials={company.logoInitials}
-          logoUrl={company.logoUrl}
-          website={company.website}
-          verified={company.verified}
-          profileUrl={profileUrl}
-          theme={theme}
-        />
-      );
-    }
-    if (wallEntries.length === 0) {
-      return (
-        <EmbedCompact
-          name={company.name}
-          verified={company.verified}
-          claimed={claimed}
-          confirmedCount={confirmedCount}
-          profileUrl={profileUrl}
-          theme={theme}
-        />
-      );
-    }
-    return (
-      <EmbedLogoWall
-        ownerName={company.name}
-        ownerProfileUrl={profileUrl}
-        entries={wallEntries}
-        label={logoWallLabel}
-        theme={theme}
-        mono={logoMono}
-        motion={logoMotion}
-        size={logoSize}
-        siteUrl={siteUrl}
-      />
-    );
-  }
-
   if (!claimed) {
-    if (variant === "compact") {
-      return (
-        <EmbedCompact
-          name={company.name}
-          verified={false}
-          claimed={false}
-          confirmedCount={0}
-          profileUrl={profileUrl}
-          theme={theme}
-        />
-      );
-    }
     return (
-      <EmbedBadge
-        name={company.name}
-        initials={company.logoInitials}
-        logoUrl={company.logoUrl}
-        website={company.website}
-        verified={false}
+      <EmbedMicro
+        {...base}
         claimed={false}
-        confirmedCount={0}
-        profileUrl={profileUrl}
-        theme={theme}
+        verified={false}
       />
     );
   }
 
-  if (variant === "compact") {
-    return (
-      <EmbedCompact
-        name={company.name}
-        verified={company.verified}
-        claimed
-        confirmedCount={confirmedCount}
-        proofCompanies={proofCompanies}
-        profileUrl={profileUrl}
-        theme={theme}
-      />
-    );
+  if (variant === "micro") {
+    return <EmbedMicro {...base} claimed />;
   }
 
-  if (variant === "proof-panel") {
-    return (
-      <EmbedProofPanel
-        name={company.name}
-        initials={company.logoInitials}
-        logoUrl={company.logoUrl}
-        website={company.website}
-        verified={company.verified}
-        confirmedCount={confirmedCount}
-        proofCompanies={proofCompanies}
-        profileUrl={profileUrl}
-        theme={theme}
-      />
-    );
+  if (variant === "horizontal") {
+    return <EmbedHorizontal {...base} />;
+  }
+
+  if (variant === "starter") {
+    return <EmbedStarter {...base} />;
+  }
+
+  if (variant === "score") {
+    return <EmbedScoreBar {...base} />;
   }
 
   if (variant === "trust-card") {
     return (
       <EmbedTrustCard
-        name={company.name}
-        level={trust.level}
+        {...base}
         breakdown={trust.breakdown}
-        confirmedCount={confirmedCount}
-        proofCompanies={proofCompanies}
-        profileUrl={profileUrl}
-        theme={theme}
-      />
-    );
-  }
-
-  if (variant === "network-card") {
-    return (
-      <EmbedNetworkCard
-        name={company.name}
-        confirmedCount={confirmedCount}
-        proofCompanies={proofCompanies}
-        profileUrl={profileUrl}
-        theme={theme}
       />
     );
   }
@@ -231,16 +135,7 @@ export function renderEmbedVariant(input: EmbedRenderInput): ReactNode {
   }
 
   if (variant === "signature") {
-    return (
-      <EmbedSignatureSeal
-        name={company.name}
-        level={trust.level}
-        confirmedCount={confirmedCount}
-        verified={company.verified}
-        profileUrl={profileUrl}
-        theme={theme}
-      />
-    );
+    return <EmbedSignatureSeal {...base} />;
   }
 
   if (variant === "assessment" && assessment.wouldWorkAgainTotal >= 3) {
@@ -251,7 +146,7 @@ export function renderEmbedVariant(input: EmbedRenderInput): ReactNode {
         wouldTotal={assessment.wouldWorkAgainTotal}
         topStrengths={assessment.topStrengths.slice(0, 3)}
         confirmedCount={confirmedCount}
-        proofCompanies={proofCompanies}
+        verified={company.verified}
         profileUrl={profileUrl}
         theme={theme}
       />
@@ -269,8 +164,6 @@ export function renderEmbedVariant(input: EmbedRenderInput): ReactNode {
           period: periodLabel(r),
           ongoing: r.ongoing,
           initials: initialsFrom(r.clientName),
-          logoUrl: r.clientLogoUrl,
-          website: r.clientWebsite,
         }))}
         profileUrl={profileUrl}
         theme={theme}
@@ -278,26 +171,14 @@ export function renderEmbedVariant(input: EmbedRenderInput): ReactNode {
     );
   }
 
-  return (
-    <EmbedBadge
-      name={company.name}
-      initials={company.logoInitials}
-      logoUrl={company.logoUrl}
-      website={company.website}
-      verified={company.verified}
-      claimed
-      confirmedCount={confirmedCount}
-      proofCompanies={proofCompanies}
-      profileUrl={profileUrl}
-      theme={theme}
-    />
-  );
+  return <EmbedHorizontal {...base} />;
 }
 
 export function embedWrapCenter(variant: string): boolean {
-  return variant === "verified" || variant === "compact" || variant === "signature";
+  const v = normalizeVariant(variant);
+  return v === "verified" || v === "signature";
 }
 
 export function embedWrapTransparent(variant: string): boolean {
-  return variant === "verified" || variant === "logo-wall";
+  return normalizeVariant(variant) === "verified";
 }

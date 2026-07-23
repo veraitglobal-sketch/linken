@@ -6,22 +6,18 @@ import {
 
 export type WidgetVariant =
   | "verified"
-  | "compact"
-  | "proof-panel"
+  | "micro"
+  | "horizontal"
+  | "starter"
+  | "score"
   | "trust-card"
-  | "network-card"
   | "credentials"
   | "signature"
-  | "badge"
   | "references"
-  | "assessment"
-  | "logo-wall";
+  | "assessment";
 
 export type WidgetTheme = "light" | "dark";
 export type WidgetSection = "essential" | "proof" | "signature";
-export type LogoWallLabel = "none" | "partners" | "clients" | "both";
-/** @deprecated kept for old embeds — ignored by clean logo wall */
-export type LogoWallDensity = "tiles+names" | "tiles";
 
 export type {
   LogoMotion,
@@ -52,50 +48,48 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "verified",
     name: "Verified",
-    description: "Clean Hansala Verified lockup — minimal footer mark.",
+    description: "Minimal Hansala Verified lockup for footers.",
     section: "essential",
     recommended: true,
     height: 44,
   },
   {
-    id: "compact",
-    name: "Compact",
-    description: "Trust bar with seal and sliding partner logos.",
+    id: "micro",
+    name: "Micro",
+    description: "Status word, proof strip, and Hansala seal — no logos.",
     section: "essential",
-    height: 48,
+    height: 52,
   },
   {
-    id: "proof-panel",
-    name: "Proof panel",
-    description: "Company card with partner slide and confirmed count.",
+    id: "horizontal",
+    name: "Horizontal",
+    description: "Full-width trust bar with level, proof strip, and count.",
+    section: "essential",
+    height: 56,
+  },
+  {
+    id: "starter",
+    name: "Starter",
+    description: "Dark premium bar — Trustpilot-style, no partner logos.",
     section: "proof",
     pro: true,
-    height: 88,
-    requirementHint: "Best with at least one confirmed relationship.",
-    unavailableCtaHref: "/dashboard/partners",
-    unavailableCtaLabel: "Confirm partners",
+    height: 96,
+  },
+  {
+    id: "score",
+    name: "TrustScore",
+    description: "Large confirmed count with proof strip and level.",
+    section: "proof",
+    pro: true,
+    height: 72,
   },
   {
     id: "trust-card",
     name: "Trust card",
-    description: "Hansala Level, evidence breakdown, and partner row.",
+    description: "Hansala Level with partners, clients, and projects.",
     section: "proof",
     pro: true,
-    height: 140,
-    requirementHint: "Earn level points via confirmed evidence.",
-    unavailableCtaHref: "/dashboard",
-    unavailableCtaLabel: "Build proof",
-  },
-  {
-    id: "network-card",
-    name: "Network card",
-    description: "Large confirmed count with overlapping partner stack.",
-    section: "proof",
-    pro: true,
-    height: 88,
-    requirementHint: "Requires at least one confirmed relationship.",
-    unavailableCtaHref: "/dashboard/partners",
-    unavailableCtaLabel: "Confirm partners",
+    height: 132,
   },
   {
     id: "credentials",
@@ -106,17 +100,9 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     height: 64,
   },
   {
-    id: "badge",
-    name: "Badge",
-    description: "Classic trust card with partner logos and seal.",
-    section: "proof",
-    pro: true,
-    height: 88,
-  },
-  {
     id: "references",
     name: "References",
-    description: "Confirmed client relationships from your profile.",
+    description: "Confirmed client list — initials only, never logos.",
     section: "proof",
     pro: true,
     height: 160,
@@ -127,7 +113,7 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "assessment",
     name: "Client assessment",
-    description: "Would-work-again score and top strengths.",
+    description: "Would-work-again score and strengths.",
     section: "proof",
     pro: true,
     height: 120,
@@ -138,35 +124,14 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "signature",
     name: "Signature seal",
-    description: "Centered premium seal with level and confirmed count.",
+    description: "Centered premium seal with level and count.",
     section: "signature",
     pro: true,
     height: 160,
   },
-  {
-    id: "logo-wall",
-    name: "Logo wall",
-    description: "Partner logos only — row, stack, fade, or grid.",
-    section: "signature",
-    pro: true,
-    height: 72,
-    requirementHint: "Requires at least one confirmed partnership or client.",
-    unavailableCtaHref: "/dashboard/partners",
-    unavailableCtaLabel: "Add partners",
-  },
 ];
 
-export function parseLogoWallDensity(raw: string | undefined): LogoWallDensity {
-  return raw === "tiles" ? "tiles" : "tiles+names";
-}
-
-export function widgetHeight(
-  variant: WidgetVariant,
-  opts?: { motion?: LogoMotion; size?: LogoSize },
-): number {
-  if (variant === "logo-wall") {
-    return logoWallHeight(opts?.motion ?? "row", opts?.size ?? "md");
-  }
+export function widgetHeight(variant: WidgetVariant): number {
   return WIDGET_CATALOG.find((w) => w.id === variant)?.height ?? 72;
 }
 
@@ -177,35 +142,16 @@ export function buildEmbedSrc(input: {
   theme: WidgetTheme;
   width?: string;
   preview?: boolean;
-  label?: LogoWallLabel;
-  mono?: boolean;
-  motion?: LogoMotion;
-  size?: LogoSize;
 }): string {
   const url = new URL(`${input.siteUrl}/embed/${input.slug}`);
-  if (input.variant !== "badge") {
+  if (input.variant !== "horizontal") {
     url.searchParams.set("variant", input.variant);
   }
   if (input.theme === "dark") {
     url.searchParams.set("theme", "dark");
   }
   if (input.width && input.width !== "100%") {
-    const w = input.width.replace(/px$/i, "");
-    url.searchParams.set("w", w);
-  }
-  if (input.variant === "logo-wall") {
-    if (input.label && input.label !== "both") {
-      url.searchParams.set("label", input.label);
-    }
-    if (input.mono === false) {
-      url.searchParams.set("mono", "0");
-    }
-    if (input.motion && input.motion !== "row") {
-      url.searchParams.set("motion", input.motion);
-    }
-    if (input.size && input.size !== "md") {
-      url.searchParams.set("size", input.size);
-    }
+    url.searchParams.set("w", input.width.replace(/px$/i, ""));
   }
   if (input.preview) {
     url.searchParams.set("preview", "1");
@@ -219,15 +165,8 @@ export function buildEmbedSnippet(input: {
   variant: WidgetVariant;
   theme: WidgetTheme;
   width: string;
-  label?: LogoWallLabel;
-  mono?: boolean;
-  motion?: LogoMotion;
-  size?: LogoSize;
 }): string {
-  const height = widgetHeight(input.variant, {
-    motion: input.motion,
-    size: input.size,
-  });
+  const height = widgetHeight(input.variant);
   const isFluid = input.width === "100%";
   const px = input.width.replace(/px$/i, "");
   const src = buildEmbedSrc({
@@ -236,10 +175,7 @@ export function buildEmbedSnippet(input: {
     variant: input.variant,
     theme: input.theme,
     width: isFluid ? undefined : px,
-    label: input.label,
-    mono: input.mono,
-    motion: input.motion,
-    size: input.size,
+    preview: false,
   });
   const widthAttr = isFluid ? "100%" : px;
   const styleWidth = isFluid ? "100%" : `${px}px`;

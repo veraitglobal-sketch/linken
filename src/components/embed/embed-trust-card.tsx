@@ -1,6 +1,5 @@
-import type { EmbedProofCompany } from "@/components/embed/embed-brand";
 import { EmbedLevelMark } from "@/components/embed/embed-level-mark";
-import { EmbedProofMarquee } from "@/components/embed/embed-proof-marquee";
+import { EmbedProofStrip } from "@/components/embed/embed-proof-strip";
 import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import {
   embedInkClass,
@@ -17,61 +16,46 @@ type Props = {
   level: TrustLevel;
   breakdown: TrustBreakdown;
   confirmedCount: number;
-  proofCompanies?: EmbedProofCompany[];
+  verified: boolean;
   profileUrl: string;
   theme?: EmbedTheme;
 };
 
-function Stat({
-  label,
-  value,
-  theme,
-}: {
-  label: string;
-  value: number;
-  theme: EmbedTheme;
-}) {
+function Stat({ label, value, theme }: { label: string; value: number; theme: EmbedTheme }) {
   return (
-    <div className="min-w-0">
-      <p
-        className={cn(
-          "font-display text-[1.25rem] font-medium leading-none tracking-[-0.03em] tabular-nums",
-          embedInkClass(theme),
-        )}
-      >
+    <div className="min-w-0 text-center">
+      <p className={cn("font-display text-[1.2rem] font-medium leading-none tabular-nums", embedInkClass(theme))}>
         {value}
       </p>
-      <p className={cn("mt-1 text-[10px] font-semibold tracking-[0.08em] uppercase", embedMutedClass(theme))}>
+      <p className={cn("mt-1 text-[9px] font-semibold tracking-[0.08em] uppercase", embedMutedClass(theme))}>
         {label}
       </p>
     </div>
   );
 }
 
-/** Pro — Hansala Level + evidence breakdown. */
+/** Pro — level + stats + proof strip. No logos. */
 export function EmbedTrustCard({
   name,
   level,
   breakdown,
   confirmedCount,
-  proofCompanies = [],
+  verified,
   profileUrl,
   theme = "light",
 }: Props) {
   const dark = theme === "dark";
+  const stripFill = confirmedCount > 0 ? Math.min(5, confirmedCount) : verified ? 5 : 0;
 
   return (
     <a
       href={profileUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn(
-        "relative block w-full px-4 py-3.5 no-underline",
-        embedPremiumShell(theme, "pro"),
-      )}
+      className={cn("relative block w-full px-4 py-3.5 no-underline", embedPremiumShell(theme, "pro"))}
     >
-      <div className="flex items-start justify-between gap-3 pr-14">
-        <div className="min-w-0">
+      <div className="flex items-start justify-between gap-3 pr-12">
+        <div>
           <p className={cn("text-[10px] font-semibold tracking-[0.12em] uppercase", embedMutedClass(theme))}>
             Hansala Level
           </p>
@@ -80,36 +64,14 @@ export function EmbedTrustCard({
             <p className={cn("truncate text-[12px]", embedSoftClass(theme))}>{name}</p>
           </div>
         </div>
-        <p className="text-right leading-none">
-          <span className={cn("font-display text-[1.5rem] font-medium tracking-[-0.04em]", embedInkClass(theme))}>
-            {confirmedCount}
-          </span>
-          <span className={cn("ml-1 text-[10px] font-semibold uppercase", embedMutedClass(theme))}>
-            total
-          </span>
-        </p>
+        <EmbedProofStrip filled={stripFill} theme={theme} size="sm" />
       </div>
-
-      <div
-        className={cn(
-          "mt-3 grid grid-cols-3 gap-3 border-t pt-3",
-          dark ? "border-white/10" : "border-[#0e1f1c]/08",
-        )}
-      >
+      <div className={cn("mt-3 grid grid-cols-3 gap-2 border-t pt-3", dark ? "border-white/10" : "border-[#0e1f1c]/08")}>
         <Stat label="Partners" value={breakdown.confirmedPartners} theme={theme} />
         <Stat label="Clients" value={breakdown.confirmedReferences + breakdown.ongoingReferences} theme={theme} />
         <Stat label="Projects" value={breakdown.clientConfirmedCaseStudies} theme={theme} />
       </div>
-
-      {proofCompanies.length > 0 ? (
-        <EmbedProofMarquee companies={proofCompanies} theme={theme} className="mt-3" />
-      ) : null}
-
-      <EmbedVerifiedLockup
-        theme={theme}
-        size="sm"
-        className="absolute top-3.5 right-3.5 opacity-80"
-      />
+      <EmbedVerifiedLockup theme={theme} size="sm" className="absolute top-3.5 right-3.5 opacity-85" />
     </a>
   );
 }
