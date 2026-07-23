@@ -42,7 +42,7 @@ if (!apiKey) {
   process.exit(1);
 }
 
-const from = process.env.RESEND_FROM_EMAIL ?? "Linken <onboarding@resend.dev>";
+const from = process.env.RESEND_FROM_EMAIL ?? "Hansala <onboarding@resend.dev>";
 const resend = new Resend(apiKey);
 
 const { data, error } = await resend.emails.send({
