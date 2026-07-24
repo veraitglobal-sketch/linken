@@ -5,7 +5,11 @@ export type CoreFail = { ok: false; error: string };
 export type CoreOk<T> = { ok: true; data: T };
 export type CoreResult<T> = CoreOk<T> | CoreFail;
 
-/** Explicit allowlist — verified/plan/slug/claimed etc. are never writable via Agent API. */
+/**
+ * Base profile allowlist for dashboard + agent.
+ * Agent also allows name/category/slug via updateCompanyAgentCore extras.
+ * Never writable: verified, plan, claimed, etc.
+ */
 export const COMPANY_PATCH_ALLOWLIST = [
   "tagline",
   "description",

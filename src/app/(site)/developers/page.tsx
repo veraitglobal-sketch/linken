@@ -333,8 +333,9 @@ export default function DevelopersPage() {
                   available under verification:run.
                 </li>
                 <li>
-                  Fields like verified, plan, slug, and claimed are not
-                  writable via PATCH /company.
+                  Fields like verified, plan, and claimed are not writable via
+                  PATCH /company. Profile fields including name, category, and
+                  slug are allowed under content:write.
                 </li>
               </ul>
             </div>
