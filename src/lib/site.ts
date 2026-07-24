@@ -1,11 +1,19 @@
 const CANONICAL_ORIGIN = "https://hansala.com";
 
+const AUTH_HOSTS = new Set(["hansala.com", "www.hansala.com"]);
+
 function normalizeOrigin(value: string) {
   return value.replace(/\/$/, "");
 }
 
-function isVercelPreviewHost(host: string) {
-  return host.includes(".vercel.app");
+function authHost(value: string): string | null {
+  try {
+    return new URL(
+      value.includes("://") ? value : `https://${value}`,
+    ).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
 }
 
 function isLocalhostOrigin(value: string) {
@@ -28,23 +36,24 @@ function isDeployedRuntime() {
 }
 
 /**
- * Public origin for auth redirects and outbound email links.
- * Priority: AUTH_SITE_URL (server) → NEXT_PUBLIC_SITE_URL → Vercel prod → canonical.
+ * Public origin for metadata / embeds.
+ * Never returns *.vercel.app — brand domain only when deployed.
  */
 function resolvePublicOrigin(): string {
   const authSite = process.env.AUTH_SITE_URL?.trim();
   if (authSite && !isLocalhostOrigin(authSite)) {
-    return normalizeOrigin(authSite);
+    const host = authHost(authSite);
+    if (host && !host.endsWith(".vercel.app")) {
+      return normalizeOrigin(authSite);
+    }
   }
 
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (configured && !(isDeployedRuntime() && isLocalhostOrigin(configured))) {
-    return normalizeOrigin(configured);
-  }
-
-  const vercelHost = process.env.VERCEL_URL?.trim()?.replace(/^https?:\/\//, "");
-  if (vercelHost && !isVercelPreviewHost(vercelHost)) {
-    return `https://${vercelHost}`;
+    const host = authHost(configured);
+    if (host && !host.endsWith(".vercel.app")) {
+      return normalizeOrigin(configured);
+    }
   }
 
   if (isDeployedRuntime()) {
@@ -67,29 +76,35 @@ export function getSiteUrl() {
 }
 
 /**
- * Reachable origin for auth + transactional email links (must match Supabase redirect allow-list).
+ * Auth + email magic links — always our domain (hansala.com), never *.vercel.app.
+ * Locally: localhost. Deployed: only hansala.com / www.hansala.com.
  */
 export function getAuthSiteUrl() {
-  const authSite = process.env.AUTH_SITE_URL?.trim();
-  if (authSite) {
-    return normalizeOrigin(authSite);
+  if (!isDeployedRuntime()) {
+    const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+    if (configured && isLocalhostOrigin(configured)) {
+      return normalizeOrigin(configured);
+    }
+    return "http://localhost:3000";
   }
 
-  const vercelHost = process.env.VERCEL_URL?.trim()?.replace(/^https?:\/\//, "");
-  if (vercelHost && isDeployedRuntime()) {
-    return `https://${vercelHost}`;
+  const authSite = process.env.AUTH_SITE_URL?.trim();
+  if (authSite) {
+    const host = authHost(authSite);
+    if (host && AUTH_HOSTS.has(host)) {
+      return normalizeOrigin(authSite);
+    }
   }
 
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (configured && !isLocalhostOrigin(configured)) {
-    return normalizeOrigin(configured);
+  if (configured) {
+    const host = authHost(configured);
+    if (host && AUTH_HOSTS.has(host)) {
+      return normalizeOrigin(configured);
+    }
   }
 
-  if (isDeployedRuntime()) {
-    return CANONICAL_ORIGIN;
-  }
-
-  return "http://localhost:3000";
+  return CANONICAL_ORIGIN;
 }
 
 /**
