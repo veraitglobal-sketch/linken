@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import {
+  logoBodyCopy,
+  logoStateLabel,
+} from "@/components/company/company-logo-copy";
 import { CompanyLogoUploadForm } from "@/components/company/company-logo-upload-form";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Badge } from "@/components/ui/badge";
@@ -39,8 +43,8 @@ export function CompanySettingsLogo({
   const cleared = logoSource === "cleared";
   const isManual = logoSource === "manual";
   const showLogo = Boolean(logoUrl) && !cleared;
-  /** Never fall back to website favicon after the owner cleared the logo. */
   const markWebsite = cleared ? null : website;
+  const copy = { showLogo, isManual, cleared, pending, hasWebsite };
 
   useEffect(() => {
     if (tried.current) return;
@@ -55,18 +59,6 @@ export function CompanySettingsLogo({
       setStatus(result.error ?? "Could not fetch logo.");
     });
   }, [cleared, hasWebsite, isManual, router, showLogo]);
-
-  const stateLabel = isManual
-    ? "Uploaded"
-    : showLogo
-      ? "From website"
-      : cleared
-        ? "Removed"
-        : pending
-          ? "Fetching…"
-          : hasWebsite
-            ? "No logo yet"
-            : "Needs website";
 
   function onClear() {
     setStatus(null);
@@ -94,11 +86,13 @@ export function CompanySettingsLogo({
           <h2 className="mt-1 font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
             Company logo
           </h2>
-          <p className="mt-1 max-w-lg text-[12px] leading-relaxed text-muted">
-            Loaded from your website. Remove with ×, or upload your own logo.
+          <p className="mt-1 max-w-lg text-[12px] text-muted">
+            From your website — remove with ×, or upload your own.
           </p>
         </div>
-        <Badge tone={showLogo ? "success" : "neutral"}>{stateLabel}</Badge>
+        <Badge tone={showLogo ? "success" : "neutral"}>
+          {logoStateLabel(copy)}
+        </Badge>
       </div>
 
       <div className="flex flex-wrap items-start gap-5 px-5 py-5 sm:px-6">
@@ -118,14 +112,11 @@ export function CompanySettingsLogo({
               disabled={pending}
               onClick={onClear}
               className={cn(
-                "absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center",
-                "rounded-full border border-line bg-surface text-ink shadow-sm",
-                "transition-colors hover:bg-paper disabled:opacity-50",
+                "absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full",
+                "border border-line bg-surface text-ink shadow-sm hover:bg-paper disabled:opacity-50",
               )}
             >
-              <span aria-hidden className="text-[14px] leading-none">
-                ×
-              </span>
+              <span aria-hidden>×</span>
             </button>
           ) : null}
         </div>
@@ -135,17 +126,7 @@ export function CompanySettingsLogo({
             {name}
           </p>
           <p className="text-[12px] leading-relaxed text-muted">
-            {showLogo
-              ? isManual
-                ? "Custom logo is live on your profile and widgets."
-                : "Logo is live on your public profile and widgets."
-              : cleared
-                ? "Logo removed. Upload a new one, or restore from the website."
-                : pending
-                  ? "Fetching logo from your website…"
-                  : hasWebsite
-                    ? "Waiting for a logo from your website — or upload one."
-                    : "Add a website to auto-load a favicon, or upload a logo."}
+            {logoBodyCopy(copy)}
           </p>
           {status ? <p className="text-[12px] text-ink-soft">{status}</p> : null}
           <CompanyLogoUploadForm
@@ -154,7 +135,11 @@ export function CompanySettingsLogo({
           />
           {hasWebsite && !isManual && (cleared || !showLogo) && !pending ? (
             <form action={refreshLogo}>
-              <input type="hidden" name="back" value={`${backPath}#company-logo`} />
+              <input
+                type="hidden"
+                name="back"
+                value={`${backPath}#company-logo`}
+              />
               <button
                 type="submit"
                 className="text-[12px] font-semibold text-blue underline-offset-2 hover:underline"
