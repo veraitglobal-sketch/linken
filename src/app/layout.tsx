@@ -44,6 +44,29 @@ export const metadata: Metadata = {
   },
 };
 
+/** Organization + WebSite graph. No SearchAction — the directory is not public yet. */
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${getSiteUrl()}/#organization`,
+      name: "Hansala",
+      url: getSiteUrl(),
+      description,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${getSiteUrl()}/#website`,
+      name: "Hansala",
+      url: getSiteUrl(),
+      description,
+      publisher: { "@id": `${getSiteUrl()}/#organization` },
+      inLanguage: "en",
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -54,7 +77,13 @@ export default function RootLayout({
       lang="en"
       className={`${jakarta.variable} ${newsreader.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">{children}</body>
+      <body className="flex min-h-full flex-col font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
