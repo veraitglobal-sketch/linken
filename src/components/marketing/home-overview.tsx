@@ -1,4 +1,14 @@
-import { ConfirmFlipBadge } from "@/components/marketing/confirm-flip-badge";
+"use client";
+
+import dynamic from "next/dynamic";
+
+const ConfirmFlipBadge = dynamic(
+  () =>
+    import("@/components/marketing/confirm-flip-badge").then(
+      (m) => m.ConfirmFlipBadge,
+    ),
+  { ssr: false, loading: () => <span className="inline-block w-[4.5rem]" /> },
+);
 
 export function HomeOverview() {
   return (

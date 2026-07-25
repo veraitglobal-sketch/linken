@@ -71,8 +71,10 @@ a {
 }
 
 .stage-grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.055;
+  /* Static speckles — avoid live SVG feTurbulence on every frame. */
+  background-image: radial-gradient(rgba(255, 255, 255, 0.035) 0.6px, transparent 0.6px);
+  background-size: 3px 3px;
+  opacity: 0.45;
   mix-blend-mode: overlay;
   pointer-events: none;
 }
@@ -297,10 +299,9 @@ a {
 }
 
 .glass-nav {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(14, 31, 28, 0.08);
   box-shadow: 0 12px 40px rgba(8, 20, 18, 0.07);
-  backdrop-filter: blur(12px);
 }
 
 .link-pulse {

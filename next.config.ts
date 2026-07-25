@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname),
   },
   experimental: {
+    optimizePackageImports: ["recharts", "@xyflow/react"],
     serverActions: {
       // Cover/gallery uploads via FormData — default 1MB causes opaque 500 errors.
       bodySizeLimit: "10mb",
@@ -30,6 +31,28 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
     ],
+  },
+  async headers() {
+    return [
+      {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/logos/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
 };
 

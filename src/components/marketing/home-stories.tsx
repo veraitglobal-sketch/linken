@@ -92,10 +92,10 @@ export function HomeStories() {
                   src={story.image}
                   alt={story.imageAlt}
                   fill
-                  quality={88}
+                  quality={70}
+                  loading="lazy"
                   className={`media-zoom object-cover ${story.focus}`}
                   sizes="(max-width: 1024px) 100vw, 40vw"
-                  priority={index === 0}
                 />
                 <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black/25 to-transparent lg:w-20" />
               </div>
