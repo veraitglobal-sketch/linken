@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn, signInWithGoogle, signUp, resendSignupConfirmation } from "@/features/auth/actions";
+import { signIn, signUp, resendSignupConfirmation } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
@@ -88,19 +88,6 @@ export function LoginPanel({
       ) : null}
 
       <div className="animate-rise-late mt-6 space-y-4">
-        <form action={signInWithGoogle}>
-          <input type="hidden" name="next" value={nextPath} />
-          <Button type="submit" variant="secondary" className="h-12 w-full">
-            Continue with Google
-          </Button>
-        </form>
-
-        <div className="flex items-center gap-3 text-[12px] text-muted">
-          <span className="h-px flex-1 bg-line" />
-          or email
-          <span className="h-px flex-1 bg-line" />
-        </div>
-
         <form
           action={isCreate ? signUp : signIn}
           className="flex flex-col gap-4"
