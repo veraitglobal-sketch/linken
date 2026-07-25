@@ -1,6 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import {
+  CHECKOUT_BRANDING,
+  CHECKOUT_CUSTOM_TEXT,
+} from "@/features/billing/checkout-branding";
 import { proPriceId } from "@/features/billing/config";
 import { ensureStripeCustomer } from "@/features/billing/sync";
 import { getDashboardSession } from "@/features/dashboard/session";
@@ -50,6 +54,9 @@ export async function startProCheckout() {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${site}${billingBack("success=1")}`,
     cancel_url: `${site}${billingBack("canceled=1")}`,
+    custom_text: CHECKOUT_CUSTOM_TEXT,
+    // Newer Checkout API — typed loosely until stripe SDK catches up.
+    branding_settings: CHECKOUT_BRANDING,
     metadata: {
       company_id: company.id,
       company_slug: company.slug,
@@ -60,7 +67,7 @@ export async function startProCheckout() {
         company_slug: company.slug,
       },
     },
-  });
+  } as Parameters<typeof stripe.checkout.sessions.create>[0]);
 
   if (!session.url) redirect(billingBack("error=checkout_failed"));
   redirect(session.url);
