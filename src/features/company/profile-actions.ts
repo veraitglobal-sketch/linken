@@ -8,7 +8,6 @@ import {
   websiteDomainChanged,
 } from "@/features/company/profile-fields";
 import { matchCompanyToSearches } from "@/features/radar-leads/match";
-import { uploadLogoCore } from "@/features/logo/core";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -109,31 +108,4 @@ export async function updateCompanyProfile(formData: FormData) {
 
   revalidateCompany(company.slug);
   redirect(backWith(back, { saved: "1" }));
-}
-
-export async function uploadCompanyLogo(
-  formData: FormData,
-): Promise<{ ok: boolean; error?: string }> {
-  const { user, company } = await requireOperatorCompany("/dashboard/settings");
-  const file = formData.get("logo");
-  if (!(file instanceof File) || file.size === 0) {
-    return { ok: false, error: "Choose an image file to upload." };
-  }
-
-  const admin = createAdminClient();
-  if (!admin) {
-    return { ok: false, error: "Logo upload is temporarily unavailable." };
-  }
-
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  const result = await uploadLogoCore(admin, company.id, {
-    bytes,
-    contentType: file.type || "image/png",
-    ownerUserId: user.id,
-  });
-
-  if (!result.ok) return { ok: false, error: result.error };
-
-  revalidateCompany(company.slug);
-  return { ok: true };
 }

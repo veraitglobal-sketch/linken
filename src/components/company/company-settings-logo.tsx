@@ -6,7 +6,6 @@ import {
   logoBodyCopy,
   logoStateLabel,
 } from "@/components/company/company-logo-copy";
-import { CompanyLogoUploadForm } from "@/components/company/company-logo-upload-form";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Badge } from "@/components/ui/badge";
 import { LogoMark } from "@/components/ui/logo-mark";
@@ -26,7 +25,7 @@ type Props = {
   backPath?: string;
 };
 
-/** Auto favicon from website; clear with ×; upload a custom mark in place. */
+/** Auto logo from website — remove with ×, restore from website. */
 export function CompanySettingsLogo({
   name,
   logoUrl,
@@ -44,7 +43,7 @@ export function CompanySettingsLogo({
   const isManual = logoSource === "manual";
   const showLogo = Boolean(logoUrl) && !cleared;
   const markWebsite = cleared ? null : website;
-  const copy = { showLogo, isManual, cleared, pending, hasWebsite };
+  const copy = { showLogo, cleared, pending, hasWebsite };
 
   useEffect(() => {
     if (tried.current) return;
@@ -68,7 +67,7 @@ export function CompanySettingsLogo({
         setStatus(result.error ?? "Could not remove logo.");
         return;
       }
-      setStatus("Logo removed. Upload a new one below.");
+      setStatus("Logo removed.");
       router.refresh();
     });
   }
@@ -87,7 +86,8 @@ export function CompanySettingsLogo({
             Company logo
           </h2>
           <p className="mt-1 max-w-lg text-[12px] text-muted">
-            From your website — remove with ×, or upload your own.
+            Loaded automatically from your website. Remove with × if you
+            don&apos;t want it shown.
           </p>
         </div>
         <Badge tone={showLogo ? "success" : "neutral"}>
@@ -129,10 +129,6 @@ export function CompanySettingsLogo({
             {logoBodyCopy(copy)}
           </p>
           {status ? <p className="text-[12px] text-ink-soft">{status}</p> : null}
-          <CompanyLogoUploadForm
-            onDone={(msg) => setStatus(msg)}
-            onError={(msg) => setStatus(msg)}
-          />
           {hasWebsite && !isManual && (cleared || !showLogo) && !pending ? (
             <form action={refreshLogo}>
               <input

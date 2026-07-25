@@ -1,13 +1,11 @@
 type LogoCopyInput = {
   showLogo: boolean;
-  isManual: boolean;
   cleared: boolean;
   pending: boolean;
   hasWebsite: boolean;
 };
 
 export function logoStateLabel(input: LogoCopyInput): string {
-  if (input.isManual) return "Uploaded";
   if (input.showLogo) return "From website";
   if (input.cleared) return "Removed";
   if (input.pending) return "Fetching…";
@@ -17,16 +15,12 @@ export function logoStateLabel(input: LogoCopyInput): string {
 
 export function logoBodyCopy(input: LogoCopyInput): string {
   if (input.showLogo) {
-    return input.isManual
-      ? "Custom logo is live on your profile and widgets."
-      : "Logo is live on your public profile and widgets.";
+    return "Logo is live on your public profile and widgets.";
   }
   if (input.cleared) {
-    return "Logo removed. Upload a new one, or restore from the website.";
+    return "Logo removed. Initials show until you restore it from the website.";
   }
   if (input.pending) return "Fetching logo from your website…";
-  if (input.hasWebsite) {
-    return "Waiting for a logo from your website — or upload one.";
-  }
-  return "Add a website to auto-load a favicon, or upload a logo.";
+  if (input.hasWebsite) return "Waiting for a logo from your website.";
+  return "Add a website below to load a logo automatically.";
 }
