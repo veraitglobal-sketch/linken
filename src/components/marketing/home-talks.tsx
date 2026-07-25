@@ -1,17 +1,4 @@
-"use client";
-
-import dynamic from "next/dynamic";
-
-const ShareMomentGraph = dynamic(
-  () =>
-    import("@/components/marketing/share-moment-graph").then(
-      (m) => m.ShareMomentGraph,
-    ),
-  {
-    ssr: false,
-    loading: () => <div className="mx-auto mt-10 h-[320px] max-w-3xl" aria-hidden />,
-  },
-);
+import { ShareMomentGraph } from "@/components/marketing/share-moment-graph";
 
 export function HomeTalks() {
   return (

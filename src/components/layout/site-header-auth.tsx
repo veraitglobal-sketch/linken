@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { signOut } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
 import { PRODUCT } from "@/lib/product-model";
 
 type AuthState =
@@ -17,27 +16,33 @@ export function SiteHeaderAuth() {
 
   useEffect(() => {
     let cancelled = false;
-    const supabase = createClient();
 
     async function load() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        setAuth({ status: "anon" });
-        return;
-      }
-      const { data: company } = await supabase
-        .from("companies")
-        .select("slug")
-        .eq("owner_id", user.id)
-        .eq("claimed", true)
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-      if (!cancelled) {
-        setAuth({ status: "user", companySlug: company?.slug ?? null });
+      try {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (cancelled) return;
+        if (!user) {
+          setAuth({ status: "anon" });
+          return;
+        }
+        const { data: company } = await supabase
+          .from("companies")
+          .select("slug")
+          .eq("owner_id", user.id)
+          .eq("claimed", true)
+          .order("created_at", { ascending: true })
+          .limit(1)
+          .maybeSingle();
+        if (!cancelled) {
+          setAuth({ status: "user", companySlug: company?.slug ?? null });
+        }
+      } catch (err) {
+        console.error("[SiteHeaderAuth]", err);
+        if (!cancelled) setAuth({ status: "anon" });
       }
     }
 

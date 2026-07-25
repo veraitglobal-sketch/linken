@@ -1,8 +1,33 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/** Marketing/public paths — do not refresh auth (avoids dynamic crash when logged in). */
+function isPublicPath(pathname: string) {
+  if (pathname === "/") return true;
+  return (
+    pathname.startsWith("/c/") ||
+    pathname.startsWith("/g/") ||
+    pathname.startsWith("/search") ||
+    pathname.startsWith("/developers") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/welcome") ||
+    pathname.startsWith("/embed") ||
+    pathname.startsWith("/demo") ||
+    pathname.startsWith("/claim/") ||
+    pathname.startsWith("/join/") ||
+    pathname.startsWith("/confirm") ||
+    pathname.startsWith("/transfer/") ||
+    pathname.startsWith("/requests/")
+  );
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+
+  if (isPublicPath(request.nextUrl.pathname)) {
+    return supabaseResponse;
+  }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey =
@@ -13,7 +38,6 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // Skip auth refresh when there is no session cookie — keeps public HTML fast.
   const hasAuthCookie = request.cookies
     .getAll()
     .some((c) => c.name.startsWith("sb-") && c.name.includes("auth-token"));

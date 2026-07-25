@@ -1,15 +1,4 @@
-"use client";
-
-import dynamic from "next/dynamic";
-
-const ConfirmDrop = dynamic(
-  () =>
-    import("@/components/marketing/confirm-drop").then((m) => m.ConfirmDrop),
-  {
-    ssr: false,
-    loading: () => <div className="h-28" aria-hidden />,
-  },
-);
+import { ConfirmDrop } from "@/components/marketing/confirm-drop";
 
 export function HomeIconLine() {
   return (
