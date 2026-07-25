@@ -2,7 +2,7 @@ import { ShareMomentGraph } from "@/components/marketing/share-moment-graph";
 
 export function HomeTalks() {
   return (
-    <section className="px-4 pb-28">
+    <section className="px-6 py-24 sm:px-8 sm:py-28 lg:px-10">
       <div className="mx-auto max-w-4xl">
         <p className="text-center text-[12px] font-semibold tracking-[0.14em] text-blue uppercase">
           The share moment

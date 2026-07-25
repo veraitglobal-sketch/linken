@@ -1,6 +1,5 @@
 import { ConfirmChecklist } from "@/components/marketing/confirm-checklist";
 
-/** A wall of anonymous logo tiles — washed out, one missing. */
 function LogoWallGlyph() {
   return (
     <div aria-hidden className="mt-8 flex h-16 items-center gap-2.5">
@@ -18,7 +17,6 @@ function LogoWallGlyph() {
   );
 }
 
-/** A claim that goes one way and never lands — the far side stays hollow. */
 function OneWayGlyph() {
   return (
     <div aria-hidden className="mt-8 flex h-16 items-center gap-3">
@@ -27,12 +25,7 @@ function OneWayGlyph() {
         <span className="h-1.5 w-5 rounded-full bg-[#d8ddd9]" />
       </div>
       <svg width="52" height="12" viewBox="0 0 52 12" fill="none" className="shrink-0">
-        <path
-          d="M2 6h40"
-          stroke="#c2c9c4"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M2 6h40" stroke="#c2c9c4" strokeWidth="2" strokeLinecap="round" />
         <path
           d="M42 1.5l6 4.5-6 4.5"
           stroke="#c2c9c4"
@@ -64,12 +57,12 @@ const weak = [
 
 export function HomeContrast() {
   return (
-    <section className="px-4 pb-24">
-      <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-3">
+    <section className="px-6 pb-24 sm:px-8 lg:px-10">
+      <div className="mx-auto grid max-w-6xl gap-px overflow-hidden rounded-[28px] bg-line md:grid-cols-3">
         {weak.map((item) => (
           <article
             key={item.title}
-            className="flex min-h-[280px] flex-col rounded-[28px] border border-line bg-surface px-6 py-8 shadow-[0_8px_28px_rgba(8,20,18,0.03)] transition-[border-color,box-shadow] duration-300 hover:border-[#cfd5d1] hover:shadow-[0_14px_40px_rgba(8,20,18,0.06)]"
+            className="flex min-h-[280px] flex-col bg-surface px-6 py-8 sm:px-7"
           >
             <p className="text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
               {item.n}
@@ -83,7 +76,7 @@ export function HomeContrast() {
             </p>
           </article>
         ))}
-        <article className="relative flex min-h-[280px] flex-col overflow-hidden rounded-[28px] bg-navy px-6 py-8 text-white shadow-[0_22px_56px_rgba(8,20,18,0.22)]">
+        <article className="relative flex min-h-[280px] flex-col overflow-hidden bg-navy px-6 py-8 text-white sm:px-7">
           <div className="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full bg-blue-soft/15 blur-3xl" />
           <p className="relative text-[11px] font-semibold tracking-[0.16em] text-blue-soft uppercase">
             03 · Hansala

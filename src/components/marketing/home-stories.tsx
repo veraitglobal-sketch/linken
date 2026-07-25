@@ -10,7 +10,7 @@ const stories = [
     role: "Managing Director, architecture firm",
     with: "Partners confirmed on shared case studies",
     href: "/onboarding",
-    cta: "Create your company link",
+    cta: "Create company",
     image: "/images/story-projects.jpg",
     imageAlt: "Architectural plans, hard hat, and tools on a project desk",
     focus: "object-[center_42%]",
@@ -25,7 +25,8 @@ const stories = [
     href: "/search",
     cta: "Find companies",
     image: "/images/story-collaboration.jpg",
-    imageAlt: "Business professional holding a Hansala portfolio outside a modern building",
+    imageAlt:
+      "Business professional holding a Hansala portfolio outside a modern building",
     focus: "object-[center_20%]",
   },
   {
@@ -36,21 +37,17 @@ const stories = [
     role: "Head of Sales, specialist trade",
     with: "Verified one-pager attached to every bid",
     href: "/onboarding",
-    cta: "Get started",
+    cta: "Create company",
     image: "/images/story-team.jpg",
     imageAlt: "Delivery team reviewing a shared project brief",
     focus: "object-center",
   },
 ];
 
-/**
- * CSS sticky stack (Retell-style): each card pins while you scroll;
- * the next card slides over it. After the last card, the page continues.
- * No JS scroll math — stable in normal document flow.
- */
+/** Sticky stack: each card pins; the next slides over it. */
 export function HomeStories() {
   return (
-    <section className="relative px-4 pb-8">
+    <section className="relative px-6 pb-10 sm:px-8 lg:px-10">
       <div className="mx-auto max-w-6xl">
         {stories.map((story, index) => (
           <div
@@ -59,9 +56,9 @@ export function HomeStories() {
             style={{ zIndex: index + 1 }}
           >
             <article
-              className={`group grid h-[min(72svh,520px)] w-full overflow-hidden rounded-[32px] shadow-[0_28px_70px_rgba(10,20,18,0.22)] ring-1 ring-white/5 ${story.tone} lg:grid-cols-[1.15fr_0.85fr]`}
+              className={`group grid h-[min(72svh,520px)] w-full overflow-hidden rounded-[28px] shadow-[0_24px_60px_rgba(10,20,18,0.2)] ${story.tone} lg:grid-cols-[1.15fr_0.85fr]`}
             >
-              <div className="flex flex-col justify-between px-7 py-8 sm:px-11 sm:py-10">
+              <div className="flex flex-col justify-between px-7 py-8 sm:px-10 sm:py-10">
                 <div>
                   <p className="text-[11px] font-semibold tracking-[0.16em] text-blue-soft/90 uppercase">
                     How teams use Hansala

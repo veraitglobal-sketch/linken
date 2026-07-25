@@ -23,7 +23,7 @@ const FAQ_ITEMS = [
 
 export function HomeFaq() {
   return (
-    <section className="px-4 pb-24">
+    <section className="px-6 pb-28 sm:px-8 lg:px-10">
       <div className="mx-auto max-w-3xl">
         <p className="text-[12px] font-semibold tracking-[0.14em] text-blue uppercase">
           FAQ
@@ -31,7 +31,7 @@ export function HomeFaq() {
         <h2 className="mt-5 font-display text-4xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
           Questions, answered.
         </h2>
-        <div className="mt-8 divide-y divide-line border-t border-b border-line">
+        <div className="mt-10 divide-y divide-line border-t border-b border-line">
           {FAQ_ITEMS.map((item) => (
             <details key={item.question} className="group py-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[17px] font-medium text-ink marker:content-none">

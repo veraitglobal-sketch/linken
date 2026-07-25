@@ -291,11 +291,32 @@ a {
     linear-gradient(158deg, #070f0d 0%, #0e1f1c 44%, #142a25 100%);
 }
 
-/* One clean color. No blobs, no drift — just the brand navy and the grain. */
-.hero-live {
-  position: relative;
-  overflow: hidden;
-  background: var(--navy);
+/* Full-bleed hero — slow settle, not decorative noise. */
+.hero-media {
+  transform: scale(1.04);
+  animation: hero-settle 22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes hero-settle {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-media {
+    animation: none;
+    transform: none;
+  }
+
+  .animate-rise,
+  .animate-rise-delay,
+  .animate-rise-late {
+    animation: none;
+  }
 }
 
 .glass-nav {

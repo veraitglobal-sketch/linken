@@ -20,7 +20,7 @@ export function SiteFooter() {
             </p>
           </div>
           <Button href="/onboarding" variant="light" className="h-11 px-6">
-            Create your company link
+            Create company
           </Button>
         </div>
         <div className="mt-9 flex flex-col gap-3 border-t border-white/10 pt-6 text-[13px] sm:flex-row sm:items-center sm:justify-between">
