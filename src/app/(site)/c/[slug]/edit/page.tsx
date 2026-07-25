@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ProfileEditHub } from "@/components/company/profile-edit-hub";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
@@ -67,12 +67,44 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(`/login?next=${encodeURIComponent(`/c/${slug}/edit`)}`);
+    // Soft gate — avoid NEXT_REDIRECT "error" HTML flash in the browser.
+    const next = encodeURIComponent(`/c/${slug}/edit`);
+    return (
+      <div className="mx-auto max-w-lg px-4 py-16 text-center">
+        <h1 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
+          Sign in to edit
+        </h1>
+        <p className="mt-2 text-[14px] text-muted">
+          You need to be signed in as the company owner to edit this profile.
+        </p>
+        <Link
+          href={`/login?next=${next}`}
+          className="mt-6 inline-flex h-11 items-center rounded-full bg-navy px-5 text-[13px] font-semibold text-white"
+        >
+          Sign in
+        </Link>
+      </div>
+    );
   }
 
   const isOwner = await isCompanyOwnerSlug(slug);
   if (!isOwner) {
-    redirect(`/c/${slug}`);
+    return (
+      <div className="mx-auto max-w-lg px-4 py-16 text-center">
+        <h1 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
+          Editing locked
+        </h1>
+        <p className="mt-2 text-[14px] text-muted">
+          Only the company owner can edit this profile.
+        </p>
+        <Link
+          href={`/c/${slug}`}
+          className="mt-6 inline-flex h-11 items-center rounded-full border border-line bg-surface px-5 text-[13px] font-semibold text-ink"
+        >
+          View profile
+        </Link>
+      </div>
+    );
   }
 
   const { data: full, error: loadError } = await supabase

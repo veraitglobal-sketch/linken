@@ -1,6 +1,10 @@
 import { resolveActiveWorkspace } from "@/features/workspace/context";
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * True if the signed-in user can operate the company at this public slug.
+ * Does not depend on the workspace cookie — cookie is preference only.
+ */
 export async function isCompanyOwnerSlug(slug: string) {
   try {
     const supabase = await createClient();
@@ -9,17 +13,15 @@ export async function isCompanyOwnerSlug(slug: string) {
     } = await supabase.auth.getUser();
     if (!user) return false;
 
-    const workspace = await resolveActiveWorkspace();
-    if (
-      !workspace?.company ||
-      workspace.active?.type !== "company" ||
-      workspace.company.slug !== slug
-    ) {
-      return false;
-    }
+    const { data: company } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("slug", slug)
+      .maybeSingle();
+    if (!company) return false;
 
     const { data: allowed } = await supabase.rpc("is_company_operator", {
-      p_company_id: workspace.company.id,
+      p_company_id: company.id,
     });
 
     return Boolean(allowed);
