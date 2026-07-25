@@ -24,7 +24,7 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Hansala",
+    default: title,
     template: "%s · Hansala",
   },
   description,
