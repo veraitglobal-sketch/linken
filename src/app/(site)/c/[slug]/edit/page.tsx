@@ -6,7 +6,7 @@ import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { toSettingsCompany } from "@/features/company/settings-company";
 import { extractDomain } from "@/features/verification/domain";
-import { getSiteUrl } from "@/lib/site";
+import { getPublicHost } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -26,12 +26,14 @@ type Props = {
 };
 
 function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  return (
+    name
+      .split(/\s+/)
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "CO"
+  );
 }
 
 function flashMessage(params: {
@@ -73,13 +75,17 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
     redirect(`/c/${slug}`);
   }
 
-  const { data: full } = await supabase
+  const { data: full, error: loadError } = await supabase
     .from("companies")
     .select(
       "name, slug, tagline, description, category, city, country, website, linkedin_url, facebook_url, services, accepting_clients, verified, logo_url, logo_source, cover_image_url",
     )
     .eq("id", company.id)
     .maybeSingle();
+
+  if (loadError) {
+    console.error("[CompanyEditPage]", slug, loadError.message);
+  }
 
   if (!full) {
     return (
@@ -92,18 +98,19 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
     );
   }
 
-  const settings = toSettingsCompany(full, new URL(getSiteUrl()).host);
+  const settings = toSettingsCompany(full, getPublicHost());
+  const name = String(full.name ?? slug);
 
   return (
     <ProfileEditHub
       company={settings}
       slug={full.slug}
-      name={full.name}
+      name={name}
       logoUrl={full.logo_url}
       website={full.website}
       logoSource={full.logo_source}
       coverImageUrl={full.cover_image_url}
-      initials={initials(full.name)}
+      initials={initials(name)}
       domain={extractDomain(full.website ?? "")}
       verified={Boolean(full.verified)}
       error={q.error}

@@ -26,10 +26,27 @@ type Row = {
   website: string | null;
   linkedin_url: string | null;
   facebook_url: string | null;
-  services: string[] | null;
+  services: unknown;
   accepting_clients: boolean | null;
   verified: boolean | null;
 };
+
+function asServices(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value
+      .map((s) => String(s ?? "").trim())
+      .filter(Boolean)
+      .slice(0, 40);
+  }
+  if (typeof value === "string" && value.trim()) {
+    return value
+      .split(/[,;]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 40);
+  }
+  return [];
+}
 
 export function toSettingsCompany(row: Row, publicHost: string): SettingsCompany {
   return {
@@ -43,7 +60,7 @@ export function toSettingsCompany(row: Row, publicHost: string): SettingsCompany
     website: row.website ?? "",
     linkedinUrl: row.linkedin_url ?? "",
     facebookUrl: row.facebook_url ?? "",
-    services: row.services ?? [],
+    services: asServices(row.services),
     acceptingClients: row.accepting_clients !== false,
     verified: Boolean(row.verified),
     publicHost,

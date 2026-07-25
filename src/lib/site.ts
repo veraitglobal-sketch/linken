@@ -6,11 +6,17 @@ function normalizeOrigin(value: string) {
   return value.replace(/\/$/, "");
 }
 
+/** Always return an absolute origin (scheme + host), never a bare hostname. */
+function asOrigin(value: string): string {
+  const trimmed = normalizeOrigin(value.trim());
+  if (!trimmed) return CANONICAL_ORIGIN;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 function authHost(value: string): string | null {
   try {
-    return new URL(
-      value.includes("://") ? value : `https://${value}`,
-    ).hostname.toLowerCase();
+    return new URL(asOrigin(value)).hostname.toLowerCase();
   } catch {
     return null;
   }
@@ -18,8 +24,7 @@ function authHost(value: string): string | null {
 
 function isLocalhostOrigin(value: string) {
   try {
-    const url = value.includes("://") ? value : `https://${value}`;
-    const host = new URL(url).hostname;
+    const host = new URL(asOrigin(value)).hostname;
     return host === "localhost" || host === "127.0.0.1" || host === "[::1]";
   } catch {
     return false;
@@ -44,7 +49,7 @@ function resolvePublicOrigin(): string {
   if (authSite && !isLocalhostOrigin(authSite)) {
     const host = authHost(authSite);
     if (host && !host.endsWith(".vercel.app")) {
-      return normalizeOrigin(authSite);
+      return asOrigin(authSite);
     }
   }
 
@@ -52,7 +57,7 @@ function resolvePublicOrigin(): string {
   if (configured && !(isDeployedRuntime() && isLocalhostOrigin(configured))) {
     const host = authHost(configured);
     if (host && !host.endsWith(".vercel.app")) {
-      return normalizeOrigin(configured);
+      return asOrigin(configured);
     }
   }
 
@@ -72,7 +77,7 @@ export function getSiteUrl() {
   if (isDeployedRuntime() && isLocalhostOrigin(origin)) {
     return CANONICAL_ORIGIN;
   }
-  return origin;
+  return asOrigin(origin);
 }
 
 /**
@@ -83,7 +88,7 @@ export function getAuthSiteUrl() {
   if (!isDeployedRuntime()) {
     const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
     if (configured && isLocalhostOrigin(configured)) {
-      return normalizeOrigin(configured);
+      return asOrigin(configured);
     }
     return "http://localhost:3000";
   }
@@ -92,7 +97,7 @@ export function getAuthSiteUrl() {
   if (authSite) {
     const host = authHost(authSite);
     if (host && AUTH_HOSTS.has(host)) {
-      return normalizeOrigin(authSite);
+      return asOrigin(authSite);
     }
   }
 
@@ -100,7 +105,7 @@ export function getAuthSiteUrl() {
   if (configured) {
     const host = authHost(configured);
     if (host && AUTH_HOSTS.has(host)) {
-      return normalizeOrigin(configured);
+      return asOrigin(configured);
     }
   }
 
@@ -140,4 +145,13 @@ export const COMPANY_SHARE_PREFIX = "hansala.com/c";
 /** Display label for shareable address (no protocol). */
 export function companyShareLabel(slug: string) {
   return `${COMPANY_SHARE_PREFIX}/${slug}`;
+}
+
+/** Hostname for share UI (never throws). */
+export function getPublicHost() {
+  try {
+    return new URL(getSiteUrl()).host;
+  } catch {
+    return "hansala.com";
+  }
 }
