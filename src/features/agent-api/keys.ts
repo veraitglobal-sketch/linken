@@ -7,6 +7,7 @@ import {
   type AgentApiKeyRow,
   type AgentScope,
 } from "@/features/agent-api/types";
+import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
 
 async function requireOwnerCompany() {
@@ -77,6 +78,13 @@ export async function createApiKeyAction(input: {
   const { supabase, user, company } = await requireOwnerCompany();
   if (!user || !company) {
     return { ok: false, error: "Sign in as a company owner." };
+  }
+
+  if (!getEntitlements(parsePlan(company.plan)).agentApi) {
+    return {
+      ok: false,
+      error: "Agent API requires Pro. Upgrade on Billing first.",
+    };
   }
 
   const name = input.name.trim();

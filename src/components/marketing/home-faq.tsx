@@ -17,7 +17,7 @@ const FAQ_ITEMS = [
   {
     question: "Is it free?",
     answer:
-      "Yes. Everything that builds the graph — your profile, confirmations, and case studies — is free. Paid tools like analytics and team seats are coming as a Pro plan, but nothing charges yet.",
+      "Yes. Your profile, confirmations, and case studies stay free. Pro unlocks premium embeds, full analytics, Agent API, branded one-pagers, and team seats.",
   },
 ];
 

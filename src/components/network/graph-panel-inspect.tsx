@@ -82,7 +82,10 @@ export function GraphPanelInspect({
         </p>
       ) : null}
 
-      {showInviteTeam && teamAccess?.canManage && selected.companyId ? (
+      {showInviteTeam &&
+      teamAccess?.canManage &&
+      teamAccess.canInviteMore &&
+      selected.companyId ? (
         <div className="px-3 pt-2">
           <GraphInviteTeamForm
             companyId={selected.companyId}
@@ -91,6 +94,20 @@ export function GraphPanelInspect({
             onSent={onInviteSent}
           />
         </div>
+      ) : null}
+
+      {showInviteTeam &&
+      teamAccess?.canManage &&
+      !teamAccess.canInviteMore ? (
+        <p className="mx-3 mt-2 rounded-2xl border border-line bg-paper px-3 py-2 text-[12px] text-muted">
+          Team seats require Pro.{" "}
+          <a
+            href="/dashboard/billing"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
+            Upgrade on Billing
+          </a>
+        </p>
       ) : null}
 
       <ul className="mt-1">
@@ -108,14 +125,25 @@ export function GraphPanelInspect({
           />
         ) : null}
         {teamAccess?.canManage && !showInviteTeam ? (
-          <PanelRow
-            icon={<PersonPlusIcon />}
-            title="Add team member"
-            description="Invite by email — they join after accepting"
-            onClick={onShowInviteTeam}
-            chevron
-            accent
-          />
+          teamAccess.canInviteMore ? (
+            <PanelRow
+              icon={<PersonPlusIcon />}
+              title="Add team member"
+              description="Invite by email — they join after accepting"
+              onClick={onShowInviteTeam}
+              chevron
+              accent
+            />
+          ) : (
+            <PanelRow
+              icon={<PersonPlusIcon />}
+              title="Add team member"
+              description="Requires Pro — upgrade on Billing"
+              href="/dashboard/billing"
+              chevron
+              accent
+            />
+          )
         ) : null}
         {editable ? (
           <PanelRow

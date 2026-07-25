@@ -81,7 +81,7 @@ export default function DevelopersPage() {
       id: "assessment",
       title: "Assessment",
       requirement:
-        "Would-work-again rate and top strengths. Needs ≥3 client assessment answers on the profile.",
+        "Pro. Would-work-again rate and top strengths. Needs ≥3 client assessment answers.",
       height: 120,
       previewSrc: `${docsUrl}/embed/${EXAMPLE_SLUG}?variant=assessment&preview=1`,
       snippet: embedSnippet(docsUrl, EXAMPLE_SLUG, "assessment", 120),
@@ -93,7 +93,7 @@ export default function DevelopersPage() {
       id: "references",
       title: "References",
       requirement:
-        "Up to five confirmed client references. Empty profiles show a quiet fallback.",
+        "Pro. Up to five confirmed client references. Free plans fall back to Horizontal.",
       height: 160,
       previewSrc: `${docsUrl}/embed/${EXAMPLE_SLUG}?variant=references&preview=1`,
       snippet: embedSnippet(docsUrl, EXAMPLE_SLUG, "references", 160),
@@ -281,7 +281,7 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="05"
               title="Embeds"
-              description="Drop an iframe on your site. Variants via ?variant=micro|horizontal|starter|score and ?theme=light|dark. No partner logos — proof strip only. Links back with ?src=embed."
+              description="Drop an iframe on your site. Free: verified, micro, horizontal. Pro unlocks starter, score, trust-card, credentials, signature, references, assessment. Public Pro URLs fall back to Horizontal without a paid plan. Links back with ?src=embed."
             />
             <p className="mt-4 text-[14px] text-ink-soft">
               Prefer a visual configurator?{" "}
@@ -299,7 +299,7 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="06"
               title="Agent API"
-              description="Authenticated write surface for AI agents and integrations acting as your company. Create keys in Workspace → API."
+              description="Pro plan. Authenticated write surface for AI agents acting as your company. Create keys in Workspace → API after upgrading."
             />
 
             <div

@@ -7,6 +7,7 @@ import { logProfileEvent } from "@/features/analytics/log";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getOnePagerData } from "@/features/one-pager/queries";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
+import { getEntitlements } from "@/features/plan/entitlements";
 import { qrDataUri } from "@/lib/qr";
 import { getSiteUrl } from "@/lib/site";
 
@@ -71,6 +72,7 @@ export default async function OnePagerPage({ params }: Props) {
           data={data}
           profileUrl={`${siteUrl}/c/${data.company.slug}`}
           qrDataUri={qr}
+          branded={getEntitlements(data.company.plan).onePagerBranding}
         />
       </div>
     </div>

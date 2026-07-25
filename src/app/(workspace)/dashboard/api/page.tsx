@@ -6,6 +6,7 @@ import { ApiKeysPanel } from "@/components/api/api-keys-panel";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { listApiKeys, listRecentAudit } from "@/features/agent-api/keys";
+import { getEntitlements } from "@/features/plan/entitlements";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 
 export const metadata: Metadata = {
@@ -48,6 +49,32 @@ export default async function DashboardApiPage() {
           </Link>{" "}
           first.
         </p>
+      </WorkspacePage>
+    );
+  }
+
+  const canAgentApi = getEntitlements(company.plan).agentApi;
+
+  if (!canAgentApi) {
+    return (
+      <WorkspacePage
+        title="API"
+        description="Keys act as your company. Confirmations always require a human."
+      >
+        <div className="rounded-2xl border border-line bg-paper/50 px-5 py-8 text-center">
+          <p className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
+            Agent API is a Pro feature
+          </p>
+          <p className="mx-auto mt-2 max-w-md text-[13px] leading-relaxed text-muted">
+            Create API keys and automate profile content after you upgrade.
+          </p>
+          <Link
+            href="/dashboard/billing"
+            className="mt-5 inline-flex h-10 items-center rounded-xl bg-ink px-4 text-[13px] font-semibold text-white"
+          >
+            Upgrade on Billing
+          </Link>
+        </div>
       </WorkspacePage>
     );
   }

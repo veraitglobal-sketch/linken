@@ -25,6 +25,7 @@ export type AgentErrorCode =
   | "unauthorized"
   | "invalid_key"
   | "insufficient_scope"
+  | "plan_required"
   | "not_found"
   | "invalid_request"
   | "rate_limited"

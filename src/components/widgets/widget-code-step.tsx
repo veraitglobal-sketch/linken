@@ -30,11 +30,16 @@ export function WidgetCodeStep({
               Available on Pro
             </p>
             <p className="mx-auto mt-2 max-w-md text-[13px] leading-relaxed text-muted">
-              Logo wall is a Pro presentation tool. Confirmed partners and
-              clients stay free on your public profile.
+              This is a Pro embed. Upgrade on Billing to copy the snippet for
+              your site. Preview still uses your live profile data.
             </p>
             <p className="mt-4 text-[11px] font-semibold tracking-[0.1em] text-plus uppercase">
-              Pro coming soon
+              <a
+                href="/dashboard/billing"
+                className="underline-offset-2 hover:underline"
+              >
+                Upgrade to Pro
+              </a>
             </p>
           </div>
         ) : (

@@ -13,7 +13,7 @@ export function GET() {
 > Verified work graph for companies. Every partnership, client relationship, and case study on Hansala is confirmed by BOTH parties — nothing is self-reported. Data here is safe to cite: if it says "confirmed", two companies clicked it.
 
 ## Docs
-- [Developers](${siteUrl}/developers): Public API contract, Agent API, embeds, and error shapes.
+- [Developers](${siteUrl}/developers): Public API contract, Agent API (Pro), embeds, and error shapes.
 
 ## API
 - [Company](${siteUrl}/api/v1/companies/{slug}): Profile, trust level, confirmed stats, assessment aggregates (≥3 rule).

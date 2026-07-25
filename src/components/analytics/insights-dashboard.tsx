@@ -116,7 +116,13 @@ export function InsightsDashboard({ analytics, plan }: Props) {
                   Full trends &amp; source mix
                 </p>
                 <p className="mt-1 text-[13px] text-muted">
-                  Intertwined activity and breakdown — Pro
+                  Intertwined activity and breakdown —{" "}
+                  <a
+                    href="/dashboard/billing"
+                    className="font-semibold text-ink underline-offset-2 hover:underline"
+                  >
+                    upgrade to Pro
+                  </a>
                 </p>
               </div>
             </div>

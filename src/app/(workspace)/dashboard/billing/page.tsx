@@ -22,7 +22,8 @@ import { createClient } from "@/lib/supabase/server";
 export const metadata: Metadata = { title: "Billing" };
 
 const FLASH: Record<string, string> = {
-  success: "Welcome to Pro — your widgets and analytics unlock immediately.",
+  success:
+    "Welcome to Pro — premium embeds, analytics, Agent API, and team seats are active.",
   canceled: "Checkout canceled. No charge was made.",
   stripe_not_configured: "Billing is not configured on this environment yet.",
   owner_only: "Only the company owner can manage billing.",
@@ -71,7 +72,7 @@ export default async function BillingPage({ searchParams }: Props) {
 
   const isOwner = company.role === "owner";
   const entitlements = getEntitlements(company.plan);
-  const isPro = entitlements.logoWallWidget;
+  const isPro = entitlements.premiumEmbeds;
   const stripeReady = isStripeConfigured();
   const flashKey = success ? "success" : canceled ? "canceled" : error;
   const flash = flashKey ? FLASH[flashKey] : null;
@@ -88,7 +89,7 @@ export default async function BillingPage({ searchParams }: Props) {
   return (
     <WorkspacePage
       title="Billing"
-      description="Upgrade for premium widgets, analytics, and Pro embeds."
+      description="Upgrade for premium embeds, full analytics, Agent API, and team seats."
     >
       <div className="mx-auto max-w-5xl space-y-6">
         {flash ? (

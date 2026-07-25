@@ -13,6 +13,7 @@ export const CHECKOUT_BRANDING = {
 
 export const CHECKOUT_CUSTOM_TEXT = {
   submit: {
-    message: "Premium embeds, analytics, and Pro tools unlock right after payment.",
+    message:
+      "Premium embeds, analytics, Agent API, and team seats unlock right after payment.",
   },
 };

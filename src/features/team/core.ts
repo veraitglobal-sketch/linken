@@ -1,6 +1,7 @@
 import "server-only";
 import { createHash } from "crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { assertTeamSeatAvailable } from "@/features/team/seat-limit";
 import { parseSectionPermissions } from "@/features/workspace/sections";
 import type { WorkspaceSection } from "@/features/workspace/sections";
 import { sendTeamJoinInviteEmail } from "@/lib/email";
@@ -113,6 +114,9 @@ export async function inviteTeamMemberCore(
   const role = input.role === "admin" ? "admin" : "member";
   const permissions =
     role === "member" ? parseSectionPermissions(input.permissions ?? []) : [];
+
+  const seats = await assertTeamSeatAvailable(admin, input.companyId);
+  if (!seats.ok) return seats;
 
   const { data: token, error } = await admin.rpc("agent_create_team_invitation", {
     p_company_id: input.companyId,

@@ -1,5 +1,7 @@
 # Hansala Agent API
 
+**Requires Hansala Pro** (or Founding). Free plans cannot create keys; existing keys return `403 plan_required`.
+
 Base URL: `https://hansala.com/api/v1/agent` (local: `http://localhost:3000/api/v1/agent`)
 
 Auth: `Authorization: Bearer hs_...` (legacy `lk_` still accepted)

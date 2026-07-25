@@ -1,33 +1,35 @@
 export type CompanyPlan = "free" | "pro" | "founding";
 
 export type Entitlements = {
-  instantInquiryNotifications: boolean;
   fullAnalytics: boolean;
+  /** Company-first one-pager chrome (free keeps Hansala watermark). */
   onePagerBranding: boolean;
-  /** Website logo-wall embed — presentation paid, evidence stays free on profile. */
-  logoWallWidget: boolean;
-  /** Instant Radar digest emails for matching project requests. */
+  /** Premium /embed variants + widgets studio unlock. */
+  premiumEmbeds: boolean;
+  /** Agent API keys and programmatic access. */
+  agentApi: boolean;
+  /** Max team members including owner. Free = owner only. */
+  maxTeamMembers: number;
+  /** companies.radar add-on — Instant Radar digest emails. */
   radarInstantAlerts: boolean;
-  /** Spend marketplace credits on Radar responses. */
+  /** companies.radar add-on — spend marketplace credits. */
   radarCredits: boolean;
 };
 
-const FREE: Entitlements = {
-  instantInquiryNotifications: false,
+const FREE: Omit<Entitlements, "radarInstantAlerts" | "radarCredits"> = {
   fullAnalytics: false,
   onePagerBranding: false,
-  logoWallWidget: false,
-  radarInstantAlerts: false,
-  radarCredits: false,
+  premiumEmbeds: false,
+  agentApi: false,
+  maxTeamMembers: 1,
 };
 
-const PRO: Entitlements = {
-  instantInquiryNotifications: true,
+const PRO: Omit<Entitlements, "radarInstantAlerts" | "radarCredits"> = {
   fullAnalytics: true,
   onePagerBranding: true,
-  logoWallWidget: true,
-  radarInstantAlerts: false,
-  radarCredits: false,
+  premiumEmbeds: true,
+  agentApi: true,
+  maxTeamMembers: 25,
 };
 
 export type EntitlementOptions = {
@@ -37,8 +39,7 @@ export type EntitlementOptions = {
 
 /**
  * Plan → product capabilities.
- * Radar is an add-on flag (`companies.radar`), not a fourth plan value —
- * so a firm can be Pro + Radar without replacing billing tiers.
+ * Radar is an add-on flag (`companies.radar`), not a fourth plan value.
  */
 export function getEntitlements(
   plan: CompanyPlan | string | null | undefined,
@@ -56,4 +57,9 @@ export function getEntitlements(
 export function parsePlan(value: unknown): CompanyPlan {
   if (value === "pro" || value === "founding" || value === "free") return value;
   return "free";
+}
+
+/** Paid plan with product unlocks (includes founding). */
+export function isPaidPlan(plan: CompanyPlan | string | null | undefined) {
+  return plan === "pro" || plan === "founding";
 }

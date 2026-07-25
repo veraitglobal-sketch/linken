@@ -10,12 +10,15 @@ import {
   embedWrapTransparent,
   renderEmbedVariant,
 } from "@/components/embed/render-embed-variant";
+import { EmbedProLockedNote } from "@/components/embed/embed-pro-locked-note";
 import { logProfileEvent } from "@/features/analytics/log";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
+import { getEntitlements } from "@/features/plan/entitlements";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
+import { resolvePublicEmbedVariant } from "@/features/widgets/embed-access";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
@@ -111,20 +114,38 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
     trust.breakdown.confirmedReferences +
     trust.breakdown.ongoingReferences;
 
-  const node = renderEmbedVariant({
+  const entitlements = getEntitlements(company.plan);
+  const resolved = resolvePublicEmbedVariant({
     variant,
-    company,
-    theme,
-    profileUrl,
-    claimed: company.claimed !== false,
-    trust,
-    assessment,
-    confirmedRefs,
-    confirmedCount,
+    premiumEmbeds: entitlements.premiumEmbeds,
+    preview: preview === "1",
   });
 
+  const node = (
+    <>
+      {renderEmbedVariant({
+        variant: resolved.variant,
+        company,
+        theme,
+        profileUrl,
+        claimed: company.claimed !== false,
+        trust,
+        assessment,
+        confirmedRefs,
+        confirmedCount,
+      })}
+      {resolved.locked ? (
+        <EmbedProLockedNote
+          name={company.name}
+          profileUrl={profileUrl}
+          theme={theme}
+        />
+      ) : null}
+    </>
+  );
+
   return wrapEmbed(node, theme, w, {
-    center: embedWrapCenter(variant),
-    transparent: embedWrapTransparent(variant),
+    center: embedWrapCenter(resolved.variant),
+    transparent: embedWrapTransparent(resolved.variant),
   });
 }

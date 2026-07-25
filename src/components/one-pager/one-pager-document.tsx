@@ -7,6 +7,8 @@ type Props = {
   data: OnePagerData;
   profileUrl: string;
   qrDataUri: string;
+  /** Pro: company-first chrome. Free: Hansala watermark. */
+  branded?: boolean;
 };
 
 function period(ref: OnePagerData["references"][number]) {
@@ -15,7 +17,12 @@ function period(ref: OnePagerData["references"][number]) {
   return ref.startedYear || "—";
 }
 
-export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
+export function OnePagerDocument({
+  data,
+  profileUrl,
+  qrDataUri,
+  branded = false,
+}: Props) {
   const { company, assessment } = data;
   const accepting = company.acceptingClients !== false;
   const totalRefs = data.confirmedReferences + data.ongoingReferences;
@@ -38,7 +45,7 @@ export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
           />
           <div>
             <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1a5c51] uppercase">
-              Verified one-pager
+              {branded ? "Company credentials" : "Verified on Hansala"}
             </p>
             <h1 className="mt-2 font-display text-[clamp(1.8rem,3vw,2.4rem)] font-medium tracking-[-0.04em] text-ink">
               {company.name}
@@ -165,6 +172,16 @@ export function OnePagerDocument({ data, profileUrl, qrDataUri }: Props) {
           className="rounded-xl border border-line"
         />
       </footer>
+
+      {!branded ? (
+        <p className="mt-8 border-t border-line pt-4 text-center text-[11px] tracking-[0.08em] text-muted uppercase">
+          Generated with Hansala
+        </p>
+      ) : (
+        <p className="mt-8 border-t border-line pt-4 text-center text-[11px] text-muted">
+          Confirmed on Hansala
+        </p>
+      )}
     </article>
   );
 }

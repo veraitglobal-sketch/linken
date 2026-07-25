@@ -55,7 +55,7 @@ export default async function DashboardWidgetsPage() {
   ]);
 
   const confirmedRefs = references.filter((r) => r.status === "confirmed");
-  const isPro = getEntitlements(company.plan).logoWallWidget;
+  const isPro = getEntitlements(company.plan).premiumEmbeds;
   const hasProof = confirmedRefs.length > 0;
 
   const availability = {

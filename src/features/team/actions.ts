@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { assertTeamSeatAvailable } from "@/features/team/seat-limit";
 import { sendTeamJoinInviteEmail } from "@/lib/email";
 import { createClient } from "@/lib/supabase/server";
 
@@ -64,6 +65,9 @@ async function createAndSendTeamInvite(input: {
   if (!company) {
     return { ok: false, error: "Company not found." };
   }
+
+  const seats = await assertTeamSeatAvailable(supabase, companyId);
+  if (!seats.ok) return seats;
 
   // Only owner may grant admin; admins invite as member.
   let effectiveRole: "admin" | "member" = role === "admin" ? "admin" : "member";

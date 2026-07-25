@@ -6,7 +6,7 @@ import { requireActiveCompany } from "@/features/workspace/require-company";
 import { createClient } from "@/lib/supabase/server";
 
 const OWNED_SELECT =
-  "id, name, slug, website, verified, accepting_clients, logo_source, radar, widget_settings" as const;
+  "id, name, slug, website, verified, accepting_clients, logo_source, radar, widget_settings, plan" as const;
 
 export type OwnedCompanyRow = {
   id: string;
@@ -18,6 +18,7 @@ export type OwnedCompanyRow = {
   logo_source: string | null;
   radar: boolean | null;
   widget_settings: unknown;
+  plan: string | null;
 };
 
 /**

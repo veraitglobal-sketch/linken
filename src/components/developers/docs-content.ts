@@ -256,6 +256,10 @@ export const VERIFY_FIELDS: FieldRow[] = [
 ];
 
 export const ERROR_FIELDS: FieldRow[] = [
-  { name: "error.code", type: '"not_found" | "invalid_request" | "internal"', description: "Machine-readable code." },
+  {
+    name: "error.code",
+    type: '"not_found" | "invalid_request" | "unauthorized" | "invalid_key" | "insufficient_scope" | "plan_required" | "rate_limited" | "service_unavailable" | "internal"',
+    description: "Machine-readable code. plan_required = Agent API needs Pro.",
+  },
   { name: "error.message", type: "string", description: "Human-readable message." },
 ];

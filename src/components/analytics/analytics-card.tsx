@@ -105,7 +105,13 @@ export function AnalyticsCard({ analytics, plan }: Props) {
           </div>
           <div className="absolute inset-0 flex items-center justify-center bg-white/55 px-4 text-center">
             <p className="text-[13px] font-medium text-ink">
-              Detailed sources and trends — Pro coming soon
+              Detailed sources and trends —{" "}
+              <a
+                href="/dashboard/billing"
+                className="font-semibold underline-offset-2 hover:underline"
+              >
+                upgrade to Pro
+              </a>
             </p>
           </div>
         </div>

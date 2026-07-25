@@ -15,7 +15,7 @@ export async function GET() {
       title: "Hansala Agent API",
       version: "1.1.0",
       description:
-        "Authenticated API for AI agents. Bearer hs_ keys. Image uploads use PUT (POST → 405). Agents invite only — never auto-confirm. See docs/AGENT-API.md and /developers.",
+        "Pro plan. Authenticated API for AI agents. Bearer hs_ keys. Image uploads use PUT (POST → 405). Agents invite only — never auto-confirm. Free keys receive 403 plan_required. See docs/AGENT-API.md and /developers.",
     },
     servers: [{ url: base }],
     security: [{ bearerAuth: [] }],

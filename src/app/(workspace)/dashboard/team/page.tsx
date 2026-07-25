@@ -4,6 +4,7 @@ import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notic
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { EditMyTeamProfile } from "@/components/team/edit-my-team-profile";
 import { InviteTeamForm } from "@/components/team/invite-team-form";
+import { TeamInviteLocked } from "@/components/team/team-invite-locked";
 import { TeamMembersSection } from "@/components/team/team-members-section";
 import { TeamPageFlashes } from "@/components/team/team-page-flashes";
 import { TeamPendingInvites } from "@/components/team/team-pending-invites";
@@ -12,6 +13,7 @@ import {
   listCompanyTeam,
   viewerCompanyMembership,
 } from "@/features/team/queries";
+import { getEntitlements } from "@/features/plan/entitlements";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { PRODUCT } from "@/lib/product-model";
 
@@ -69,6 +71,9 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
     me && (!me.displayName.trim() || !me.displayTitle.trim()),
   );
   const tab = resolveTab(sp.tab, canManage, Boolean(me), needsSetup);
+  const seats = getEntitlements(sessionCompany?.plan).maxTeamMembers;
+  const usedSeats = members.length + pendingInvites.length;
+  const canInviteMore = usedSeats < seats;
 
   return (
     <WorkspacePage
@@ -136,7 +141,11 @@ export default async function DashboardTeamPage({ searchParams }: Props) {
             ) : null}
             {tab === "invite" && canManage ? (
               <div className="space-y-10">
-                <InviteTeamForm companyId={company.id} />
+                {canInviteMore ? (
+                  <InviteTeamForm companyId={company.id} />
+                ) : (
+                  <TeamInviteLocked maxSeats={seats} />
+                )}
                 <TeamPendingInvites
                   pendingInvites={pendingInvites}
                   back="/dashboard/team?tab=invite"

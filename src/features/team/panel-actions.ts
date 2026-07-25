@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getPublicTeam, listCompanyTeam } from "@/features/team/queries";
+import { assertTeamSeatAvailable } from "@/features/team/seat-limit";
 import type {
   PublicTeamMember,
   TeamInvitation,
@@ -20,6 +21,8 @@ export type TeamManageAccess = {
   canManage: boolean;
   /** Owner may invite as admin; admin may only invite members. */
   canInviteAdmin: boolean;
+  /** False when Free (owner-only) or Pro seat cap is full. */
+  canInviteMore: boolean;
   role: TeamRole | null;
 };
 
@@ -30,6 +33,7 @@ export async function fetchTeamManageAccess(
   const empty: TeamManageAccess = {
     canManage: false,
     canInviteAdmin: false,
+    canInviteMore: false,
     role: null,
   };
   if (!companyId) return empty;
@@ -61,10 +65,12 @@ export async function fetchTeamManageAccess(
 
     if (!isOwner && !isAdmin) return empty;
 
+    const seats = await assertTeamSeatAvailable(supabase, companyId);
     const role: TeamRole = isOwner ? "owner" : "admin";
     return {
       canManage: true,
       canInviteAdmin: isOwner,
+      canInviteMore: seats.ok,
       role,
     };
   } catch {

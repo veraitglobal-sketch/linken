@@ -42,7 +42,7 @@ export function BillingPlanPanel({
           <p className="mt-2 text-[13px] text-muted">
             {isPro
               ? "Pro tools are active for this company."
-              : "You are on Free — upgrade when you are ready."}
+              : "Free includes profile, confirmations, and basic embeds. Upgrade for premium embeds, analytics, Agent API, and team seats."}
           </p>
         )}
       </div>
