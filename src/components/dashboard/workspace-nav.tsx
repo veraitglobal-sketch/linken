@@ -19,28 +19,43 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
       : pathname === item.href || pathname.startsWith(`${item.href}/`);
   const Icon = item.icon;
   const hint = item.lockedHint ?? "Coming soon";
+  const className = cn(
+    "group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium transition-colors",
+    item.locked
+      ? "cursor-default text-muted/70"
+      : active
+        ? "bg-navy/[0.07] font-semibold text-ink"
+        : "text-muted hover:bg-black/[0.03] hover:text-ink",
+  );
 
-  return (
-    <Link
-      href={item.href}
-      title={item.locked ? hint : undefined}
-      className={cn(
-        "group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium transition-colors",
-        active
-          ? "bg-navy/[0.07] font-semibold text-ink"
-          : "text-muted hover:bg-black/[0.03] hover:text-ink",
-      )}
-    >
+  const body = (
+    <>
       <Icon
         className={cn(
           "shrink-0 transition-colors",
-          active ? "text-navy" : "text-plus group-hover:text-muted",
+          item.locked
+            ? "text-plus/70"
+            : active
+              ? "text-navy"
+              : "text-plus group-hover:text-muted",
         )}
       />
       <span className="min-w-0 flex-1 truncate">{item.label}</span>
-      {item.locked ? (
-        <IconLock className="shrink-0 text-plus" />
-      ) : null}
+      {item.locked ? <IconLock className="shrink-0 text-plus/80" /> : null}
+    </>
+  );
+
+  if (item.locked) {
+    return (
+      <span className={className} title={hint} aria-disabled="true">
+        {body}
+      </span>
+    );
+  }
+
+  return (
+    <Link href={item.href} className={className}>
+      {body}
     </Link>
   );
 }
