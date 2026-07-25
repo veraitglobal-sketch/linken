@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { clearCompanyCover, updateCompanyCover } from "@/features/company/cover-actions";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Button } from "@/components/ui/button";
@@ -33,12 +32,11 @@ export function CompanySettingsCover({
 
       <div className="px-5 py-5 sm:px-6">
         <div className="relative mb-4 h-32 w-full overflow-hidden rounded-2xl bg-[#0e1f1c] sm:h-40">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={coverImageUrl || "/images/hero-network.jpg"}
             alt="Current cover photo preview"
-            fill
-            className="object-cover"
-            sizes="100vw"
+            className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
 

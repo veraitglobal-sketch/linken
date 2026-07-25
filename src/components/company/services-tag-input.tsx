@@ -14,7 +14,9 @@ export function ServicesTagInput({
   name = "services",
   defaultServices = [],
 }: Props) {
-  const [tags, setTags] = useState(defaultServices);
+  const [tags, setTags] = useState(() =>
+    Array.isArray(defaultServices) ? defaultServices : [],
+  );
   const [draft, setDraft] = useState("");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
