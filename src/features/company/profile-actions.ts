@@ -7,6 +7,7 @@ import {
   parseSettingsFormData,
   websiteDomainChanged,
 } from "@/features/company/profile-fields";
+import { uploadLogoCore } from "@/features/logo/core";
 import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -26,10 +27,6 @@ function backWith(back: string, params: Record<string, string>) {
   return `${url.pathname}${url.search}`;
 }
 
-async function requireOperatorCompany(loginNext: string) {
-  return requireOperatorActiveCompany({ loginNext });
-}
-
 function revalidateCompany(slug: string) {
   revalidatePath("/dashboard/settings");
   revalidatePath(`/c/${slug}/edit`);
@@ -41,9 +38,9 @@ function revalidateCompany(slug: string) {
 
 export async function updateCompanyProfile(formData: FormData) {
   const backHint = String(formData.get("back") ?? "").trim();
-  const { supabase, company } = await requireOperatorCompany(
-    backHint.startsWith("/") ? backHint : "/dashboard/settings",
-  );
+  const { supabase, company } = await requireOperatorActiveCompany({
+    loginNext: backHint.startsWith("/") ? backHint : "/dashboard/settings",
+  });
   const back = safeBack(backHint, company.slug);
 
   const forbidden = hasForbiddenSettingsFields(formData);
@@ -52,9 +49,7 @@ export async function updateCompanyProfile(formData: FormData) {
   }
 
   const parsed = parseSettingsFormData(formData);
-  if (!parsed.ok) {
-    redirect(backWith(back, { error: parsed.error }));
-  }
+  if (!parsed.ok) redirect(backWith(back, { error: parsed.error }));
 
   const next = parsed.data;
   const domainShift =
@@ -108,4 +103,31 @@ export async function updateCompanyProfile(formData: FormData) {
 
   revalidateCompany(company.slug);
   redirect(backWith(back, { saved: "1" }));
+}
+
+/** In-place upload — no redirect. */
+export async function uploadCompanyLogo(
+  formData: FormData,
+): Promise<{ ok: boolean; error?: string }> {
+  const { user, company } = await requireOperatorActiveCompany({
+    loginNext: "/dashboard/settings",
+  });
+  const file = formData.get("logo");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: "Choose an image file." };
+  }
+
+  const admin = createAdminClient();
+  if (!admin) return { ok: false, error: "Upload unavailable right now." };
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const result = await uploadLogoCore(admin, company.id, {
+    bytes,
+    contentType: file.type || "image/png",
+    ownerUserId: user.id,
+  });
+  if (!result.ok) return { ok: false, error: result.error };
+
+  revalidateCompany(company.slug);
+  return { ok: true };
 }
