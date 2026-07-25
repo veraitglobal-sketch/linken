@@ -1,41 +1,91 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { NetworkMark } from "@/components/marketing/network-mark";
 
-const links = [
+const product = [
   { label: "Directory", href: "/search" },
   { label: "Developers", href: "/developers" },
+  { label: "Demo", href: "/demo" },
+];
+
+const account = [
   { label: "Sign in", href: "/login" },
+  { label: "Create company", href: "/onboarding" },
 ];
 
 /** Static footer — no auth/DB so marketing pages can stay cached. */
 export function SiteFooter() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="px-4 pb-8">
-      <div className="mx-auto max-w-6xl rounded-[28px] bg-navy px-8 py-10 shadow-[0_22px_56px_rgba(8,20,18,0.18)]">
-        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-          <div className="text-white">
-            <p className="font-display text-3xl tracking-[-0.035em]">Hansala</p>
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-white/58">
-              Company profile. Case studies. Partners confirmed by both sides.
+    <footer className="mt-8 border-t border-line bg-navy text-white">
+      <div className="mx-auto max-w-6xl px-6 py-14 sm:px-8 lg:px-10">
+        <div className="grid gap-12 lg:grid-cols-[1.4fr_0.8fr_0.8fr] lg:gap-16">
+          <div>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2.5 text-white"
+            >
+              <NetworkMark size={22} className="text-blue-soft" animate={false} />
+              <span className="font-display text-[1.35rem] font-semibold leading-none tracking-[-0.035em]">
+                Hansala
+              </span>
+            </Link>
+            <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-white/55">
+              Company profiles, case studies, and partners — public only after
+              both sides confirm.
             </p>
+            <Button
+              href="/onboarding"
+              variant="light"
+              className="mt-7 h-11 px-5"
+            >
+              Create company
+            </Button>
           </div>
-          <Button href="/onboarding" variant="light" className="h-11 px-6">
-            Create company
-          </Button>
-        </div>
-        <div className="mt-9 flex flex-col gap-3 border-t border-white/10 pt-6 text-[13px] sm:flex-row sm:items-center sm:justify-between">
-          <nav className="flex flex-wrap gap-6">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-white/45 transition-colors hover:text-white/85"
-              >
-                {link.label}
-              </Link>
-            ))}
+
+          <nav aria-label="Product">
+            <p className="text-[11px] font-semibold tracking-[0.14em] text-blue-soft uppercase">
+              Product
+            </p>
+            <ul className="mt-4 space-y-3">
+              {product.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-[14px] text-white/58 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </nav>
-          <p className="text-white/35">© 2026 Hansala</p>
+
+          <nav aria-label="Account">
+            <p className="text-[11px] font-semibold tracking-[0.14em] text-blue-soft uppercase">
+              Account
+            </p>
+            <ul className="mt-4 space-y-3">
+              {account.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-[14px] text-white/58 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-5 text-[12px] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
+          <p>© {year} Hansala. All rights reserved.</p>
+          <p>Mutually confirmed project networks.</p>
         </div>
       </div>
     </footer>
