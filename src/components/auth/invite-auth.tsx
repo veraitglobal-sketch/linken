@@ -1,4 +1,4 @@
-import { signIn, signInWithGoogle, signUp } from "@/features/auth/actions";
+import { signIn, signUp } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -28,20 +28,7 @@ export function InviteAuth({
       </h2>
       <p className="mt-2 text-[14px] text-ink-soft">{description}</p>
 
-      <form action={signInWithGoogle} className="mt-5">
-        <input type="hidden" name="next" value={next} />
-        <Button type="submit" variant="secondary" className="h-11 w-full">
-          Continue with Google
-        </Button>
-      </form>
-
-      <div className="my-4 flex items-center gap-3 text-[12px] text-muted">
-        <span className="h-px flex-1 bg-line" />
-        or email
-        <span className="h-px flex-1 bg-line" />
-      </div>
-
-      <form action={signIn} className="flex flex-col gap-3">
+      <form action={signIn} className="mt-5 flex flex-col gap-3">
         <input type="hidden" name="next" value={next} />
         <Input
           type="email"
@@ -62,7 +49,10 @@ export function InviteAuth({
         </Button>
       </form>
 
-      <form action={signUp} className="mt-5 flex flex-col gap-3 border-t border-line pt-5">
+      <form
+        action={signUp}
+        className="mt-5 flex flex-col gap-3 border-t border-line pt-5"
+      >
         <input type="hidden" name="next" value={next} />
         <p className="text-sm font-medium text-ink">New here? Create an account</p>
         <Input
