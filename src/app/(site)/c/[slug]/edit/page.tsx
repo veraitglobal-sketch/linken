@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ProfileEditGate } from "@/components/company/profile-edit-gate";
 import { ProfileEditHub } from "@/components/company/profile-edit-hub";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
@@ -36,22 +36,22 @@ function initials(name: string) {
   );
 }
 
-function flashMessage(params: {
+function flashMessage(q: {
   saved?: string;
   ok?: string;
   slugChanged?: string;
   coverUpdated?: string;
   coverCleared?: string;
 }): string | null {
-  if (params.slugChanged === "1") {
+  if (q.slugChanged === "1") {
     return "Handle updated. Old links now redirect here automatically.";
   }
-  if (params.saved === "1") return "Profile saved.";
-  if (params.ok === "logo") return "Logo refreshed from your website.";
-  if (params.ok === "logo-cleared") return "Logo removed.";
-  if (params.ok === "logoUpload") return "Logo uploaded.";
-  if (params.coverUpdated === "1") return "Cover photo updated.";
-  if (params.coverCleared === "1") return "Cover photo removed.";
+  if (q.saved === "1") return "Profile saved.";
+  if (q.ok === "logo") return "Logo refreshed from your website.";
+  if (q.ok === "logo-cleared") return "Logo removed.";
+  if (q.ok === "logoUpload") return "Logo uploaded.";
+  if (q.coverUpdated === "1") return "Cover photo updated.";
+  if (q.coverCleared === "1") return "Cover photo removed.";
   return null;
 }
 
@@ -61,52 +61,48 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
   const company = await getCompanyForPage(slug);
   if (!company) notFound();
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user: { id: string } | null = null;
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (error) console.error("[CompanyEditPage] auth", error.message);
+    user = data.user;
+  } catch (err) {
+    console.error("[CompanyEditPage] auth throw", err);
+    return (
+      <ProfileEditGate
+        title="Sign in to edit"
+        body="Your session could not be verified. Sign in again to continue."
+        href={`/login?next=${encodeURIComponent(`/c/${slug}/edit`)}`}
+        cta="Sign in"
+      />
+    );
+  }
 
   if (!user) {
-    // Soft gate — avoid NEXT_REDIRECT "error" HTML flash in the browser.
-    const next = encodeURIComponent(`/c/${slug}/edit`);
     return (
-      <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <h1 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
-          Sign in to edit
-        </h1>
-        <p className="mt-2 text-[14px] text-muted">
-          You need to be signed in as the company owner to edit this profile.
-        </p>
-        <Link
-          href={`/login?next=${next}`}
-          className="mt-6 inline-flex h-11 items-center rounded-full bg-navy px-5 text-[13px] font-semibold text-white"
-        >
-          Sign in
-        </Link>
-      </div>
+      <ProfileEditGate
+        title="Sign in to edit"
+        body="You need to be signed in as the company owner to edit this profile."
+        href={`/login?next=${encodeURIComponent(`/c/${slug}/edit`)}`}
+        cta="Sign in"
+      />
     );
   }
 
   const isOwner = await isCompanyOwnerSlug(slug);
   if (!isOwner) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <h1 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
-          Editing locked
-        </h1>
-        <p className="mt-2 text-[14px] text-muted">
-          Only the company owner can edit this profile.
-        </p>
-        <Link
-          href={`/c/${slug}`}
-          className="mt-6 inline-flex h-11 items-center rounded-full border border-line bg-surface px-5 text-[13px] font-semibold text-ink"
-        >
-          View profile
-        </Link>
-      </div>
+      <ProfileEditGate
+        title="Editing locked"
+        body="Only the company owner can edit this profile."
+        href={`/c/${slug}`}
+        cta="View profile"
+      />
     );
   }
 
+  const supabase = await createClient();
   const { data: full, error: loadError } = await supabase
     .from("companies")
     .select(
@@ -116,17 +112,17 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
     .maybeSingle();
 
   if (loadError) {
-    console.error("[CompanyEditPage]", slug, loadError.message);
+    console.error("[CompanyEditPage] load", slug, loadError.message);
+    throw new Error(`Could not load company: ${loadError.message}`);
   }
-
   if (!full) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-[14px] text-muted">
-        Could not load company.{" "}
-        <Link href={`/c/${slug}`} className="font-semibold text-ink underline">
-          Back to profile
-        </Link>
-      </div>
+      <ProfileEditGate
+        title="Company not found"
+        body="We could not load this company profile."
+        href={`/c/${slug}`}
+        cta="Back to profile"
+      />
     );
   }
 
