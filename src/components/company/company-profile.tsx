@@ -50,6 +50,8 @@ type Props = {
   addPartnerVerified?: boolean;
   addPartnerStatus?: Map<string, string>;
   addPartnerMode?: "search" | "draft";
+  /** Case study URL base — default `/c/{slug}`. */
+  caseStudyBase?: string;
 };
 
 export function CompanyProfile({
@@ -78,6 +80,7 @@ export function CompanyProfile({
   addPartnerVerified = false,
   addPartnerStatus,
   addPartnerMode = "search",
+  caseStudyBase,
 }: Props) {
   const isUnclaimed = company.claimed === false;
   const confirmedRefs = references.filter((r) => r.status === "confirmed").length;
@@ -171,6 +174,7 @@ export function CompanyProfile({
               companySlug={company.slug}
               caseStudies={caseStudies}
               editable={editable}
+              caseStudyBase={caseStudyBase}
             />
           ) : null}
         </div>

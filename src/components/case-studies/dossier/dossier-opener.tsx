@@ -8,14 +8,21 @@ type Props = {
   company: Company;
   caseStudy: CaseStudy;
   index?: number;
+  companyHref?: string;
 };
 
-export function DossierOpener({ company, caseStudy, index = 0 }: Props) {
+export function DossierOpener({
+  company,
+  caseStudy,
+  index = 0,
+  companyHref,
+}: Props) {
   const cover = caseStudyCoverUrl(caseStudy.coverImageUrl, index);
   const confirmed = caseStudy.clientConfirmation?.status === "confirmed";
   const meta = [caseStudy.year, caseStudy.location, caseStudy.sector]
     .filter(Boolean)
     .join("  ·  ");
+  const backHref = companyHref ?? `/c/${company.slug}`;
 
   return (
     <header className="case-file-hero">
@@ -35,7 +42,7 @@ export function DossierOpener({ company, caseStudy, index = 0 }: Props) {
       <div className="absolute inset-x-0 bottom-0 z-10">
         <div className="mx-auto max-w-6xl px-6 pb-12 pt-32 sm:pb-16 sm:pt-40">
           <Link
-            href={`/c/${company.slug}`}
+            href={backHref}
             className="text-[13px] font-medium text-white/45 transition-colors hover:text-white/75"
           >
             {company.name}

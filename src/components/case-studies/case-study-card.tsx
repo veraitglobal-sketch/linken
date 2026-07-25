@@ -11,6 +11,8 @@ type Props = {
   company: Pick<Company, "verified" | "name">;
   index: number;
   featured?: boolean;
+  /** Override `/c/{slug}` — e.g. `/demo` for the sample profile. */
+  caseStudyBase?: string;
 };
 
 export function CaseStudyCard({
@@ -18,8 +20,10 @@ export function CaseStudyCard({
   caseStudy,
   index,
   featured = false,
+  caseStudyBase,
 }: Props) {
-  const href = `/c/${companySlug}/case-studies/${caseStudy.slug}`;
+  const base = caseStudyBase ?? `/c/${companySlug}`;
+  const href = `${base}/case-studies/${caseStudy.slug}`;
   const cover = caseStudyCoverUrl(caseStudy.coverImageUrl, index);
   const confirmed = caseStudy.clientConfirmation?.status === "confirmed";
 

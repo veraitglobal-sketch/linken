@@ -20,6 +20,7 @@ type Props = {
   requested?: boolean;
   error?: string;
   index?: number;
+  companyHref?: string;
 };
 
 export function CaseStudyDossier({
@@ -29,12 +30,18 @@ export function CaseStudyDossier({
   requested = false,
   error,
   index = 0,
+  companyHref,
 }: Props) {
   const clientConfirmed = caseStudy.clientConfirmation?.status === "confirmed";
 
   return (
     <article className="case-file pb-28">
-      <DossierOpener company={company} caseStudy={caseStudy} index={index} />
+      <DossierOpener
+        company={company}
+        caseStudy={caseStudy}
+        index={index}
+        companyHref={companyHref}
+      />
       <CaseFileCredentials company={company} caseStudy={caseStudy} />
 
       <div className="mx-auto max-w-3xl px-6 pt-16">
@@ -69,7 +76,11 @@ export function CaseStudyDossier({
         <DossierFilmstrip urls={caseStudy.galleryUrls} title={caseStudy.title} />
         <div className="mx-auto max-w-3xl space-y-20 px-6">
           <DossierPartners partners={caseStudy.partners} companyName={company.name} />
-          <DossierFooterCta companySlug={company.slug} companyName={company.name} />
+          <DossierFooterCta
+            companySlug={company.slug}
+            companyName={company.name}
+            companyHref={companyHref}
+          />
           {editable ? (
             <p className="text-center text-[13px] text-[var(--cf-muted)]">
               <a href={`/dashboard/cases/${caseStudy.slug}`} className="text-ink underline-offset-4 hover:underline">

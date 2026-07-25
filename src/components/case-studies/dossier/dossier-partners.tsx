@@ -21,10 +21,13 @@ export function DossierPartners({ partners }: Props) {
 export function DossierFooterCta({
   companySlug,
   companyName,
+  companyHref,
 }: {
   companySlug: string;
   companyName: string;
+  companyHref?: string;
 }) {
+  const profile = companyHref ?? `/c/${companySlug}`;
   return (
     <footer className="border-t border-[var(--cf-line)] pt-12 text-center">
       <p className="font-display text-2xl font-medium tracking-[-0.03em] text-[var(--cf-ink)]">
@@ -32,13 +35,13 @@ export function DossierFooterCta({
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-4">
         <Link
-          href={`/c/${companySlug}#contact`}
+          href={`${profile}#contact`}
           className="inline-flex h-11 items-center border border-[var(--cf-ink)] px-6 text-[13px] font-semibold text-[var(--cf-ink)]"
         >
           Get in touch
         </Link>
         <Link
-          href={`/c/${companySlug}`}
+          href={profile}
           className="inline-flex h-11 items-center px-6 text-[13px] font-semibold text-[var(--cf-muted)] underline-offset-4 hover:underline"
         >
           Profile

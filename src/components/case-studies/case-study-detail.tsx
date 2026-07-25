@@ -9,6 +9,7 @@ type Props = {
   requested?: boolean;
   error?: string;
   index?: number;
+  companyHref?: string;
 };
 
 export function CaseStudyDetail(props: Props) {

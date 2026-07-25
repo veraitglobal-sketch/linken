@@ -8,6 +8,7 @@ type Props = {
   companySlug: string;
   caseStudies: CaseStudy[];
   editable?: boolean;
+  caseStudyBase?: string;
 };
 
 export function CaseStudyList({
@@ -15,6 +16,7 @@ export function CaseStudyList({
   companySlug,
   caseStudies,
   editable = false,
+  caseStudyBase,
 }: Props) {
   if (caseStudies.length === 0 && !editable) return null;
 
@@ -49,6 +51,7 @@ export function CaseStudyList({
               caseStudy={caseStudy}
               index={index}
               featured={index === 0}
+              caseStudyBase={caseStudyBase}
             />
           ))}
         </div>
