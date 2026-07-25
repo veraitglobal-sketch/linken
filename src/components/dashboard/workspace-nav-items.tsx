@@ -42,6 +42,9 @@ export type NavItem = {
   match?: "exact" | "prefix";
   companyOnly?: boolean;
   section?: import("@/features/workspace/sections").WorkspaceSection;
+  /** Show a padlock — feature parked until the network is dense enough. */
+  locked?: boolean;
+  lockedHint?: string;
 };
 
 /** The only three things most users need. */
@@ -118,6 +121,9 @@ export const MORE_NAV: NavItem[] = [
     icon: IconRadar,
     companyOnly: true,
     section: "radar",
+    locked: true,
+    lockedHint:
+      "Radar unlocks when enough companies are on Hansala to make matching useful.",
   },
   {
     href: "/dashboard/billing",

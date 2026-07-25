@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconHome } from "@/components/dashboard/workspace-icons";
+import { IconHome, IconLock } from "@/components/dashboard/workspace-icons";
 import {
   MORE_NAV,
   primaryNav,
@@ -18,10 +18,12 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
       ? pathname === item.href
       : pathname === item.href || pathname.startsWith(`${item.href}/`);
   const Icon = item.icon;
+  const hint = item.lockedHint ?? "Coming soon";
 
   return (
     <Link
       href={item.href}
+      title={item.locked ? hint : undefined}
       className={cn(
         "group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium transition-colors",
         active
@@ -35,7 +37,10 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
           active ? "text-navy" : "text-plus group-hover:text-muted",
         )}
       />
-      {item.label}
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+      {item.locked ? (
+        <IconLock className="shrink-0 text-plus" />
+      ) : null}
     </Link>
   );
 }

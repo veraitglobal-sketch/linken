@@ -1,48 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { WorkspacePage } from "@/components/dashboard/workspace-page";
+import { RadarLockedPanel } from "@/components/radar/radar-locked-panel";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
-import { RadarPageBody } from "@/components/radar/radar-page-body";
-import { RadarPageFlashes } from "@/components/radar/radar-page-flashes";
-import { RadarTabs } from "@/components/radar/radar-tabs";
-import { getAnalytics } from "@/features/analytics/queries";
-import { searchRadarCompanies } from "@/features/intros/search";
-import { getEntitlements } from "@/features/plan/entitlements";
-import {
-  getCreditBalance,
-  listMyRequestResponses,
-  listOpenRequests,
-} from "@/features/project-requests/queries";
-import {
-  listCompanyLeads,
-  listSavedSearches,
-} from "@/features/radar-leads/queries";
-import { parseRadarFilters } from "@/features/radar-leads/parse-filters";
+import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { assertCompanySection } from "@/features/workspace/company-gate";
-import { isTimestampInFuture } from "@/lib/time";
 
 export const metadata: Metadata = {
   title: "Radar",
 };
 
-type Props = {
-  searchParams: Promise<{
-    error?: string;
-    responded?: string;
-    introSent?: string;
-    searchSaved?: string;
-    searchDeleted?: string;
-    tab?: string;
-    category?: string;
-    country?: string;
-    city?: string;
-    level?: string;
-    accepting?: string;
-  }>;
-};
-
-export default async function DashboardRadarPage({ searchParams }: Props) {
-  const sp = await searchParams;
+/**
+ * Radar stays locked until the public graph is dense enough for matching.
+ * No lead/search queries while parked.
+ */
+export default async function DashboardRadarPage() {
   const { user, company, needsCompanySwitch } =
     await assertCompanySection("radar");
 
@@ -52,7 +23,7 @@ export default async function DashboardRadarPage({ searchParams }: Props) {
 
   if (!user) {
     return (
-      <WorkspacePage title="Radar" description="Leads, requests, and intros.">
+      <WorkspacePage title="Radar" description="Project matching across Hansala.">
         <p className="text-[14px] text-muted">
           <Link
             href="/login?next=/dashboard/radar"
@@ -68,7 +39,7 @@ export default async function DashboardRadarPage({ searchParams }: Props) {
 
   if (!company) {
     return (
-      <WorkspacePage title="Radar" description="Leads, requests, and intros.">
+      <WorkspacePage title="Radar" description="Project matching across Hansala.">
         <p className="text-[14px] text-muted">
           <Link
             href="/onboarding"
@@ -82,79 +53,12 @@ export default async function DashboardRadarPage({ searchParams }: Props) {
     );
   }
 
-  const entitlements = getEntitlements(company.plan, { radar: company.radar });
-  const radarEnabled = entitlements.radarCredits;
-  const introSuspended = isTimestampInFuture(company.introSuspendedUntil);
-  const tab = sp.tab === "requests" ? "requests" : "leads";
-  const { filters, acceptingClients, trustLevel } = parseRadarFilters(sp);
-
-  const [openRequests, history, balance, analytics, hits, leads, searches] =
-    await Promise.all([
-      listOpenRequests(company.category, company.city),
-      radarEnabled ? listMyRequestResponses() : Promise.resolve([]),
-      radarEnabled ? getCreditBalance(company.id) : Promise.resolve(0),
-      getAnalytics(company.id, 30),
-      searchRadarCompanies({
-        category: filters.category,
-        country: filters.country,
-        city: filters.city,
-        level: trustLevel,
-        acceptingClients,
-        excludeCompanyId: company.id,
-      }),
-      radarEnabled
-        ? listCompanyLeads(company.id, { unseenOnly: true })
-        : Promise.resolve([]),
-      radarEnabled ? listSavedSearches(company.id) : Promise.resolve([]),
-    ]);
-
   return (
     <WorkspacePage
       title="Radar"
-      description="Company leads and project requests. Profile inquiries stay free in Inbox."
-      action={
-        <Link
-          href="/dashboard/inbox?tab=intros"
-          className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
-        >
-          Intros inbox
-        </Link>
-      }
+      description="Project matching across the Hansala network."
     >
-      <div className="space-y-8">
-        <RadarPageFlashes
-          params={{
-            error: sp.error,
-            introSent: sp.introSent,
-            searchSaved: sp.searchSaved,
-            searchDeleted: sp.searchDeleted,
-          }}
-        />
-
-        {radarEnabled ? (
-          <RadarTabs
-            active={tab}
-            leadsCount={leads.length}
-            requestsCount={openRequests.length}
-          />
-        ) : null}
-
-        <RadarPageBody
-          tab={tab}
-          radarEnabled={radarEnabled}
-          verified={Boolean(company.verified)}
-          balance={balance}
-          introSuspended={introSuspended}
-          leads={leads}
-          searches={searches}
-          hits={hits}
-          filters={filters}
-          openRequests={openRequests}
-          history={history}
-          analytics={analytics}
-          responded={sp.responded === "1"}
-        />
-      </div>
+      <RadarLockedPanel />
     </WorkspacePage>
   );
 }
