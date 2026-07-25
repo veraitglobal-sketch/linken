@@ -43,29 +43,24 @@ export async function ensureCompanyLogoFromWebsite(): Promise<{
   return { ok: true };
 }
 
-export async function clearCompanyLogo(formData?: FormData) {
-  const backRaw = String(formData?.get("back") ?? "").trim();
+/** Clear stored logo. No redirect — caller refreshes in place. */
+export async function clearCompanyLogo(): Promise<{
+  ok: boolean;
+  error?: string;
+}> {
   const { supabase, company } = await requireOperatorActiveCompany({
-    loginNext: backRaw.startsWith("/") ? backRaw : "/dashboard/settings",
+    loginNext: "/dashboard/settings",
   });
-  const back =
-    backRaw.startsWith(`/c/${company.slug}`) || backRaw === "/dashboard/settings"
-      ? backRaw
-      : `/c/${company.slug}/edit`;
-  const sep = back.includes("?") ? "&" : "?";
 
   const { error } = await supabase
     .from("companies")
     .update({ logo_url: null, logo_source: "cleared" })
     .eq("id", company.id);
 
-  if (error) {
-    redirect(`${back}${sep}error=${encodeURIComponent(error.message)}`);
-  }
+  if (error) return { ok: false, error: error.message };
 
   revalidateLogoPaths(company.slug);
-  revalidatePath(`/c/${company.slug}/edit`);
-  redirect(`${back}${sep}ok=logo-cleared`);
+  return { ok: true };
 }
 
 export async function refreshLogo(formData: FormData) {
@@ -79,9 +74,9 @@ export async function refreshLogo(formData: FormData) {
   const dash = (query: string) => {
     const hashIdx = back.indexOf("#");
     const path = (hashIdx >= 0 ? back.slice(0, hashIdx) : back) || "/dashboard";
-    const hash = hashIdx >= 0 ? back.slice(hashIdx) : "";
+    const hash = hashIdx >= 0 ? back.slice(hashIdx) : "#company-logo";
     const sep = path.includes("?") ? "&" : "?";
-    return `${path}${sep}${query}${hash}`;
+    return `${path}${sep}${query}${hash || "#company-logo"}`;
   };
 
   if (company.logo_source === "manual") {

@@ -83,7 +83,7 @@ export function SearchPanel({ mode = "browse", excludeSlug }: Props) {
                 <PartnerInviteButton
                   companySlug={hit.slug}
                   companyName={hit.name}
-                  back="/search"
+                  back="/dashboard/partners"
                 />
               ) : mode === "invite" && !hit.claimed ? (
                 <span className="shrink-0 text-[11px] font-semibold text-muted">

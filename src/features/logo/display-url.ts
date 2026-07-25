@@ -3,11 +3,15 @@ import { extractDomain } from "@/features/verification/domain";
 /**
  * Best URL to show a company mark in UI.
  * Prefers stored logo; otherwise a favicon derived from the website domain.
+ * When logo_source is 'cleared', never fall back to favicon.
  */
 export function companyDisplayLogoUrl(input: {
   logoUrl?: string | null;
   website?: string | null;
+  logoSource?: string | null;
 }): string | null {
+  if (input.logoSource === "cleared") return null;
+
   const stored = input.logoUrl?.trim();
   if (stored) return stored;
 

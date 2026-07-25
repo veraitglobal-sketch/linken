@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   IconHome,
-  IconSearch,
   IconSettings,
 } from "@/components/dashboard/workspace-icons";
 import { workspaceRoleLabel } from "@/features/workspace/role-label";
@@ -24,13 +23,6 @@ export function WorkspaceAsideFooter({ active }: Props) {
             Edit company
           </Link>
         ) : null}
-        <Link
-          href="/search"
-          className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-muted transition-colors hover:bg-black/[0.03] hover:text-ink"
-        >
-          <IconSearch className="text-plus group-hover:text-muted" />
-          Directory
-        </Link>
         <Link
           href="/"
           className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] font-medium text-muted transition-colors hover:bg-black/[0.03] hover:text-ink"

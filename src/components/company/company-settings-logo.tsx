@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { CompanyLogoUploadForm } from "@/components/company/company-logo-upload-form";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Badge } from "@/components/ui/badge";
 import { LogoMark } from "@/components/ui/logo-mark";
@@ -21,7 +22,7 @@ type Props = {
   backPath?: string;
 };
 
-/** Auto logo from website — remove with ×. No manual upload. */
+/** Auto favicon from website; clear with ×; upload a custom mark in place. */
 export function CompanySettingsLogo({
   name,
   logoUrl,
@@ -36,11 +37,14 @@ export function CompanySettingsLogo({
   const tried = useRef(false);
   const hasWebsite = Boolean(website?.trim());
   const cleared = logoSource === "cleared";
-  const showLogo = Boolean(logoUrl);
+  const isManual = logoSource === "manual";
+  const showLogo = Boolean(logoUrl) && !cleared;
+  /** Never fall back to website favicon after the owner cleared the logo. */
+  const markWebsite = cleared ? null : website;
 
   useEffect(() => {
     if (tried.current) return;
-    if (!hasWebsite || showLogo || cleared || logoSource === "manual") return;
+    if (!hasWebsite || showLogo || cleared || isManual) return;
     tried.current = true;
     startTransition(async () => {
       const result = await ensureCompanyLogoFromWebsite();
@@ -50,21 +54,39 @@ export function CompanySettingsLogo({
       }
       setStatus(result.error ?? "Could not fetch logo.");
     });
-  }, [cleared, hasWebsite, logoSource, router, showLogo]);
+  }, [cleared, hasWebsite, isManual, router, showLogo]);
 
-  const stateLabel = showLogo
-    ? "From website"
-    : cleared
-      ? "Removed"
-      : pending
-        ? "Fetching…"
-        : hasWebsite
-          ? "No logo yet"
-          : "Needs website";
+  const stateLabel = isManual
+    ? "Uploaded"
+    : showLogo
+      ? "From website"
+      : cleared
+        ? "Removed"
+        : pending
+          ? "Fetching…"
+          : hasWebsite
+            ? "No logo yet"
+            : "Needs website";
+
+  function onClear() {
+    setStatus(null);
+    startTransition(async () => {
+      const result = await clearCompanyLogo();
+      if (!result.ok) {
+        setStatus(result.error ?? "Could not remove logo.");
+        return;
+      }
+      setStatus("Logo removed. Upload a new one below.");
+      router.refresh();
+    });
+  }
 
   return (
     <WorkspaceCard padded={false}>
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line bg-paper/70 px-5 py-4 sm:px-6">
+      <div
+        id="company-logo"
+        className="scroll-mt-24 flex flex-wrap items-start justify-between gap-3 border-b border-line bg-paper/70 px-5 py-4 sm:px-6"
+      >
         <div className="min-w-0">
           <p className="text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
             Brand
@@ -73,8 +95,7 @@ export function CompanySettingsLogo({
             Company logo
           </h2>
           <p className="mt-1 max-w-lg text-[12px] leading-relaxed text-muted">
-            Loaded automatically from your website. Remove with × if you
-            don&apos;t want it shown.
+            Loaded from your website. Remove with ×, or upload your own logo.
           </p>
         </div>
         <Badge tone={showLogo ? "success" : "neutral"}>{stateLabel}</Badge>
@@ -84,53 +105,56 @@ export function CompanySettingsLogo({
         <div className="relative shrink-0">
           <LogoMark
             initials={initials}
-            logoUrl={logoUrl}
-            website={website}
+            logoUrl={showLogo ? logoUrl : null}
+            website={markWebsite}
             size="lg"
             className="rounded-2xl ring-1 ring-line"
           />
           {showLogo ? (
-            <form action={clearCompanyLogo}>
-              <input type="hidden" name="back" value={backPath} />
-              <button
-                type="submit"
-                title="Remove logo"
-                aria-label="Remove logo"
-                className={cn(
-                  "absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center",
-                  "rounded-full border border-line bg-surface text-ink shadow-sm",
-                  "transition-colors hover:bg-paper",
-                )}
-              >
-                <span aria-hidden className="text-[14px] leading-none">
-                  ×
-                </span>
-              </button>
-            </form>
+            <button
+              type="button"
+              title="Remove logo"
+              aria-label="Remove logo"
+              disabled={pending}
+              onClick={onClear}
+              className={cn(
+                "absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center",
+                "rounded-full border border-line bg-surface text-ink shadow-sm",
+                "transition-colors hover:bg-paper disabled:opacity-50",
+              )}
+            >
+              <span aria-hidden className="text-[14px] leading-none">
+                ×
+              </span>
+            </button>
           ) : null}
         </div>
 
-        <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+        <div className="min-w-0 flex-1 space-y-3 pt-0.5">
           <p className="text-[13px] font-semibold tracking-[-0.02em] text-ink">
             {name}
           </p>
           <p className="text-[12px] leading-relaxed text-muted">
             {showLogo
-              ? "Logo is live on your public profile and widgets."
+              ? isManual
+                ? "Custom logo is live on your profile and widgets."
+                : "Logo is live on your public profile and widgets."
               : cleared
-                ? "Logo removed. Initials show until you restore it."
+                ? "Logo removed. Upload a new one, or restore from the website."
                 : pending
                   ? "Fetching logo from your website…"
                   : hasWebsite
-                    ? "Waiting for a logo from your website."
-                    : "Add a website below to load a logo automatically."}
+                    ? "Waiting for a logo from your website — or upload one."
+                    : "Add a website to auto-load a favicon, or upload a logo."}
           </p>
-          {status ? (
-            <p className="text-[12px] text-ember">{status}</p>
-          ) : null}
-          {hasWebsite && (cleared || !showLogo) && !pending ? (
+          {status ? <p className="text-[12px] text-ink-soft">{status}</p> : null}
+          <CompanyLogoUploadForm
+            onDone={(msg) => setStatus(msg)}
+            onError={(msg) => setStatus(msg)}
+          />
+          {hasWebsite && !isManual && (cleared || !showLogo) && !pending ? (
             <form action={refreshLogo}>
-              <input type="hidden" name="back" value={backPath} />
+              <input type="hidden" name="back" value={`${backPath}#company-logo`} />
               <button
                 type="submit"
                 className="text-[12px] font-semibold text-blue underline-offset-2 hover:underline"

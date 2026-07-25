@@ -201,10 +201,10 @@ export default function DemoPage() {
           </div>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Button href="/onboarding" variant="primary" className="h-12 min-w-[190px] px-6">
-              Create company link
+              Create company
             </Button>
-            <Button href="/search" variant="secondary" className="h-12 min-w-[190px] px-6">
-              Browse directory
+            <Button href="/" variant="secondary" className="h-12 min-w-[190px] px-6">
+              Back to home
             </Button>
           </div>
         </div>

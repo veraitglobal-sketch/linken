@@ -45,11 +45,11 @@ export function HomeHero() {
               Create company
             </Button>
             <Button
-              href="/search"
+              href="/demo"
               variant="onDark"
               className="h-12 min-w-[180px] px-6"
             >
-              Browse directory
+              See an example
             </Button>
           </div>
         </div>

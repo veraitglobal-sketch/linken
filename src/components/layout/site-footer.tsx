@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { NetworkMark } from "@/components/marketing/network-mark";
 
 const product = [
-  { label: "Directory", href: "/search" },
   { label: "Developers", href: "/developers" },
   { label: "Demo", href: "/demo" },
 ];

@@ -111,17 +111,18 @@ export async function updateCompanyProfile(formData: FormData) {
   redirect(backWith(back, { saved: "1" }));
 }
 
-export async function uploadCompanyLogo(formData: FormData) {
+export async function uploadCompanyLogo(
+  formData: FormData,
+): Promise<{ ok: boolean; error?: string }> {
   const { user, company } = await requireOperatorCompany("/dashboard/settings");
-  const back = safeBack(String(formData.get("back") ?? ""), company.slug);
   const file = formData.get("logo");
   if (!(file instanceof File) || file.size === 0) {
-    redirect(backWith(back, { error: "Choose an image file to upload." }));
+    return { ok: false, error: "Choose an image file to upload." };
   }
 
   const admin = createAdminClient();
   if (!admin) {
-    redirect(backWith(back, { error: "Logo upload is temporarily unavailable." }));
+    return { ok: false, error: "Logo upload is temporarily unavailable." };
   }
 
   const bytes = new Uint8Array(await file.arrayBuffer());
@@ -131,8 +132,8 @@ export async function uploadCompanyLogo(formData: FormData) {
     ownerUserId: user.id,
   });
 
-  if (!result.ok) redirect(backWith(back, { error: result.error }));
+  if (!result.ok) return { ok: false, error: result.error };
 
   revalidateCompany(company.slug);
-  redirect(backWith(back, { ok: "logoUpload" }));
+  return { ok: true };
 }

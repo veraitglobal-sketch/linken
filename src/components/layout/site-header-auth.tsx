@@ -108,12 +108,6 @@ export function SiteHeaderAuth() {
     <div className="flex items-center gap-2">
       <nav className="mr-2 hidden items-center gap-5 md:flex">
         <Link
-          href="/search"
-          className="text-[13px] font-medium text-ink-soft hover:text-ink"
-        >
-          Directory
-        </Link>
-        <Link
           href="/dashboard"
           className="text-[13px] font-medium text-ink-soft hover:text-ink"
         >

@@ -22,8 +22,8 @@ const stories = [
     person: "Markus Stein",
     role: "Owner, general contracting",
     with: "Shared case study on both profiles",
-    href: "/search",
-    cta: "Find companies",
+    href: "/demo",
+    cta: "See an example",
     image: "/images/story-collaboration.jpg",
     imageAlt:
       "Business professional holding a Hansala portfolio outside a modern building",
