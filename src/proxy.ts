@@ -5,8 +5,22 @@ export async function proxy(request: NextRequest) {
   return updateSession(request);
 }
 
+/**
+ * Proxy only where session refresh may run.
+ * Home, public profiles, search, etc. never hit middleware auth.
+ */
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/dashboard/:path*",
+    "/auth/:path*",
+    "/c/:slug/edit",
+    "/c/:slug/edit/:path*",
+    "/join/:path*",
+    "/claim/:path*",
+    "/confirm",
+    "/confirm/:path*",
+    "/transfer/:path*",
+    "/requests/:path*",
+    "/api/((?!v1/agent|v1/openapi|webhooks/|badge/).*)",
   ],
 };

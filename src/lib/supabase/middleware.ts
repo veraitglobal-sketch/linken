@@ -1,31 +1,16 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getAuthCookieOptions } from "@/lib/supabase/cookie-options";
+import { needsSessionRefresh } from "@/lib/supabase/paths";
 
-/** Marketing/public paths — do not refresh auth (avoids dynamic crash when logged in). */
-function isPublicPath(pathname: string) {
-  if (pathname === "/") return true;
-  return (
-    pathname.startsWith("/c/") ||
-    pathname.startsWith("/g/") ||
-    pathname.startsWith("/search") ||
-    pathname.startsWith("/developers") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/welcome") ||
-    pathname.startsWith("/embed") ||
-    pathname.startsWith("/demo") ||
-    pathname.startsWith("/claim/") ||
-    pathname.startsWith("/join/") ||
-    pathname.startsWith("/confirm") ||
-    pathname.startsWith("/transfer/") ||
-    pathname.startsWith("/requests/")
-  );
-}
-
+/**
+ * Refresh Supabase auth cookies only on app routes.
+ * Public/marketing routes skip this so ISR stays valid while logged in.
+ */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
-  if (isPublicPath(request.nextUrl.pathname)) {
+  if (!needsSessionRefresh(request.nextUrl.pathname)) {
     return supabaseResponse;
   }
 
@@ -47,6 +32,7 @@ export async function updateSession(request: NextRequest) {
 
   try {
     const supabase = createServerClient(url, anonKey, {
+      cookieOptions: getAuthCookieOptions(),
       cookies: {
         getAll() {
           return request.cookies.getAll();
