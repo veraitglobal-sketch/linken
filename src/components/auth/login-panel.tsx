@@ -13,12 +13,20 @@ type Props = {
   verify?: string;
   email?: string;
   resent?: string;
+  next?: string;
 };
 
-export function LoginPanel({ error, verify, email, resent }: Props) {
+export function LoginPanel({
+  error,
+  verify,
+  email,
+  resent,
+  next = "/dashboard",
+}: Props) {
   const [mode, setMode] = useState<Mode>("sign-in");
   const isCreate = mode === "create";
   const showVerify = verify === "1";
+  const nextPath = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
 
   return (
     <div className="relative flex flex-col justify-center border-t border-line bg-[#fbfbfc] px-6 py-8 sm:px-9 sm:py-10 lg:border-t-0 lg:border-l lg:border-white/10">
@@ -35,6 +43,7 @@ export function LoginPanel({ error, verify, email, resent }: Props) {
           {email ? (
             <form action={resendSignupConfirmation} className="mt-3">
               <input type="hidden" name="email" value={email} />
+              <input type="hidden" name="next" value={nextPath} />
               <button
                 type="submit"
                 className="text-[13px] font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
@@ -80,6 +89,7 @@ export function LoginPanel({ error, verify, email, resent }: Props) {
 
       <div className="animate-rise-late mt-6 space-y-4">
         <form action={signInWithGoogle}>
+          <input type="hidden" name="next" value={nextPath} />
           <Button type="submit" variant="secondary" className="h-12 w-full">
             Continue with Google
           </Button>
@@ -95,6 +105,7 @@ export function LoginPanel({ error, verify, email, resent }: Props) {
           action={isCreate ? signUp : signIn}
           className="flex flex-col gap-4"
         >
+          <input type="hidden" name="next" value={nextPath} />
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               Email

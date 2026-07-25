@@ -7,6 +7,8 @@ import { LogoTile } from "@/components/ui/logo-tile";
 import { SectionTitle } from "@/components/ui/section-title";
 import type { Company } from "@/types/company";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Demo profile",
   description:

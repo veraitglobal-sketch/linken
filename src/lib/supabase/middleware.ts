@@ -13,6 +13,14 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // Skip auth refresh when there is no session cookie — keeps public HTML fast.
+  const hasAuthCookie = request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith("sb-") && c.name.includes("auth-token"));
+  if (!hasAuthCookie) {
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient(url, anonKey, {
     cookies: {
       getAll() {

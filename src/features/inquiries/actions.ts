@@ -83,30 +83,33 @@ export async function sendInquiry(formData: FormData) {
   await logProfileEvent(companySlug, "inquiry", "direct");
 
   // Instant email for ALL plans — a firm must not miss inbound work.
-  // TODO: when daily digest ships, restore plan gating
-  // (instant = Pro/Founding; Free = digest only) via entitlements.instantInquiryNotifications.
   const admin = createAdminClient();
-  if (admin) {
-    const { data: notifyEmail } = await admin.rpc("get_inquiry_notify_email", {
-      p_inquiry_id: row.inquiry_id,
-    });
-
-    if (notifyEmail) {
-      await sendInquiryNotifyEmail({
-        to: notifyEmail as string,
-        senderName,
-        senderEmail,
-        senderCompany,
-        serviceInterest,
-        message,
-        companyName: row.company_name,
-        companySlug: row.company_slug,
-      });
-    }
-  } else {
-    console.warn(
-      "SUPABASE_SERVICE_ROLE_KEY not configured — inquiry notification email skipped.",
+  if (!admin) {
+    redirect(
+      `${back}${back.includes("?") ? "&" : "?"}error=${encodeURIComponent("Message saved, but notification email is unavailable. Try again later.")}`,
     );
+  }
+
+  const { data: notifyEmail } = await admin.rpc("get_inquiry_notify_email", {
+    p_inquiry_id: row.inquiry_id,
+  });
+
+  if (notifyEmail) {
+    const sent = await sendInquiryNotifyEmail({
+      to: notifyEmail as string,
+      senderName,
+      senderEmail,
+      senderCompany,
+      serviceInterest,
+      message,
+      companyName: row.company_name,
+      companySlug: row.company_slug,
+    });
+    if (!sent.ok) {
+      redirect(
+        `${back}${back.includes("?") ? "&" : "?"}error=${encodeURIComponent(sent.error ?? "Message saved, but notify email failed.")}`,
+      );
+    }
   }
 
   revalidatePath(`/c/${companySlug}`);

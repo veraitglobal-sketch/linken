@@ -7,6 +7,8 @@ import { HomeOverview } from "@/components/marketing/home-overview";
 import { HomeStories } from "@/components/marketing/home-stories";
 import { HomeTalks } from "@/components/marketing/home-talks";
 
+export const revalidate = 3600;
+
 export default function HomePage() {
   return (
     <>

@@ -3,6 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import {
+  clearOnboardingDraft,
+  saveOnboardingDraft,
+} from "@/features/company/onboarding-draft";
 import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { tryEmailDomainVerificationAfterOnboarding } from "@/features/verification/actions";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
@@ -66,15 +70,6 @@ export async function setAllowLogoInPartnerWidgets(formData: FormData) {
 }
 
 export async function createCompany(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
   const name = String(formData.get("name") ?? "").trim();
   const category = String(formData.get("category") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
@@ -84,6 +79,16 @@ export async function createCompany(formData: FormData) {
 
   if (!name || !slug) {
     redirect("/onboarding?error=Company%20name%20is%20required");
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    await saveOnboardingDraft({ name, category, city, website, description });
+    redirect(`/login?next=${encodeURIComponent("/onboarding")}`);
   }
 
   const { data: created, error } = await supabase
@@ -108,6 +113,8 @@ export async function createCompany(formData: FormData) {
       `/onboarding?error=${encodeURIComponent(error?.message ?? "Could not create company.")}`,
     );
   }
+
+  await clearOnboardingDraft();
 
   // Automatic email-domain verification when website matches work email
   let autoVerified = false;

@@ -349,12 +349,18 @@ export async function requestClientConfirmationCore(
     return { ok: false, error: error?.message ?? "Could not create request." };
   }
 
-  await sendClientConfirmationEmail({
+  const sent = await sendClientConfirmationEmail({
     to: email,
     requesterName: input.companyName,
     caseTitle: caseMeta?.title ?? caseSlug,
     token,
   });
+  if (!sent.ok) {
+    return {
+      ok: false,
+      error: sent.error ?? "Could not send confirmation email.",
+    };
+  }
 
   return { ok: true, data: { id: row.id as string } };
 }

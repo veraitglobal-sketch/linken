@@ -333,12 +333,19 @@ export async function createSubsidiary(formData: FormData) {
   }
 
   if (inviteEmail) {
-    await sendClaimInviteEmail({
+    const sent = await sendClaimInviteEmail({
       to: inviteEmail,
       inviterName: seedCompany?.name ?? "A company on Hansala",
       companyName: name,
       claimToken,
     });
+    if (!sent.ok) {
+      redirect(
+        backWith(back, {
+          error: sent.error ?? "Subsidiary created, but invite email failed.",
+        }),
+      );
+    }
   }
 
   revalidateBack(back);

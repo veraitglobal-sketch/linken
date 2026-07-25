@@ -157,7 +157,7 @@ export async function inviteReferenceCore(
     return { ok: false, error: updateError.message };
   }
 
-  await sendReferenceConfirmEmail({
+  const sent = await sendReferenceConfirmEmail({
     to: email,
     providerName: input.companyName,
     clientName: ref.client_name as string,
@@ -165,6 +165,12 @@ export async function inviteReferenceCore(
     startedYear: ref.started_year as string,
     token: ref.confirm_token as string,
   });
+  if (!sent.ok) {
+    return {
+      ok: false,
+      error: sent.error ?? "Could not send confirmation email.",
+    };
+  }
 
   return { ok: true, data: { id: ref.id as string } };
 }

@@ -114,17 +114,32 @@ export async function requestPartnership(formData: FormData) {
   }
 
   const admin = createAdminClient();
-  if (admin && target.owner_id) {
+  if (!admin) {
+    redirect(
+      withBackQuery(back, {
+        error:
+          "Partnership saved locally, but notify email needs SUPABASE_SERVICE_ROLE_KEY.",
+      }),
+    );
+  }
+  if (target.owner_id) {
     const { data: ownerData } = await admin.auth.admin.getUserById(
       target.owner_id,
     );
     const email = ownerData.user?.email;
     if (email) {
-      await sendPartnershipRequestEmail({
+      const sent = await sendPartnershipRequestEmail({
         to: email,
         requesterName: mine.name,
         recipientName: target.name,
       });
+      if (!sent.ok) {
+        redirect(
+          withBackQuery(back, {
+            error: sent.error ?? "Request saved, but notify email failed.",
+          }),
+        );
+      }
     }
   }
 

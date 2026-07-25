@@ -27,12 +27,17 @@ export async function resendOperatorClaimInvite(formData: FormData) {
     );
   }
 
-  await sendClaimInviteEmail({
+  const sent = await sendClaimInviteEmail({
     to: row.invite_email as string,
     inviterName: company.name,
     companyName: (row.company_name as string) || company.name,
     claimToken: row.claim_token as string,
   });
+  if (!sent.ok) {
+    redirect(
+      `${back}?error=${encodeURIComponent(sent.error ?? "Could not send claim email.")}`,
+    );
+  }
 
   revalidatePath(back);
   redirect(`${back}?claimResent=1`);

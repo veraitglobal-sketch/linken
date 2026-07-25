@@ -4,15 +4,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createCompany } from "@/features/company/actions";
+import type { OnboardingDraft } from "@/features/company/onboarding-draft";
 import { COMPANY_SHARE_PREFIX } from "@/lib/site";
 import { toSlug } from "@/lib/slug";
 
 type Props = {
   error?: string;
+  draft?: OnboardingDraft | null;
 };
 
-export function OnboardingForm({ error }: Props) {
-  const [name, setName] = useState("");
+export function OnboardingForm({ error, draft = null }: Props) {
+  const [name, setName] = useState(draft?.name ?? "");
   const slug = toSlug(name) || "your-company";
 
   return (
@@ -67,13 +69,23 @@ export function OnboardingForm({ error }: Props) {
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               Category
             </span>
-            <Input name="category" placeholder="Architecture" required />
+            <Input
+              name="category"
+              placeholder="Architecture"
+              required
+              defaultValue={draft?.category ?? ""}
+            />
           </label>
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-medium text-ink">
               City
             </span>
-            <Input name="city" placeholder="Berlin" required />
+            <Input
+              name="city"
+              placeholder="Berlin"
+              required
+              defaultValue={draft?.city ?? ""}
+            />
           </label>
         </div>
 
@@ -81,7 +93,12 @@ export function OnboardingForm({ error }: Props) {
           <span className="mb-1.5 block text-[13px] font-medium text-ink">
             Website
           </span>
-          <Input name="website" placeholder="https://" required />
+          <Input
+            name="website"
+            placeholder="https://"
+            required
+            defaultValue={draft?.website ?? ""}
+          />
         </label>
 
         <label className="block">
@@ -93,6 +110,7 @@ export function OnboardingForm({ error }: Props) {
             required
             rows={3}
             placeholder="What your company does — and how partners help deliver."
+            defaultValue={draft?.description ?? ""}
             className="min-h-[5.5rem] w-full resize-none rounded-xl border border-line bg-white px-3.5 py-3 text-sm leading-relaxed text-ink outline-none transition-colors placeholder:text-muted focus:border-[#1a5c51] focus:ring-2 focus:ring-[rgba(31,107,92,0.15)]"
           />
         </label>

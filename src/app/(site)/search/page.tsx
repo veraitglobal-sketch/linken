@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   title: "Search companies",
 };
 
+export const revalidate = 60;
+
 type Props = {
   searchParams: Promise<{
     q?: string;
@@ -36,20 +38,16 @@ export default async function SearchPage({ searchParams }: Props) {
     verifiedOnly: active.verified,
     hasPartners: active.partners,
     hasCaseStudies: active.caseStudies,
+    includeUnclaimed: false,
   });
   const empty = results.length === 0;
-  const unclaimedIndex = results.findIndex((c) => c.claimed === false);
-  const claimedResults =
-    unclaimedIndex === -1 ? results : results.slice(0, unclaimedIndex);
-  const unclaimedResults =
-    unclaimedIndex === -1 ? [] : results.slice(unclaimedIndex);
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
       <SectionTitle
         eyebrow="Search"
         title="Find a company"
-        description="Registered and draft profiles appear here. Partnerships stay pending until both sides confirm."
+        description="Claimed company profiles. Partnerships stay private until both sides confirm."
       />
       <form className="mt-8" action="/search" method="get">
         <Input
@@ -91,23 +89,16 @@ export default async function SearchPage({ searchParams }: Props) {
         </div>
       </form>
       <div className="mt-6 flex flex-col gap-2.5">
-        {claimedResults.map((company) => (
+        {results.map((company) => (
           <CompanyResult key={company.id} company={company} />
         ))}
-        {unclaimedResults.length > 0 ? (
-          <>
-            <p className="mt-4 mb-0.5 text-[11px] font-semibold tracking-[0.1em] text-muted uppercase">
-              Unclaimed drafts
-            </p>
-            {unclaimedResults.map((company) => (
-              <CompanyResult key={company.id} company={company} />
-            ))}
-          </>
-        ) : null}
         {empty ? (
           <div className="rounded-2xl border border-line bg-[#fafbfc] px-5 py-8 text-center">
             <p className="text-sm text-muted">
-              {q.trim() || active.verified || active.partners || active.caseStudies
+              {q.trim() ||
+              active.verified ||
+              active.partners ||
+              active.caseStudies
                 ? "No companies match this search."
                 : "No companies on Hansala yet — be the first."}
             </p>

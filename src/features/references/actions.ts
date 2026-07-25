@@ -48,7 +48,7 @@ export async function addReference(formData: FormData) {
   }
 
   if (inviteEmail) {
-    await sendReferenceConfirmEmail({
+    const sent = await sendReferenceConfirmEmail({
       to: inviteEmail,
       providerName: company.name,
       clientName,
@@ -56,6 +56,11 @@ export async function addReference(formData: FormData) {
       startedYear,
       token: result.data.confirmToken,
     });
+    if (!sent.ok) {
+      redirect(
+        `${back}?error=${encodeURIComponent(sent.error ?? "Could not send confirmation email.")}`,
+      );
+    }
   }
 
   await setWorkspacePreference("company", company.id);

@@ -13,11 +13,12 @@ type Props = {
     verify?: string;
     email?: string;
     resent?: string;
+    next?: string;
   }>;
 };
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { error, verify, email, resent } = await searchParams;
+  const { error, verify, email, resent, next } = await searchParams;
 
   return (
     <section className="flex flex-1 items-center px-4 py-6">
@@ -28,6 +29,7 @@ export default async function LoginPage({ searchParams }: Props) {
           verify={verify}
           email={email}
           resent={resent}
+          next={next}
         />
       </div>
     </section>

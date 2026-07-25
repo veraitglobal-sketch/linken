@@ -93,12 +93,18 @@ export async function createUnclaimedPartnerCore(
   }
 
   if (inviteEmail) {
-    await sendClaimInviteEmail({
+    const sent = await sendClaimInviteEmail({
       to: inviteEmail,
       inviterName: input.companyName,
       companyName: ghost.name as string,
       claimToken,
     });
+    if (!sent.ok) {
+      return {
+        ok: false,
+        error: sent.error ?? "Partner created, but invite email failed.",
+      };
+    }
   }
 
   if (website) {

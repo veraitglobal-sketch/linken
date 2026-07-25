@@ -66,12 +66,17 @@ export async function resendPendingPartnerInvite(formData: FormData) {
     );
   }
 
-  await sendClaimInviteEmail({
+  const sent = await sendClaimInviteEmail({
     to: ghost.invite_email as string,
     inviterName: company.name,
     companyName: ghost.name as string,
     claimToken: ghost.claim_token as string,
   });
+  if (!sent.ok) {
+    redirect(
+      `${safeBack}?error=${encodeURIComponent(sent.error ?? "Could not send invite email.")}`,
+    );
+  }
 
   revalidatePath(safeBack);
   redirect(`${safeBack}?resent=1`);

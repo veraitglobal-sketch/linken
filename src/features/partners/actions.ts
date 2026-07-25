@@ -92,10 +92,9 @@ export async function requestClaimInviteResend(formData: FormData) {
   // claim token and hijack the profile.
   const admin = createAdminClient();
   if (!admin) {
-    console.warn(
-      "SUPABASE_SERVICE_ROLE_KEY not configured — claim invite resend disabled.",
+    redirect(
+      `${back}?claimError=${encodeURIComponent("Claim email is temporarily unavailable. Try again later.")}`,
     );
-    redirect(`${back}?claimSent=1`);
   }
 
   const { data: token, error } = await admin.rpc("resolve_claim_token", {
@@ -126,12 +125,17 @@ export async function requestClaimInviteResend(formData: FormData) {
     if (inviter?.name) inviterName = inviter.name;
   }
 
-  await sendClaimInviteEmail({
+  const sent = await sendClaimInviteEmail({
     to: email,
     inviterName,
     companyName: company?.name ?? slug,
     claimToken: token as string,
   });
+  if (!sent.ok) {
+    redirect(
+      `${back}?claimError=${encodeURIComponent(sent.error ?? "Could not send claim email.")}`,
+    );
+  }
 
   redirect(`${back}?claimSent=1`);
 }

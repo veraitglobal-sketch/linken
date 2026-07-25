@@ -1,5 +1,6 @@
 import { parsePlan } from "@/features/plan/entitlements";
 import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import type { Company } from "@/types/company";
 
 function initials(name: string) {
@@ -69,7 +70,7 @@ function mapRow(row: {
 export async function getCompanyForPage(slug: string): Promise<Company | null> {
   if (!slug) return null;
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("companies")
       .select(
@@ -105,6 +106,8 @@ export type SearchFilters = {
   verifiedOnly?: boolean;
   hasPartners?: boolean;
   hasCaseStudies?: boolean;
+  /** When true, include unclaimed draft profiles (default: claimed only). */
+  includeUnclaimed?: boolean;
 };
 
 /** Verified + claimed profiles first, then claimed, then unclaimed drafts. */
@@ -121,7 +124,7 @@ export async function searchCompanies(
   const q = query.trim().toLowerCase();
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     let req = supabase
       .from("companies")
       .select(
@@ -129,6 +132,10 @@ export async function searchCompanies(
       )
       .order("name")
       .limit(60);
+
+    if (!filters.includeUnclaimed) {
+      req = req.eq("claimed", true);
+    }
 
     if (filters.verifiedOnly) {
       req = req.eq("verified", true).eq("claimed", true);

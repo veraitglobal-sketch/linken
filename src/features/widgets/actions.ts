@@ -97,12 +97,17 @@ export async function resendLogoWallInvite(formData: FormData) {
     );
   }
 
-  await sendClaimInviteEmail({
+  const sent = await sendClaimInviteEmail({
     to: ghost.invite_email as string,
     inviterName: company.name,
     companyName: ghost.name as string,
     claimToken: ghost.claim_token as string,
   });
+  if (!sent.ok) {
+    redirect(
+      `${back}?error=${encodeURIComponent(sent.error ?? "Could not send invite email.")}`,
+    );
+  }
 
   revalidatePath(back);
   redirect(`${back}?resent=1`);
