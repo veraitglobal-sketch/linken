@@ -24,10 +24,10 @@ const stories = [
     with: "Shared case study on both profiles",
     href: "/demo",
     cta: "See an example",
-    image: "/images/story-collaboration.jpg",
+    image: "/images/story-collaboration-v2.jpg",
     imageAlt:
-      "Business professional holding a Hansala portfolio outside a modern building",
-    focus: "object-[center_20%]",
+      "Contractor on a construction site in front of a modern concrete building",
+    focus: "object-[center_28%]",
   },
   {
     tone: "bg-[#1a3530]",

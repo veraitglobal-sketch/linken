@@ -72,7 +72,7 @@ export const DEMO_CASE_STUDIES: CaseStudy[] = [
     "A full identity and voice for a contract-review startup, built alongside outside counsel.",
     ["Brand strategy", "Positioning"],
     { slug: "ostra-legal", name: "Ostra Legal Partners", initials: "OL" },
-    "/images/story-collaboration.jpg",
+    "/images/story-collaboration-v2.jpg",
   ),
   confirmedCase(
     "cs3",

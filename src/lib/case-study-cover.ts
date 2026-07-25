@@ -1,6 +1,6 @@
 const FALLBACKS = [
   "/images/story-projects.jpg",
-  "/images/story-collaboration.jpg",
+  "/images/story-collaboration-v2.jpg",
   "/images/story-team.jpg",
   "/images/hero-partner.jpg",
 ] as const;
