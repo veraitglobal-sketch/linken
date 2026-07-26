@@ -92,31 +92,43 @@ export async function createCompany(formData: FormData) {
     redirect(`/login?next=${encodeURIComponent("/onboarding")}`);
   }
 
-  const slug = await uniqueCompanySlug(supabase, name);
+  // If the handle is taken, bump the slug only (name stays as typed).
+  let slug = await uniqueCompanySlug(supabase, name);
+  let created: { id: string; slug: string } | null = null;
+  let lastError: string | null = null;
 
-  const { data: created, error } = await supabase
-    .from("companies")
-    .insert({
-      owner_id: user.id,
-      claimed: true,
-      claim_token: null,
-      name,
-      slug,
-      category,
-      city,
-      website,
-      description,
-      tagline: description.slice(0, 120),
-    })
-    .select("id, slug")
-    .single();
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const { data, error } = await supabase
+      .from("companies")
+      .insert({
+        owner_id: user.id,
+        claimed: true,
+        claim_token: null,
+        name,
+        slug,
+        category,
+        city,
+        website,
+        description,
+        tagline: description.slice(0, 120),
+      })
+      .select("id, slug")
+      .single();
 
-  if (error || !created) {
-    const raw = error?.message ?? "Could not create company.";
-    const message = /companies_slug_key|duplicate key/i.test(raw)
-      ? "That public link is already taken. Try a slightly different company name."
-      : raw;
-    redirect(`/onboarding?error=${encodeURIComponent(message)}`);
+    if (!error && data) {
+      created = data;
+      break;
+    }
+
+    lastError = error?.message ?? "Could not create company.";
+    if (!/companies_slug_key|duplicate key/i.test(lastError)) break;
+    slug = `${baseSlug}-${attempt + 1}`;
+  }
+
+  if (!created) {
+    redirect(
+      `/onboarding?error=${encodeURIComponent(lastError ?? "Could not create company.")}`,
+    );
   }
 
   await clearOnboardingDraft();
