@@ -1,23 +1,17 @@
 import type { ReactNode } from "react";
 import { NextStepStrip } from "@/components/activation/next-step-strip";
-import { ClientHighlights } from "@/components/assessments/client-highlights";
-import { CaseStudyList } from "@/components/case-studies/case-study-list";
-import { CompanyAbout } from "@/components/company/company-about";
 import { CompanyHeroBand } from "@/components/company/company-hero-band";
+import { CompanyProfileBody } from "@/components/company/company-profile-body";
 import { CompanySignal } from "@/components/company/company-signal";
-import { CompanyTeamSection } from "@/components/company/company-team-section";
 import { UnclaimedBanner } from "@/components/company/unclaimed-banner";
 import type { PublicTeamMember } from "@/features/team/types";
 import { InquirySentBanner } from "@/components/inquiries/inquiry-sent-banner";
-import { PartnerSidebar } from "@/components/partners/partner-sidebar";
 import { ProfilePartnerFlashes } from "@/components/partners/profile-partner-flashes";
 import { OwnerLoopBar } from "@/components/product/owner-loop-bar";
-import { ReferencesSection } from "@/components/references/references-section";
-import { TrustProgressCard } from "@/components/trust/trust-progress-card";
-import { TrustWhyCard } from "@/components/trust/trust-why-card";
 import type { ActivationStep } from "@/features/activation/checklist";
 import type { ClientAssessmentSummary } from "@/features/assessments/queries";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
+import type { PartnerRailSettings } from "@/features/partners/partner-rail";
 import type { TrustProfile } from "@/features/trust/queries";
 import type { CaseStudy } from "@/types/case-study";
 import type { Company } from "@/types/company";
@@ -27,6 +21,7 @@ import type { ServiceReference } from "@/types/service-reference";
 type Props = {
   company: Company;
   partners: Partner[];
+  partnerRail?: PartnerRailSettings;
   caseStudies: CaseStudy[];
   references: ServiceReference[];
   trust: TrustProfile;
@@ -50,13 +45,13 @@ type Props = {
   addPartnerVerified?: boolean;
   addPartnerStatus?: Map<string, string>;
   addPartnerMode?: "search" | "draft";
-  /** Case study URL base — default `/c/{slug}`. */
   caseStudyBase?: string;
 };
 
 export function CompanyProfile({
   company,
   partners,
+  partnerRail,
   caseStudies,
   references,
   trust,
@@ -84,14 +79,6 @@ export function CompanyProfile({
 }: Props) {
   const isUnclaimed = company.claimed === false;
   const confirmedRefs = references.filter((r) => r.status === "confirmed").length;
-  const showPartners = partners.length > 0 || editable;
-  const showCases = caseStudies.length > 0 || editable;
-  const showRefs = references.length > 0 || editable;
-  const showTeam = teamMembers.length > 0 || (editable && !isUnclaimed);
-  const showWhyPublic = trust.points > 0;
-  const showOwnerProgress = editable && !isUnclaimed;
-  const showSidebar =
-    showWhyPublic || showOwnerProgress || showPartners;
 
   return (
     <div className="pb-10">
@@ -150,55 +137,31 @@ export function CompanyProfile({
         />
       )}
 
-      <div className="mx-auto mt-4 grid max-w-6xl gap-4 px-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-5">
-        <div className="flex flex-col gap-4">
-          <CompanyAbout company={company} />
-          {showTeam ? (
-            <CompanyTeamSection
-              members={teamMembers}
-              companySlug={company.slug}
-              editable={editable && !isUnclaimed}
-            />
-          ) : null}
-          <ClientHighlights summary={assessmentSummary} />
-          {showRefs ? (
-            <ReferencesSection
-              references={references}
-              editable={editable}
-              companySlug={company.slug}
-            />
-          ) : null}
-          {showCases ? (
-            <CaseStudyList
-              company={company}
-              companySlug={company.slug}
-              caseStudies={caseStudies}
-              editable={editable}
-              caseStudyBase={caseStudyBase}
-            />
-          ) : null}
-        </div>
-
-        {showSidebar ? (
-          <div className="flex flex-col gap-4 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-            {showWhyPublic ? <TrustWhyCard trust={trust} /> : null}
-            {showOwnerProgress ? <TrustProgressCard trust={trust} /> : null}
-            {showPartners ? (
-              <PartnerSidebar
-                companySlug={company.slug}
-                partners={partners}
-                editable={editable && !isUnclaimed}
-                showAdd={showAddPartner}
-                addQ={addPartnerQ}
-                addResults={addPartnerResults}
-                verified={addPartnerVerified}
-                statusBySlug={addPartnerStatus}
-                addMode={addPartnerMode}
-              />
-            ) : null}
-          </div>
-        ) : null}
-      </div>
+      <CompanyProfileBody
+        company={company}
+        partners={partners}
+        partnerRail={partnerRail}
+        caseStudies={caseStudies}
+        references={references}
+        trust={trust}
+        assessmentSummary={assessmentSummary}
+        teamMembers={teamMembers}
+        editable={editable}
+        isUnclaimed={isUnclaimed}
+        showTeam={teamMembers.length > 0 || (editable && !isUnclaimed)}
+        showRefs={references.length > 0 || editable}
+        showCases={caseStudies.length > 0 || editable}
+        showPartners={partners.length > 0 || editable}
+        showWhyPublic={trust.points > 0}
+        showOwnerProgress={editable && !isUnclaimed}
+        showAddPartner={showAddPartner}
+        addPartnerQ={addPartnerQ}
+        addPartnerResults={addPartnerResults}
+        addPartnerVerified={addPartnerVerified}
+        addPartnerStatus={addPartnerStatus}
+        addPartnerMode={addPartnerMode}
+        caseStudyBase={caseStudyBase}
+      />
 
       {networkMap}
     </div>

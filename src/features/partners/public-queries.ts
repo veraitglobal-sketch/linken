@@ -1,4 +1,9 @@
 import { companyDisplayLogoUrl } from "@/features/logo/display-url";
+import {
+  applyPartnerSort,
+  parsePartnerRail,
+  type PartnerRailSettings,
+} from "@/features/partners/partner-rail";
 import { createClient } from "@/lib/supabase/server";
 import type { Partner } from "@/types/partner";
 
@@ -11,9 +16,26 @@ function initials(name: string) {
     .toUpperCase();
 }
 
+export async function getPartnerRailSettings(
+  companyId: string,
+): Promise<PartnerRailSettings> {
+  if (!companyId) return parsePartnerRail(null);
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("companies")
+      .select("partner_rail")
+      .eq("id", companyId)
+      .maybeSingle();
+    return parsePartnerRail(data?.partner_rail);
+  } catch {
+    return parsePartnerRail(null);
+  }
+}
+
 /**
  * Accepted partnerships for a public company profile.
- * Firm appears as requester or recipient; join companies for the other side.
+ * Honors owner partner_rail.sortIds when set.
  */
 export async function getPartnersForCompany(
   companyId: string,
@@ -22,10 +44,11 @@ export async function getPartnersForCompany(
 
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("partnerships")
-      .select(
-        `
+    const [{ data, error }, rail] = await Promise.all([
+      supabase
+        .from("partnerships")
+        .select(
+          `
         id,
         status,
         requester_id,
@@ -37,9 +60,11 @@ export async function getPartnersForCompany(
           id, slug, name, category, city, verified, claimed, logo_url, website
         )
       `,
-      )
-      .or(`requester_id.eq.${companyId},recipient_id.eq.${companyId}`)
-      .eq("status", "accepted");
+        )
+        .or(`requester_id.eq.${companyId},recipient_id.eq.${companyId}`)
+        .eq("status", "accepted"),
+      getPartnerRailSettings(companyId),
+    ]);
 
     if (error) {
       console.error("[getPartnersForCompany]", error.message);
@@ -77,10 +102,6 @@ export async function getPartnersForCompany(
     if (otherIds.length === 0) return [];
 
     const shared = new Map<string, number>();
-
-    // Two independent chains (outbound tags on our case studies, inbound
-    // tags on theirs) — run them concurrently instead of four round-trips
-    // in a row.
     const [outboundCount, inboundCount] = await Promise.all([
       (async () => {
         const { data: ownedCases } = await supabase
@@ -89,7 +110,6 @@ export async function getPartnersForCompany(
           .eq("company_id", companyId);
         const ownedIds = (ownedCases ?? []).map((c) => c.id as string);
         if (ownedIds.length === 0) return [];
-
         const { data: outbound } = await supabase
           .from("case_study_partners")
           .select("partner_company_id")
@@ -110,7 +130,6 @@ export async function getPartnersForCompany(
           ),
         ];
         if (inboundCaseIds.length === 0) return [];
-
         const { data: theirCases } = await supabase
           .from("case_studies")
           .select("id, company_id")
@@ -141,7 +160,7 @@ export async function getPartnersForCompany(
       return a.name.localeCompare(b.name);
     });
 
-    return partners;
+    return applyPartnerSort(partners, rail.sortIds);
   } catch (err) {
     console.error("[getPartnersForCompany]", err);
     return [];

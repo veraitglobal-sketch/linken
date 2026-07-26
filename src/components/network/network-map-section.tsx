@@ -28,15 +28,15 @@ export async function NetworkMapSection({
       id="network-map"
       className="mx-auto mt-5 max-w-6xl scroll-mt-28 px-4"
     >
-      <div className="overflow-hidden rounded-[28px] border border-line bg-surface">
-        <div className="border-b border-line px-5 py-5 sm:px-7">
-          <p className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">
+      <div className="overflow-hidden rounded-[22px] border border-line/80 bg-surface shadow-[0_16px_48px_rgba(8,20,18,0.05)]">
+        <div className="border-b border-line/70 px-5 py-5 sm:px-7">
+          <p className="text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
             {PRODUCT.map.label}
           </p>
-          <h2 className="mt-2 font-display text-[clamp(1.5rem,2.4vw,1.9rem)] font-medium tracking-[-0.035em] text-ink">
+          <h2 className="mt-1.5 font-display text-[clamp(1.4rem,2.2vw,1.75rem)] font-medium tracking-[-0.04em] text-ink">
             {title}
           </h2>
-          <p className="mt-2 max-w-[42rem] text-[14px] leading-relaxed text-muted">
+          <p className="mt-2 max-w-[40rem] text-[13px] leading-relaxed text-muted">
             {PRODUCT.map.job}
           </p>
           {graph.summary.companies +

@@ -4,7 +4,8 @@ import {
   AddPartnerTextLink,
 } from "@/components/partners/add-partner-button";
 import { CompanyAddPartner } from "@/components/partners/company-add-partner";
-import { PartnerCard } from "@/components/partners/partner-card";
+import { PartnerRailList } from "@/components/partners/partner-rail-list";
+import type { PartnerRailSettings } from "@/features/partners/partner-rail";
 import { PRODUCT } from "@/lib/product-model";
 import type { Company } from "@/types/company";
 import type { Partner } from "@/types/partner";
@@ -12,6 +13,7 @@ import type { Partner } from "@/types/partner";
 type Props = {
   companySlug: string;
   partners: Partner[];
+  rail: PartnerRailSettings;
   editable?: boolean;
   showAdd?: boolean;
   addQ?: string;
@@ -21,11 +23,10 @@ type Props = {
   addMode?: "search" | "draft";
 };
 
-const PREVIEW = 4;
-
 export function PartnerSidebar({
   companySlug,
   partners,
+  rail,
   editable = false,
   showAdd = false,
   addQ = "",
@@ -35,9 +36,6 @@ export function PartnerSidebar({
   addMode = "search",
 }: Props) {
   if (partners.length === 0 && !editable) return null;
-
-  const preview = partners.slice(0, PREVIEW);
-  const remaining = Math.max(partners.length - PREVIEW, 0);
 
   return (
     <aside id="partners" className="scroll-mt-24 lg:sticky lg:top-20 lg:self-start">
@@ -52,7 +50,7 @@ export function PartnerSidebar({
               <h2 className="mt-2 font-display text-[1.45rem] font-medium tracking-[-0.03em]">
                 Verified partners
               </h2>
-              <p className="mt-2 max-w-[220px] text-[12px] leading-relaxed text-white/60">
+              <p className="mt-2 max-w-[240px] text-[12px] leading-relaxed text-white/60">
                 {PRODUCT.partners.job}
               </p>
             </div>
@@ -62,17 +60,13 @@ export function PartnerSidebar({
           </div>
         </div>
 
-        {preview.length > 0 ? (
-          <div className="space-y-2 px-3.5 py-3.5">
-            {preview.map((partner) => (
-              <PartnerCard
-                key={partner.id}
-                partner={partner}
-                editable={editable}
-                manageBack={editable ? `/c/${companySlug}` : undefined}
-              />
-            ))}
-          </div>
+        {partners.length > 0 ? (
+          <PartnerRailList
+            companySlug={companySlug}
+            partners={partners}
+            rail={rail}
+            editable={editable}
+          />
         ) : (
           <div className="px-5 py-5">
             <p className="text-[13px] text-muted">
@@ -99,12 +93,17 @@ export function PartnerSidebar({
         {partners.length > 0 ? (
           <div className="border-t border-line px-5 py-4">
             <Link
-              href={`/c/${companySlug}/partners`}
+              href={`/c/${companySlug}#network-map`}
               className="text-[13px] font-semibold text-ink underline-offset-4 hover:underline"
             >
-              {remaining > 0
-                ? `View all ${partners.length} partners`
-                : `View on ${PRODUCT.map.label}`}
+              View on {PRODUCT.map.label}
+            </Link>
+            <span className="mx-2 text-plus">·</span>
+            <Link
+              href={`/c/${companySlug}/partners`}
+              className="text-[13px] font-semibold text-muted underline-offset-4 hover:underline"
+            >
+              Full list
             </Link>
           </div>
         ) : null}

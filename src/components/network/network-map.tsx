@@ -102,8 +102,8 @@ function toFlowEdge(e: NetworkEdge, selected: boolean, editable = false): Edge {
     : isOwnership
       ? "#0e1f1c"
       : isPartner
-        ? "#b8895a"
-        : "#8a948e";
+        ? "#8a948e"
+        : "#a3aba6";
 
   return {
     id: e.id,
@@ -118,23 +118,21 @@ function toFlowEdge(e: NetworkEdge, selected: boolean, editable = false): Edge {
     interactionWidth: 28,
     style: {
       stroke,
-      strokeWidth: selected ? 2 : isOwnership ? 1.6 : 1.2,
-      // Solid = primary owner. Long dash = shared/joint owner (same dark
-      // "owns" color family, distinct from the fine-dashed partner line).
+      strokeWidth: selected ? 2 : isOwnership ? 1.75 : 1.15,
       strokeDasharray: isCoOwner
-        ? "7 3"
+        ? "8 4"
         : isPartner || e.type === "client"
-          ? "2.5 5"
+          ? "1.5 4.5"
           : undefined,
-      opacity: selected ? 1 : isPartner ? 0.95 : 0.9,
+      opacity: selected ? 1 : isPartner ? 0.72 : 0.88,
     },
     animated: false,
     markerEnd: isOwnership
       ? {
           type: MarkerType.ArrowClosed,
           color: stroke,
-          width: 11,
-          height: 11,
+          width: 10,
+          height: 10,
         }
       : undefined,
   };
@@ -622,16 +620,16 @@ export function NetworkMap({
         className="linken-flow-canvas"
       >
         <Background
-          variant={BackgroundVariant.Dots}
-          gap={20}
-          size={1}
-          color="rgba(14, 31, 28, 0.1)"
+          variant={BackgroundVariant.Lines}
+          gap={28}
+          lineWidth={0.5}
+          color="rgba(14, 31, 28, 0.045)"
           bgColor="transparent"
         />
         <Controls
           showInteractive={false}
           position="bottom-left"
-          className="!m-4 !overflow-hidden !rounded-2xl !border !border-white/80 !bg-white/78 !shadow-[0_10px_32px_rgba(8,20,18,0.07)] !backdrop-blur-xl [&>button]:!h-8 [&>button]:!w-8 [&>button]:!border-transparent [&>button]:!bg-transparent [&>button]:!fill-muted"
+          className="!m-4 !overflow-hidden !rounded-xl !border !border-line/80 !bg-surface/90 !shadow-[0_8px_28px_rgba(8,20,18,0.06)] !backdrop-blur-md [&>button]:!h-8 [&>button]:!w-8 [&>button]:!border-transparent [&>button]:!bg-transparent [&>button]:!fill-muted"
         />
       </ReactFlow>
 

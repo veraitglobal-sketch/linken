@@ -87,15 +87,15 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
         className={cn(
           "relative w-full cursor-grab border bg-surface text-left",
           "transition-[border-color,box-shadow,transform,width] duration-150 active:cursor-grabbing",
-          expanded ? (isHub ? "rounded-2xl" : "rounded-[14px]") : "rounded-full",
-          d.kind === "client" ? "border-dashed border-line" : "border-line",
-          isPartner && !isSelected && "opacity-[0.92]",
-          isHub && !isSelected && "border-[#c5ccc7]",
+          expanded ? (isHub ? "rounded-2xl" : "rounded-xl") : "rounded-full",
+          d.kind === "client" ? "border-dashed border-line" : "border-line/90",
+          isPartner && !isSelected && "opacity-[0.9]",
+          isHub && !isSelected && "border-navy/20",
           isSelected
-            ? "border-blue/45 shadow-[0_0_0_3px_rgba(26,92,81,0.12),0_14px_28px_rgba(8,20,18,0.08)]"
+            ? "border-blue/40 shadow-[0_0_0_2px_rgba(26,92,81,0.1),0_10px_24px_rgba(8,20,18,0.07)]"
             : cn(
-                "shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_8px_20px_rgba(8,20,18,0.05)]",
-                "hover:border-[#c5ccc7] hover:shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_14px_28px_rgba(8,20,18,0.08)]",
+                "shadow-[0_1px_0_rgba(255,255,255,0.95)_inset,0_4px_14px_rgba(8,20,18,0.04)]",
+                "hover:border-navy/15 hover:shadow-[0_1px_0_rgba(255,255,255,0.95)_inset,0_10px_22px_rgba(8,20,18,0.06)]",
               ),
         )}
       >

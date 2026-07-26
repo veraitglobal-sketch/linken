@@ -58,7 +58,7 @@ export function NetworkMapLegend({
       ) : null}
       {showPartner ? (
         <div className="flex items-center gap-2 text-[11px] font-medium text-ink-soft">
-          <LegendLine color="#b8895a" dashed />
+          <LegendLine color="#8a948e" dashed />
           Partner
         </div>
       ) : null}

@@ -16,7 +16,10 @@ import {
 } from "@/features/companies/queries";
 import { getConfirmedGroupForCompany } from "@/features/groups/queries";
 import { getPartnershipInbox } from "@/features/partners/inbox";
-import { getPartnersForCompany } from "@/features/partners/public-queries";
+import {
+  getPartnerRailSettings,
+  getPartnersForCompany,
+} from "@/features/partners/public-queries";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getPublicTeam } from "@/features/team/queries";
 import { getTrustProfile } from "@/features/trust/queries";
@@ -70,6 +73,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
 
   const [
     partners,
+    partnerRail,
     caseStudies,
     references,
     trust,
@@ -79,6 +83,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     teamMembers,
   ] = await Promise.all([
     getPartnersForCompany(company.id),
+    getPartnerRailSettings(company.id),
     getCaseStudiesForCompany(company.id),
     getReferencesForCompany(company.id),
     getTrustProfile(company.id, company.slug),
@@ -147,6 +152,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
       <CompanyProfile
         company={company}
         partners={partners}
+        partnerRail={partnerRail}
         caseStudies={caseStudies}
         references={references}
         trust={trust}
