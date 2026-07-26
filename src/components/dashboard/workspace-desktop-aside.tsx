@@ -15,6 +15,7 @@ type Props = {
   contexts: WorkspaceContext[];
   verified?: boolean;
   allowedSections?: WorkspaceSection[] | null;
+  signedIn?: boolean;
   footer?: ReactNode;
 };
 
@@ -27,6 +28,7 @@ export function WorkspaceDesktopAside({
   contexts,
   verified,
   allowedSections = null,
+  signedIn = true,
   footer,
 }: Props) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -47,7 +49,17 @@ export function WorkspaceDesktopAside({
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col px-3 pb-3">
-        {active ? (
+        {!signedIn ? (
+          <div className="mb-5 rounded-2xl border border-dashed border-line bg-paper/50 px-3.5 py-3">
+            <p className="text-[12px] font-semibold text-ink">Not signed in</p>
+            <Link
+              href="/login?next=/dashboard"
+              className="mt-1 inline-block text-[11px] font-semibold text-blue underline-offset-2 hover:underline"
+            >
+              Sign in →
+            </Link>
+          </div>
+        ) : active ? (
           <div className="mb-5 rounded-2xl border border-line/65 bg-paper/70 px-0.5 py-0.5">
             <WorkspaceSwitcher
               active={active}
@@ -68,15 +80,19 @@ export function WorkspaceDesktopAside({
         )}
 
         <div className="min-h-0 flex-1 overflow-y-auto px-0.5">
-          <WorkspaceNav
-            companySlug={active?.type === "company" ? active.slug : null}
-            groupSlug={active?.type === "group" ? active.slug : null}
-            contextType={active?.type ?? null}
-            allowedSections={allowedSections}
-          />
+          {signedIn ? (
+            <WorkspaceNav
+              companySlug={active?.type === "company" ? active.slug : null}
+              groupSlug={active?.type === "group" ? active.slug : null}
+              contextType={active?.type ?? null}
+              allowedSections={allowedSections}
+            />
+          ) : null}
         </div>
 
-        {footer ?? <WorkspaceAsideFooter active={active} />}
+        {footer ?? (
+          <WorkspaceAsideFooter active={active} signedIn={signedIn} />
+        )}
       </div>
     </aside>
   );

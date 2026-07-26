@@ -11,7 +11,7 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  const { active, contexts, company } = await getDashboardSession();
+  const { user, active, contexts, company } = await getDashboardSession();
 
   let verified = false;
   let checklist = null;
@@ -51,6 +51,7 @@ export default async function DashboardLayout({
 
   return (
     <WorkspaceShell
+      signedIn={Boolean(user)}
       active={active}
       contexts={contexts}
       verified={verified}

@@ -11,12 +11,14 @@ import type { WorkspaceContext } from "@/features/workspace/types";
 type Props = {
   active: WorkspaceContext | null;
   allowedSections?: WorkspaceSection[] | null;
+  signedIn?: boolean;
 };
 
 /** Full workspace nav for phones — desktop uses the aside. */
 export function WorkspaceMobileMenu({
   active,
   allowedSections = null,
+  signedIn = true,
 }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -67,27 +69,43 @@ export function WorkspaceMobileMenu({
             </button>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto px-3 py-5">
-            {active ? (
+            {signedIn && active ? (
               <p className="mb-4 truncate px-2.5 text-[12px] font-semibold text-ink">
                 {active.name}
               </p>
             ) : null}
-            <WorkspaceNav
-              companySlug={active?.type === "company" ? active.slug : null}
-              groupSlug={active?.type === "group" ? active.slug : null}
-              contextType={active?.type ?? null}
-              allowedSections={allowedSections}
-            />
+            {signedIn ? (
+              <WorkspaceNav
+                companySlug={active?.type === "company" ? active.slug : null}
+                groupSlug={active?.type === "group" ? active.slug : null}
+                contextType={active?.type ?? null}
+                allowedSections={allowedSections}
+              />
+            ) : (
+              <p className="px-2.5 text-[13px] text-muted">
+                Sign in to open your workspace.
+              </p>
+            )}
           </div>
           <div className="border-t border-line/55 bg-surface px-3 py-3">
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="flex h-10 w-full items-center justify-center rounded-xl border border-line/70 bg-paper text-[13px] font-semibold text-ink"
+            {signedIn ? (
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className="flex h-10 w-full items-center justify-center rounded-xl border border-line/70 bg-paper text-[13px] font-semibold text-ink"
+                >
+                  Sign out
+                </button>
+              </form>
+            ) : (
+              <Link
+                href="/login?next=/dashboard"
+                className="flex h-10 w-full items-center justify-center rounded-xl bg-navy text-[13px] font-semibold text-white"
+                onClick={() => setOpen(false)}
               >
-                Sign out
-              </button>
-            </form>
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       ) : null}

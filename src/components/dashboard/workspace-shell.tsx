@@ -20,6 +20,7 @@ type Props = {
   checklist?: ActivationChecklist | null;
   allowedSections?: WorkspaceSection[] | null;
   operatorBanner?: ReactNode;
+  signedIn?: boolean;
 };
 
 export function WorkspaceShell({
@@ -30,6 +31,7 @@ export function WorkspaceShell({
   checklist,
   allowedSections = null,
   operatorBanner = null,
+  signedIn = true,
 }: Props) {
   const pathname = usePathname();
   const isGraph = pathname === "/dashboard" && active?.type !== "group";
@@ -54,6 +56,7 @@ export function WorkspaceShell({
         contexts={contexts}
         verified={verified}
         allowedSections={allowedSections}
+        signedIn={signedIn}
       />
 
       <div className="relative flex min-w-0 flex-1 flex-col bg-paper">
@@ -63,12 +66,22 @@ export function WorkspaceShell({
           <>
             <div className="pointer-events-none absolute top-3 right-3 z-40 flex items-center gap-2 sm:top-4 sm:right-4">
               <div className="pointer-events-auto">
-                <WorkspaceMobileMenu
-                  active={active}
-                  allowedSections={allowedSections}
-                />
+                {signedIn ? (
+                  <WorkspaceMobileMenu
+                    active={active}
+                    allowedSections={allowedSections}
+                    signedIn={signedIn}
+                  />
+                ) : (
+                  <Link
+                    href="/login?next=/dashboard"
+                    className="inline-flex h-8 items-center rounded-full border border-line bg-surface px-3 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)]"
+                  >
+                    Sign in
+                  </Link>
+                )}
               </div>
-              {checklist && !checklist.complete ? (
+              {signedIn && checklist && !checklist.complete ? (
                 <div className="pointer-events-auto shrink-0">
                   <GettingStartedPill checklist={checklist} />
                 </div>
@@ -82,20 +95,25 @@ export function WorkspaceShell({
                 </Link>
               ) : null}
             </div>
-            <WorkspaceMobileNav
-              pathname={pathname}
-              companySlug={active?.type === "company" ? active.slug : null}
-            />
+            {signedIn ? (
+              <WorkspaceMobileNav
+                pathname={pathname}
+                companySlug={active?.type === "company" ? active.slug : null}
+              />
+            ) : null}
             <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
           </>
         ) : (
           <>
             <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-line/50 bg-surface/90 px-4 py-3 backdrop-blur-sm sm:h-14 sm:flex-nowrap sm:py-0 sm:px-7">
               <div className="flex min-w-0 flex-1 items-center gap-3">
-                <WorkspaceMobileMenu
-                  active={active}
-                  allowedSections={allowedSections}
-                />
+                {signedIn ? (
+                  <WorkspaceMobileMenu
+                    active={active}
+                    allowedSections={allowedSections}
+                    signedIn={signedIn}
+                  />
+                ) : null}
                 <div className="min-w-0 flex-1">
                   <h1 className="truncate font-display text-[16px] font-medium tracking-[-0.04em] text-ink">
                     {active?.type === "group" && pathname === "/dashboard"
@@ -108,11 +126,18 @@ export function WorkspaceShell({
                     </p>
                   ) : null}
                 </div>
-                {checklist && !checklist.complete ? (
+                {signedIn && checklist && !checklist.complete ? (
                   <GettingStartedPill checklist={checklist} />
                 ) : null}
               </div>
-              {publicHref ? (
+              {!signedIn ? (
+                <Link
+                  href="/login?next=/dashboard"
+                  className="inline-flex h-8 shrink-0 items-center rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white"
+                >
+                  Sign in
+                </Link>
+              ) : publicHref ? (
                 <Link
                   href={publicHref}
                   className="inline-flex h-8 shrink-0 items-center rounded-full border border-line/80 bg-paper/80 px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
@@ -128,10 +153,12 @@ export function WorkspaceShell({
                 </Link>
               )}
             </header>
-            <WorkspaceMobileNav
-              pathname={pathname}
-              companySlug={active?.type === "company" ? active.slug : null}
-            />
+            {signedIn ? (
+              <WorkspaceMobileNav
+                pathname={pathname}
+                companySlug={active?.type === "company" ? active.slug : null}
+              />
+            ) : null}
             <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
           </>
         )}
