@@ -60,7 +60,7 @@ export async function getLogoWallEntries(
         .eq("recipient_id", companyId),
       supabase
         .from("service_references")
-        .select("client_company_id, ongoing")
+        .select("client_company_id, ongoing, disclosure")
         .eq("provider_company_id", companyId)
         .eq("status", "confirmed")
         .not("client_company_id", "is", null),
@@ -83,6 +83,7 @@ export async function getLogoWallEntries(
 
     const clientMeta = new Map<string, boolean>();
     for (const r of refs.data ?? []) {
+      if ((r.disclosure as string | null) === "undisclosed") continue;
       const id = r.client_company_id as string;
       if (!id) continue;
       clientMeta.set(id, clientMeta.get(id) === true || Boolean(r.ongoing));

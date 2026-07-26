@@ -41,16 +41,20 @@ export function referencesExample() {
       "started_year": "2023",
       "ongoing": true,
       "ended_year": null,
-      "confirmed_at": "2024-11-02T09:14:00.000Z"
+      "confirmed_at": "2024-11-02T09:14:00.000Z",
+      "confirmation_level": 2,
+      "disclosure": "named"
     },
     {
-      "client_name": "Stadtwerke Spandau",
+      "client_name": "Undisclosed client",
       "client_slug": null,
       "service": "Electrical fit-out",
       "started_year": "2021",
       "ongoing": false,
       "ended_year": "2022",
-      "confirmed_at": "2023-03-18T14:22:00.000Z"
+      "confirmed_at": "2023-03-18T14:22:00.000Z",
+      "confirmation_level": 1,
+      "disclosure": "undisclosed"
     }
   ],
   "count": 2

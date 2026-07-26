@@ -1,3 +1,8 @@
+import type {
+  ConfirmationDisclosure,
+  ConfirmationLevel,
+} from "@/features/confirmations/meta";
+
 export type ServiceReferenceStatus = "pending" | "confirmed" | "declined";
 
 export type ServiceReference = {
@@ -13,4 +18,6 @@ export type ServiceReference = {
   endedYear: string | null;
   status: ServiceReferenceStatus;
   confirmedAt: string | null;
+  confirmationLevel: ConfirmationLevel | null;
+  disclosure: ConfirmationDisclosure | null;
 };

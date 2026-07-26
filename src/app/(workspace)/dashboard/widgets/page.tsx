@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
-import { WidgetsFlash } from "@/components/widgets/widgets-flash";
+import { WidgetAnalyticsSection } from "@/components/widgets/widget-analytics-section";
 import { WidgetsStudio } from "@/components/widgets/widgets-studio";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
-import { getEntitlements } from "@/features/plan/entitlements";
+import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getSiteUrl } from "@/lib/site";
@@ -27,7 +27,10 @@ export default async function DashboardWidgetsPage() {
     return (
       <WorkspacePage title="Widgets" description="Embed Hansala on your website.">
         <p className="text-[14px] text-muted">
-          <Link href="/login?next=/dashboard/widgets" className="font-semibold text-ink underline-offset-2 hover:underline">
+          <Link
+            href="/login?next=/dashboard/widgets"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
             Sign in
           </Link>{" "}
           to configure website widgets.
@@ -40,7 +43,10 @@ export default async function DashboardWidgetsPage() {
     return (
       <WorkspacePage title="Widgets" description="Embed Hansala on your website.">
         <p className="text-[14px] text-muted">
-          <Link href="/onboarding" className="font-semibold text-ink underline-offset-2 hover:underline">
+          <Link
+            href="/onboarding"
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
             Create your company
           </Link>{" "}
           first.
@@ -57,9 +63,7 @@ export default async function DashboardWidgetsPage() {
   const confirmedRefs = references.filter((r) => r.status === "confirmed");
   const isPro = getEntitlements(company.plan).premiumEmbeds;
   const hasProof = confirmedRefs.length > 0;
-  const domainReady = Boolean(
-    company.verified && company.website?.trim(),
-  );
+  const domainReady = Boolean(company.verified && company.website?.trim());
 
   const availability = {
     verified: true,
@@ -88,6 +92,11 @@ export default async function DashboardWidgetsPage() {
         </Link>
       }
     >
+      <WidgetAnalyticsSection
+        companyId={company.id}
+        website={company.website}
+        plan={parsePlan(company.plan)}
+      />
       <WidgetsStudio
         siteUrl={siteUrl}
         slug={company.slug}

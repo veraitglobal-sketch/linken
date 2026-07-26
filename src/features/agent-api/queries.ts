@@ -154,7 +154,7 @@ export async function listAgentReferences(
   let q = admin
     .from("service_references")
     .select(
-      "id, client_name, client_company_id, service, started_year, ongoing, ended_year, status, created_at, confirmed_at",
+      "id, client_name, client_company_id, service, started_year, ongoing, ended_year, status, created_at, confirmed_at, confirmation_level, disclosure",
       { count: "exact" },
     )
     .eq("provider_company_id", companyId)
@@ -182,6 +182,16 @@ export async function listAgentReferences(
     status: r.status as AgentReference["status"],
     created_at: r.created_at as string,
     confirmed_at: (r.confirmed_at as string | null) ?? null,
+    confirmation_level:
+      r.confirmation_level === 1 ||
+      r.confirmation_level === 2 ||
+      r.confirmation_level === 3
+        ? r.confirmation_level
+        : null,
+    disclosure:
+      r.disclosure === "named" || r.disclosure === "undisclosed"
+        ? r.disclosure
+        : null,
   }));
 
   return { references, count: count ?? references.length };

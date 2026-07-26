@@ -73,6 +73,10 @@ export type ApiReference = {
   ended_year: string | null;
   /** ISO-8601 when the client confirmed. */
   confirmed_at: string;
+  /** 1 engagement · 2 scope · 3 outcome */
+  confirmation_level: 1 | 2 | 3;
+  /** named | undisclosed — undisclosed clients still count */
+  disclosure: "named" | "undisclosed";
 };
 
 /** GET /api/v1/companies/{slug}/references */

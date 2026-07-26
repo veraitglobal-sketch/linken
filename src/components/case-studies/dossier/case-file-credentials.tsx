@@ -1,6 +1,7 @@
 import type { CaseStudy } from "@/types/case-study";
 import type { Company } from "@/types/company";
 import { dossierProofScore } from "@/lib/case-study-dossier";
+import { confirmationLevelLabel } from "@/features/confirmations/meta";
 
 type Props = { company: Company; caseStudy: CaseStudy };
 
@@ -10,10 +11,17 @@ export function CaseFileCredentials({ company, caseStudy }: Props) {
   const clientOk = caseStudy.clientConfirmation?.status === "confirmed";
   const clientName =
     caseStudy.clientConfirmation?.confirmedBy?.name ?? caseStudy.clientLabel;
+  const depth = confirmationLevelLabel(
+    caseStudy.clientConfirmation?.confirmationLevel,
+  );
 
   const items = [
     clientOk && clientName
-      ? { label: "Client confirmed", value: clientName, ok: true }
+      ? {
+          label: depth ? `Client confirmed · ${depth}` : "Client confirmed",
+          value: clientName,
+          ok: true,
+        }
       : clientName
         ? { label: "Client", value: clientName, ok: false }
         : null,

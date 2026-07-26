@@ -2,6 +2,7 @@ import {
   confirmClientRequest,
   declineClientRequest,
 } from "@/features/case-studies/actions";
+import { ConfirmDepthFields } from "@/components/confirm/confirm-depth-fields";
 import { Button } from "@/components/ui/button";
 import type { ClientConfirmationView } from "@/types/client-confirmation";
 
@@ -29,20 +30,19 @@ export function ConfirmDecision({ view, companyName }: Props) {
         {view.caseSummary}
       </p>
 
-      <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-        <form action={confirmClientRequest} className="flex-1">
-          <input type="hidden" name="token" value={view.token} />
-          <Button type="submit" className="h-11 w-full">
-            Confirm project
-          </Button>
-        </form>
-        <form action={declineClientRequest} className="flex-1">
-          <input type="hidden" name="token" value={view.token} />
-          <Button type="submit" variant="secondary" className="h-11 w-full">
-            Decline
-          </Button>
-        </form>
-      </div>
+      <form action={confirmClientRequest} className="mt-6">
+        <input type="hidden" name="token" value={view.token} />
+        <ConfirmDepthFields />
+        <Button type="submit" className="mt-6 h-11 w-full">
+          Confirm project
+        </Button>
+      </form>
+      <form action={declineClientRequest} className="mt-2">
+        <input type="hidden" name="token" value={view.token} />
+        <Button type="submit" variant="secondary" className="h-11 w-full">
+          Decline
+        </Button>
+      </form>
     </div>
   );
 }

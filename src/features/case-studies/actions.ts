@@ -12,6 +12,10 @@ import { getOperatorActiveCompany } from "@/features/workspace/require-operator"
 import { requireOwnedActiveCompany } from "@/features/workspace/require-owned";
 import { requireOperatorForCompanySlug } from "@/features/workspace/require-operator-slug";
 import { setWorkspacePreference } from "@/features/workspace/set-preference";
+import {
+  disclosureFromConfirmForm,
+  levelFromConfirmForm,
+} from "@/features/confirmations/meta";
 import { safeAppBack, withBackQuery } from "@/lib/safe-back";
 import { parseMetricsFromForm } from "@/lib/case-study-metrics";
 import { createClient } from "@/lib/supabase/server";
@@ -228,6 +232,12 @@ async function respondClientRequest(
     p_token: token,
     p_response: response,
     p_company_id: company.id,
+    ...(response === "confirmed"
+      ? {
+          p_level: levelFromConfirmForm(formData),
+          p_disclosure: disclosureFromConfirmForm(formData),
+        }
+      : {}),
   });
 
   if (error) {

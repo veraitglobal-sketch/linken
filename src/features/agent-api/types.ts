@@ -89,6 +89,8 @@ export type AgentReference = {
   status: "pending" | "confirmed" | "declined";
   created_at: string;
   confirmed_at: string | null;
+  confirmation_level: 1 | 2 | 3 | null;
+  disclosure: "named" | "undisclosed" | null;
 };
 
 export type AgentCaseStudy = {

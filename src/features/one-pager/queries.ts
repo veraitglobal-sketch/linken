@@ -1,5 +1,6 @@
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
+import { publicReferenceClient } from "@/features/confirmations/public-client";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -92,7 +93,8 @@ export async function getOnePagerData(
       if (a.ongoing !== b.ongoing) return a.ongoing ? -1 : 1;
       return (a.startedYear || "9999").localeCompare(b.startedYear || "9999");
     })
-    .slice(0, 8);
+    .slice(0, 8)
+    .map((r) => publicReferenceClient(r));
 
   return {
     company,

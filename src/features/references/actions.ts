@@ -6,6 +6,10 @@ import {
   createReferenceCore,
   deleteReferenceCore,
 } from "@/features/references/core";
+import {
+  disclosureFromConfirmForm,
+  levelFromConfirmForm,
+} from "@/features/confirmations/meta";
 import { sendReferenceConfirmEmail } from "@/lib/email";
 import { requireOwnedActiveCompany } from "@/features/workspace/require-owned";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
@@ -93,6 +97,12 @@ async function respondServiceReference(
       p_token: token,
       p_decision: decision,
       p_company_id: company.id,
+      ...(decision === "confirmed"
+        ? {
+            p_level: levelFromConfirmForm(formData),
+            p_disclosure: disclosureFromConfirmForm(formData),
+          }
+        : {}),
     },
   );
 

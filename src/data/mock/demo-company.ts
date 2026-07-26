@@ -76,6 +76,8 @@ export const DEMO_REFERENCES: ServiceReference[] = [
     endedYear: null,
     status: "confirmed",
     confirmedAt: "2024-09-01",
+    confirmationLevel: 2,
+    disclosure: "named",
   },
   {
     id: "r2",
@@ -90,5 +92,7 @@ export const DEMO_REFERENCES: ServiceReference[] = [
     endedYear: "2024",
     status: "confirmed",
     confirmedAt: "2024-03-12",
+    confirmationLevel: 1,
+    disclosure: "named",
   },
 ];

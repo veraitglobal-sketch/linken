@@ -1,3 +1,8 @@
+import type {
+  ConfirmationDisclosure,
+  ConfirmationLevel,
+} from "@/features/confirmations/meta";
+
 export type ClientConfirmationStatus = "pending" | "confirmed" | "declined";
 
 export type ClientConfirmation = {
@@ -7,6 +12,8 @@ export type ClientConfirmation = {
   email: string;
   token: string;
   confirmedAt?: string;
+  confirmationLevel?: ConfirmationLevel | null;
+  disclosure?: ConfirmationDisclosure | null;
   confirmedBy?: {
     id: string;
     name: string;

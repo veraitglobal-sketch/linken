@@ -3,7 +3,7 @@ import { EmbedAssessment } from "@/components/embed/embed-assessment";
 import { EmbedCredentials } from "@/components/embed/embed-credentials";
 import { EmbedHorizontal } from "@/components/embed/embed-horizontal";
 import { EmbedMicro } from "@/components/embed/embed-micro";
-import { EmbedReferences } from "@/components/embed/embed-references";
+import { embedReferencesNode } from "@/components/embed/embed-references-node";
 import { EmbedScoreBar } from "@/components/embed/embed-score-bar";
 import { EmbedSignatureSeal } from "@/components/embed/embed-signature-seal";
 import { EmbedStarter } from "@/components/embed/embed-starter";
@@ -20,6 +20,7 @@ type ReferenceRow = {
   startedYear: string;
   endedYear: string | null;
   ongoing: boolean;
+  disclosure?: "named" | "undisclosed" | null;
 };
 
 export type EmbedRenderInput = {
@@ -33,21 +34,6 @@ export type EmbedRenderInput = {
   confirmedRefs: ReferenceRow[];
   confirmedCount: number;
 };
-
-function periodLabel(ref: ReferenceRow) {
-  if (ref.ongoing) return `since ${ref.startedYear || "—"}`;
-  if (ref.endedYear) return `${ref.startedYear || "—"}–${ref.endedYear}`;
-  return ref.startedYear || "—";
-}
-
-function initialsFrom(name: string) {
-  return name
-    .split(/\s+/)
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
 
 /** Legacy embed params map to logo-free widgets. */
 function normalizeVariant(raw: string): string {
@@ -157,21 +143,12 @@ export function renderEmbedVariant(input: EmbedRenderInput): ReactNode {
   }
 
   if (variant === "references" && confirmedRefs.length > 0) {
-    return (
-      <EmbedReferences
-        name={company.name}
-        totalCount={confirmedRefs.length}
-        references={confirmedRefs.slice(0, 5).map((r) => ({
-          clientName: r.clientName,
-          service: r.service,
-          period: periodLabel(r),
-          ongoing: r.ongoing,
-          initials: initialsFrom(r.clientName),
-        }))}
-        profileUrl={profileUrl}
-        theme={theme}
-      />
-    );
+    return embedReferencesNode({
+      companyName: company.name,
+      confirmedRefs,
+      profileUrl,
+      theme,
+    });
   }
 
   return <EmbedHorizontal {...base} />;

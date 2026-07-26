@@ -177,6 +177,16 @@ export const REFERENCE_FIELDS: FieldRow[] = [
     type: "string",
     description: "ISO-8601 when the client confirmed.",
   },
+  {
+    name: "references[].confirmation_level",
+    type: "1 | 2 | 3",
+    description: "1 engagement · 2 scope · 3 outcome.",
+  },
+  {
+    name: "references[].disclosure",
+    type: '"named" | "undisclosed"',
+    description: "Undisclosed clients still count; name is redacted.",
+  },
 ];
 
 export const CASE_STUDY_FIELDS: FieldRow[] = [

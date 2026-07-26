@@ -31,6 +31,7 @@ export function buildProofCompanies(input: {
     clientName: string;
     clientLogoUrl?: string | null;
     clientWebsite?: string | null;
+    disclosure?: "named" | "undisclosed" | null;
   }>;
   limit?: number;
 }): EmbedProofCompany[] {
@@ -52,6 +53,7 @@ export function buildProofCompanies(input: {
   }
 
   for (const r of input.references) {
+    if (r.disclosure === "undisclosed") continue;
     const key = r.clientName.trim().toLowerCase();
     if (!key || seen.has(key)) continue;
     seen.add(key);

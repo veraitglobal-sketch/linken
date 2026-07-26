@@ -1,4 +1,5 @@
 import type { CaseStudy } from "@/types/case-study";
+import { confirmationLevelLabel } from "@/features/confirmations/meta";
 
 type Props = { caseStudy: CaseStudy };
 
@@ -9,6 +10,9 @@ export function CaseStudyAtAGlance({ caseStudy }: Props) {
   const clientName =
     caseStudy.clientConfirmation?.confirmedBy?.name ??
     caseStudy.clientLabel.trim();
+  const depth = confirmationLevelLabel(
+    caseStudy.clientConfirmation?.confirmationLevel,
+  );
 
   const facts: Fact[] = [
     caseStudy.year ? { label: "Year", value: caseStudy.year } : null,
@@ -17,7 +21,11 @@ export function CaseStudyAtAGlance({ caseStudy }: Props) {
     caseStudy.sector ? { label: "Sector", value: caseStudy.sector } : null,
     clientName
       ? {
-          label: clientOk ? "Client (confirmed)" : "Client",
+          label: clientOk
+            ? depth
+              ? `Client (confirmed · ${depth})`
+              : "Client (confirmed)"
+            : "Client",
           value: clientName,
         }
       : null,

@@ -21,6 +21,7 @@ type Props = {
   name: string;
   references: EmbedReferenceItem[];
   totalCount?: number;
+  undisclosedCount?: number;
   profileUrl: string;
   theme?: EmbedTheme;
 };
@@ -54,6 +55,7 @@ export function EmbedReferences({
   name,
   references,
   totalCount,
+  undisclosedCount = 0,
   profileUrl,
   theme = "light",
 }: Props) {
@@ -76,7 +78,12 @@ export function EmbedReferences({
               {count}
             </p>
           </div>
-          <p className={cn("mt-0.5 text-[11px]", embedSoftClass(theme))}>{name}</p>
+          <p className={cn("mt-0.5 text-[11px]", embedSoftClass(theme))}>
+            {name}
+            {undisclosedCount > 0
+              ? ` · ${undisclosedCount} undisclosed`
+              : null}
+          </p>
           <ul className="mt-2.5 space-y-2">
             {references.map((ref) => (
               <li key={`${ref.clientName}-${ref.service}`} className="flex items-center gap-2.5">

@@ -7,6 +7,8 @@ export type DaySeries = {
   inquiries: number;
   onePager: number;
   embed: number;
+  /** profile_view with source=embed */
+  embedClicks: number;
 };
 
 export type AnalyticsSummary = {
@@ -14,6 +16,8 @@ export type AnalyticsSummary = {
   profileViews: number;
   onePagerViews: number;
   embedViews: number;
+  /** Click-throughs from widgets (?src=embed). */
+  embedClicks: number;
   inquiries: number;
   byType: Record<string, number>;
   bySource: Record<string, number>;
@@ -25,6 +29,7 @@ const EMPTY: AnalyticsSummary = {
   profileViews: 0,
   onePagerViews: 0,
   embedViews: 0,
+  embedClicks: 0,
   inquiries: 0,
   byType: {},
   bySource: {},
@@ -38,17 +43,20 @@ function mapDay(raw: {
   inquiries?: number;
   one_pager?: number;
   embed?: number;
+  embed_clicks?: number;
 }): DaySeries {
   const visits = Number(raw.visits ?? raw.count ?? 0);
   const inquiries = Number(raw.inquiries ?? 0);
   const onePager = Number(raw.one_pager ?? 0);
   const embed = Number(raw.embed ?? 0);
+  const embedClicks = Number(raw.embed_clicks ?? 0);
   return {
     day: raw.day,
     visits,
     inquiries,
     onePager,
     embed,
+    embedClicks,
     count: Number(raw.count ?? visits + onePager + embed),
   };
 }
@@ -76,6 +84,7 @@ export function fillDaySeries(
         inquiries: 0,
         onePager: 0,
         embed: 0,
+        embedClicks: 0,
       },
     );
   }
@@ -103,6 +112,7 @@ export async function getAnalytics(
       profile_views?: number;
       one_pager_views?: number;
       embed_views?: number;
+      embed_clicks?: number;
       inquiries?: number;
       by_type?: Record<string, number>;
       by_source?: Record<string, number>;
@@ -114,6 +124,7 @@ export async function getAnalytics(
             inquiries?: number;
             one_pager?: number;
             embed?: number;
+            embed_clicks?: number;
           }[]
         | null;
     };
@@ -126,6 +137,9 @@ export async function getAnalytics(
       profileViews: Number(row.profile_views ?? 0),
       onePagerViews: Number(row.one_pager_views ?? 0),
       embedViews: Number(row.embed_views ?? 0),
+      embedClicks: Number(
+        row.embed_clicks ?? row.by_source?.embed ?? 0,
+      ),
       inquiries: Number(row.inquiries ?? 0),
       byType: row.by_type ?? {},
       bySource: row.by_source ?? {},

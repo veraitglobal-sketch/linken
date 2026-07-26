@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { formatReferencePeriod } from "@/components/references/reference-period";
 import { deleteReference } from "@/features/references/actions";
+import {
+  confirmationLevelLabel,
+  isUndisclosedPublic,
+} from "@/features/confirmations/meta";
+import { publicReferenceClient } from "@/features/confirmations/public-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { ServiceReference } from "@/types/service-reference";
@@ -17,8 +22,11 @@ export function ReferenceCard({
   editable = false,
   companySlug,
 }: Props) {
-  const confirmed = reference.status === "confirmed";
-  const period = formatReferencePeriod(reference);
+  const view = publicReferenceClient(reference, { reveal: editable });
+  const confirmed = view.status === "confirmed";
+  const period = formatReferencePeriod(view);
+  const depth = confirmationLevelLabel(view.confirmationLevel);
+  const undisclosed = isUndisclosedPublic(view.disclosure);
 
   return (
     <article
@@ -31,28 +39,36 @@ export function ReferenceCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          {reference.clientSlug ? (
+          {view.clientSlug ? (
             <Link
-              href={`/c/${reference.clientSlug}?src=partner`}
+              href={`/c/${view.clientSlug}?src=partner`}
               className="font-display text-[1.1rem] font-medium tracking-[-0.03em] text-ink hover:underline"
             >
-              {reference.clientName}
+              {view.clientName}
             </Link>
           ) : (
             <p className="font-display text-[1.1rem] font-medium tracking-[-0.03em] text-ink">
-              {reference.clientName}
+              {view.clientName}
             </p>
           )}
-          <p className="mt-1 text-[14px] text-ink-soft">{reference.service}</p>
+          <p className="mt-1 text-[14px] text-ink-soft">{view.service}</p>
           <p className="mt-1.5 text-[12px] text-muted">
             {period}
-            {reference.ongoing && confirmed ? " · ongoing" : null}
+            {view.ongoing && confirmed ? " · ongoing" : null}
+            {undisclosed && editable ? " · undisclosed publicly" : null}
           </p>
         </div>
         {confirmed ? (
-          <Badge tone="success" className="shrink-0 rounded-lg uppercase tracking-[0.08em]">
-            Confirmed
-          </Badge>
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            <Badge tone="success" className="rounded-lg uppercase tracking-[0.08em]">
+              Confirmed
+            </Badge>
+            {depth ? (
+              <Badge tone="neutral" className="rounded-lg tracking-[0.04em]">
+                {depth}
+              </Badge>
+            ) : null}
+          </div>
         ) : (
           <Badge tone="neutral" className="shrink-0 rounded-lg uppercase tracking-[0.06em]">
             Awaiting confirmation

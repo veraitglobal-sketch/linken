@@ -1,3 +1,7 @@
+import {
+  parseConfirmationLevel,
+  parseDisclosure,
+} from "@/features/confirmations/meta";
 import { companyDisplayLogoUrl } from "@/features/logo/display-url";
 import { createClient } from "@/lib/supabase/server";
 import type { ServiceReference } from "@/types/service-reference";
@@ -24,7 +28,7 @@ export async function getReferencesForCompany(
     const { data, error } = await supabase
       .from("service_references")
       .select(
-        "id, client_name, client_company_id, service, started_year, ongoing, ended_year, status, confirmed_at, client:companies!client_company_id(slug, name, logo_url, website)",
+        "id, client_name, client_company_id, service, started_year, ongoing, ended_year, status, confirmed_at, confirmation_level, disclosure, client:companies!client_company_id(slug, name, logo_url, website)",
       )
       .eq("provider_company_id", companyId)
       .in("status", ["confirmed", "pending"])
@@ -53,6 +57,8 @@ export async function getReferencesForCompany(
         endedYear: row.ended_year,
         status: row.status as ServiceReference["status"],
         confirmedAt: row.confirmed_at,
+        confirmationLevel: parseConfirmationLevel(row.confirmation_level),
+        disclosure: parseDisclosure(row.disclosure),
       };
     });
 

@@ -13,6 +13,7 @@ import type {
 import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
 import type { ServiceReference } from "@/types/service-reference";
+import { publicReferenceClient } from "@/features/confirmations/public-client";
 
 export function toApiTrustLevel(level: TrustLevel): ApiTrustLevel {
   return level.toLowerCase() as ApiTrustLevel;
@@ -73,14 +74,17 @@ export function serializeCompany(input: {
 
 export function serializeReference(ref: ServiceReference): ApiReference | null {
   if (ref.status !== "confirmed") return null;
+  const view = publicReferenceClient(ref);
   return {
-    client_name: ref.clientName,
-    client_slug: ref.clientSlug,
-    service: ref.service,
-    started_year: ref.startedYear ?? "",
-    ongoing: Boolean(ref.ongoing),
-    ended_year: ref.endedYear,
-    confirmed_at: ref.confirmedAt ?? "",
+    client_name: view.clientName,
+    client_slug: view.clientSlug,
+    service: view.service,
+    started_year: view.startedYear ?? "",
+    ongoing: Boolean(view.ongoing),
+    ended_year: view.endedYear,
+    confirmed_at: view.confirmedAt ?? "",
+    confirmation_level: view.confirmationLevel ?? 1,
+    disclosure: view.disclosure === "undisclosed" ? "undisclosed" : "named",
   };
 }
 

@@ -38,7 +38,15 @@ export async function renderTrustedEmbed(input: {
     .sort((a, b) => {
       if (a.ongoing !== b.ongoing) return a.ongoing ? -1 : 1;
       return (a.startedYear || "").localeCompare(b.startedYear || "");
-    });
+    })
+    .map((r) => ({
+      clientName: r.clientName,
+      service: r.service,
+      startedYear: r.startedYear,
+      endedYear: r.endedYear,
+      ongoing: r.ongoing,
+      disclosure: r.disclosure,
+    }));
 
   const confirmedCount =
     trust.breakdown.confirmedPartners +

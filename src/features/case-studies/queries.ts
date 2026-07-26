@@ -154,7 +154,7 @@ export async function getCaseStudyForDashboard(
 
     const [partnersByCase, confirmByCase] = await Promise.all([
       loadPartnersForCases([cs.id as string]),
-      loadClientConfirmationsForCases([cs.id as string]),
+      loadClientConfirmationsForCases([cs.id as string], { reveal: true }),
     ]);
 
     return mapCaseStudyRow(
