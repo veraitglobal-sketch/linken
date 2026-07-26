@@ -14,6 +14,7 @@ type Props = {
   portalAction: () => void;
   cancelAction: () => void;
   resumeAction: () => void;
+  endManualAction: () => void;
 };
 
 export function BillingPlanPanel({
@@ -29,6 +30,7 @@ export function BillingPlanPanel({
   portalAction,
   cancelAction,
   resumeAction,
+  endManualAction,
 }: Props) {
   return (
     <section className="flex h-full flex-col justify-between rounded-[28px] border border-line bg-surface px-7 py-8 lg:rounded-[32px] lg:px-9 lg:py-10">
@@ -68,6 +70,7 @@ export function BillingPlanPanel({
             portalAction={portalAction}
             cancelAction={cancelAction}
             resumeAction={resumeAction}
+            endManualAction={endManualAction}
           />
         )}
       </div>

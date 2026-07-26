@@ -11,6 +11,7 @@ import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { tryEmailDomainVerificationAfterOnboarding } from "@/features/verification/actions";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { setWorkspacePreference } from "@/features/workspace/set-preference";
+import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { createClient } from "@/lib/supabase/server";
 import { toSlug } from "@/lib/slug";
 
@@ -75,9 +76,9 @@ export async function createCompany(formData: FormData) {
   const city = String(formData.get("city") ?? "").trim();
   const website = String(formData.get("website") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
-  const slug = toSlug(name);
+  const baseSlug = toSlug(name);
 
-  if (!name || !slug) {
+  if (!name || !baseSlug) {
     redirect("/onboarding?error=Company%20name%20is%20required");
   }
 
@@ -90,6 +91,8 @@ export async function createCompany(formData: FormData) {
     await saveOnboardingDraft({ name, category, city, website, description });
     redirect(`/login?next=${encodeURIComponent("/onboarding")}`);
   }
+
+  const slug = await uniqueCompanySlug(supabase, name);
 
   const { data: created, error } = await supabase
     .from("companies")
@@ -109,9 +112,11 @@ export async function createCompany(formData: FormData) {
     .single();
 
   if (error || !created) {
-    redirect(
-      `/onboarding?error=${encodeURIComponent(error?.message ?? "Could not create company.")}`,
-    );
+    const raw = error?.message ?? "Could not create company.";
+    const message = /companies_slug_key|duplicate key/i.test(raw)
+      ? "That public link is already taken. Try a slightly different company name."
+      : raw;
+    redirect(`/onboarding?error=${encodeURIComponent(message)}`);
   }
 
   await clearOnboardingDraft();

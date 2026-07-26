@@ -7,6 +7,7 @@ import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notic
 import { WidgetsFlash } from "@/components/widgets/widgets-flash";
 import {
   cancelProSubscription,
+  endManualProPlan,
   openBillingPortal,
   resumeProSubscription,
   startProCheckout,
@@ -29,10 +30,15 @@ const FLASH: Record<string, string> = {
   canceled: "Checkout canceled. No charge was made.",
   canceled_sub:
     "Subscription canceled. You keep Pro until the end of the current period.",
+  ended_manual: "Pro removed. This company is back on Free.",
   resumed: "Subscription resumed. Pro will renew as usual.",
   stripe_not_configured: "Billing is not configured on this environment yet.",
   owner_only: "Only the company owner can manage billing.",
   already_pro: "This company is already on a paid plan.",
+  not_pro: "This company is not on Pro.",
+  founding_locked: "Founding plans cannot be removed from Billing.",
+  use_cancel_subscription:
+    "This company has a Stripe subscription — use Cancel subscription.",
   no_subscription: "No Stripe subscription found for this company.",
   checkout_failed: "Could not start checkout. Try again or contact support.",
 };
@@ -42,13 +48,14 @@ type Props = {
     success?: string;
     canceled?: string;
     canceled_sub?: string;
+    ended_manual?: string;
     resumed?: string;
     error?: string;
   }>;
 };
 
 export default async function BillingPage({ searchParams }: Props) {
-  const { success, canceled, canceled_sub, resumed, error } =
+  const { success, canceled, canceled_sub, ended_manual, resumed, error } =
     await searchParams;
   const { user, company, needsCompanySwitch } =
     await assertCompanySection("settings");
@@ -88,16 +95,19 @@ export default async function BillingPage({ searchParams }: Props) {
   const entitlements = getEntitlements(company.plan);
   const isPro = entitlements.premiumEmbeds;
   const stripeReady = isStripeConfigured();
+  const hasSubscription = Boolean(billing?.stripe_subscription_id);
   const cancelAtPeriodEnd = Boolean(billing?.cancel_at_period_end);
   const flashKey = success
     ? "success"
-    : canceled_sub
-      ? "canceled_sub"
-      : resumed
-        ? "resumed"
-        : canceled
-          ? "canceled"
-          : error;
+    : ended_manual
+      ? "ended_manual"
+      : canceled_sub
+        ? "canceled_sub"
+        : resumed
+          ? "resumed"
+          : canceled
+            ? "canceled"
+            : error;
   const flash = flashKey ? FLASH[flashKey] : null;
 
   const endDate =
@@ -108,12 +118,15 @@ export default async function BillingPage({ searchParams }: Props) {
       year: "numeric",
     });
 
-  const renewLabel =
-    endDate && isPro
+  const renewLabel = isPro
+    ? hasSubscription && endDate
       ? cancelAtPeriodEnd
         ? `Cancels ${endDate} — Pro stays active until then`
         : `Renews ${endDate}${billing?.billing_status ? ` · ${billing.billing_status}` : ""}`
-      : null;
+      : !hasSubscription
+        ? "Granted without Stripe — remove anytime below"
+        : null
+    : null;
 
   return (
     <WorkspacePage
@@ -146,13 +159,14 @@ export default async function BillingPage({ searchParams }: Props) {
             isPro={isPro}
             isOwner={isOwner}
             stripeReady={stripeReady}
-            hasSubscription={Boolean(billing?.stripe_subscription_id)}
+            hasSubscription={hasSubscription}
             cancelAtPeriodEnd={cancelAtPeriodEnd}
             renewLabel={renewLabel}
             checkoutAction={startProCheckout}
             portalAction={openBillingPortal}
             cancelAction={cancelProSubscription}
             resumeAction={resumeProSubscription}
+            endManualAction={endManualProPlan}
           />
         </div>
       </div>
