@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { HomeClose } from "@/components/marketing/home-close";
 import { HomeContrast } from "@/components/marketing/home-contrast";
 import { FAQ_ITEMS, HomeFaq } from "@/components/marketing/home-faq";
 import { HomeHero } from "@/components/marketing/home-hero";
@@ -40,6 +41,7 @@ export default function HomePage() {
       <HomeTalks />
       <HomeHighlights />
       <HomeFaq />
+      <HomeClose />
     </>
   );
 }

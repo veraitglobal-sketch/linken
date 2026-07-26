@@ -8,12 +8,11 @@ function clamp(v: number, min: number, max: number) {
 
 const LINES = [
   { text: "Two companies.", indent: "pl-0" },
-  { text: "One confirmation.", indent: "pl-10 sm:pl-16" },
-  { text: "A public network", indent: "pl-28 sm:pl-44" },
+  { text: "One confirmation.", indent: "pl-8 sm:pl-14" },
+  { text: "A public network.", indent: "pl-16 sm:pl-28" },
 ];
 
-/** Each line brightens in turn as you scroll past it — a discrete step per
- * line, reversing as you scroll back up. */
+/** Each line brightens in turn as you scroll past — discrete steps. */
 export function ConfirmDrop() {
   const ref = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -27,8 +26,8 @@ export function ConfirmDrop() {
       raf = 0;
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      const start = vh * 0.8;
-      const end = vh * 0.3;
+      const start = vh * 0.78;
+      const end = vh * 0.32;
       const progress = clamp((start - rect.top) / (start - end), 0, 1);
       setActiveIndex(
         clamp(Math.round(progress * (LINES.length - 1)), 0, LINES.length - 1),
@@ -50,17 +49,19 @@ export function ConfirmDrop() {
   }, []);
 
   return (
-    <div ref={ref} className="relative mx-auto max-w-3xl">
-      <p className="font-display text-[clamp(2.3rem,6.2vw,4.4rem)] font-medium leading-[1.12] tracking-[-0.048em]">
+    <div ref={ref} className="relative">
+      <p className="font-display text-[clamp(2.4rem,6.4vw,4.5rem)] font-medium leading-[1.1] tracking-[-0.05em]">
         {LINES.map((line, i) => {
           const distance = activeIndex < 0 ? 1 : Math.abs(activeIndex - i);
-          const intensity = clamp(1 - distance, 0.16, 1);
+          const intensity = clamp(1 - distance * 0.72, 0.14, 1);
           return (
             <span
               key={line.text}
-              className={`mt-3 block transition-colors duration-300 first:mt-0 ${line.indent}`}
+              className={`mt-2.5 block transition-[color,transform] duration-300 first:mt-0 ${line.indent}`}
               style={{
                 color: `rgba(13, 18, 16, ${intensity})`,
+                transform:
+                  activeIndex === i ? "translateX(0)" : "translateX(-2px)",
               }}
             >
               {line.text}

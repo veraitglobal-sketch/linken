@@ -1,3 +1,8 @@
+import {
+  HomeEyebrow,
+  HomeSection,
+} from "@/components/marketing/home-section";
+
 export const FAQ_ITEMS = [
   {
     question: "How does mutual confirmation work?",
@@ -23,30 +28,31 @@ export const FAQ_ITEMS = [
 
 export function HomeFaq() {
   return (
-    <section className="px-6 pb-28 sm:px-8 lg:px-10">
+    <HomeSection tone="tight" className="!pb-16 sm:!pb-20">
       <div className="mx-auto max-w-3xl">
-        <p className="text-[12px] font-semibold tracking-[0.14em] text-blue uppercase">
-          FAQ
-        </p>
-        <h2 className="mt-5 font-display text-4xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
+        <HomeEyebrow>FAQ</HomeEyebrow>
+        <h2 className="mt-5 font-display text-[clamp(2rem,4vw,3rem)] font-medium tracking-[-0.04em] text-ink">
           Questions, answered.
         </h2>
-        <div className="mt-10 divide-y divide-line border-t border-b border-line">
+        <div className="mt-10 divide-y divide-line border-y border-line">
           {FAQ_ITEMS.map((item) => (
             <details key={item.question} className="group py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[17px] font-medium text-ink marker:content-none">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[17px] font-medium tracking-[-0.02em] text-ink marker:content-none [&::-webkit-details-marker]:hidden">
                 {item.question}
-                <span className="shrink-0 text-xl leading-none text-muted transition-transform duration-200 group-open:rotate-45">
+                <span
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-[15px] leading-none text-muted transition-[transform,color,border-color] duration-200 group-open:rotate-45 group-open:border-[#1a5c51]/35 group-open:text-[#1a5c51]"
+                  aria-hidden
+                >
                   +
                 </span>
               </summary>
-              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-soft">
+              <p className="mt-3.5 max-w-xl text-[15px] leading-relaxed text-ink-soft">
                 {item.answer}
               </p>
             </details>
           ))}
         </div>
       </div>
-    </section>
+    </HomeSection>
   );
 }

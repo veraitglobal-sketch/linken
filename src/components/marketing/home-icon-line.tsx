@@ -1,11 +1,15 @@
 import { ConfirmDrop } from "@/components/marketing/confirm-drop";
+import { HomeSection } from "@/components/marketing/home-section";
 
 export function HomeIconLine() {
   return (
-    <section className="border-y border-line/70 bg-[#eef0ee] px-6 py-20 sm:px-8 sm:py-28 lg:px-10">
-      <div className="mx-auto max-w-3xl pl-2 sm:pl-6">
+    <HomeSection tone="mute" className="!py-24 sm:!py-32">
+      <div className="mx-auto max-w-3xl">
         <ConfirmDrop />
+        <p className="mt-10 max-w-sm text-[14px] leading-relaxed text-ink-soft/90 sm:mt-12">
+          Not a claim. A record both sides signed.
+        </p>
       </div>
-    </section>
+    </HomeSection>
   );
 }
