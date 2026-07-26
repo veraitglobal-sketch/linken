@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
+import { StyleRescue } from "@/components/layout/style-rescue";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -67,6 +68,14 @@ const orgJsonLd = {
   ],
 };
 
+/** Baseline if external CSS fails (email WebViews / stale Safari caches). */
+const CRITICAL_CSS = `
+html{line-height:1.45;-webkit-text-size-adjust:100%}
+body{margin:0;background:#f0f2f0;color:#0d1210;font-family:system-ui,-apple-system,sans-serif}
+a{color:#1a5c51}
+img{max-width:100%;height:auto}
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,11 +87,13 @@ export default function RootLayout({
       className={`${jakarta.variable} ${newsreader.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
+        <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
         {children}
+        <StyleRescue />
       </body>
     </html>
   );
