@@ -83,6 +83,16 @@ export async function handleTool(name, args, { jsonAgent, agentFetch }) {
     }
     case "hansala_upload_team_member_photo":
       return uploadImage(agentFetch, `/team/members/${args.member_id}/photo`, args);
+    case "hansala_get_scheduling":
+      return jsonAgent("GET", "/scheduling");
+    case "hansala_set_scheduling":
+      return jsonAgent("PUT", "/scheduling", {
+        url: args.url,
+        label: args.label,
+        provider: args.provider,
+      });
+    case "hansala_disconnect_scheduling":
+      return jsonAgent("DELETE", "/scheduling");
     default:
       throw new Error(`Unknown tool: ${name}`);
   }

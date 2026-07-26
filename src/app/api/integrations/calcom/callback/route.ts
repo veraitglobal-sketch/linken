@@ -4,14 +4,17 @@ import {
   exchangeCalcomCode,
   fetchCalcomSchedulingUrl,
 } from "@/features/scheduling/calcom-oauth";
+import { CALCOM_PKCE_COOKIE } from "@/features/scheduling/calcom-pkce";
 import { verifySchedulingState } from "@/features/scheduling/oauth-state";
 import { getSiteUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
 function back(query: string) {
-  return NextResponse.redirect(
+  const res = NextResponse.redirect(
     new URL(`/dashboard/integrations?${query}`, getSiteUrl()),
   );
+  res.cookies.set(CALCOM_PKCE_COOKIE, "", { path: "/", maxAge: 0 });
+  return res;
 }
 
 export async function GET(request: Request) {
@@ -36,6 +39,19 @@ export async function GET(request: Request) {
     );
   }
 
+  const cookieHeader = request.headers.get("cookie") ?? "";
+  const verifier = cookieHeader
+    .split(";")
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(`${CALCOM_PKCE_COOKIE}=`))
+    ?.slice(CALCOM_PKCE_COOKIE.length + 1);
+
+  if (!verifier) {
+    return back(
+      `error=${encodeURIComponent("Cal.com login expired. Try Connect again.")}`,
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -46,7 +62,7 @@ export async function GET(request: Request) {
     );
   }
 
-  const token = await exchangeCalcomCode(code);
+  const token = await exchangeCalcomCode(code, decodeURIComponent(verifier));
   if ("error" in token) {
     return back(`error=${encodeURIComponent(token.error)}`);
   }

@@ -53,8 +53,8 @@ export function SchedulingIntegrations({ scheduling }: Props) {
 
         {!calendlyReady || !calcomReady ? (
           <p className="mt-3 text-[11px] leading-relaxed text-muted">
-            OAuth needs app credentials in env. You can always paste a public
-            booking link below.
+            Calendly needs CLIENT_ID + SECRET. Cal.com needs only CLIENT_ID
+            (PKCE). You can always paste a public booking link below.
           </p>
         ) : null}
       </section>

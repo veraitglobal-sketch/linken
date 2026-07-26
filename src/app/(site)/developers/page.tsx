@@ -417,6 +417,7 @@ export default function DevelopersPage() {
                       ["Team profile + photo + permissions", "PATCH …/team/members/{id} · PUT …/photo", "team:manage"],
                       ["Group / subsidiary / hierarchy", "…/group…", "structure:manage"],
                       ["Widgets & logo wall", "GET|PATCH /widget-settings · GET /widgets", "settings:write"],
+                      ["Calendly / Cal.com booking", "GET|PUT|DELETE /scheduling", "read · settings:write"],
                       ["Triage inquiries", "GET /inquiries · PATCH /inquiries/{id}", "read · inquiries:manage"],
                       ["Analytics / audit", "GET /analytics · GET /audit-log", "read"],
                     ].map(([action, endpoint, scope]) => (

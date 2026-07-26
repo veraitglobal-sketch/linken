@@ -344,4 +344,40 @@ export const TOOLS = [
       additionalProperties: false,
     },
   },
+  {
+    name: "hansala_get_scheduling",
+    description:
+      "Get Calendly/Cal.com booking link on the company profile (Book a call CTA).",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+  },
+  {
+    name: "hansala_set_scheduling",
+    description:
+      "Set public Calendly or Cal.com booking URL (shows Book a call). OAuth login is browser-only — use a pasteable booking link. Requires settings:write.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        url: {
+          type: "string",
+          description: "https://calendly.com/… or https://cal.com/…",
+        },
+        label: {
+          type: "string",
+          description: "CTA label (default Book a call)",
+        },
+        provider: {
+          type: "string",
+          enum: ["calendly", "calcom"],
+          description: "Optional; detected from URL if omitted",
+        },
+      },
+      required: ["url"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "hansala_disconnect_scheduling",
+    description: "Remove booking link from the company profile. Requires settings:write.",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+  },
 ];

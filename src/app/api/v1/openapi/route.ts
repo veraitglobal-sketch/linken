@@ -170,6 +170,20 @@ export async function GET() {
         get: op("Read widget_settings", "getWidgetSettings"),
         patch: op("Update widget settings", "patchWidgetSettings"),
       },
+      "/scheduling": {
+        get: op(
+          "Read Calendly/Cal.com booking link (Book a call)",
+          "getScheduling",
+        ),
+        put: op(
+          "Set Calendly or Cal.com public booking URL (settings:write)",
+          "putScheduling",
+        ),
+        delete: op(
+          "Disconnect booking link (settings:write)",
+          "deleteScheduling",
+        ),
+      },
     },
   };
 

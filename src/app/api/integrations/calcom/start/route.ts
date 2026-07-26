@@ -3,6 +3,10 @@ import {
   calcomAuthorizeUrl,
   calcomOAuthConfigured,
 } from "@/features/scheduling/calcom-oauth";
+import {
+  CALCOM_PKCE_COOKIE,
+  createCalcomPkce,
+} from "@/features/scheduling/calcom-pkce";
 import { signSchedulingState } from "@/features/scheduling/oauth-state";
 import { getSiteUrl } from "@/lib/site";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
@@ -12,9 +16,7 @@ export async function GET() {
     return NextResponse.redirect(
       new URL(
         "/dashboard/integrations?error=" +
-          encodeURIComponent(
-            "Add CALCOM_CLIENT_ID and CALCOM_CLIENT_SECRET to enable Connect.",
-          ),
+          encodeURIComponent("Add CALCOM_CLIENT_ID to enable Connect."),
         getSiteUrl(),
       ),
     );
@@ -28,6 +30,15 @@ export async function GET() {
     companyId: company.id,
     userId: user.id,
   });
+  const { verifier, challenge } = createCalcomPkce();
 
-  return NextResponse.redirect(calcomAuthorizeUrl(state));
+  const res = NextResponse.redirect(calcomAuthorizeUrl(state, challenge));
+  res.cookies.set(CALCOM_PKCE_COOKIE, verifier, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 15 * 60,
+  });
+  return res;
 }

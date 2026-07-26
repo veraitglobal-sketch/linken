@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getSiteUrl } from "@/lib/site";
+import { schedulingOAuthOrigin } from "@/features/scheduling/oauth-origin";
 
 export function calendlyOAuthConfigured(): boolean {
   return Boolean(
@@ -10,8 +10,33 @@ export function calendlyOAuthConfigured(): boolean {
 }
 
 export function calendlyRedirectUri(): string {
-  return `${getSiteUrl()}/api/integrations/calendly/callback`;
+  return `${schedulingOAuthOrigin()}/api/integrations/calendly/callback`;
 }
+
+/** Full Calendly scope catalog — request everything for future APIs. */
+const CALENDLY_SCOPES = [
+  "users:read",
+  "event_types:read",
+  "event_types:write",
+  "availability:read",
+  "availability:write",
+  "locations:read",
+  "scheduled_events:read",
+  "scheduled_events:write",
+  "scheduling_links:write",
+  "shares:write",
+  "routing_forms:read",
+  "organizations:read",
+  "organizations:write",
+  "groups:read",
+  "webhooks:read",
+  "webhooks:write",
+  "contacts:read",
+  "contacts:write",
+  "activity_log:read",
+  "outgoing_communications:read",
+  "data_compliance:write",
+].join(" ");
 
 export function calendlyAuthorizeUrl(state: string): string {
   const clientId = process.env.CALENDLY_CLIENT_ID!.trim();
@@ -19,6 +44,7 @@ export function calendlyAuthorizeUrl(state: string): string {
     client_id: clientId,
     response_type: "code",
     redirect_uri: calendlyRedirectUri(),
+    scope: CALENDLY_SCOPES,
     state,
   });
   return `https://auth.calendly.com/oauth/authorize?${params}`;

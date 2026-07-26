@@ -1,36 +1,40 @@
 import "server-only";
 
-import { getSiteUrl } from "@/lib/site";
+import { CALCOM_SCOPES } from "@/features/scheduling/calcom-scopes";
+import { schedulingOAuthOrigin } from "@/features/scheduling/oauth-origin";
 
+/** Cal.com OAuth is PKCE-only — no client secret. */
 export function calcomOAuthConfigured(): boolean {
-  return Boolean(
-    process.env.CALCOM_CLIENT_ID?.trim() &&
-      process.env.CALCOM_CLIENT_SECRET?.trim(),
-  );
+  return Boolean(process.env.CALCOM_CLIENT_ID?.trim());
 }
 
 export function calcomRedirectUri(): string {
-  return `${getSiteUrl()}/api/integrations/calcom/callback`;
+  return `${schedulingOAuthOrigin()}/api/integrations/calcom/callback`;
 }
 
-export function calcomAuthorizeUrl(state: string): string {
+export function calcomAuthorizeUrl(
+  state: string,
+  codeChallenge: string,
+): string {
   const clientId = process.env.CALCOM_CLIENT_ID!.trim();
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: calcomRedirectUri(),
     response_type: "code",
     state,
-    scope: "PROFILE_READ EVENT_TYPE_READ",
+    scope: CALCOM_SCOPES,
+    code_challenge: codeChallenge,
+    code_challenge_method: "S256",
   });
   return `https://app.cal.com/auth/oauth2/authorize?${params}`;
 }
 
 export async function exchangeCalcomCode(
   code: string,
+  codeVerifier: string,
 ): Promise<{ accessToken: string } | { error: string }> {
   const clientId = process.env.CALCOM_CLIENT_ID?.trim();
-  const clientSecret = process.env.CALCOM_CLIENT_SECRET?.trim();
-  if (!clientId || !clientSecret) {
+  if (!clientId) {
     return { error: "Cal.com OAuth is not configured." };
   }
 
@@ -42,10 +46,10 @@ export async function exchangeCalcomCode(
     },
     body: JSON.stringify({
       client_id: clientId,
-      client_secret: clientSecret,
       grant_type: "authorization_code",
       code,
       redirect_uri: calcomRedirectUri(),
+      code_verifier: codeVerifier,
     }),
   });
 
@@ -64,10 +68,7 @@ export async function exchangeCalcomCode(
   return { accessToken: token };
 }
 
-/**
- * Best-effort public booking URL after OAuth.
- * Prefer first event type slug + username when available.
- */
+/** Best-effort public booking URL after OAuth. */
 export async function fetchCalcomSchedulingUrl(
   accessToken: string,
 ): Promise<string | null> {

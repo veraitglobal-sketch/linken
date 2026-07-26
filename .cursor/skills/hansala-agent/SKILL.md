@@ -40,6 +40,15 @@ Base: /api/v1/agent
 3. `PATCH /team/members/{member_id}` — profile, role, permissions
 4. `PUT /team/members/{member_id}/photo` — avatar upload
 
+## Scheduling (Calendly / Cal.com)
+
+1. `GET /scheduling` — current booking link + `oauth_dashboard_url`
+2. `PUT /scheduling` — `{ url, label?, provider? }` (Calendly or Cal.com public URL)
+3. `DELETE /scheduling` — disconnect
+4. OAuth “Connect” is browser-only (`/dashboard/integrations`); agents use paste URL.
+
+MCP: `hansala_get_scheduling`, `hansala_set_scheduling`, `hansala_disconnect_scheduling`.
+
 ## Sacred rules
 
 - Never set partner/client **confirmed** flags via API.
@@ -48,4 +57,4 @@ Base: /api/v1/agent
 
 ## MCP tools
 
-When MCP is configured: `hansala_create_case_study`, `hansala_upload_case_study_cover`, `hansala_invite_team_member`, etc. — see `mcp/hansala/index.mjs`.
+When MCP is configured: `hansala_create_case_study`, `hansala_upload_case_study_cover`, `hansala_invite_team_member`, `hansala_set_scheduling`, etc. — see `mcp/hansala/index.mjs`.
