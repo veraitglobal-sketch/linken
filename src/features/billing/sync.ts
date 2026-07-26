@@ -9,6 +9,7 @@ export type BillingRow = {
   stripe_subscription_id: string | null;
   billing_status: string | null;
   plan_period_end: string | null;
+  cancel_at_period_end: boolean | null;
 };
 
 export async function loadBillingRow(
@@ -18,7 +19,7 @@ export async function loadBillingRow(
   const { data } = await supabase
     .from("company_billing")
     .select(
-      "stripe_customer_id, stripe_subscription_id, billing_status, plan_period_end",
+      "stripe_customer_id, stripe_subscription_id, billing_status, plan_period_end, cancel_at_period_end",
     )
     .eq("company_id", companyId)
     .maybeSingle();
@@ -49,7 +50,10 @@ export async function applySubscription(
       stripe_customer_id: customerId,
       stripe_subscription_id: subscription.id,
       billing_status: subscription.status,
-      plan_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      plan_period_end: new Date(
+        subscription.current_period_end * 1000,
+      ).toISOString(),
+      cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
       updated_at: new Date().toISOString(),
     });
     return;
@@ -64,7 +68,10 @@ export async function applySubscription(
     stripe_customer_id: customerId,
     stripe_subscription_id: subscription.id,
     billing_status: subscription.status,
-    plan_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+    plan_period_end: new Date(
+      subscription.current_period_end * 1000,
+    ).toISOString(),
+    cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
     updated_at: new Date().toISOString(),
   });
 }
@@ -85,6 +92,7 @@ export async function downgradeToFree(admin: SupabaseClient, companyId: string) 
     .update({
       billing_status: "canceled",
       stripe_subscription_id: null,
+      cancel_at_period_end: false,
       updated_at: new Date().toISOString(),
     })
     .eq("company_id", companyId);

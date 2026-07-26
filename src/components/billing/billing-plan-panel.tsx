@@ -8,9 +8,12 @@ type Props = {
   isOwner: boolean;
   stripeReady: boolean;
   hasSubscription: boolean;
+  cancelAtPeriodEnd: boolean;
   renewLabel?: string | null;
   checkoutAction: () => void;
   portalAction: () => void;
+  cancelAction: () => void;
+  resumeAction: () => void;
 };
 
 export function BillingPlanPanel({
@@ -20,9 +23,12 @@ export function BillingPlanPanel({
   isOwner,
   stripeReady,
   hasSubscription,
+  cancelAtPeriodEnd,
   renewLabel,
   checkoutAction,
   portalAction,
+  cancelAction,
+  resumeAction,
 }: Props) {
   return (
     <section className="flex h-full flex-col justify-between rounded-[28px] border border-line bg-surface px-7 py-8 lg:rounded-[32px] lg:px-9 lg:py-10">
@@ -56,9 +62,12 @@ export function BillingPlanPanel({
           <BillingActions
             isPro={isPro}
             hasSubscription={hasSubscription}
+            cancelAtPeriodEnd={cancelAtPeriodEnd}
             stripeReady={stripeReady}
             checkoutAction={checkoutAction}
             portalAction={portalAction}
+            cancelAction={cancelAction}
+            resumeAction={resumeAction}
           />
         )}
       </div>

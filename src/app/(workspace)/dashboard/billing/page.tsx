@@ -6,7 +6,9 @@ import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { WidgetsFlash } from "@/components/widgets/widgets-flash";
 import {
+  cancelProSubscription,
   openBillingPortal,
+  resumeProSubscription,
   startProCheckout,
 } from "@/features/billing/actions";
 import {
@@ -25,6 +27,9 @@ const FLASH: Record<string, string> = {
   success:
     "Welcome to Pro — premium embeds, analytics, Agent API, and team seats are active.",
   canceled: "Checkout canceled. No charge was made.",
+  canceled_sub:
+    "Subscription canceled. You keep Pro until the end of the current period.",
+  resumed: "Subscription resumed. Pro will renew as usual.",
   stripe_not_configured: "Billing is not configured on this environment yet.",
   owner_only: "Only the company owner can manage billing.",
   already_pro: "This company is already on a paid plan.",
@@ -33,11 +38,18 @@ const FLASH: Record<string, string> = {
 };
 
 type Props = {
-  searchParams: Promise<{ success?: string; canceled?: string; error?: string }>;
+  searchParams: Promise<{
+    success?: string;
+    canceled?: string;
+    canceled_sub?: string;
+    resumed?: string;
+    error?: string;
+  }>;
 };
 
 export default async function BillingPage({ searchParams }: Props) {
-  const { success, canceled, error } = await searchParams;
+  const { success, canceled, canceled_sub, resumed, error } =
+    await searchParams;
   const { user, company, needsCompanySwitch } =
     await assertCompanySection("settings");
 
@@ -66,7 +78,9 @@ export default async function BillingPage({ searchParams }: Props) {
   const supabase = await createClient();
   const { data: billing } = await supabase
     .from("company_billing")
-    .select("stripe_subscription_id, billing_status, plan_period_end")
+    .select(
+      "stripe_subscription_id, billing_status, plan_period_end, cancel_at_period_end",
+    )
     .eq("company_id", company.id)
     .maybeSingle();
 
@@ -74,16 +88,31 @@ export default async function BillingPage({ searchParams }: Props) {
   const entitlements = getEntitlements(company.plan);
   const isPro = entitlements.premiumEmbeds;
   const stripeReady = isStripeConfigured();
-  const flashKey = success ? "success" : canceled ? "canceled" : error;
+  const cancelAtPeriodEnd = Boolean(billing?.cancel_at_period_end);
+  const flashKey = success
+    ? "success"
+    : canceled_sub
+      ? "canceled_sub"
+      : resumed
+        ? "resumed"
+        : canceled
+          ? "canceled"
+          : error;
   const flash = flashKey ? FLASH[flashKey] : null;
 
+  const endDate =
+    billing?.plan_period_end &&
+    new Date(billing.plan_period_end).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
   const renewLabel =
-    billing?.plan_period_end && isPro
-      ? `Renews ${new Date(billing.plan_period_end).toLocaleDateString("en-GB", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}${billing.billing_status ? ` · ${billing.billing_status}` : ""}`
+    endDate && isPro
+      ? cancelAtPeriodEnd
+        ? `Cancels ${endDate} — Pro stays active until then`
+        : `Renews ${endDate}${billing?.billing_status ? ` · ${billing.billing_status}` : ""}`
       : null;
 
   return (
@@ -106,7 +135,7 @@ export default async function BillingPage({ searchParams }: Props) {
           ) : (
             <BillingProAside
               label={PRO_PLAN_LABEL}
-              price="Active"
+              price={cancelAtPeriodEnd ? "Ending soon" : "Active"}
               features={PRO_FEATURES}
             />
           )}
@@ -118,9 +147,12 @@ export default async function BillingPage({ searchParams }: Props) {
             isOwner={isOwner}
             stripeReady={stripeReady}
             hasSubscription={Boolean(billing?.stripe_subscription_id)}
+            cancelAtPeriodEnd={cancelAtPeriodEnd}
             renewLabel={renewLabel}
             checkoutAction={startProCheckout}
             portalAction={openBillingPortal}
+            cancelAction={cancelProSubscription}
+            resumeAction={resumeProSubscription}
           />
         </div>
       </div>
