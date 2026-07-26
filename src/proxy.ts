@@ -19,6 +19,7 @@ export const config = {
     "/claim/:path*",
     "/confirm",
     "/confirm/:path*",
+    "/partners/requests",
     "/transfer/:path*",
     "/requests/:path*",
     "/api/((?!v1/agent|v1/openapi|webhooks/|badge/).*)",

@@ -28,6 +28,7 @@ function isAuthGatedPublicPath(pathname: string): boolean {
     pathname.startsWith("/join/") ||
     pathname.startsWith("/claim/") ||
     pathname.startsWith("/confirm") ||
+    pathname.startsWith("/partners/requests") ||
     pathname.startsWith("/transfer/") ||
     pathname.startsWith("/requests/")
   );

@@ -133,7 +133,7 @@ export async function sendPartnershipRequestEmail(input: {
   requesterName: string;
   recipientName: string;
 }) {
-  const inboxUrl = `${getEmailSiteUrl()}/dashboard/partners`;
+  const inboxUrl = `${getEmailSiteUrl()}/partners/requests`;
   return sendBrandedEmail({
     to: input.to,
     subject: `${input.requesterName} wants to partner with ${input.recipientName} on Hansala`,
@@ -142,10 +142,10 @@ export async function sendPartnershipRequestEmail(input: {
       headline: "New partnership request",
       paragraphs: [
         `${input.requesterName} sent a partnership request to ${input.recipientName} on Hansala.`,
-        "Accept in your workspace to become official partners on the network graph.",
+        "Accept to become official partners on the network graph.",
       ],
-      cta: { label: "Open Partners inbox", href: inboxUrl },
-      finePrint: "You can decline in the Partners inbox if this was unexpected.",
+      cta: { label: "Review partnership request", href: inboxUrl },
+      finePrint: "You can decline if this was unexpected.",
     },
     logLabel: "partnership-request",
     linkForLog: inboxUrl,

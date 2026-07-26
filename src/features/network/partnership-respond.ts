@@ -6,7 +6,13 @@ import { createClient } from "@/lib/supabase/server";
 
 function safeBack(raw: string, fallback = "/dashboard/partners") {
   const back = raw.trim();
-  if (back.startsWith("/dashboard") || back.startsWith("/c/")) return back;
+  if (
+    back.startsWith("/dashboard") ||
+    back.startsWith("/c/") ||
+    back.startsWith("/partners/requests")
+  ) {
+    return back;
+  }
   return fallback;
 }
 
@@ -37,9 +43,10 @@ export async function respondPartnership(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
   }
   if (decision === "accepted" && !mine.verified) {
-    redirect(
-      `${back}?error=${encodeURIComponent("Verify your domain before accepting partnerships.")}`,
-    );
+    const verifyBack = back.startsWith("/partners/requests")
+      ? "/partners/requests?needVerify=1"
+      : `${back}?error=${encodeURIComponent("Verify your domain before accepting partnerships.")}`;
+    redirect(verifyBack);
   }
 
   const { data: row } = await supabase

@@ -1,0 +1,116 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { PartnerRequestsPanel } from "@/components/partners/partner-requests-panel";
+import { getPartnershipInbox } from "@/features/partners/inbox";
+import { resolveActiveWorkspace } from "@/features/workspace/context";
+import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Partnership requests",
+  robots: { index: false, follow: false },
+};
+
+type Props = {
+  searchParams: Promise<{
+    error?: string;
+    accepted?: string;
+    declined?: string;
+    needVerify?: string;
+  }>;
+};
+
+/** Lean page for email links — no workspace chrome (phone-friendly). */
+export default async function PartnerRequestsPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return (
+      <Gate
+        title="Sign in to respond"
+        body="Open this link after signing in with the account that owns the company."
+        href={`/login?next=${encodeURIComponent("/partners/requests")}`}
+        cta="Sign in"
+      />
+    );
+  }
+
+  const workspace = await resolveActiveWorkspace();
+  const company = workspace?.company;
+  if (!company || company.role !== "owner") {
+    return (
+      <Gate
+        title="Company required"
+        body="Create or switch to your company workspace to accept partnership requests."
+        href="/onboarding"
+        cta="Create company"
+      />
+    );
+  }
+
+  const [{ data: full }, inbox] = await Promise.all([
+    supabase
+      .from("companies")
+      .select("verified")
+      .eq("id", company.id)
+      .maybeSingle(),
+    getPartnershipInbox(company.id),
+  ]);
+
+  return (
+    <section className="mx-auto w-full max-w-xl px-4 py-8 sm:py-12">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+        Hansala · Partnership
+      </p>
+      <h1 className="mt-3 font-display text-[clamp(1.7rem,4vw,2.3rem)] font-medium tracking-[-0.04em] text-ink">
+        Partnership requests
+      </h1>
+      <p className="mt-2 text-[14px] text-ink-soft">
+        Responding as{" "}
+        <span className="font-semibold text-ink">{company.name}</span>
+      </p>
+
+      <div className="mt-8">
+        <PartnerRequestsPanel
+          incoming={inbox.incomingPending}
+          verified={Boolean(full?.verified)}
+          companySlug={company.slug}
+          error={params.error}
+          accepted={params.accepted === "1"}
+          declined={params.declined === "1"}
+          needVerify={params.needVerify === "1"}
+        />
+      </div>
+    </section>
+  );
+}
+
+function Gate({
+  title,
+  body,
+  href,
+  cta,
+}: {
+  title: string;
+  body: string;
+  href: string;
+  cta: string;
+}) {
+  return (
+    <section className="mx-auto max-w-lg px-4 py-16 text-center">
+      <h1 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
+        {title}
+      </h1>
+      <p className="mt-3 text-[14px] text-ink-soft">{body}</p>
+      <Link
+        href={href}
+        className="mt-6 inline-flex h-11 items-center rounded-full bg-navy px-5 text-[13px] font-semibold text-white"
+      >
+        {cta}
+      </Link>
+    </section>
+  );
+}
