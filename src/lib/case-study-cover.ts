@@ -2,7 +2,7 @@ const FALLBACKS = [
   "/images/story-projects.jpg",
   "/images/story-collaboration-v2.jpg",
   "/images/story-team.jpg",
-  "/images/hero-partner.jpg",
+  "/images/hero-partner-v2.jpg",
 ] as const;
 
 export function caseStudyCoverUrl(

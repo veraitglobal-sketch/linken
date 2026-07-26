@@ -56,7 +56,7 @@ export function HomeHero() {
 
         <div className="relative min-h-[280px]">
           <Image
-            src="/images/hero-partner.jpg"
+            src="/images/hero-partner-v2.jpg"
             alt="Architecture firm partner reviewing plans outside a project site"
             fill
             priority
