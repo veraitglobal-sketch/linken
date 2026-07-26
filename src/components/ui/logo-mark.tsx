@@ -19,6 +19,8 @@ const sizes = {
   lg: "h-14 w-14 text-xs",
 };
 
+const sizePx = { sm: 36, md: 44, lg: 56 } as const;
+
 const imgPad = {
   sm: "p-1",
   md: "p-1.5",
@@ -50,6 +52,7 @@ export function LogoMark({
 
   const src = candidates[index] ?? null;
   const showImg = Boolean(src);
+  const px = sizePx[size];
 
   return (
     <div
@@ -59,6 +62,7 @@ export function LogoMark({
         sizes[size],
         className,
       )}
+      style={{ width: px, height: px }}
       aria-hidden
     >
       {showImg ? (
@@ -66,6 +70,8 @@ export function LogoMark({
         <img
           src={src!}
           alt=""
+          width={px}
+          height={px}
           loading="lazy"
           className="h-full w-full object-contain"
           onError={() => {
