@@ -1,6 +1,8 @@
 import { EmbedSnippetButton } from "@/components/company/embed-snippet-button";
 import { InquiryForm } from "@/components/inquiries/inquiry-form";
+import { BookCallButton } from "@/components/scheduling/book-call-button";
 import { Button } from "@/components/ui/button";
+import type { SchedulingProvider } from "@/features/scheduling/types";
 
 type Props = {
   slug: string;
@@ -15,6 +17,9 @@ type Props = {
   siteUrl: string;
   bookingUrl?: string | null;
   bookingLabel?: string;
+  bookingProvider?: SchedulingProvider | null;
+  logoInitials?: string;
+  logoUrl?: string | null;
 };
 
 export function CompanyHeroActions({
@@ -30,17 +35,21 @@ export function CompanyHeroActions({
   siteUrl,
   bookingUrl = null,
   bookingLabel = "Book a call",
+  bookingProvider = null,
+  logoInitials = "?",
+  logoUrl = null,
 }: Props) {
   return (
     <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
       {bookingUrl ? (
-        <Button
-          href={bookingUrl}
-          variant="light"
-          className="h-11 min-w-[150px] px-5"
-        >
-          {bookingLabel}
-        </Button>
+        <BookCallButton
+          companyName={name}
+          logoInitials={logoInitials}
+          logoUrl={logoUrl}
+          bookingUrl={bookingUrl}
+          provider={bookingProvider}
+          label={bookingLabel}
+        />
       ) : null}
       {showContact ? (
         <InquiryForm
@@ -59,11 +68,7 @@ export function CompanyHeroActions({
         </Button>
       ) : null}
       {showOnePager ? (
-        <Button
-          href={`/c/${slug}/one-pager`}
-          variant="onDark"
-          className="h-10 px-4"
-        >
+        <Button href={`/c/${slug}/one-pager`} variant="onDark" className="h-10 px-4">
           One-pager
         </Button>
       ) : null}
@@ -71,11 +76,7 @@ export function CompanyHeroActions({
         <EmbedSnippetButton companySlug={slug} siteUrl={siteUrl} />
       ) : null}
       {website ? (
-        <Button
-          href={website}
-          variant="onDark"
-          className="h-10 px-4"
-        >
+        <Button href={website} variant="onDark" className="h-10 px-4">
           Website
           {websiteLinked ? (
             <span className="ml-1 text-[10px] font-semibold tracking-[0.08em] opacity-80 uppercase">

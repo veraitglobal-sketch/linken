@@ -49,3 +49,20 @@ export function normalizeSchedulingUrl(raw: string): string | null {
 export function providerLabel(provider: SchedulingProvider): string {
   return provider === "calendly" ? "Calendly" : "Cal.com";
 }
+
+/** URL suited for iframe embed (keeps booking on Hansala). */
+export function schedulingEmbedUrl(url: string, provider: SchedulingProvider | null): string {
+  try {
+    const u = new URL(url);
+    if (provider === "calendly" || u.hostname.includes("calendly")) {
+      u.searchParams.set("embed_type", "Inline");
+      u.searchParams.set("hide_gdpr_banner", "1");
+    }
+    if (provider === "calcom" || u.hostname.includes("cal.com")) {
+      u.searchParams.set("embed", "true");
+    }
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
