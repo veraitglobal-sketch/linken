@@ -177,13 +177,29 @@ curl "$BASE/inquiries"                              # scope: read
 curl -X PATCH "$BASE/inquiries/{id}" -d '{"status":"…"}'  # inquiries:manage
 curl "$BASE/analytics"                              # read
 curl "$BASE/audit-log"                              # read
-curl "$BASE/widgets"                                # settings:write
+curl "$BASE/widgets"                                # settings:write — catalog + snippets
+curl "$BASE/widgets/partners"                       # settings:write — wall candidates + logo state
+curl -X PUT "$BASE/widgets/partners/{companyId}/logo" -d '{"image_base64":"…"}'
 curl "$BASE/widget-settings"                        # settings:write
-curl -X PATCH "$BASE/widget-settings" -d '{…}'
+curl -X PATCH "$BASE/widget-settings" -d '{
+  "logo_wall": {
+    "background": "transparent",
+    "limit": 12,
+    "motion": "swap-random",
+    "order": ["uuid"],
+    "excluded_company_ids": []
+  }
+}'
+# Partial PATCH merges — omitted logo_wall fields stay unchanged.
 ```
+
+MCP tools (settings:write): `hansala_list_widget_variants`, `hansala_list_widget_partners`,
+`hansala_get_widget_settings`, `hansala_update_widget_settings`,
+`hansala_upload_partner_logo` (image_path | image_url | image_base64),
+`hansala_get_widget_snippet`.
 
 ## MCP
 
-See `mcp/hansala/` — tools covering profile, media, references, partners, verification, team.
+See `mcp/hansala/` — tools covering profile, media, references, partners, widgets, verification, team.
 
 Runbook: `docs/AGENT-ONBOARDING-RUNBOOK.md`

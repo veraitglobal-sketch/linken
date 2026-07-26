@@ -1,9 +1,16 @@
 import {
   parseLogoWallBackground,
+  parseLogoWallLimit,
   parseLogoWallOverride,
   type LogoWallBackground,
   type LogoWallOverride,
 } from "@/features/widgets/settings";
+import {
+  parseLogoMotion,
+  parseLogoSize,
+  type LogoMotion,
+  type LogoSize,
+} from "@/features/widgets/logo-motion";
 
 function baseLogoWall(
   current: unknown,
@@ -48,6 +55,39 @@ export function mergeLogoWallBackground(
   };
 }
 
+export function mergeLogoWallLimit(
+  current: unknown,
+  limit: number,
+): Record<string, unknown> {
+  const { base, prevLw } = baseLogoWall(current);
+  return {
+    ...base,
+    logoWall: { ...prevLw, limit: parseLogoWallLimit(limit) },
+  };
+}
+
+export function mergeLogoWallMotion(
+  current: unknown,
+  motion: LogoMotion,
+): Record<string, unknown> {
+  const { base, prevLw } = baseLogoWall(current);
+  return {
+    ...base,
+    logoWall: { ...prevLw, motion: parseLogoMotion(motion) },
+  };
+}
+
+export function mergeLogoWallSize(
+  current: unknown,
+  size: LogoSize,
+): Record<string, unknown> {
+  const { base, prevLw } = baseLogoWall(current);
+  return {
+    ...base,
+    logoWall: { ...prevLw, size: parseLogoSize(size) },
+  };
+}
+
 export function mergeLogoWallOverride(
   current: unknown,
   partnerId: string,
@@ -81,6 +121,9 @@ export function mergeLogoWallPatch(
     excludedCompanyIds?: string[];
     order?: string[];
     background?: unknown;
+    limit?: unknown;
+    motion?: unknown;
+    size?: unknown;
     overrides?: Record<string, Partial<LogoWallOverride> | null>;
   },
 ): Record<string, unknown> {
@@ -96,6 +139,15 @@ export function mergeLogoWallPatch(
       next,
       parseLogoWallBackground(patch.background),
     );
+  }
+  if ("limit" in patch && patch.limit !== undefined) {
+    next = mergeLogoWallLimit(next, parseLogoWallLimit(patch.limit));
+  }
+  if ("motion" in patch && typeof patch.motion === "string") {
+    next = mergeLogoWallMotion(next, parseLogoMotion(patch.motion));
+  }
+  if ("size" in patch && typeof patch.size === "string") {
+    next = mergeLogoWallSize(next, parseLogoSize(patch.size));
   }
   if (patch.overrides) {
     for (const [id, ov] of Object.entries(patch.overrides)) {

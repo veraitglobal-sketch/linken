@@ -79,9 +79,9 @@ export default async function DashboardWidgetsPage() {
   const hasProof = confirmedRefs.length > 0;
   const domainReady = Boolean(company.verified && company.website?.trim());
   const hasWall = wallCandidates.length > 0;
-  const wallBackground = parseWidgetSettings(
+  const wallSettings = parseWidgetSettings(
     settingsRes.data?.widget_settings,
-  ).logoWall.background;
+  ).logoWall;
 
   const availability = {
     verified: true,
@@ -95,6 +95,7 @@ export default async function DashboardWidgetsPage() {
     references: confirmedRefs.length > 0,
     assessment: assessment.wouldWorkAgainTotal >= 3,
     "logo-wall": hasWall,
+    "case-stamp": false,
   };
 
   return (
@@ -119,7 +120,10 @@ export default async function DashboardWidgetsPage() {
         />
         <LogoWallStudio
           entries={wallCandidates}
-          background={wallBackground}
+          background={wallSettings.background}
+          limit={wallSettings.limit}
+          motion={wallSettings.motion}
+          size={wallSettings.size}
         />
         <WidgetsStudio
           siteUrl={siteUrl}

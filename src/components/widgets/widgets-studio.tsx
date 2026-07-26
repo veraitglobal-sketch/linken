@@ -30,15 +30,22 @@ export function WidgetsStudio({
 }: Props) {
   const [active, setActive] = useState<WidgetDefinition | null>(null);
   const essential = useMemo(
-    () => WIDGET_CATALOG.filter((w) => w.section === "essential"),
+    () =>
+      WIDGET_CATALOG.filter(
+        (w) => w.section === "essential" && !w.caseScoped,
+      ),
     [],
   );
   const proof = useMemo(
-    () => WIDGET_CATALOG.filter((w) => w.section === "proof"),
+    () =>
+      WIDGET_CATALOG.filter((w) => w.section === "proof" && !w.caseScoped),
     [],
   );
   const signature = useMemo(
-    () => WIDGET_CATALOG.filter((w) => w.section === "signature"),
+    () =>
+      WIDGET_CATALOG.filter(
+        (w) => w.section === "signature" && !w.caseScoped,
+      ),
     [],
   );
 

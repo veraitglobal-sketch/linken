@@ -2,14 +2,16 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import { CompanyProfile } from "@/components/company/company-profile";
+import { RelationshipConfirmBanner } from "@/components/company/relationship-confirm-banner";
 import { NetworkMapSection } from "@/components/network/network-map-section";
 import { CompanyMapTeaser } from "@/components/product/company-map-teaser";
-import { logProfileEvent } from "@/features/analytics/log";
-import { parseProfileSource } from "@/features/analytics/sources";
+import { trackProfileArrival } from "@/features/analytics/track-arrival";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
-import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
+import {
+  getCaseStudiesForCompany,
+  isCompanyOwnerSlug,
+} from "@/features/case-studies/queries";
 import { getActivationChecklist } from "@/features/activation/checklist";
-import { getCaseStudiesForCompany } from "@/features/case-studies/queries";
 import {
   getCompanyForPage,
   searchCompanies,
@@ -22,6 +24,7 @@ import {
 } from "@/features/partners/public-queries";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getPublicTeam } from "@/features/team/queries";
+import { resolveConfirmedRelationship } from "@/features/trust/relationship-banner";
 import { getTrustProfile } from "@/features/trust/queries";
 import { PRODUCT } from "@/lib/product-model";
 import { getSiteUrl } from "@/lib/site";
@@ -36,6 +39,8 @@ type Props = {
     invited?: string;
     created?: string;
     src?: string;
+    via?: string;
+    rel?: string;
     domainVerified?: string;
     partnerConfirmed?: string;
     add?: string;
@@ -82,6 +87,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     isOwner,
     groupBadge,
     teamMembers,
+    relationship,
   ] = await Promise.all([
     getPartnersForCompany(company.id),
     getPartnerRailSettings(company.id),
@@ -94,6 +100,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
       : Promise.resolve(false),
     getConfirmedGroupForCompany(company.id),
     getPublicTeam(company.id),
+    resolveConfirmedRelationship(company.id, sp.rel),
   ]);
 
   const editable = isOwner;
@@ -129,12 +136,12 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     (groupBadge ? 1 : 0);
 
   if (!isOwner && company.claimed !== false) {
-    const source = parseProfileSource(sp.src);
-    await logProfileEvent(
-      company.slug,
-      source === "qr" ? "qr_scan" : "profile_view",
-      source,
-    );
+    await trackProfileArrival({
+      companySlug: company.slug,
+      src: sp.src,
+      via: sp.via,
+      relationship,
+    });
   }
 
   const networkMap =
@@ -150,6 +157,13 @@ export default async function CompanyPage({ params, searchParams }: Props) {
 
   return (
     <>
+      {relationship ? (
+        <RelationshipConfirmBanner
+          profileName={company.name}
+          profileSlug={company.slug}
+          relationship={relationship}
+        />
+      ) : null}
       <CompanyProfile
         company={company}
         partners={partners}

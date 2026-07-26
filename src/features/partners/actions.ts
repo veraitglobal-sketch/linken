@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { confirmPartnershipsAfterClaim } from "@/features/partners/confirm-on-claim";
 import { createUnclaimedPartnerCore } from "@/features/partners/core";
 import { sendClaimInviteEmail } from "@/lib/email";
 import { safeAppBack, withBackQuery } from "@/lib/safe-back";
@@ -73,48 +74,8 @@ export async function claimCompanyProfile(formData: FormData) {
   const companyId = claimed?.id;
   const slug = claimed?.slug;
 
-  // Invite path: claiming also confirms pending partnerships with this company.
   if (companyId) {
-    const { data: pending } = await supabase
-      .from("partnerships")
-      .select("id, requester_id, recipient_id")
-      .eq("recipient_id", companyId)
-      .eq("status", "pending");
-
-    const respondedAt = new Date().toISOString();
-    await supabase
-      .from("partnerships")
-      .update({
-        status: "accepted",
-        responded_at: respondedAt,
-      })
-      .eq("recipient_id", companyId)
-      .eq("status", "pending");
-
-    if (pending?.length) {
-      const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
-      for (const p of pending) {
-        const payload = {
-          partnership_id: p.id,
-          requester_id: p.requester_id,
-          recipient_id: p.recipient_id,
-          responded_at: respondedAt,
-          via: "claim",
-        };
-        emitWebhookEvent(
-          p.recipient_id as string,
-          "partnership.accepted",
-          payload,
-          `partnership_${p.id}`,
-        );
-        emitWebhookEvent(
-          p.requester_id as string,
-          "partnership.accepted",
-          payload,
-          `partnership_${p.id}`,
-        );
-      }
-    }
+    await confirmPartnershipsAfterClaim(supabase, companyId, user.id);
   }
 
   revalidatePath("/dashboard");

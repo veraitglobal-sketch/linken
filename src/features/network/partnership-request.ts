@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { sendPartnershipRequestEmail } from "@/lib/email";
 import { safeAppBack, withBackQuery } from "@/lib/safe-back";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 
 function revalidateNetwork(paths: string[]) {
   for (const p of paths) {
@@ -32,20 +32,9 @@ export async function requestPartnership(formData: FormData) {
     redirect(withBackQuery(back, { error: "Company slug is required." }));
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user, company: mine } = await getOperatorActiveCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
-
-  const { data: mine } = await supabase
-    .from("companies")
-    .select("id, slug, name, verified")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!mine) {
+  if (!mine?.claimed) {
     redirect(withBackQuery(back, { error: "Create your company first." }));
   }
   if (!mine.verified) {
@@ -72,6 +61,14 @@ export async function requestPartnership(formData: FormData) {
   }
   if (target.id === mine.id) {
     redirect(withBackQuery(back, { error: "Cannot partner with yourself." }));
+  }
+  if (target.owner_id === user.id) {
+    redirect(
+      withBackQuery(back, {
+        error:
+          "That company is already yours. Use Groups for firms you own — not Partners.",
+      }),
+    );
   }
 
   const { data: existing } = await supabase

@@ -8,6 +8,8 @@ import { LogoWallStateBadge } from "@/components/widgets/logo-wall-state-badge";
 import { LogoWallRowActions } from "@/components/widgets/logo-wall-row-actions";
 import { LogoTile } from "@/components/ui/logo-tile";
 
+import { cn } from "@/lib/cn";
+
 type Props = {
   entry: LogoWallEntry;
   onDragStart: () => void;
@@ -30,7 +32,10 @@ export function LogoWallStudioRow({ entry, onDragStart, onDrop }: Props) {
 
   return (
     <li
-      className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5"
+      className={cn(
+        "flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5",
+        entry.belowCut && entry.included && "bg-paper/80 opacity-70",
+      )}
       draggable
       onDragStart={onDragStart}
       onDragOver={(e) => e.preventDefault()}
@@ -61,6 +66,7 @@ export function LogoWallStudioRow({ entry, onDragStart, onDrop }: Props) {
         <p className="truncate text-[13px] font-semibold text-ink">{entry.name}</p>
         <p className="truncate text-[11px] text-muted">
           {entry.website?.trim() || "No website"} · {entry.kind}
+          {entry.belowCut && entry.included ? " · below cut" : ""}
         </p>
       </div>
       <LogoWallStateBadge state={entry.logoState} />

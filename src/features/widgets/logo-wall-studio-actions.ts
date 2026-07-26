@@ -4,10 +4,14 @@ import { revalidatePath } from "next/cache";
 import {
   mergeLogoWallBackground,
   mergeLogoWallExcluded,
+  mergeLogoWallLimit,
+  mergeLogoWallMotion,
   mergeLogoWallOrder,
   mergeLogoWallOverride,
+  mergeLogoWallSize,
 } from "@/features/widgets/settings-merge";
 import { parseWidgetSettings } from "@/features/widgets/settings";
+import type { LogoMotion, LogoSize } from "@/features/widgets/logo-motion";
 import { getLogoWallConfirmedCandidates } from "@/features/widgets/logo-wall";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 
@@ -61,6 +65,45 @@ export async function saveLogoWallBackground(background: string) {
   const { supabase, user, company } = await requireStudio();
   if (!user || !company) return { ok: false as const, error: "Not signed in." };
   const next = mergeLogoWallBackground(company.widget_settings, background);
+  const { error } = await supabase
+    .from("companies")
+    .update({ widget_settings: next })
+    .eq("id", company.id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateWall(company.slug);
+  return { ok: true as const };
+}
+
+export async function saveLogoWallLimit(limit: number) {
+  const { supabase, user, company } = await requireStudio();
+  if (!user || !company) return { ok: false as const, error: "Not signed in." };
+  const next = mergeLogoWallLimit(company.widget_settings, limit);
+  const { error } = await supabase
+    .from("companies")
+    .update({ widget_settings: next })
+    .eq("id", company.id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateWall(company.slug);
+  return { ok: true as const };
+}
+
+export async function saveLogoWallMotion(motion: LogoMotion) {
+  const { supabase, user, company } = await requireStudio();
+  if (!user || !company) return { ok: false as const, error: "Not signed in." };
+  const next = mergeLogoWallMotion(company.widget_settings, motion);
+  const { error } = await supabase
+    .from("companies")
+    .update({ widget_settings: next })
+    .eq("id", company.id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateWall(company.slug);
+  return { ok: true as const };
+}
+
+export async function saveLogoWallSize(size: LogoSize) {
+  const { supabase, user, company } = await requireStudio();
+  if (!user || !company) return { ok: false as const, error: "Not signed in." };
+  const next = mergeLogoWallSize(company.widget_settings, size);
   const { error } = await supabase
     .from("companies")
     .update({ widget_settings: next })

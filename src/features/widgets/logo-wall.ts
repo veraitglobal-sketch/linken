@@ -37,6 +37,8 @@ export type LogoWallEntry = {
   grayscale: boolean;
   invertOnDark: boolean;
   included: boolean;
+  /** Studio only: included but past logoWall.limit (won't render on embed). */
+  belowCut?: boolean;
 };
 
 function initials(name: string) {
@@ -49,9 +51,9 @@ function initials(name: string) {
 }
 
 /**
- * Confirmed partners + confirmed clients (with company id), deduped, max 30.
- * Sort: ongoing clients → other clients → partners by shared evidence.
- * When `applySelection` is true (public embed), respects excludedCompanyIds.
+ * Confirmed partners + confirmed clients (with company id), deduped.
+ * Public embed (`applySelection`): exclusion list then `logoWall.limit` (max 30).
+ * Studio: all candidates (soft max 100), with `belowCut` for ranks past limit.
  * Entries missing from `order` render after ordered ones (evidence sort kept).
  */
 export async function getLogoWallEntries(
@@ -184,11 +186,21 @@ export async function getLogoWallEntries(
     });
 
     const ordered = applyLogoWallOrder(entries, settings.logoWall.order);
-    const filtered = opts?.applySelection
-      ? ordered.filter((e) => e.included)
-      : ordered;
+    const limit = settings.logoWall.limit;
 
-    return filtered.slice(0, 30);
+    if (opts?.applySelection) {
+      return ordered.filter((e) => e.included).slice(0, limit);
+    }
+
+    // Studio: full candidate list (soft max 100). belowCut set for included ranks.
+    const withCut = ordered.slice(0, 100).map((e) => ({ ...e }));
+    let shownRank = 0;
+    for (const e of withCut) {
+      if (!e.included) continue;
+      e.belowCut = shownRank >= limit;
+      shownRank += 1;
+    }
+    return withCut;
   } catch {
     return [];
   }

@@ -24,7 +24,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_get_widget_settings",
     description:
-      "Read widget_settings including logoWall (excludedCompanyIds, order, background, overrides) plus allow_logo_in_partner_widgets and accepting_clients.",
+      "Read widget_settings including logoWall (excludedCompanyIds, order, background, limit, motion, size, overrides) plus allow_logo_in_partner_widgets and accepting_clients.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -34,7 +34,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_update_widget_settings",
     description:
-      "Partial PATCH for Logo wall presentation. Omitted fields stay unchanged (merge, never wipe). logo_wall.background must be exactly one of: \"transparent\" | \"light\" | \"dark\" | \"#RRGGBB\" (strict 6-digit hex). logo_wall.order is company_id UUID array. logo_wall.excluded_company_ids hides firms from the public wall. logo_wall.overrides[company_id] may set scale (0.5–1.5), padding (0–24), grayscale, invertOnDark — not logoUrl (use hansala_upload_partner_logo). Optional variant is only used by hansala_get_widget_snippet defaults and is not persisted.",
+      "Partial PATCH for Logo wall presentation. Omitted fields stay unchanged (merge, never wipe). Selection is exclusion-based — default shows every confirmed partner. logo_wall.background: \"transparent\" | \"light\" | \"dark\" | \"#RRGGBB\". logo_wall.limit: 1–30 (default 12) — how many included entries render (order first, then evidence). logo_wall.motion: \"row\" | \"stack\" | \"fade\" | \"grid\" | \"swap-batch\" | \"swap-random\". logo_wall.size: \"sm\" | \"md\" | \"lg\" | \"xl\". logo_wall.order is company_id UUID array. logo_wall.excluded_company_ids hides firms. logo_wall.overrides[company_id] may set scale/padding/grayscale/invertOnDark — not logoUrl (use hansala_upload_partner_logo).",
     inputSchema: {
       type: "object",
       properties: {
@@ -49,6 +49,19 @@ export const WIDGET_TOOLS = [
               type: "string",
               description:
                 'Exactly: "transparent" | "light" | "dark" | "#RRGGBB"',
+            },
+            limit: {
+              type: "number",
+              description: "How many included logos to render (1–30, default 12).",
+            },
+            motion: {
+              type: "string",
+              description:
+                'Exactly: "row" | "stack" | "fade" | "grid" | "swap-batch" | "swap-random"',
+            },
+            size: {
+              type: "string",
+              description: 'Exactly: "sm" | "md" | "lg" | "xl"',
             },
             order: { type: "array", items: { type: "string" } },
             excluded_company_ids: {

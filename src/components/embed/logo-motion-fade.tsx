@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
+import { LogoWallMarkLink } from "@/components/embed/logo-wall-mark-link";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 import type { LogoSize } from "@/features/widgets/logo-motion";
 import { LOGO_SIZE_PX } from "@/features/widgets/logo-motion";
@@ -14,6 +14,8 @@ type Props = {
   theme: EmbedTheme;
   mono: boolean;
   size: LogoSize;
+  ownerCompanyId: string;
+  viaHost?: string | null;
 };
 
 /** Soft crossfade — one logo at a time. */
@@ -21,8 +23,9 @@ export function LogoMotionFade({
   entries,
   siteUrl,
   theme,
-  mono,
   size,
+  ownerCompanyId,
+  viaHost,
 }: Props) {
   const [i, setI] = useState(0);
 
@@ -44,28 +47,23 @@ export function LogoMotionFade({
       style={{ height: LOGO_SIZE_PX[size] + 8 }}
     >
       {entries.map((entry, idx) => (
-        <a
+        <div
           key={entry.slug}
-          href={`${siteUrl}/c/${entry.slug}?src=embed`}
-          target="_blank"
-          rel="noopener noreferrer"
           className={cn(
-            "absolute inset-0 flex items-center justify-center no-underline transition-opacity duration-700",
+            "absolute inset-0 flex items-center justify-center transition-opacity duration-700",
             idx === i ? "opacity-100" : "pointer-events-none opacity-0",
           )}
           aria-hidden={idx !== i}
-          tabIndex={idx === i ? 0 : -1}
         >
-          <EmbedBareLogo
-            name={entry.name}
-            initials={entry.initials}
-            logoUrl={entry.showLogo ? entry.logoUrl : null}
-            website={entry.website}
+          <LogoWallMarkLink
+            entry={entry}
+            siteUrl={siteUrl}
             theme={theme}
-            mono={mono}
             size={size}
+            ownerCompanyId={ownerCompanyId}
+            viaHost={viaHost}
           />
-        </a>
+        </div>
       ))}
     </div>
   );

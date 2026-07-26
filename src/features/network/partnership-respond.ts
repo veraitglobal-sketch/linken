@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 
 function safeBack(raw: string, fallback = "/dashboard/partners") {
   const back = raw.trim();
@@ -26,20 +26,9 @@ export async function respondPartnership(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Invalid response.")}`);
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user, company: mine } = await getOperatorActiveCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
-
-  const { data: mine } = await supabase
-    .from("companies")
-    .select("id, slug, verified")
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  if (!mine) {
+  if (!mine?.claimed) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
   }
   if (decision === "accepted" && !mine.verified) {
@@ -62,7 +51,21 @@ export async function respondPartnership(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Only the recipient can respond.")}`);
   }
 
-  // DB check: rejected | accepted (app UI still says "declined")
+  if (decision === "accepted") {
+    const { data: requester } = await supabase
+      .from("companies")
+      .select("owner_id")
+      .eq("id", row.requester_id)
+      .maybeSingle();
+    if (requester?.owner_id === user.id) {
+      redirect(
+        `${back}?error=${encodeURIComponent(
+          "That company is already yours. Use Groups for firms you own — not Partners.",
+        )}`,
+      );
+    }
+  }
+
   const status = decision === "declined" ? "rejected" : "accepted";
   const respondedAt = new Date().toISOString();
   const { error } = await supabase

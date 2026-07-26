@@ -8,6 +8,7 @@ type Props = {
   back: string;
   flash?: string | null;
   error?: string | null;
+  siteUrl: string;
 };
 
 export function CaseStudyStudio(props: Props) {

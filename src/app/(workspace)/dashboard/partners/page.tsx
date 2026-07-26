@@ -5,6 +5,7 @@ import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { PartnerPageFlashes } from "@/components/partners/partner-page-flashes";
 import { PartnershipInbox } from "@/components/partners/partnership-inbox";
 import { getPartnershipInbox } from "@/features/partners/inbox";
+import { dissolveSameOwnerPartnerLinks } from "@/features/partners/same-owner-guard";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { PRODUCT } from "@/lib/product-model";
 import { createClient } from "@/lib/supabase/server";
@@ -56,6 +57,13 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
     .eq("id", mine.id)
     .maybeSingle();
   verified = Boolean(data?.verified);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    await dissolveSameOwnerPartnerLinks(mine.id, user.id);
+  }
 
   const inbox = await getPartnershipInbox(mine.id);
 

@@ -1,5 +1,11 @@
 /** How partner logos move in the clean logo wall. */
-export type LogoMotion = "row" | "stack" | "fade" | "grid";
+export type LogoMotion =
+  | "row"
+  | "stack"
+  | "fade"
+  | "grid"
+  | "swap-batch"
+  | "swap-random";
 
 /** Logo mark height — studio + embed `size` param. */
 export type LogoSize = "sm" | "md" | "lg" | "xl";
@@ -10,6 +16,9 @@ export const LOGO_SIZE_PX: Record<LogoSize, number> = {
   lg: 44,
   xl: 52,
 };
+
+/** Default visible cells for swap modes. */
+export const LOGO_SWAP_CELLS = 5;
 
 export const LOGO_MOTION_OPTIONS: {
   id: LogoMotion;
@@ -24,7 +33,7 @@ export const LOGO_MOTION_OPTIONS: {
   {
     id: "stack",
     name: "Vertical",
-    hint: "Logos rise bottom → top (Viktor-style).",
+    hint: "Logos rise bottom → top.",
   },
   {
     id: "fade",
@@ -36,11 +45,30 @@ export const LOGO_MOTION_OPTIONS: {
     name: "Grid",
     hint: "Static hairline grid — editorial logo wall.",
   },
+  {
+    id: "swap-batch",
+    name: "Swap batch",
+    hint: "Fixed grid — cells crossfade together on a beat.",
+  },
+  {
+    id: "swap-random",
+    name: "Swap random",
+    hint: "Fixed grid — individual cells swap on jittered timers.",
+  },
 ];
 
 export function parseLogoMotion(raw: string | undefined): LogoMotion {
-  if (raw === "stack" || raw === "fade" || raw === "grid") return raw;
-  return "row";
+  if (
+    raw === "stack" ||
+    raw === "fade" ||
+    raw === "grid" ||
+    raw === "swap-batch" ||
+    raw === "swap-random" ||
+    raw === "row"
+  ) {
+    return raw;
+  }
+  return "grid";
 }
 
 export function parseLogoSize(raw: string | undefined): LogoSize {
@@ -51,15 +79,17 @@ export function parseLogoSize(raw: string | undefined): LogoSize {
 /** iframe height for clean logo wall (transparent, no card chrome). */
 export function logoWallHeight(motion: LogoMotion, size: LogoSize): number {
   const logo = LOGO_SIZE_PX[size];
-  const label = 22;
+  const label = 48; // Hansala Verified lockup
   switch (motion) {
     case "grid":
-      return label + logo * 2 + 28;
+    case "swap-batch":
+    case "swap-random":
+      return label + logo * 2 + 56;
     case "stack":
-      return label + logo * 2 + 20;
+      return label + logo * 2 + 36;
     case "fade":
-      return label + logo + 28;
+      return label + logo + 40;
     default:
-      return label + logo + 28;
+      return label + logo + 40;
   }
 }

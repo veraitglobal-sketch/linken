@@ -3,6 +3,7 @@ import { CaseStudyStudio } from "@/components/case-studies/studio/case-study-stu
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { getCaseStudyForDashboard } from "@/features/case-studies/queries";
 import { assertCompanyWorkspace } from "@/features/workspace/company-gate";
+import { getSiteUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -52,6 +53,7 @@ export default async function DashboardCaseStudioPage({
       back={back}
       flash={flashMessage(q)}
       error={q.error}
+      siteUrl={getSiteUrl()}
     />
   );
 }

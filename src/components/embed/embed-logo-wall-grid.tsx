@@ -1,35 +1,69 @@
+"use client";
+
+import { useRef } from "react";
 import { EmbedVerified } from "@/components/embed/embed-verified";
-import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
+import { LogoMotionFade } from "@/components/embed/logo-motion-fade";
+import { LogoMotionRow } from "@/components/embed/logo-motion-row";
+import { LogoMotionStack } from "@/components/embed/logo-motion-stack";
+import { LogoMotionSwap } from "@/components/embed/logo-motion-swap";
+import { LogoWallMarkLink } from "@/components/embed/logo-wall-mark-link";
+import { useLogoWallActive } from "@/components/embed/use-logo-wall-active";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
+import type { LogoMotion, LogoSize } from "@/features/widgets/logo-motion";
 import type { LogoWallEntry } from "@/features/widgets/logo-wall";
 import { cn } from "@/lib/cn";
 
 type Props = {
   ownerProfileUrl: string;
+  ownerCompanyId: string;
+  viaHost?: string | null;
   entries: LogoWallEntry[];
   theme?: EmbedTheme;
   siteUrl: string;
+  motion?: LogoMotion;
+  size?: LogoSize;
 };
 
-/**
- * Catalog Logo wall — Hansala Verified on top, partner marks in a calm grid.
- * Transparent background, monochrome treatment, responsive 2–3 rows.
- */
+/** Catalog Logo wall — Hansala Verified on top; motion from settings. */
 export function EmbedLogoWallGrid({
   ownerProfileUrl,
+  ownerCompanyId,
+  viaHost,
   entries,
   theme = "light",
   siteUrl,
+  motion = "grid",
+  size = "md",
 }: Props) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const active = useLogoWallActive(rootRef);
   const dark = theme === "dark";
-  const shown = entries.slice(0, 30);
+  const effective: LogoMotion =
+    (motion === "swap-batch" || motion === "swap-random") &&
+    entries.length <= 5
+      ? "grid"
+      : motion;
+
+  const motionProps = {
+    entries,
+    siteUrl,
+    theme,
+    mono: true as const,
+    size,
+    ownerCompanyId,
+    viaHost,
+  };
 
   return (
-    <div className="box-border flex w-full flex-col gap-5 bg-transparent px-1 py-2">
+    <div
+      ref={rootRef}
+      className="box-border flex w-full flex-col gap-5 bg-transparent px-1 py-2"
+      data-logo-wall-paused={active ? "false" : "true"}
+    >
       <div className="flex justify-center">
         <EmbedVerified profileUrl={ownerProfileUrl} theme={theme} />
       </div>
-      {shown.length === 0 ? (
+      {entries.length === 0 ? (
         <p
           className={cn(
             "text-center text-[11px]",
@@ -38,42 +72,43 @@ export function EmbedLogoWallGrid({
         >
           No partners on this wall yet
         </p>
+      ) : effective === "swap-batch" || effective === "swap-random" ? (
+        <LogoMotionSwap
+          key={`${effective}:${entries.map((e) => e.id).join(",")}`}
+          {...motionProps}
+          mode={effective}
+        />
+      ) : effective === "row" ? (
+        <LogoMotionRow {...motionProps} />
+      ) : effective === "stack" ? (
+        <LogoMotionStack {...motionProps} />
+      ) : effective === "fade" && active ? (
+        <LogoMotionFade {...motionProps} />
+      ) : effective === "fade" ? (
+        <div className="flex justify-center">
+          {entries[0] ? (
+            <LogoWallMarkLink
+              entry={entries[0]}
+              siteUrl={siteUrl}
+              theme={theme}
+              size={size}
+              ownerCompanyId={ownerCompanyId}
+              viaHost={viaHost}
+            />
+          ) : null}
+        </div>
       ) : (
         <ul className="grid grid-cols-2 gap-x-8 gap-y-7 sm:grid-cols-3 md:grid-cols-4">
-          {shown.map((e) => (
+          {entries.map((e) => (
             <li key={e.id} className="flex items-center justify-center">
-              <a
-                href={`${siteUrl}/c/${e.slug}?src=embed`}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={e.name}
-                className="block no-underline opacity-75 transition-opacity hover:opacity-100"
-              >
-                {e.showLogo ? (
-                  <EmbedBareLogo
-                    name={e.name}
-                    initials={e.initials}
-                    logoUrl={e.logoUrl}
-                    website={e.website}
-                    theme={theme}
-                    mono
-                    size="md"
-                    scale={e.scale}
-                    padding={e.padding}
-                    grayscale={e.grayscale}
-                    invertOnDark={e.invertOnDark}
-                  />
-                ) : (
-                  <span
-                    className={cn(
-                      "text-[12px] font-semibold tracking-[0.06em]",
-                      dark ? "text-white/80" : "text-[#0d1210]",
-                    )}
-                  >
-                    {e.name}
-                  </span>
-                )}
-              </a>
+              <LogoWallMarkLink
+                entry={e}
+                siteUrl={siteUrl}
+                theme={theme}
+                size={size}
+                ownerCompanyId={ownerCompanyId}
+                viaHost={viaHost}
+              />
             </li>
           ))}
         </ul>

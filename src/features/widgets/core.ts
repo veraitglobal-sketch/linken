@@ -120,6 +120,18 @@ export function listWidgetVariantsCore(slug: string) {
   const theme: WidgetTheme = "light";
   return WIDGET_CATALOG.map((w) => {
     const variant = w.id as WidgetVariant;
+    if (w.caseScoped) {
+      return {
+        id: w.id,
+        name: w.name,
+        description: w.description,
+        height: w.height,
+        pro: Boolean(w.pro),
+        case_scoped: true,
+        embed_url: `${siteUrl}/embed/${slug}/case/{caseSlug}`,
+        snippet: null,
+      };
+    }
     return {
       id: w.id,
       name: w.name,

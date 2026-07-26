@@ -3,40 +3,54 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { LogoWallEntry } from "@/features/widgets/logo-wall";
+import type { LogoMotion, LogoSize } from "@/features/widgets/logo-motion";
 import { LogoWallStudioRow } from "@/components/widgets/logo-wall-studio-row";
 import { LogoWallBackgroundPicker } from "@/components/widgets/logo-wall-background-picker";
+import { LogoWallLayoutControls } from "@/components/widgets/logo-wall-layout-controls";
 import { saveLogoWallOrder } from "@/features/widgets/logo-wall-studio-actions";
 
 type Props = {
   entries: LogoWallEntry[];
   background: string;
+  limit: number;
+  motion: LogoMotion;
+  size: LogoSize;
 };
 
-export function LogoWallStudio({ entries, background }: Props) {
+export function LogoWallStudio(props: Props) {
   return (
     <LogoWallStudioInner
-      key={studioKey(entries, background)}
-      entries={entries}
-      background={background}
+      key={studioKey(props)}
+      {...props}
     />
   );
 }
 
-function studioKey(entries: LogoWallEntry[], background: string) {
+function studioKey(p: Props) {
   return [
-    background,
-    ...entries.map(
+    p.background,
+    p.limit,
+    p.motion,
+    p.size,
+    ...p.entries.map(
       (e) =>
-        `${e.id}:${e.included ? 1 : 0}:${e.logoState}:${e.logoUrl ?? ""}:${e.scale}:${e.padding}`,
+        `${e.id}:${e.included ? 1 : 0}:${e.belowCut ? 1 : 0}:${e.logoState}:${e.logoUrl ?? ""}`,
     ),
   ].join("|");
 }
 
-function LogoWallStudioInner({ entries: initial, background }: Props) {
+function LogoWallStudioInner({
+  entries: initial,
+  background,
+  limit,
+  motion,
+  size,
+}: Props) {
   const router = useRouter();
   const [rows, setRows] = useState(initial);
   const [pending, startTransition] = useTransition();
   const [dragId, setDragId] = useState<string | null>(null);
+  const includedCount = rows.filter((r) => r.included).length;
 
   function onDragStart(id: string) {
     setDragId(id);
@@ -71,14 +85,19 @@ function LogoWallStudioInner({ entries: initial, background }: Props) {
           Logo wall studio
         </p>
         <p className="mt-1 max-w-2xl text-[13px] text-muted">
-          Curate which confirmed partners and clients appear on your embed.
-          Paste the snippet once — everything else is managed here.
-          Transparent background sits on any coloured section of the customer
-          site.
+          Every confirmed partner and client is on by default — uncheck to hide.
+          New confirmations appear automatically. Paste the embed once; manage
+          everything here.
         </p>
         <div className="mt-3">
           <LogoWallBackgroundPicker background={background} />
         </div>
+        <LogoWallLayoutControls
+          limit={limit}
+          motion={motion}
+          size={size}
+          includedCount={includedCount}
+        />
       </div>
       {rows.length === 0 ? (
         <p className="px-5 py-8 text-[13px] text-muted">

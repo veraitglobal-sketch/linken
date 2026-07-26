@@ -13,6 +13,8 @@ export { EmbedLogoWallProFallback } from "@/components/embed/embed-logo-wall-fal
 type Props = {
   ownerName: string;
   ownerProfileUrl: string;
+  ownerCompanyId: string;
+  viaHost?: string | null;
   entries: LogoWallEntry[];
   label: string | null;
   theme?: EmbedTheme;
@@ -29,6 +31,8 @@ type Props = {
 export function EmbedLogoWall({
   ownerName,
   ownerProfileUrl,
+  ownerCompanyId,
+  viaHost,
   entries,
   label,
   theme = "light",
@@ -38,7 +42,15 @@ export function EmbedLogoWall({
   siteUrl,
 }: Props) {
   const dark = theme === "dark";
-  const motionProps = { entries, siteUrl, theme, mono, size };
+  const motionProps = {
+    entries,
+    siteUrl,
+    theme,
+    mono,
+    size,
+    ownerCompanyId,
+    viaHost,
+  };
 
   return (
     <div className="box-border flex w-full flex-col bg-transparent">

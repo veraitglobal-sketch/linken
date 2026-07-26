@@ -1,3 +1,5 @@
+import { logoWallHeight } from "@/features/widgets/logo-motion";
+
 export type WidgetVariant =
   | "verified"
   | "micro"
@@ -9,7 +11,8 @@ export type WidgetVariant =
   | "signature"
   | "references"
   | "assessment"
-  | "logo-wall";
+  | "logo-wall"
+  | "case-stamp";
 
 export type WidgetTheme = "light" | "dark";
 export type WidgetSection = "essential" | "proof" | "signature";
@@ -37,6 +40,8 @@ export type WidgetDefinition = {
   requirementHint?: string;
   unavailableCtaHref?: string;
   unavailableCtaLabel?: string;
+  /** Case-study scoped — not in company /embed/[slug] picker. */
+  caseScoped?: boolean;
 };
 
 export const WIDGET_CATALOG: WidgetDefinition[] = [
@@ -131,60 +136,29 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
       "Hansala Verified lockup above partner logos — curated from the studio.",
     section: "proof",
     pro: true,
-    height: 240,
+    height: logoWallHeight("grid", "md"),
     requirementHint: "Requires at least one confirmed partner or client.",
     unavailableCtaHref: "/dashboard/partners",
     unavailableCtaLabel: "Confirm partners",
   },
+  {
+    id: "case-stamp",
+    name: "Case confirmation stamp",
+    description:
+      "Small strip for your case page — only renders when the client confirmed.",
+    section: "proof",
+    height: 72,
+    caseScoped: true,
+    requirementHint: "Requires a client-confirmed case study.",
+    unavailableCtaHref: "/dashboard/cases",
+    unavailableCtaLabel: "Open cases",
+  },
 ];
 
-export function widgetHeight(variant: WidgetVariant): number {
-  return WIDGET_CATALOG.find((w) => w.id === variant)?.height ?? 72;
-}
+export {
+  buildCaseStampSnippet,
+  buildEmbedSnippet,
+  buildEmbedSrc,
+  widgetHeight,
+} from "@/features/widgets/embed-snippet";
 
-export function buildEmbedSrc(input: {
-  siteUrl: string;
-  slug: string;
-  variant: WidgetVariant;
-  theme: WidgetTheme;
-  width?: string;
-  preview?: boolean;
-}): string {
-  const url = new URL(`${input.siteUrl}/embed/${input.slug}`);
-  if (input.variant !== "horizontal") {
-    url.searchParams.set("variant", input.variant);
-  }
-  if (input.theme === "dark") {
-    url.searchParams.set("theme", "dark");
-  }
-  if (input.width && input.width !== "100%") {
-    url.searchParams.set("w", input.width.replace(/px$/i, ""));
-  }
-  if (input.preview) {
-    url.searchParams.set("preview", "1");
-  }
-  return url.toString();
-}
-
-export function buildEmbedSnippet(input: {
-  siteUrl: string;
-  slug: string;
-  variant: WidgetVariant;
-  theme: WidgetTheme;
-  width: string;
-}): string {
-  const height = widgetHeight(input.variant);
-  const isFluid = input.width === "100%";
-  const px = input.width.replace(/px$/i, "");
-  const src = buildEmbedSrc({
-    siteUrl: input.siteUrl,
-    slug: input.slug,
-    variant: input.variant,
-    theme: input.theme,
-    width: isFluid ? undefined : px,
-    preview: false,
-  });
-  const widthAttr = isFluid ? "100%" : px;
-  const styleWidth = isFluid ? "100%" : `${px}px`;
-  return `<iframe src="${src}" width="${widthAttr}" height="${height}" style="border:0;width:${styleWidth};max-width:100%;background:transparent" title="Verified on Hansala" loading="lazy"></iframe>`;
-}

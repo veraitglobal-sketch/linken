@@ -1,4 +1,4 @@
-import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
+import { LogoWallMarkLink } from "@/components/embed/logo-wall-mark-link";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 import type { LogoSize } from "@/features/widgets/logo-motion";
 import type { LogoWallEntry } from "@/features/widgets/logo-wall";
@@ -10,6 +10,8 @@ type Props = {
   theme: EmbedTheme;
   mono: boolean;
   size: LogoSize;
+  ownerCompanyId: string;
+  viaHost?: string | null;
 };
 
 /** Editorial grid — hairlines only, no card fills. */
@@ -17,8 +19,9 @@ export function LogoMotionGrid({
   entries,
   siteUrl,
   theme,
-  mono,
   size,
+  ownerCompanyId,
+  viaHost,
 }: Props) {
   const shown = entries.slice(0, 8);
   const line = theme === "dark" ? "border-white/12" : "border-[#e2e6e3]";
@@ -37,38 +40,14 @@ export function LogoMotionGrid({
               row === 0 && shown.length > 4 && `border-b ${line}`,
             )}
           >
-            <a
-              href={`${siteUrl}/c/${e.slug}?src=embed`}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={e.name}
-              className="block no-underline opacity-75 transition-opacity hover:opacity-100"
-            >
-              {e.showLogo ? (
-                <EmbedBareLogo
-                  name={e.name}
-                  initials={e.initials}
-                  logoUrl={e.logoUrl}
-                  website={e.website}
-                  theme={theme}
-                  mono={mono}
-                  size={size}
-                  scale={e.scale}
-                  padding={e.padding}
-                  grayscale={e.grayscale}
-                  invertOnDark={e.invertOnDark}
-                />
-              ) : (
-                <span
-                  className={cn(
-                    "text-[11px] font-semibold tracking-[0.06em]",
-                    theme === "dark" ? "text-white/80" : "text-[#0d1210]",
-                  )}
-                >
-                  {e.name}
-                </span>
-              )}
-            </a>
+            <LogoWallMarkLink
+              entry={e}
+              siteUrl={siteUrl}
+              theme={theme}
+              size={size}
+              ownerCompanyId={ownerCompanyId}
+              viaHost={viaHost}
+            />
           </li>
         );
       })}

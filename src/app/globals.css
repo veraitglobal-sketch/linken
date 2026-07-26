@@ -136,6 +136,11 @@ a {
   animation-play-state: paused;
 }
 
+[data-logo-wall-paused="true"] .linken-marquee,
+[data-logo-wall-paused="true"] .linken-marquee-y {
+  animation-play-state: paused;
+}
+
 @keyframes linken-marquee-y {
   from {
     transform: translate3d(0, 0, 0);

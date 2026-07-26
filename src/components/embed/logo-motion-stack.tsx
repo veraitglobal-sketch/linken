@@ -1,4 +1,4 @@
-import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
+import { LogoWallMarkLink } from "@/components/embed/logo-wall-mark-link";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 import type { LogoSize } from "@/features/widgets/logo-motion";
 import { LOGO_SIZE_PX } from "@/features/widgets/logo-motion";
@@ -11,6 +11,8 @@ type Props = {
   theme: EmbedTheme;
   mono: boolean;
   size: LogoSize;
+  ownerCompanyId: string;
+  viaHost?: string | null;
 };
 
 /** Vertical rise — logos enter from below (Viktor-style). */
@@ -18,8 +20,9 @@ export function LogoMotionStack({
   entries,
   siteUrl,
   theme,
-  mono,
   size,
+  ownerCompanyId,
+  viaHost,
 }: Props) {
   const slide = entries.length >= 2;
   const padded =
@@ -52,22 +55,14 @@ export function LogoMotionStack({
             className="flex shrink-0 items-center justify-center"
             style={{ height: rowH }}
           >
-            <a
-              href={`${siteUrl}/c/${e.slug}?src=embed`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block no-underline opacity-85 transition-opacity hover:opacity-100"
-            >
-              <EmbedBareLogo
-                name={e.name}
-                initials={e.initials}
-                logoUrl={e.showLogo ? e.logoUrl : null}
-                website={e.website}
-                theme={theme}
-                mono={mono}
-                size={size}
-              />
-            </a>
+            <LogoWallMarkLink
+              entry={e}
+              siteUrl={siteUrl}
+              theme={theme}
+              size={size}
+              ownerCompanyId={ownerCompanyId}
+              viaHost={viaHost}
+            />
           </li>
         ))}
       </ul>

@@ -98,5 +98,6 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
     variant,
     w,
     isPreview,
+    viaHost: placement.host,
   });
 }

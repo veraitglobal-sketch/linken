@@ -29,8 +29,9 @@ export async function renderTrustedEmbed(input: {
   variant: string;
   w?: string;
   isPreview: boolean;
+  viaHost?: string | null;
 }) {
-  const { company, theme, variant, w, isPreview } = input;
+  const { company, theme, variant, w, isPreview, viaHost } = input;
   const siteUrl = getSiteUrl();
   const profileUrl = `${siteUrl}/c/${company.slug}?src=embed`;
 
@@ -48,9 +49,8 @@ export async function renderTrustedEmbed(input: {
       .select("widget_settings")
       .eq("id", company.id)
       .maybeSingle();
-    const background = parseWidgetSettings(settingsRow?.widget_settings).logoWall
-      .background;
-    const presentation = resolveLogoWallPresentation(background, theme);
+    const settings = parseWidgetSettings(settingsRow?.widget_settings).logoWall;
+    const presentation = resolveLogoWallPresentation(settings.background, theme);
 
     const entries = await getLogoWallEntries(company.id, {
       applySelection: true,
@@ -59,9 +59,13 @@ export async function renderTrustedEmbed(input: {
       <>
         <EmbedLogoWallGrid
           ownerProfileUrl={profileUrl}
+          ownerCompanyId={company.id}
+          viaHost={viaHost}
           entries={entries}
           theme={presentation.theme}
           siteUrl={siteUrl}
+          motion={settings.motion}
+          size={settings.size}
         />
         {resolved.locked ? (
           <EmbedProLockedNote

@@ -67,6 +67,9 @@ function patchFromLogoWallObject(
     excludedCompanyIds?: string[];
     order?: string[];
     background?: unknown;
+    limit?: unknown;
+    motion?: unknown;
+    size?: unknown;
     overrides?: Record<string, Partial<LogoWallOverride> | null>;
   };
 } | { ok: false; error: string } {
@@ -74,11 +77,14 @@ function patchFromLogoWallObject(
     excludedCompanyIds?: string[];
     order?: string[];
     background?: unknown;
+    limit?: unknown;
+    motion?: unknown;
+    size?: unknown;
     overrides?: Record<string, Partial<LogoWallOverride> | null>;
   } = {};
 
-  const exclKey = opts?.camel ? "excludedCompanyIds" : "excluded_company_ids";
-  if (exclKey in o || "excludedCompanyIds" in o || "excluded_company_ids" in o) {
+  void opts;
+  if ("excludedCompanyIds" in o || "excluded_company_ids" in o) {
     const raw = o.excluded_company_ids ?? o.excludedCompanyIds;
     if (!Array.isArray(raw)) {
       return { ok: false, error: "logo_wall excluded ids must be an array." };
@@ -94,6 +100,9 @@ function patchFromLogoWallObject(
     patch.order = o.order.filter((id): id is string => typeof id === "string");
   }
   if ("background" in o) patch.background = o.background;
+  if ("limit" in o) patch.limit = o.limit;
+  if ("motion" in o) patch.motion = o.motion;
+  if ("size" in o) patch.size = o.size;
 
   if ("overrides" in o) {
     if (!o.overrides || typeof o.overrides !== "object" || Array.isArray(o.overrides)) {

@@ -131,6 +131,23 @@ export async function connectGraphNodes(input: {
     mine.id === parentId || mine.id === childId ? mine.id : parentId;
   const recipientId = requesterId === parentId ? childId : parentId;
 
+  const { data: endpoints } = await supabase
+    .from("companies")
+    .select("id, owner_id")
+    .in("id", [parentId, childId]);
+  const owners = (endpoints ?? []).map((c) => c.owner_id as string | null);
+  if (
+    owners.length === 2 &&
+    owners[0] &&
+    owners[0] === owners[1]
+  ) {
+    return {
+      ok: false,
+      error:
+        "Those firms share an owner. Use Groups for firms you own — not Partners.",
+    };
+  }
+
   const { data: existing } = await supabase
     .from("partnerships")
     .select("id, status")

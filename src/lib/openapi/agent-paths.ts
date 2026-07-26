@@ -122,7 +122,7 @@ export const AGENT_OPENAPI_PATHS = {
   "/widget-settings": {
     get: op("Read widget_settings including logoWall", "getWidgetSettings"),
     patch: op(
-      "Merge widget settings / logo_wall (order, background transparent|light|dark|#RRGGBB, exclusions, presentation overrides)",
+      "Merge widget settings / logo_wall (order, background transparent|light|dark|#RRGGBB, limit 1–30, motion, size, exclusions, presentation overrides)",
       "patchWidgetSettings",
     ),
   },

@@ -6,11 +6,13 @@ import {
   isCompanyOwnerSlug,
 } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
+import { logProfileEvent } from "@/features/analytics/log";
+import { parseProfileSource } from "@/features/analytics/sources";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string; caseSlug: string }>;
-  searchParams: Promise<{ error?: string; requested?: string }>;
+  searchParams: Promise<{ error?: string; requested?: string; src?: string; via?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -35,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CaseStudyPage({ params, searchParams }: Props) {
   const { slug, caseSlug } = await params;
-  const { error, requested } = await searchParams;
+  const { error, requested, src } = await searchParams;
   const [company, caseStudy] = await Promise.all([
     getCompanyForPage(slug),
     getCaseStudyForPage(slug, caseSlug),
@@ -45,7 +47,18 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
   const editable = await isCompanyOwnerSlug(slug);
   const siteUrl = getSiteUrl();
 
+  if (!editable && company.claimed !== false) {
+    await logProfileEvent(
+      company.slug,
+      "profile_view",
+      parseProfileSource(src),
+    );
+  }
+
   const clientConfirmed = caseStudy.clientConfirmation?.status === "confirmed";
+  const confirmer = caseStudy.clientConfirmation?.confirmedBy;
+  const undisclosed =
+    caseStudy.clientConfirmation?.disclosure === "undisclosed";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -58,7 +71,6 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
       name: company.name,
       url: `${siteUrl}/c/${company.slug}`,
     },
-    // Hansala extension — mirrors Public API `client_confirmed`.
     client_confirmed: clientConfirmed,
     ...(clientConfirmed
       ? {
@@ -67,6 +79,17 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
             name: "client_confirmed",
             value: true,
           },
+          ...(!undisclosed && confirmer?.name
+            ? {
+                about: {
+                  "@type": "Organization",
+                  name: confirmer.name,
+                  ...(confirmer.slug
+                    ? { url: `${siteUrl}/c/${confirmer.slug}` }
+                    : {}),
+                },
+              }
+            : {}),
         }
       : {}),
   };

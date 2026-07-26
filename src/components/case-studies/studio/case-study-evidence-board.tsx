@@ -17,7 +17,11 @@ import {
 } from "@/components/case-studies/studio/case-study-draft";
 import type { CaseStudy } from "@/types/case-study";
 
-export type DossierCompany = { slug: string; name: string; verified: boolean };
+export type DossierCompany = {
+  slug: string;
+  name: string;
+  verified: boolean;
+};
 
 type Props = {
   company: DossierCompany;
@@ -25,6 +29,7 @@ type Props = {
   back: string;
   flash?: string | null;
   error?: string | null;
+  siteUrl: string;
 };
 
 const LAYERS: {
@@ -40,7 +45,14 @@ const LAYERS: {
   { id: "client", index: "4", title: "Confirmation", subtitle: "Client seal", pillarIds: ["proof"] },
 ];
 
-export function CaseStudyEvidenceBoard({ company, caseStudy, back, flash, error }: Props) {
+export function CaseStudyEvidenceBoard({
+  company,
+  caseStudy,
+  back,
+  flash,
+  error,
+  siteUrl,
+}: Props) {
   const [open, setOpen] = useState<CaseStudyStudioTab>("visual");
   const [draft, setDraft] = useState<CaseStudyDraft>(() => draftFromCaseStudy(caseStudy));
 
@@ -101,7 +113,13 @@ export function CaseStudyEvidenceBoard({ company, caseStudy, back, flash, error 
                 <CaseStudyStudioProof draft={draft} caseSlug={caseStudy.slug} companySlug={company.slug} back={back} onChange={patch} />
               ) : null}
               {layer.id === "client" ? (
-                <CaseStudyStudioClient companySlug={company.slug} caseStudy={caseStudy} back={back} />
+                <CaseStudyStudioClient
+                  companySlug={company.slug}
+                  caseStudy={caseStudy}
+                  back={back}
+                  siteUrl={siteUrl}
+                  domainReady={company.verified}
+                />
               ) : null}
             </StudioLayer>
           ))}

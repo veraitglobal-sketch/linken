@@ -1,7 +1,14 @@
 /**
  * companies.widget_settings — logoWall: excludedCompanyIds, order,
- * background ("transparent"|"light"|"dark"|"#RRGGBB"), overrides.
+ * background, limit, motion, size, overrides.
  */
+
+import {
+  parseLogoMotion,
+  parseLogoSize,
+  type LogoMotion,
+  type LogoSize,
+} from "@/features/widgets/logo-motion";
 
 export type LogoWallOverride = {
   logoUrl?: string;
@@ -19,6 +26,10 @@ export type LogoWallSettings = {
   excludedCompanyIds: string[];
   order: string[];
   background: LogoWallBackground;
+  /** How many included entries the public wall renders (default 12, max 30). */
+  limit: number;
+  motion: LogoMotion;
+  size: LogoSize;
   overrides: Record<string, LogoWallOverride>;
 };
 
@@ -34,6 +45,13 @@ export function parseLogoWallBackground(raw: unknown): LogoWallBackground {
   if (raw === "transparent" || raw === "light" || raw === "dark") return raw;
   if (typeof raw === "string" && /^#[0-9A-Fa-f]{6}$/.test(raw)) return raw;
   return "light";
+}
+
+export function parseLogoWallLimit(raw: unknown): number {
+  if (typeof raw === "number" && Number.isFinite(raw)) {
+    return clamp(Math.round(raw), 1, 30);
+  }
+  return 12;
 }
 
 export function parseLogoWallOverride(raw: unknown): LogoWallOverride | null {
@@ -93,7 +111,19 @@ export function parseWidgetSettings(raw: unknown): WidgetSettings {
     "background" in lw
       ? parseLogoWallBackground(lw.background)
       : "transparent";
+  const limit = "limit" in lw ? parseLogoWallLimit(lw.limit) : 12;
+  const motion =
+    typeof lw.motion === "string" ? parseLogoMotion(lw.motion) : "grid";
+  const size = typeof lw.size === "string" ? parseLogoSize(lw.size) : "md";
   return {
-    logoWall: { excludedCompanyIds: excluded, order, background, overrides },
+    logoWall: {
+      excludedCompanyIds: excluded,
+      order,
+      background,
+      limit,
+      motion,
+      size,
+      overrides,
+    },
   };
 }
