@@ -1,9 +1,10 @@
-import { PostConfirmAcquisition } from "@/components/confirm/post-confirm-acquisition";
+import { PostConfirmSuccess } from "@/components/confirm/post-confirm-success";
 import { PostConfirmAssessment } from "@/components/assessments/post-confirm-assessment";
 import { ConfirmAuth } from "@/components/confirm/confirm-auth";
 import { ConfirmCompanyForm } from "@/components/confirm/confirm-company-form";
 import { ConfirmDecision } from "@/components/confirm/confirm-decision";
 import type { ListingCompany } from "@/features/acquisition/listing-companies";
+import type { PostConfirmSubject } from "@/features/confirm/post-confirm-subject";
 import type { ClientConfirmationView } from "@/types/client-confirmation";
 
 type ViewerCompany = {
@@ -18,6 +19,7 @@ type Props = {
   company: ViewerCompany;
   listings: ListingCompany[];
   suggestedWebsite: string;
+  subject: PostConfirmSubject | null;
   error?: string;
   done?: string;
   assessed?: boolean;
@@ -31,6 +33,7 @@ export function ConfirmPanel({
   company,
   listings,
   suggestedWebsite,
+  subject,
   error,
   done,
   assessed = false,
@@ -54,14 +57,14 @@ export function ConfirmPanel({
             {error}
           </p>
         ) : null}
-        <PostConfirmAcquisition
-          listings={listings}
-          suggestedName={suggestedName}
-          suggestedWebsite={suggestedWebsite}
-          existingProfile={
-            company ? { slug: company.slug, name: company.name } : null
-          }
-        />
+        {subject ? (
+          <PostConfirmSuccess
+            subject={subject}
+            listings={listings}
+            suggestedName={suggestedName}
+            suggestedWebsite={suggestedWebsite}
+          />
+        ) : null}
         <PostConfirmAssessment
           sourceType="confirmation"
           sourceId={view.id}

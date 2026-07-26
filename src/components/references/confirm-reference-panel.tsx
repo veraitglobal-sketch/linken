@@ -1,4 +1,5 @@
-import { PostConfirmAcquisition } from "@/components/confirm/post-confirm-acquisition";
+import { PostConfirmSuccess } from "@/components/confirm/post-confirm-success";
+import type { PostConfirmSubject } from "@/features/confirm/post-confirm-subject";
 import { ConfirmDepthFields } from "@/components/confirm/confirm-depth-fields";
 import {
   ConfirmErrorNote,
@@ -24,6 +25,7 @@ type Props = {
   company: { id: string; name: string; slug: string } | null;
   listings: ListingCompany[];
   suggestedWebsite: string;
+  subject: PostConfirmSubject | null;
   error?: string;
   done?: string;
   assessed?: boolean;
@@ -39,6 +41,7 @@ export function ConfirmReferencePanel({
   company,
   listings,
   suggestedWebsite,
+  subject,
   error,
   done,
   assessed = false,
@@ -58,14 +61,14 @@ export function ConfirmReferencePanel({
     return (
       <div className="space-y-4">
         {error ? <ConfirmErrorNote>{error}</ConfirmErrorNote> : null}
-        <PostConfirmAcquisition
-          listings={listings}
-          suggestedName={company?.name || preview.clientName}
-          suggestedWebsite={suggestedWebsite}
-          existingProfile={
-            company ? { slug: company.slug, name: company.name } : null
-          }
-        />
+        {subject ? (
+          <PostConfirmSuccess
+            subject={subject}
+            listings={listings}
+            suggestedName={company?.name || preview.clientName}
+            suggestedWebsite={suggestedWebsite}
+          />
+        ) : null}
         <PostConfirmAssessment
           sourceType="reference"
           sourceId={preview.id}

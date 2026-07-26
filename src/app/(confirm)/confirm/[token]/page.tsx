@@ -11,6 +11,7 @@ import {
   getClientConfirmationByToken,
   getViewerCompany,
 } from "@/features/case-studies/queries";
+import { loadPostConfirmSubject } from "@/features/confirm/post-confirm-subject";
 
 export const metadata: Metadata = {
   title: "Confirm project",
@@ -65,6 +66,17 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
       })
     : [];
 
+  const subject = confirmed
+    ? await loadPostConfirmSubject("case", token, {
+        requesterName: view.requesterName,
+        requesterSlug: view.requesterSlug,
+        caseSlug: view.caseSlug,
+        companyId: view.confirmedByCompanyId ?? company?.id ?? null,
+        companyName: view.confirmerName ?? company?.name ?? null,
+        companySlug: view.confirmerSlug ?? company?.slug ?? null,
+      })
+    : null;
+
   return (
     <ConfirmPage
       eyebrow="Hansala · Client confirmation"
@@ -77,6 +89,7 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
         company={company}
         listings={listings}
         suggestedWebsite={suggestedWebsiteFromEmail(view.email)}
+        subject={subject}
         error={error}
         done={done}
         assessed={assessed === "1"}

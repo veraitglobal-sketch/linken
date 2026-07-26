@@ -55,6 +55,16 @@ export function applyLogoWallOrder<T extends { id: string }>(
   return ordered;
 }
 
+/**
+ * Logo wall display precedence (highest first):
+ * 1. Wall owner's override for THIS wall
+ * 2. Partner profile logo (logo_url / logo_source=manual)
+ * 3. Auto-fetched logo (logo_url / logo_source=auto)
+ * 4. Initials (caller / EmbedBareLogo)
+ *
+ * `allow_logo_in_partner_widgets = false` forces text — overrides are ignored.
+ * Changing a partner profile logo never clears another wall's override.
+ */
 export function displayLogoForWall(input: {
   showLogo: boolean;
   profileLogoUrl: string | null;

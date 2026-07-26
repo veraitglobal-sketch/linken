@@ -59,7 +59,7 @@ export function LogoWallStudioRow({ entry, onDragStart, onDrop }: Props) {
         name={entry.name}
         initials={entry.initials}
         logoUrl={entry.showLogo ? entry.logoUrl : null}
-        website={entry.website}
+        website={entry.showLogo ? entry.website : null}
         size="sm"
       />
       <div className="min-w-0 flex-1">

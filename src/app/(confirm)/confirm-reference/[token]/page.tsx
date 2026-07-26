@@ -7,6 +7,7 @@ import {
   suggestedWebsiteFromEmail,
 } from "@/features/acquisition/listing-companies";
 import { hasAssessmentForSource } from "@/features/assessments/queries";
+import { loadPostConfirmSubject } from "@/features/confirm/post-confirm-subject";
 import { getReferencePreview } from "@/features/references/queries";
 import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
 
@@ -63,6 +64,16 @@ export default async function ConfirmReferencePage({
       })
     : [];
 
+  const subject = confirmed
+    ? await loadPostConfirmSubject("reference", token, {
+        requesterName: preview.providerName,
+        requesterSlug: preview.providerSlug,
+        companyId: company?.id ?? null,
+        companyName: company?.name ?? preview.clientName,
+        companySlug: company?.slug ?? null,
+      })
+    : null;
+
   return (
     <ConfirmPage
       eyebrow="Hansala · Reference confirmation"
@@ -81,6 +92,7 @@ export default async function ConfirmReferencePage({
         }
         listings={listings}
         suggestedWebsite={suggestedWebsiteFromEmail(preview.inviteEmail)}
+        subject={subject}
         error={error}
         done={done}
         assessed={assessed === "1"}
