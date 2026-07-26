@@ -13,6 +13,8 @@ type Props = {
   showEmbed: boolean;
   showEditProfile: boolean;
   siteUrl: string;
+  bookingUrl?: string | null;
+  bookingLabel?: string;
 };
 
 export function CompanyHeroActions({
@@ -26,9 +28,20 @@ export function CompanyHeroActions({
   showEmbed,
   showEditProfile,
   siteUrl,
+  bookingUrl = null,
+  bookingLabel = "Book a call",
 }: Props) {
   return (
     <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
+      {bookingUrl ? (
+        <Button
+          href={bookingUrl}
+          variant="light"
+          className="h-11 min-w-[150px] px-5"
+        >
+          {bookingLabel}
+        </Button>
+      ) : null}
       {showContact ? (
         <InquiryForm
           companySlug={slug}

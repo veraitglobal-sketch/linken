@@ -6,6 +6,7 @@ import { LogoMark } from "@/components/ui/logo-mark";
 import { SocialIcons } from "@/components/ui/social-icons";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
+import { getSchedulingForCompanyId } from "@/features/scheduling/queries";
 import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
 import { COMPANY_SHARE_PREFIX } from "@/lib/site";
@@ -21,7 +22,7 @@ type Props = {
   groupBadge?: ConfirmedGroupBadge | null;
 };
 
-export function CompanyHeroBand({
+export async function CompanyHeroBand({
   company,
   trustLevel = "Member",
   showContact = false,
@@ -33,6 +34,10 @@ export function CompanyHeroBand({
 }: Props) {
   const accepting = company.acceptingClients !== false;
   const claimed = company.claimed !== false;
+  const scheduling =
+    claimed && company.id
+      ? await getSchedulingForCompanyId(company.id)
+      : null;
 
   return (
     <section className="px-4 pt-3">
@@ -144,6 +149,8 @@ export function CompanyHeroBand({
               showEmbed={showEmbed}
               showEditProfile={showEditProfile}
               siteUrl={siteUrl}
+              bookingUrl={scheduling?.url}
+              bookingLabel={scheduling?.label}
             />
           </div>
         </div>

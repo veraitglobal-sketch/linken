@@ -56,4 +56,8 @@ export const WORKSPACE_PAGE_META: Record<
     title: "API",
     description: "Agent keys for your company.",
   },
+  "/dashboard/integrations": {
+    title: "Integrations",
+    description: "Connect Calendly or Cal.com for booking.",
+  },
 };

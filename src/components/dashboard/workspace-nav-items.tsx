@@ -140,6 +140,13 @@ export const MORE_NAV: NavItem[] = [
     section: "widgets",
   },
   {
+    href: "/dashboard/integrations",
+    label: "Integrations",
+    icon: IconWidgets,
+    companyOnly: true,
+    section: "settings",
+  },
+  {
     href: "/dashboard/api",
     label: "API",
     icon: IconKey,

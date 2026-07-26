@@ -29,9 +29,14 @@ const SECTION_LOGIN: Record<WorkspaceSection, string> = {
 };
 
 /** Company workspace + member section permission (server-side). */
-export async function assertCompanySection(section: WorkspaceSection) {
+export async function assertCompanySection(
+  section: WorkspaceSection,
+  opts?: { loginNext?: string },
+) {
   const gated = await assertCompanyWorkspace();
   if (gated.needsCompanySwitch || !gated.company) return gated;
-  await assertSectionAccess(section, { loginNext: SECTION_LOGIN[section] });
+  await assertSectionAccess(section, {
+    loginNext: opts?.loginNext ?? SECTION_LOGIN[section],
+  });
   return gated;
 }
