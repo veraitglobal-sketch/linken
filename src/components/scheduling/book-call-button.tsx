@@ -1,54 +1,26 @@
-"use client";
-
-import { useState } from "react";
-import { BookSheet } from "@/components/scheduling/book-sheet";
 import { Button } from "@/components/ui/button";
-import type { SchedulingProvider } from "@/features/scheduling/types";
 
 type Props = {
   companySlug: string;
-  companyName: string;
-  logoInitials: string;
-  logoUrl?: string | null;
-  bookingUrl: string;
-  provider: SchedulingProvider | null;
   label?: string;
   className?: string;
 };
 
+/** Opens the branded booking page in a new tab (no overlay on the profile). */
 export function BookCallButton({
   companySlug,
-  companyName,
-  logoInitials,
-  logoUrl,
-  bookingUrl,
-  provider,
   label = "Book a call",
   className,
 }: Props) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <>
-      <Button
-        type="button"
-        variant="light"
-        className={className ?? "h-11 min-w-[150px] px-5"}
-        onClick={() => setOpen(true)}
-      >
-        {label}
-      </Button>
-      <BookSheet
-        open={open}
-        onClose={() => setOpen(false)}
-        profileHref={`/c/${companySlug}`}
-        companyName={companyName}
-        logoInitials={logoInitials}
-        logoUrl={logoUrl}
-        bookingUrl={bookingUrl}
-        provider={provider}
-        label={label}
-      />
-    </>
+    <Button
+      href={`/c/${companySlug}/book`}
+      target="_blank"
+      rel="noopener noreferrer"
+      variant="light"
+      className={className ?? "h-11 min-w-[150px] px-5"}
+    >
+      {label}
+    </Button>
   );
 }

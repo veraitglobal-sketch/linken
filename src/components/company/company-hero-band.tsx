@@ -151,9 +151,6 @@ export async function CompanyHeroBand({
               siteUrl={siteUrl}
               bookingUrl={scheduling?.url}
               bookingLabel={scheduling?.label}
-              bookingProvider={scheduling?.provider ?? null}
-              logoInitials={company.logoInitials}
-              logoUrl={company.logoUrl}
             />
           </div>
         </div>

@@ -2,7 +2,6 @@ import { EmbedSnippetButton } from "@/components/company/embed-snippet-button";
 import { InquiryForm } from "@/components/inquiries/inquiry-form";
 import { BookCallButton } from "@/components/scheduling/book-call-button";
 import { Button } from "@/components/ui/button";
-import type { SchedulingProvider } from "@/features/scheduling/types";
 
 type Props = {
   slug: string;
@@ -17,9 +16,6 @@ type Props = {
   siteUrl: string;
   bookingUrl?: string | null;
   bookingLabel?: string;
-  bookingProvider?: SchedulingProvider | null;
-  logoInitials?: string;
-  logoUrl?: string | null;
 };
 
 export function CompanyHeroActions({
@@ -35,22 +31,11 @@ export function CompanyHeroActions({
   siteUrl,
   bookingUrl = null,
   bookingLabel = "Book a call",
-  bookingProvider = null,
-  logoInitials = "?",
-  logoUrl = null,
 }: Props) {
   return (
     <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
       {bookingUrl ? (
-        <BookCallButton
-          companySlug={slug}
-          companyName={name}
-          logoInitials={logoInitials}
-          logoUrl={logoUrl}
-          bookingUrl={bookingUrl}
-          provider={bookingProvider}
-          label={bookingLabel}
-        />
+        <BookCallButton companySlug={slug} label={bookingLabel} />
       ) : null}
       {showContact ? (
         <InquiryForm

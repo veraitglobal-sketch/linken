@@ -25,6 +25,8 @@ const textColor: Record<Variant, string> = {
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant;
   href?: string;
+  target?: string;
+  rel?: string;
   children?: ReactNode;
 };
 
@@ -32,6 +34,8 @@ export function Button({
   variant = "primary",
   className,
   href,
+  target,
+  rel,
   children,
   ...props
 }: Props) {
@@ -50,7 +54,7 @@ export function Button({
 
   if (href) {
     return (
-      <a href={href} className={classes} style={style}>
+      <a href={href} target={target} rel={rel} className={classes} style={style}>
         <span className="inline-flex items-center leading-none" style={style}>
           {children}
         </span>
