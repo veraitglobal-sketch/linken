@@ -303,23 +303,6 @@ a {
   background: var(--navy);
 }
 
-.hero-media {
-  transform: scale(1.04);
-  transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.hero-live:hover .hero-media {
-  transform: scale(1.08);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-media,
-  .hero-live:hover .hero-media {
-    transform: none;
-    transition: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .animate-rise,
   .animate-rise-delay,
