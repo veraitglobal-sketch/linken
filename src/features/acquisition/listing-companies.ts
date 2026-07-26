@@ -135,6 +135,7 @@ function addProvider(
     logoUrl: companyDisplayLogoUrl({
       logoUrl: provider.logo_url ?? null,
       website,
+      allowFavicon: false,
     }),
     logoInitials: initialsFromName(provider.name),
   });

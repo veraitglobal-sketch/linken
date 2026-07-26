@@ -1,4 +1,5 @@
 import type { LogoWallOverride } from "@/features/widgets/settings";
+import { isFaviconLogoUrl } from "@/features/logo/display-url";
 
 export type LogoWallLogoState =
   | "profile"
@@ -9,14 +10,7 @@ export type LogoWallLogoState =
   | "opted_out";
 
 export function isLowQualityLogoUrl(url: string | null | undefined): boolean {
-  if (!url) return false;
-  const u = url.toLowerCase();
-  return (
-    u.includes("favicon") ||
-    u.includes("google.com/s2/favicons") ||
-    u.includes("icons.duckduckgo.com") ||
-    /\/favicon\.(ico|png)/.test(u)
-  );
+  return isFaviconLogoUrl(url);
 }
 
 export function resolveLogoWallState(input: {
@@ -86,8 +80,14 @@ export function displayLogoForWall(input: {
     };
   }
   const o = input.override;
+  const overrideUrl = o?.logoUrl?.trim() || null;
+  // Override always wins when set. Profile/auto never show favicons on the wall.
+  let logoUrl = overrideUrl || input.profileLogoUrl?.trim() || null;
+  if (logoUrl && !overrideUrl && isFaviconLogoUrl(logoUrl)) {
+    logoUrl = null;
+  }
   return {
-    logoUrl: o?.logoUrl?.trim() || input.profileLogoUrl,
+    logoUrl,
     scale: o?.scale ?? 1,
     padding: o?.padding ?? 0,
     grayscale: o?.grayscale === true,

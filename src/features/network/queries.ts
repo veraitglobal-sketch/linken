@@ -87,6 +87,7 @@ async function companyNode(
     logoUrl: companyDisplayLogoUrl({
       logoUrl: row.logo_url,
       website: row.website,
+      allowFavicon: false,
     }),
     website: row.website ?? null,
     logoSource: row.logo_source ?? null,

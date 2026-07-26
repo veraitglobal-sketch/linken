@@ -1,7 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { faviconFallbackUrls } from "@/features/logo/display-url";
+import {
+  faviconFallbackUrls,
+  isFaviconLogoUrl,
+} from "@/features/logo/display-url";
 import { cn } from "@/lib/cn";
 
 export type LogoTileSize = "xs" | "sm" | "md";
@@ -10,34 +13,32 @@ type Props = {
   name: string;
   initials: string;
   logoUrl?: string | null;
-  /** Favicon fallbacks when logo_url is missing/broken. */
+  /** Used only when allowFavicon — workspace switcher / structure. */
   website?: string | null;
-  /** Name beside the tile (`text-[12px]` truncate). */
-  showName?: boolean;
-  /** Grayscale + opacity on tile *content* only — not the frame. */
-  mono?: boolean;
   /**
-   * Frame contrast on dark embed shells. Tiles stay white (logos never inverted).
+   * Favicons in round partner marks look bad. Default false.
+   * Workspace switcher uses LogoMark (favicons ok). Pass true only when needed.
    */
+  allowFavicon?: boolean;
+  showName?: boolean;
+  mono?: boolean;
   frameTone?: "light" | "dark";
   size?: LogoTileSize;
-  /** Circle mark for constellation graph nodes. */
   shape?: "tile" | "circle";
   className?: string;
-  /** Soften tile when awaiting / unverified (configurator, map). */
   muted?: boolean;
 };
 
 const BOX: Record<LogoTileSize, string> = {
-  xs: "h-6 w-6", // 24px — proof-row stack
-  sm: "h-9 w-9", // 36px
-  md: "h-11 w-11", // 44px
+  xs: "h-6 w-6",
+  sm: "h-9 w-9",
+  md: "h-11 w-11",
 };
 
 const PAD: Record<LogoTileSize, string> = {
   xs: "p-0.5",
   sm: "p-1",
-  md: "p-1.5", // ~6px
+  md: "p-1.5",
 };
 
 const RADIUS: Record<LogoTileSize, string> = {
@@ -52,15 +53,13 @@ const INITIALS: Record<LogoTileSize, string> = {
   md: "text-[11px]",
 };
 
-/**
- * Uniform company logo pločica — favicon, wordmark, or initials.
- * Never render logos raw outside this tile.
- */
+/** Real logo or initials. Favicons only when allowFavicon is true. */
 export function LogoTile({
   name,
   initials,
   logoUrl,
   website,
+  allowFavicon = false,
   showName = false,
   mono = false,
   frameTone = "light",
@@ -72,12 +71,16 @@ export function LogoTile({
   const candidates = useMemo(() => {
     const list: string[] = [];
     const primary = logoUrl?.trim();
-    if (primary) list.push(primary);
-    for (const url of faviconFallbackUrls(website)) {
-      if (!list.includes(url)) list.push(url);
+    if (primary && (allowFavicon || !isFaviconLogoUrl(primary))) {
+      list.push(primary);
+    }
+    if (allowFavicon) {
+      for (const url of faviconFallbackUrls(website)) {
+        if (!list.includes(url)) list.push(url);
+      }
     }
     return list;
-  }, [logoUrl, website]);
+  }, [logoUrl, website, allowFavicon]);
 
   const candidateKey = candidates.join("|");
   const [index, setIndex] = useState(0);

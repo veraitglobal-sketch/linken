@@ -43,6 +43,7 @@ export async function getReferencesForCompany(
       const logoUrl = companyDisplayLogoUrl({
         logoUrl: (client?.logo_url as string | null) ?? null,
         website,
+        allowFavicon: false,
       });
       return {
         id: row.id,

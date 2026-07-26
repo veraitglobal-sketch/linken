@@ -93,6 +93,7 @@ export async function getPartnersForCompany(
         logoUrl: companyDisplayLogoUrl({
           logoUrl: other.logo_url as string | null,
           website: other.website as string | null,
+          allowFavicon: false,
         }),
         status: "accepted",
         partnershipId: row.id as string,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { faviconFallbackUrls } from "@/features/logo/display-url";
+import { isFaviconLogoUrl } from "@/features/logo/display-url";
 import type { LogoSize } from "@/features/widgets/logo-motion";
 import { LOGO_SIZE_PX } from "@/features/widgets/logo-motion";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
@@ -11,6 +11,7 @@ type Props = {
   name: string;
   initials: string;
   logoUrl?: string | null;
+  /** Kept for API compat — favicons are never used on partner walls. */
   website?: string | null;
   theme?: EmbedTheme;
   /** Monochrome mark — premium default for logo walls. */
@@ -31,7 +32,6 @@ export function EmbedBareLogo({
   name,
   initials,
   logoUrl,
-  website,
   theme = "light",
   mono = true,
   size = "md",
@@ -45,15 +45,10 @@ export function EmbedBareLogo({
   const candidates = useMemo(() => {
     const list: string[] = [];
     const primary = logoUrl?.trim();
-    if (primary) list.push(primary);
-    // Custom / curated overrides should not fall back to favicons.
-    if (!primary) {
-      for (const url of faviconFallbackUrls(website)) {
-        if (!list.includes(url)) list.push(url);
-      }
-    }
+    // Never favicons on partner walls — initials if no real mark.
+    if (primary && !isFaviconLogoUrl(primary)) list.push(primary);
     return list;
-  }, [logoUrl, website]);
+  }, [logoUrl]);
 
   const key = candidates.join("|");
   const [index, setIndex] = useState(0);
