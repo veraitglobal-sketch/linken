@@ -657,6 +657,27 @@ export default function DevelopersPage() {
                   Clients on v1 keep working. New major versions only when the
                   meaning of a field must change.
                 </p>
+                <p className="mt-5 text-[13px] text-ink-soft">
+                  <a href="/api/v1/openapi" className="font-semibold text-ink underline underline-offset-2">
+                    OpenAPI
+                  </a>
+                  {" · "}
+                  <a href="/developers/webhooks" className="font-semibold text-ink underline underline-offset-2">
+                    Webhooks
+                  </a>
+                  {" · "}
+                  <a href="/changelog" className="font-semibold text-ink underline underline-offset-2">
+                    Changelog
+                  </a>
+                  {" · "}
+                  <a href="/status" className="font-semibold text-ink underline underline-offset-2">
+                    Status
+                  </a>
+                  {" · "}
+                  <a href="/developers/api-terms" className="font-semibold text-ink underline underline-offset-2">
+                    API Terms
+                  </a>
+                </p>
               </div>
             </div>
           </section>

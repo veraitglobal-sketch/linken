@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { DOCS_NAV } from "@/components/developers/docs-content";
+import { DocsPlatformLinks } from "@/components/developers/docs-platform-links";
 import { cn } from "@/lib/cn";
 
 function flattenIds() {
@@ -128,6 +129,7 @@ export function DocsShell({ children }: Props) {
                 );
               })}
             </ul>
+            <DocsPlatformLinks />
           </div>
         </nav>
 

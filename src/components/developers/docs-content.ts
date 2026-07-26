@@ -37,6 +37,16 @@ export const DOCS_NAV: NavItem[] = [
   { id: "versioning", label: "Versioning" },
 ];
 
+/** External / legal links shown under docs nav Contents. */
+export const DOCS_LINKS = [
+  { href: "/api/v1/openapi", label: "OpenAPI" },
+  { href: "/developers/webhooks", label: "Webhooks" },
+  { href: "/developers/api-terms", label: "API Terms" },
+  { href: "/changelog", label: "Changelog" },
+  { href: "/status", label: "Status" },
+  { href: "/security", label: "Security" },
+] as const;
+
 export type FieldRow = {
   name: string;
   type: string;
