@@ -57,6 +57,9 @@ export default async function DashboardWidgetsPage() {
   const confirmedRefs = references.filter((r) => r.status === "confirmed");
   const isPro = getEntitlements(company.plan).premiumEmbeds;
   const hasProof = confirmedRefs.length > 0;
+  const domainReady = Boolean(
+    company.verified && company.website?.trim(),
+  );
 
   const availability = {
     verified: true,
@@ -89,6 +92,7 @@ export default async function DashboardWidgetsPage() {
         siteUrl={siteUrl}
         slug={company.slug}
         isPro={isPro}
+        domainReady={domainReady}
         availability={availability}
       />
     </WorkspacePage>

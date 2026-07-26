@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ConfirmPage } from "@/components/confirm/confirm-page";
 import { ConfirmPanel } from "@/components/confirm/confirm-panel";
+import {
+  getCompaniesListingClient,
+  suggestedWebsiteFromEmail,
+} from "@/features/acquisition/listing-companies";
 import { hasAssessmentForSource } from "@/features/assessments/queries";
 import {
   getClientConfirmationByToken,
@@ -48,10 +52,18 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
     );
   }
 
-  const alreadyAssessed =
-    view.status === "confirmed" || done === "confirmed"
-      ? await hasAssessmentForSource("confirmation", view.id)
-      : false;
+  const confirmed = done === "confirmed" || view.status === "confirmed";
+  const alreadyAssessed = confirmed
+    ? await hasAssessmentForSource("confirmation", view.id)
+    : false;
+
+  const listings = confirmed
+    ? await getCompaniesListingClient({
+        clientCompanyId: view.confirmedByCompanyId ?? company?.id ?? null,
+        clientName: view.confirmerName ?? company?.name ?? "",
+        email: view.email,
+      })
+    : [];
 
   return (
     <ConfirmPage
@@ -63,6 +75,8 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
         view={view}
         userId={user?.id ?? null}
         company={company}
+        listings={listings}
+        suggestedWebsite={suggestedWebsiteFromEmail(view.email)}
         error={error}
         done={done}
         assessed={assessed === "1"}

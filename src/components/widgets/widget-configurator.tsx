@@ -12,6 +12,7 @@ type Props = {
   siteUrl: string;
   slug: string;
   isPro: boolean;
+  domainReady: boolean;
   onClose: () => void;
 };
 
@@ -22,6 +23,7 @@ export function WidgetConfigurator({
   siteUrl,
   slug,
   isPro,
+  domainReady,
   onClose,
 }: Props) {
   const titleId = useId();
@@ -144,6 +146,7 @@ export function WidgetConfigurator({
         ) : (
           <WidgetCodeStep
             proLocked={proLocked}
+            domainReady={domainReady}
             tokens={studio.tokens}
             copied={copied}
             onCopy={copy}

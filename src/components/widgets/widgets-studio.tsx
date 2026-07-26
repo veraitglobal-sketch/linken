@@ -17,6 +17,8 @@ type Props = {
   slug: string;
   availability: Availability;
   isPro: boolean;
+  /** Verified domain present — badge can frame on the company site. */
+  domainReady: boolean;
 };
 
 export function WidgetsStudio({
@@ -24,6 +26,7 @@ export function WidgetsStudio({
   slug,
   availability,
   isPro,
+  domainReady,
 }: Props) {
   const [active, setActive] = useState<WidgetDefinition | null>(null);
   const essential = useMemo(
@@ -85,6 +88,7 @@ export function WidgetsStudio({
           siteUrl={siteUrl}
           slug={slug}
           isPro={isPro}
+          domainReady={domainReady}
           onClose={() => setActive(null)}
         />
       ) : null}

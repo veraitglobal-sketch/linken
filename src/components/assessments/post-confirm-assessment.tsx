@@ -11,6 +11,8 @@ type Props = {
   alreadyAssessed: boolean;
   assessedJustNow?: boolean;
   skipped?: boolean;
+  /** When acquisition card already shows the confirmed state. */
+  hideConfirmedBanner?: boolean;
 };
 
 export function PostConfirmAssessment({
@@ -22,8 +24,10 @@ export function PostConfirmAssessment({
   alreadyAssessed,
   assessedJustNow = false,
   skipped = false,
+  hideConfirmedBanner = false,
 }: Props) {
   if (assessedJustNow || alreadyAssessed || skipped) {
+    if (hideConfirmedBanner) return null;
     const title = assessedJustNow
       ? "Thanks for sharing"
       : skipped
@@ -50,14 +54,16 @@ export function PostConfirmAssessment({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[24px] border border-[#1a5c51]/25 bg-[#1a5c51]/8 px-5 py-5 text-center sm:px-7">
-        <h2 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
-          Confirmed
-        </h2>
-        <p className="mx-auto mt-2 max-w-md text-[14px] text-ink-soft">
-          Thank you — this is now verified on Hansala.
-        </p>
-      </div>
+      {hideConfirmedBanner ? null : (
+        <div className="rounded-[24px] border border-[#1a5c51]/25 bg-[#1a5c51]/8 px-5 py-5 text-center sm:px-7">
+          <h2 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
+            Confirmed
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-[14px] text-ink-soft">
+            Thank you — this is now verified on Hansala.
+          </p>
+        </div>
+      )}
       <AssessmentForm
         sourceType={sourceType}
         sourceId={sourceId}

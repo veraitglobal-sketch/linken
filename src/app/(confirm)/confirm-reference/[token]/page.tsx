@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ConfirmPage } from "@/components/confirm/confirm-page";
 import { ConfirmReferencePanel } from "@/components/references/confirm-reference-panel";
+import {
+  getCompaniesListingClient,
+  suggestedWebsiteFromEmail,
+} from "@/features/acquisition/listing-companies";
 import { hasAssessmentForSource } from "@/features/assessments/queries";
 import { getReferencePreview } from "@/features/references/queries";
 import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
@@ -46,10 +50,18 @@ export default async function ConfirmReferencePage({
     );
   }
 
-  const alreadyAssessed =
-    preview.status === "confirmed" || done === "confirmed"
-      ? await hasAssessmentForSource("reference", preview.id)
-      : false;
+  const confirmed = done === "confirmed" || preview.status === "confirmed";
+  const alreadyAssessed = confirmed
+    ? await hasAssessmentForSource("reference", preview.id)
+    : false;
+
+  const listings = confirmed
+    ? await getCompaniesListingClient({
+        clientCompanyId: company?.id ?? null,
+        clientName: preview.clientName,
+        email: preview.inviteEmail,
+      })
+    : [];
 
   return (
     <ConfirmPage
@@ -62,7 +74,13 @@ export default async function ConfirmReferencePage({
         token={token}
         userId={user?.id ?? null}
         userEmail={user?.email ?? null}
-        company={company ? { id: company.id, name: company.name } : null}
+        company={
+          company
+            ? { id: company.id, name: company.name, slug: company.slug }
+            : null
+        }
+        listings={listings}
+        suggestedWebsite={suggestedWebsiteFromEmail(preview.inviteEmail)}
         error={error}
         done={done}
         assessed={assessed === "1"}

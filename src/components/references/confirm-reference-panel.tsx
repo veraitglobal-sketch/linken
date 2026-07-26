@@ -1,7 +1,9 @@
+import { PostConfirmAcquisition } from "@/components/confirm/post-confirm-acquisition";
 import { PostConfirmAssessment } from "@/components/assessments/post-confirm-assessment";
 import { InviteAuth } from "@/components/auth/invite-auth";
 import { ConfirmCompanyForm } from "@/components/confirm/confirm-company-form";
 import { signOutTo } from "@/features/auth/actions";
+import type { ListingCompany } from "@/features/acquisition/listing-companies";
 import {
   confirmServiceReference,
   declineServiceReference,
@@ -14,7 +16,9 @@ type Props = {
   token: string;
   userId: string | null;
   userEmail: string | null;
-  company: { id: string; name: string } | null;
+  company: { id: string; name: string; slug: string } | null;
+  listings: ListingCompany[];
+  suggestedWebsite: string;
   error?: string;
   done?: string;
   assessed?: boolean;
@@ -28,6 +32,8 @@ export function ConfirmReferencePanel({
   userId,
   userEmail,
   company,
+  listings,
+  suggestedWebsite,
   error,
   done,
   assessed = false,
@@ -47,6 +53,14 @@ export function ConfirmReferencePanel({
     return (
       <div className="space-y-4">
         {error ? <ErrorNote>{error}</ErrorNote> : null}
+        <PostConfirmAcquisition
+          listings={listings}
+          suggestedName={company?.name || preview.clientName}
+          suggestedWebsite={suggestedWebsite}
+          existingProfile={
+            company ? { slug: company.slug, name: company.name } : null
+          }
+        />
         <PostConfirmAssessment
           sourceType="reference"
           sourceId={preview.id}
@@ -56,6 +70,7 @@ export function ConfirmReferencePanel({
           alreadyAssessed={alreadyAssessed}
           assessedJustNow={assessed}
           skipped={skipped}
+          hideConfirmedBanner
         />
       </div>
     );

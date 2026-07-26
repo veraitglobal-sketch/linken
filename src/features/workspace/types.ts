@@ -28,6 +28,7 @@ export type DashboardCompany = {
   slug: string;
   category: string;
   city: string;
+  website: string;
   verified: boolean;
   acceptingClients: boolean;
   plan: import("@/features/plan/entitlements").CompanyPlan;

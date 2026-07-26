@@ -1,7 +1,9 @@
+import { PostConfirmAcquisition } from "@/components/confirm/post-confirm-acquisition";
 import { PostConfirmAssessment } from "@/components/assessments/post-confirm-assessment";
 import { ConfirmAuth } from "@/components/confirm/confirm-auth";
 import { ConfirmCompanyForm } from "@/components/confirm/confirm-company-form";
 import { ConfirmDecision } from "@/components/confirm/confirm-decision";
+import type { ListingCompany } from "@/features/acquisition/listing-companies";
 import type { ClientConfirmationView } from "@/types/client-confirmation";
 
 type ViewerCompany = {
@@ -14,6 +16,8 @@ type Props = {
   view: ClientConfirmationView;
   userId: string | null;
   company: ViewerCompany;
+  listings: ListingCompany[];
+  suggestedWebsite: string;
   error?: string;
   done?: string;
   assessed?: boolean;
@@ -25,6 +29,8 @@ export function ConfirmPanel({
   view,
   userId,
   company,
+  listings,
+  suggestedWebsite,
   error,
   done,
   assessed = false,
@@ -35,6 +41,12 @@ export function ConfirmPanel({
   const confirmed = done === "confirmed" || view.status === "confirmed";
 
   if (confirmed) {
+    const suggestedName =
+      view.confirmerName?.trim() ||
+      company?.name ||
+      view.email.split("@")[0] ||
+      "Your company";
+
     return (
       <div className="space-y-4">
         {error ? (
@@ -42,6 +54,14 @@ export function ConfirmPanel({
             {error}
           </p>
         ) : null}
+        <PostConfirmAcquisition
+          listings={listings}
+          suggestedName={suggestedName}
+          suggestedWebsite={suggestedWebsite}
+          existingProfile={
+            company ? { slug: company.slug, name: company.name } : null
+          }
+        />
         <PostConfirmAssessment
           sourceType="confirmation"
           sourceId={view.id}
@@ -51,6 +71,7 @@ export function ConfirmPanel({
           alreadyAssessed={alreadyAssessed}
           assessedJustNow={assessed}
           skipped={skipped}
+          hideConfirmedBanner
         />
       </div>
     );

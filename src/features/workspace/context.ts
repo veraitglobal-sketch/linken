@@ -37,7 +37,7 @@ async function loadCompanySession(
   let query = supabase
     .from("companies")
     .select(
-      "id, name, slug, category, city, verified, accepting_clients, plan, radar, receive_intros, intro_suspended_until, claimed",
+      "id, name, slug, category, city, website, verified, accepting_clients, plan, radar, receive_intros, intro_suspended_until, claimed",
     )
     .eq("id", companyId);
 
@@ -71,6 +71,7 @@ async function loadCompanySession(
     slug: data.slug,
     category: (data.category as string) ?? "",
     city: (data.city as string) ?? "",
+    website: (data.website as string) ?? "",
     verified: Boolean(data.verified),
     acceptingClients: data.accepting_clients !== false,
     plan: parsePlan(data.plan),

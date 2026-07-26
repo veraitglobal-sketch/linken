@@ -1,11 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { CodeBlock } from "@/components/developers/code-block";
 import type { CodeToken } from "@/components/developers/highlight";
 import { Button } from "@/components/ui/button";
 
 type Props = {
   proLocked: boolean;
+  /** True when company has a verified website domain for frame-ancestors. */
+  domainReady: boolean;
   tokens: CodeToken[];
   copied: boolean;
   onCopy: () => void;
@@ -15,6 +18,7 @@ type Props = {
 
 export function WidgetCodeStep({
   proLocked,
+  domainReady,
   tokens,
   copied,
   onCopy,
@@ -34,19 +38,34 @@ export function WidgetCodeStep({
               your site. Preview still uses your live profile data.
             </p>
             <p className="mt-4 text-[11px] font-semibold tracking-[0.1em] text-plus uppercase">
-              <a
+              <Link
                 href="/dashboard/billing"
                 className="underline-offset-2 hover:underline"
               >
                 Upgrade to Pro
-              </a>
+              </Link>
             </p>
           </div>
         ) : (
           <>
+            {!domainReady ? (
+              <div className="mb-4 rounded-2xl border border-ember/30 bg-ember/5 px-4 py-3 text-[13px] leading-relaxed text-ink-soft">
+                <p className="font-semibold text-ink">Verify your website first</p>
+                <p className="mt-1">
+                  Until your domain is verified, browsers will only allow this
+                  badge on Hansala itself — not on customer sites.{" "}
+                  <Link
+                    href="/dashboard/verification"
+                    className="font-semibold text-ink underline-offset-2 hover:underline"
+                  >
+                    Go to Verification
+                  </Link>
+                </p>
+              </div>
+            ) : null}
             <p className="text-[13px] leading-relaxed text-ink">
-              Paste this iframe on your site. It links to your Hansala profile and
-              can count toward website backlink verification.
+              Paste this iframe on your verified website. It only renders as
+              trusted there (and in your Hansala preview).
             </p>
             <div className="relative mt-4 overflow-hidden rounded-2xl bg-navy-deep ring-1 ring-navy">
               <button
