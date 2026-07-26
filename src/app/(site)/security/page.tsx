@@ -40,6 +40,10 @@ export default function SecurityPage() {
         steps to reproduce. Please allow reasonable time before public
         disclosure. Do not access other customers’ data while testing.
       </p>
+      <p>
+        Machine-readable disclosure:{" "}
+        <a href="/.well-known/security.txt">/.well-known/security.txt</a>
+      </p>
 
       <h2>More</h2>
       <p>

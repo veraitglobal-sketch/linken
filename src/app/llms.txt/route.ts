@@ -14,7 +14,8 @@ export function GET() {
 
 ## Docs
 - [Developers](${siteUrl}/developers): Public API contract, Agent API (Pro), embeds, and error shapes.
-- [OpenAPI](${siteUrl}/api/v1/openapi): Agent API discovery document.
+- [OpenAPI index](${siteUrl}/api/v1/openapi): Public + Agent discovery.
+- [Public OpenAPI](${siteUrl}/api/v1/openapi/public) · [Agent OpenAPI](${siteUrl}/api/v1/openapi/agent)
 - [Changelog](${siteUrl}/changelog) · [Status](${siteUrl}/status) · [Security](${siteUrl}/security)
 - [API Terms](${siteUrl}/developers/api-terms) · [Privacy](${siteUrl}/privacy) · [Terms](${siteUrl}/terms)
 

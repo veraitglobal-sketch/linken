@@ -22,6 +22,6 @@ export const config = {
     "/partners/requests",
     "/transfer/:path*",
     "/requests/:path*",
-    "/api/((?!v1/agent|v1/openapi|webhooks/|badge/).*)",
+    "/api/((?!v1/agent|v1/openapi|health|webhooks/|badge/).*)",
   ],
 };

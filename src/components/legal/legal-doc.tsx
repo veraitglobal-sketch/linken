@@ -18,7 +18,7 @@ export function LegalDoc({ eyebrow, title, updated, children }: Props) {
         {title}
       </h1>
       <p className="mt-2 text-[13px] text-muted">Last updated {updated}</p>
-      <div className="prose-legal mt-10 space-y-6 text-[15px] leading-relaxed text-ink-soft [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-medium [&_h2]:tracking-[-0.03em] [&_h2]:text-ink [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5 [&_a]:font-semibold [&_a]:text-ink [&_a]:underline-offset-2 hover:[&_a]:underline">
+      <div className="prose-legal mt-10 space-y-6 text-[15px] leading-relaxed text-ink [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-medium [&_h2]:tracking-[-0.03em] [&_h2]:text-ink [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5 [&_a]:font-semibold [&_a]:text-ink [&_a]:underline-offset-2 hover:[&_a]:underline [&_table]:my-0 [&_table]:w-full">
         {children}
       </div>
     </article>

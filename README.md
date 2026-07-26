@@ -35,10 +35,14 @@ Functions deploy to **fra1** via [`vercel.json`](vercel.json).
 | Surface | URL |
 |---------|-----|
 | Docs | `/developers` |
-| OpenAPI (Agent API) | `/api/v1/openapi` |
+| OpenAPI index | `/api/v1/openapi` |
+| Public OpenAPI | `/api/v1/openapi/public` |
+| Agent OpenAPI | `/api/v1/openapi/agent` |
+| Health | `/api/health` |
 | Webhooks (roadmap) | `/developers/webhooks` |
 | Changelog / Status | `/changelog` · `/status` |
 | Legal | `/privacy` · `/terms` · `/security` · `/developers/api-terms` |
+| security.txt | `/.well-known/security.txt` |
 
 **Agent API / MCP (Pro):** create an `hs_` key in Workspace → API. For Cursor MCP, copy `.cursor/mcp.json.example` → `.cursor/mcp.json`, set `HANSALA_AGENT_API_KEY`, and run `npm install` in `mcp/hansala`. Same key as HTTP Bearer auth — no separate MCP secret.
 

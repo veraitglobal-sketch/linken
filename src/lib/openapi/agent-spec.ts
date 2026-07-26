@@ -1,8 +1,13 @@
 import { AGENT_OPENAPI_PATHS } from "@/lib/openapi/agent-paths";
+import {
+  OPENAPI_CONTACT,
+  OPENAPI_DOCS,
+  OPENAPI_LICENSE,
+  OPENAPI_TERMS,
+} from "@/lib/openapi/shared";
 
-/** Build OpenAPI 3.1 discovery for Hansala Agent API v1. */
+/** OpenAPI 3.1 discovery for Hansala Agent API v1. */
 export function buildAgentOpenApi(siteUrl: string) {
-  const base = `${siteUrl}/api/v1/agent`;
   return {
     openapi: "3.1.0",
     info: {
@@ -10,20 +15,16 @@ export function buildAgentOpenApi(siteUrl: string) {
       version: "1.1.0",
       summary: "Authenticated Agent API for Pro companies (Bearer hs_ keys).",
       description:
-        "Pro plan. Bearer hs_ keys. Image uploads use PUT (POST → 405). Agents invite only — never auto-confirm. Free keys → 403 plan_required. Human docs: https://www.hansala.com/developers",
-      termsOfService: "https://www.hansala.com/developers/api-terms",
-      contact: {
-        name: "Hansala Developers",
-        url: "https://www.hansala.com/developers",
-        email: "developers@hansala.com",
-      },
-      license: { name: "Proprietary", url: "https://www.hansala.com/terms" },
+        "Pro plan. Bearer hs_ keys. PUT for image uploads (POST → 405). Agents invite only — never auto-confirm. Free keys → 403 plan_required.",
+      termsOfService: OPENAPI_TERMS,
+      contact: OPENAPI_CONTACT,
+      license: OPENAPI_LICENSE,
     },
     externalDocs: {
       description: "Developer docs, embeds, MCP",
-      url: "https://www.hansala.com/developers",
+      url: OPENAPI_DOCS,
     },
-    servers: [{ url: base }],
+    servers: [{ url: `${siteUrl}/api/v1/agent` }],
     security: [{ bearerAuth: [] }],
     components: {
       securitySchemes: {

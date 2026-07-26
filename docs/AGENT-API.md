@@ -6,7 +6,7 @@ Base URL: `https://hansala.com/api/v1/agent` (local: `http://localhost:3000/api/
 
 Auth: `Authorization: Bearer hs_...` (legacy `lk_` still accepted)
 
-OpenAPI: `GET /api/v1/openapi` (full agent route index)
+OpenAPI: `GET /api/v1/openapi` (index) · `GET /api/v1/openapi/agent` (full agent route index)
 
 ## Scopes
 

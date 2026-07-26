@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const COMPONENTS = [
+  { name: "Web app", detail: "hansala.com", status: "Operational" },
+  { name: "Public API", detail: "/api/v1", status: "Operational" },
+  { name: "Agent API", detail: "/api/v1/agent", status: "Operational" },
+  { name: "Auth", detail: "Sessions & magic links", status: "Operational" },
+  { name: "Email", detail: "Transactional (Resend)", status: "Operational" },
+] as const;
+
 export default function StatusPage() {
   const checked = new Date().toISOString().slice(0, 16).replace("T", " ");
 
@@ -16,26 +24,47 @@ export default function StatusPage() {
       <div className="rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-4">
         <p className="text-[13px] font-semibold text-ink">All systems operational</p>
         <p className="mt-1 text-[12px] text-muted">
-          Manual status page · last reviewed {checked} UTC
+          Manual status · last reviewed {checked} UTC · health{" "}
+          <a href="/api/health">/api/health</a>
         </p>
       </div>
 
       <h2>Components</h2>
-      <ul>
-        <li>Web app (hansala.com) — operational</li>
-        <li>Public API `/api/v1` — operational</li>
-        <li>Agent API `/api/v1/agent` — operational</li>
-        <li>Auth &amp; email delivery — operational</li>
-      </ul>
+      <div className="overflow-hidden rounded-2xl border border-line">
+        <table className="w-full text-left text-[14px]">
+          <thead className="border-b border-line bg-[#fafbfc] text-[11px] tracking-[0.08em] text-muted uppercase">
+            <tr>
+              <th className="px-4 py-2.5 font-semibold">Component</th>
+              <th className="px-4 py-2.5 font-semibold">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line">
+            {COMPONENTS.map((row) => (
+              <tr key={row.name}>
+                <td className="px-4 py-3">
+                  <p className="font-medium text-ink">{row.name}</p>
+                  <p className="text-[12px] text-muted">{row.detail}</p>
+                </td>
+                <td className="px-4 py-3">
+                  <span className="inline-flex items-center gap-2 text-[13px] font-medium text-[#1a5c51]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#1a5c51]" />
+                    {row.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <h2>Incidents</h2>
       <p>No open incidents. Historical notes will appear here when needed.</p>
 
       <h2>Subscribe</h2>
       <p>
-        Questions or outages:{" "}
-        <a href="mailto:developers@hansala.com">developers@hansala.com</a>. API
-        changes: <Link href="/changelog">Changelog</Link>.
+        Outages:{" "}
+        <a href="mailto:developers@hansala.com">developers@hansala.com</a>.
+        Changes: <Link href="/changelog">Changelog</Link>.
       </p>
     </LegalDoc>
   );

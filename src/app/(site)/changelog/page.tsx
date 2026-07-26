@@ -11,6 +11,8 @@ const ENTRIES = [
   {
     date: "26 July 2026",
     items: [
+      "security.txt (RFC 9116) + /api/health liveness.",
+      "Public + Agent OpenAPI specs under /api/v1/openapi/*.",
       "Developer portal baseline: Privacy, Terms, API Terms, Security, Status.",
       "Scheduling: Calendly / Cal.com book sheet on company profiles; Agent `/scheduling`.",
       "Partnership claim flow: confirm-first gate (magic link or password continue).",

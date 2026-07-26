@@ -35,6 +35,7 @@ function isPublicApi(pathname: string): boolean {
   return (
     pathname.startsWith("/api/v1/agent") ||
     pathname.startsWith("/api/v1/openapi") ||
+    pathname.startsWith("/api/health") ||
     pathname.startsWith("/api/webhooks/") ||
     pathname.startsWith("/api/badge/")
   );

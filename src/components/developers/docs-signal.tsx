@@ -4,7 +4,7 @@ export function DocsSignal() {
     {
       label: "Surface",
       value: "REST · JSON",
-      note: "Read-only GET",
+      note: "Public GET · Agent write",
     },
     {
       label: "Evidence",
@@ -12,14 +12,14 @@ export function DocsSignal() {
       note: "Same as public profiles",
     },
     {
-      label: "Cache",
-      value: "5 minutes",
-      note: "stale-while-revalidate",
+      label: "Limits",
+      value: "120 / min",
+      note: "Agent keys · invites 20/day",
     },
     {
       label: "Access",
       value: "Open CORS",
-      note: "No API key required",
+      note: "Public needs no key",
     },
   ];
 

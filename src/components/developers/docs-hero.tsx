@@ -62,7 +62,7 @@ export function DocsHero({ siteUrl, basePath, previewTokens }: Props) {
               <Button href="#quickstart" variant="light" className="h-11 px-5">
                 Quickstart
               </Button>
-              <Button href="/api/v1/openapi" variant="onDark" className="h-11 px-5">
+              <Button href="/api/v1/openapi/public" variant="onDark" className="h-11 px-5">
                 OpenAPI
               </Button>
               <Button href="#embeds" variant="onDark" className="h-11 px-5">

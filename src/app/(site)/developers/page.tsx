@@ -659,7 +659,15 @@ export default function DevelopersPage() {
                 </p>
                 <p className="mt-5 text-[13px] text-ink-soft">
                   <a href="/api/v1/openapi" className="font-semibold text-ink underline underline-offset-2">
-                    OpenAPI
+                    OpenAPI index
+                  </a>
+                  {" · "}
+                  <a href="/api/v1/openapi/public" className="font-semibold text-ink underline underline-offset-2">
+                    Public
+                  </a>
+                  {" · "}
+                  <a href="/api/v1/openapi/agent" className="font-semibold text-ink underline underline-offset-2">
+                    Agent
                   </a>
                   {" · "}
                   <a href="/developers/webhooks" className="font-semibold text-ink underline underline-offset-2">

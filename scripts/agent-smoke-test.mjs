@@ -112,6 +112,10 @@ async function main() {
   if (openapi.ok) pass("GET /api/v1/openapi");
   else fail("GET /api/v1/openapi", openapi.status);
 
+  const agentSpec = await fetch(`${BASE}/api/v1/openapi/agent`);
+  if (agentSpec.ok) pass("GET /api/v1/openapi/agent");
+  else fail("GET /api/v1/openapi/agent", agentSpec.status);
+
   if (WRITE && company.json?.data) {
     const patch = await agent("PATCH", "/company", {
       tagline: company.json.data.tagline,
