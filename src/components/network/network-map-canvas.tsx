@@ -10,8 +10,6 @@ type Props = {
   heightClass?: string;
   emptyHref?: string;
   emptyLabel?: string;
-  secondaryHref?: string;
-  secondaryLabel?: string;
   subtitle?: string;
   fullBleed?: boolean;
   editable?: boolean;
@@ -24,9 +22,7 @@ export async function NetworkMapCanvas({
   scope,
   heightClass = "h-[min(68vh,640px)]",
   emptyHref,
-  emptyLabel = "Invite a partner",
-  secondaryHref,
-  secondaryLabel,
+  emptyLabel = "Add partners on Company",
   subtitle,
   fullBleed = false,
   editable = false,
@@ -81,8 +77,6 @@ export async function NetworkMapCanvas({
         <NetworkEmptyState
           emptyHref={emptyHref}
           emptyLabel={emptyLabel}
-          secondaryHref={secondaryHref}
-          secondaryLabel={secondaryLabel}
           className={fullBleed ? "min-h-0 flex-1" : heightClass}
         />
       ) : (

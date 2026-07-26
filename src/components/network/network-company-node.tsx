@@ -162,7 +162,7 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
       {d.editable && !d.moreCount ? (
         <button
           type="button"
-          title="Add company"
+          title="Add"
           className={cn(
             "nodrag nopan absolute -bottom-8 left-1/2 z-10 flex h-6 w-6 -translate-x-1/2 items-center justify-center",
             "rounded-full border border-line bg-surface text-ink shadow-sm",

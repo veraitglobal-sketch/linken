@@ -79,15 +79,6 @@ export function GraphPanelAdd({
                     {!hit.claimed ? " · Unclaimed" : ""}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    <button
-                      type="button"
-                      disabled={pending || !hit.claimed}
-                      onClick={() => onAddCompany(hit, "partner")}
-                      className="h-7 rounded-xl border border-line bg-surface px-2.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper disabled:opacity-40"
-                      title="Mutual partnership (dashed link)"
-                    >
-                      {busy ? "…" : "As partner"}
-                    </button>
                     {canInviteToGroup ? (
                       <button
                         type="button"
@@ -96,9 +87,13 @@ export function GraphPanelAdd({
                         className="h-7 rounded-xl bg-navy px-2.5 text-[11px] font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-40"
                         title="Invite into group — can hang under a parent as child firm"
                       >
-                        As child firm
+                        {busy ? "…" : "As child firm"}
                       </button>
-                    ) : null}
+                    ) : (
+                      <p className="text-[11px] text-muted">
+                        Add partners on Company — they appear here after confirm.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

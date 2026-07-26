@@ -5,7 +5,7 @@ import Link from "next/link";
 import { OwnerLoopBar } from "@/components/product/owner-loop-bar";
 import { cn } from "@/lib/cn";
 
-type ConnectMode = "structure" | "partner" | "co_owner";
+type ConnectMode = "structure" | "co_owner";
 
 type Props = {
   title?: string;
@@ -15,9 +15,13 @@ type Props = {
   onMode: (mode: ConnectMode) => void;
   onReset: () => void;
   onAdd: () => void;
+  /** When set, Add opens Company partner flow instead of map create. */
+  addHref?: string | null;
   pendingInviteCount: number;
   /** When set, Company / Map / Inbox sit in the same toolbar (dashboard map). */
   companySlug?: string;
+  /** Structure modes only apply in a group map. */
+  showStructureTools?: boolean;
 };
 
 const GLASS =
@@ -34,11 +38,15 @@ export function NetworkMapChrome({
   onMode,
   onReset,
   onAdd,
+  addHref = null,
   pendingInviteCount,
   companySlug,
+  showStructureTools = false,
 }: Props) {
   const subtitle =
-    counts.length > 0 ? counts.join(" · ") : "Drag between firms to connect";
+    counts.length > 0
+      ? counts.join(" · ")
+      : "Confirmed partners appear automatically";
 
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-20 p-3 sm:p-4">
@@ -86,28 +94,25 @@ export function NetworkMapChrome({
               aria-hidden
             />
             <div className="flex w-full shrink-0 flex-wrap items-center gap-0.5 sm:ml-auto sm:w-auto">
-              <ModeButton
-                active={mode === "structure"}
-                onClick={() => onMode("structure")}
-                title="Drag parent → child"
-              >
-                Ownership
-              </ModeButton>
-              <ModeButton
-                active={mode === "partner"}
-                onClick={() => onMode("partner")}
-                title="Request partnership"
-              >
-                Partner
-              </ModeButton>
-              <ModeButton
-                active={mode === "co_owner"}
-                onClick={() => onMode("co_owner")}
-                title="Propose shared ownership — the other side must confirm"
-              >
-                Shared
-              </ModeButton>
-              <span className="mx-1 h-3.5 w-px bg-line" aria-hidden />
+              {showStructureTools ? (
+                <>
+                  <ModeButton
+                    active={mode === "structure"}
+                    onClick={() => onMode("structure")}
+                    title="Drag parent → child"
+                  >
+                    Ownership
+                  </ModeButton>
+                  <ModeButton
+                    active={mode === "co_owner"}
+                    onClick={() => onMode("co_owner")}
+                    title="Propose shared ownership — the other side must confirm"
+                  >
+                    Shared
+                  </ModeButton>
+                  <span className="mx-1 h-3.5 w-px bg-line" aria-hidden />
+                </>
+              ) : null}
               <button
                 type="button"
                 onClick={onReset}
@@ -116,13 +121,22 @@ export function NetworkMapChrome({
               >
                 Reset
               </button>
-              <button
-                type="button"
-                onClick={onAdd}
-                className="ml-0.5 inline-flex h-8 items-center rounded-xl bg-navy px-3 text-[11px] font-semibold text-white transition-colors hover:bg-accent-hover"
-              >
-                Add
-              </button>
+              {addHref ? (
+                <Link
+                  href={addHref}
+                  className="ml-0.5 inline-flex h-8 items-center rounded-xl bg-navy px-3 text-[11px] font-semibold text-white transition-colors hover:bg-accent-hover"
+                >
+                  Add partners
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onAdd}
+                  className="ml-0.5 inline-flex h-8 items-center rounded-xl bg-navy px-3 text-[11px] font-semibold text-white transition-colors hover:bg-accent-hover"
+                >
+                  Add
+                </button>
+              )}
             </div>
           </>
         ) : null}

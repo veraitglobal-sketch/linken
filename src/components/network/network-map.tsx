@@ -79,7 +79,7 @@ const edgeTypes = {
   network: NetworkEdgeLine,
 };
 
-type ConnectMode = "structure" | "partner" | "co_owner";
+type ConnectMode = "structure" | "co_owner";
 
 type Props = {
   graph: NetworkGraph;
@@ -451,12 +451,11 @@ export function NetworkMap({
             ...connection,
             id: `temp:${connection.source}->${connection.target}:${Date.now()}`,
             type: "smoothstep",
-            animated: mode === "partner",
+            animated: false,
             style: {
               stroke: mode === "co_owner" ? "#0e1f1c" : "#66706b",
               strokeWidth: 2,
-              strokeDasharray:
-                mode === "partner" ? "6 4" : mode === "co_owner" ? "7 3" : undefined,
+              strokeDasharray: mode === "co_owner" ? "7 3" : undefined,
             },
           },
           eds,
@@ -568,6 +567,12 @@ export function NetworkMap({
             setSelected(null);
           }
         }}
+        addHref={
+          companySlug && !groupId
+            ? `/c/${companySlug}?add=1#add-partner`
+            : null
+        }
+        showStructureTools={Boolean(groupId)}
         pendingInviteCount={pendingInviteCount}
         companySlug={companySlug}
       />

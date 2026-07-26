@@ -3,10 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { createSubsidiary } from "@/features/groups/actions";
-import {
-  detachGraphLink,
-  requestPartnership,
-} from "@/features/network/actions";
 import type {
   NetworkEdge,
   NetworkGraphContext,
@@ -15,6 +11,7 @@ import type {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LogoTile } from "@/components/ui/logo-tile";
+import { PRODUCT } from "@/lib/product-model";
 
 const ROLE_LABEL = {
   group: "Group hub",
@@ -33,6 +30,7 @@ type Props = {
   onSelectEdge: (edge: NetworkEdge) => void;
 };
 
+/** Inspect a node — partners are added on Company, not here. */
 export function GraphInspector({
   selected,
   selectedId,
@@ -41,7 +39,7 @@ export function GraphInspector({
   onClose,
   onSelectEdge,
 }: Props) {
-  const [mode, setMode] = useState<"idle" | "subsidiary" | "partner">("idle");
+  const [mode, setMode] = useState<"idle" | "subsidiary">("idle");
   const canAddUnder =
     Boolean(context?.groupId) &&
     Boolean(selected.companyId) &&
@@ -85,38 +83,46 @@ export function GraphInspector({
           </p>
         ) : null}
 
-        {canAddUnder || selected.kind === "company" || selected.kind === "subsidiary" ? (
-          <div className="flex flex-col gap-2">
-            <p className="text-[10px] font-semibold tracking-[0.1em] text-muted uppercase">
-              Attach to this firm
-            </p>
-            {canAddUnder ? (
-              <button
-                type="button"
-                onClick={() =>
-                  setMode((m) => (m === "subsidiary" ? "idle" : "subsidiary"))
-                }
-                className="h-9 rounded-xl border border-line bg-[#f7f8fa] px-3 text-left text-[12px] font-semibold text-ink transition-colors hover:border-[#1a5c51]/35"
+        {selected.kind === "company" || selected.kind === "subsidiary" ? (
+          <p className="text-[12px] leading-relaxed text-muted">
+            Partners appear after both sides confirm on{" "}
+            {selected.href && selected.href !== "#" ? (
+              <Link
+                href={selected.href}
+                className="font-semibold text-ink underline-offset-2 hover:underline"
               >
-                + Add subsidiary under {selected.name}
-              </button>
-            ) : null}
-            <button
-              type="button"
-              onClick={() =>
-                setMode((m) => (m === "partner" ? "idle" : "partner"))
-              }
-              className="h-9 rounded-xl border border-line bg-[#f7f8fa] px-3 text-left text-[12px] font-semibold text-ink transition-colors hover:border-[#1a5c51]/35"
-            >
-              + Connect partner
-            </button>
-          </div>
+                {PRODUCT.company.label}
+              </Link>
+            ) : (
+              PRODUCT.company.label
+            )}
+            .
+          </p>
+        ) : null}
+
+        {canAddUnder ? (
+          <button
+            type="button"
+            onClick={() =>
+              setMode((m) => (m === "subsidiary" ? "idle" : "subsidiary"))
+            }
+            className="h-9 w-full rounded-xl border border-line bg-[#f7f8fa] px-3 text-left text-[12px] font-semibold text-ink transition-colors hover:border-[#1a5c51]/35"
+          >
+            + Add subsidiary under {selected.name}
+          </button>
         ) : null}
 
         {mode === "subsidiary" && context?.groupId && selected.companyId ? (
-          <form action={createSubsidiary} className="space-y-2 rounded-xl border border-line bg-[#f7f8fa] p-3">
+          <form
+            action={createSubsidiary}
+            className="space-y-2 rounded-xl border border-line bg-[#f7f8fa] p-3"
+          >
             <input type="hidden" name="group_id" value={context.groupId} />
-            <input type="hidden" name="parent_company_id" value={selected.companyId} />
+            <input
+              type="hidden"
+              name="parent_company_id"
+              value={selected.companyId}
+            />
             <input type="hidden" name="back" value="/dashboard" />
             <Input name="name" required placeholder="Subsidiary name" />
             <Input name="category" required placeholder="Category" />
@@ -125,26 +131,6 @@ export function GraphInspector({
             <Input name="website" type="url" placeholder="https://" />
             <Button type="submit" className="h-9 w-full">
               Create & attach
-            </Button>
-          </form>
-        ) : null}
-
-        {mode === "partner" ? (
-          <form
-            action={requestPartnership}
-            className="space-y-2 rounded-xl border border-line bg-[#f7f8fa] p-3"
-          >
-            <input type="hidden" name="back" value="/dashboard" />
-            <Input
-              name="company_slug"
-              required
-              placeholder="partner-company-slug"
-            />
-            <p className="text-[11px] text-muted">
-              They must confirm before the link shows publicly.
-            </p>
-            <Button type="submit" className="h-9 w-full">
-              Send partner request
             </Button>
           </form>
         ) : null}
@@ -192,84 +178,6 @@ export function GraphInspector({
         >
           Close
         </button>
-      </div>
-    </div>
-  );
-}
-
-type DetachProps = {
-  edge: NetworkEdge;
-  onCancel: () => void;
-};
-
-export function GraphDetachDialog({ edge, onCancel }: DetachProps) {
-  if (!edge.detachable) {
-    return (
-      <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]">
-        <div className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]">
-          <p className="font-display text-lg font-medium text-ink">
-            Can’t detach here
-          </p>
-          <p className="mt-2 text-[13px] text-muted">
-            Client links come from confirmed service references. Manage them on
-            the company profile.
-          </p>
-          <Button type="button" variant="secondary" className="mt-4 h-9" onClick={onCancel}>
-            Back
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]">
-      <div className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]">
-        <p className="text-[10px] font-semibold tracking-[0.12em] text-ember uppercase">
-          Detach link
-        </p>
-        <p className="mt-2 font-display text-lg font-medium tracking-[-0.03em] text-ink">
-          Remove this connection?
-        </p>
-        <p className="mt-2 text-[13px] leading-relaxed text-muted">
-          {edge.type === "partner"
-            ? "This removes the partnership from both profiles. Case study collaborations remain."
-            : "This firm will leave the group structure (subsidiary / membership). Evidence on each profile stays."}
-        </p>
-        <form action={detachGraphLink} className="mt-4 flex flex-wrap gap-2">
-          <input type="hidden" name="edge_type" value={edge.type} />
-          <input type="hidden" name="back" value="/dashboard" />
-          {edge.meta?.partnershipId ? (
-            <input
-              type="hidden"
-              name="partnership_id"
-              value={edge.meta.partnershipId}
-            />
-          ) : null}
-          {edge.meta?.groupId ? (
-            <input type="hidden" name="group_id" value={edge.meta.groupId} />
-          ) : null}
-          {edge.meta?.memberCompanyId ? (
-            <input
-              type="hidden"
-              name="company_id"
-              value={edge.meta.memberCompanyId}
-            />
-          ) : null}
-          <Button type="submit" className="h-9 bg-ember hover:bg-[#a8642e]">
-            Detach
-          </Button>
-          <Button type="button" variant="secondary" className="h-9" onClick={onCancel}>
-            Cancel
-          </Button>
-        </form>
-        <p className="mt-3 text-[11px] text-muted">
-          Or manage in{" "}
-          <Link href="/dashboard/structure" className="font-semibold text-ink underline">
-            Structure
-          </Link>
-          .
-        </p>
       </div>
     </div>
   );

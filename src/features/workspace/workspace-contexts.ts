@@ -55,7 +55,7 @@ export async function getWorkspaceContexts(
     });
   }
 
-  // Unclaimed branches where user is admin/owner of the creator firm.
+  // Unclaimed group branches only (subsidiaries) — never partner/client ghosts.
   const { data: adminOf } = await supabase
     .from("company_members")
     .select("company_id, role")
@@ -67,13 +67,22 @@ export async function getWorkspaceContexts(
     const { data: branches } = await supabase
       .from("companies")
       .select(
-        "id, name, slug, logo_url, website, claimed, created_at, created_by_company_id",
+        "id, name, slug, logo_url, website, claimed, created_at, created_by_company_id, group_members:company_group_members!company_id(status)",
       )
       .eq("claimed", false)
       .in("created_by_company_id", creatorIds);
 
     for (const c of branches ?? []) {
       if (seen.has(c.id as string)) continue;
+      const memberships = Array.isArray(c.group_members)
+        ? c.group_members
+        : c.group_members
+          ? [c.group_members]
+          : [];
+      const inGroup = memberships.some(
+        (m: { status?: string }) => m.status === "confirmed",
+      );
+      if (!inGroup) continue;
       seen.add(c.id as string);
       out.push({
         type: "company",

@@ -145,14 +145,24 @@ export function GraphPanelInspect({
             />
           )
         ) : null}
-        {editable ? (
+        {editable && context?.groupId ? (
           <PanelRow
             icon={<PlusIcon />}
-            title="Add company"
-            description="Partner (dashed) or child firm under ownership (solid arrow)"
+            title="Add child firm"
+            description="Invite a claimed company into this group structure"
             onClick={onOpenAdd}
             chevron
             accent={selected.domainVerified !== false}
+          />
+        ) : null}
+        {editable && !context?.groupId && selected.href && selected.href !== "#" ? (
+          <PanelRow
+            icon={<PlusIcon />}
+            title="Add partners on Company"
+            description="Confirmed partners appear on the map automatically"
+            href={`${selected.href}${selected.href.includes("?") ? "&" : "?"}add=1#add-partner`}
+            chevron
+            accent
           />
         ) : null}
         {selected.href && selected.href !== "#" ? (

@@ -117,9 +117,7 @@ export default async function DashboardOverviewPage() {
         pendingInviteCount={inbox.outgoingPending.length}
         companySlug={company.slug}
         emptyHref={`/c/${company.slug}?add=1#add-partner`}
-        emptyLabel="Add on Company"
-        secondaryHref={`/c/${company.slug}`}
-        secondaryLabel="Company"
+        emptyLabel="Add partners on Company"
         subtitle={groupSlug ? "Group map" : "Your map"}
       />
     </div>

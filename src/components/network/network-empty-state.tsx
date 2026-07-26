@@ -5,17 +5,13 @@ import { PRODUCT } from "@/lib/product-model";
 type Props = {
   emptyHref?: string;
   emptyLabel?: string;
-  secondaryHref?: string;
-  secondaryLabel?: string;
   className?: string;
 };
 
-/** Premium empty network — composed center, not dashed junk cards. */
+/** Premium empty network — partners are added on Company, not here. */
 export function NetworkEmptyState({
   emptyHref = "/dashboard/partners",
-  emptyLabel = "Add on profile",
-  secondaryHref = "/dashboard/structure",
-  secondaryLabel = "Add subsidiary",
+  emptyLabel = "Add partners on Company",
   className,
 }: Props) {
   return (
@@ -42,22 +38,17 @@ export function NetworkEmptyState({
           {PRODUCT.map.label}
         </p>
         <p className="mt-2 text-[13px] leading-relaxed text-muted">
-          {PRODUCT.oneLiner}
+          Confirmed partners and proof show here automatically. Add them on{" "}
+          {PRODUCT.company.label}.
         </p>
       </div>
 
-      <div className="relative mt-7 flex flex-wrap items-center justify-center gap-2.5">
+      <div className="relative mt-7">
         <Link
           href={emptyHref}
           className="inline-flex h-10 items-center rounded-2xl bg-navy px-4 text-[12px] font-semibold text-white shadow-[0_10px_24px_rgba(8,20,18,0.14)] transition-colors hover:bg-accent-hover"
         >
           {emptyLabel}
-        </Link>
-        <Link
-          href={secondaryHref}
-          className="inline-flex h-10 items-center rounded-2xl border border-white/80 bg-white/80 px-4 text-[12px] font-semibold text-ink shadow-[0_8px_20px_rgba(8,20,18,0.05)] backdrop-blur-md transition-colors hover:bg-white"
-        >
-          {secondaryLabel}
         </Link>
       </div>
     </div>
