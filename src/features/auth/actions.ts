@@ -55,6 +55,14 @@ export async function signOut() {
   redirect("/");
 }
 
+/** Sign out and return to an invite/confirm link (switch account). */
+export async function signOutTo(formData: FormData) {
+  const next = safeNext(formData.get("next"), "/");
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect(next);
+}
+
 export async function resendSignupConfirmation(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const next = safeNext(formData.get("next"), "/onboarding");

@@ -66,6 +66,7 @@ export default async function ConfirmReferencePage({
           preview={preview}
           token={token}
           userId={user?.id ?? null}
+          userEmail={user?.email ?? null}
           company={company ? { id: company.id, name: company.name } : null}
           error={error}
           done={done}

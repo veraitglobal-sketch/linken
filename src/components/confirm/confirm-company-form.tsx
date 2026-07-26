@@ -4,9 +4,10 @@ import { Input } from "@/components/ui/input";
 
 type Props = {
   next: string;
+  defaultName?: string;
 };
 
-export function ConfirmCompanyForm({ next }: Props) {
+export function ConfirmCompanyForm({ next, defaultName = "" }: Props) {
   return (
     <form
       action={createMinimalCompany}
@@ -27,7 +28,12 @@ export function ConfirmCompanyForm({ next }: Props) {
         <span className="mb-1.5 block text-[13px] font-medium text-ink">
           Company name
         </span>
-        <Input name="name" required placeholder="Client company GmbH" />
+        <Input
+          name="name"
+          required
+          placeholder="Client company GmbH"
+          defaultValue={defaultName}
+        />
       </label>
 
       <label className="mt-4 block">

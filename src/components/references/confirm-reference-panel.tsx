@@ -1,5 +1,7 @@
 import { PostConfirmAssessment } from "@/components/assessments/post-confirm-assessment";
 import { InviteAuth } from "@/components/auth/invite-auth";
+import { ConfirmCompanyForm } from "@/components/confirm/confirm-company-form";
+import { signOutTo } from "@/features/auth/actions";
 import {
   confirmServiceReference,
   declineServiceReference,
@@ -11,6 +13,7 @@ type Props = {
   preview: ReferencePreview;
   token: string;
   userId: string | null;
+  userEmail: string | null;
   company: { id: string; name: string } | null;
   error?: string;
   done?: string;
@@ -23,6 +26,7 @@ export function ConfirmReferencePanel({
   preview,
   token,
   userId,
+  userEmail,
   company,
   error,
   done,
@@ -33,6 +37,11 @@ export function ConfirmReferencePanel({
   const next = `/confirm-reference/${token}`;
   const confirmed = done === "confirmed" || preview.status === "confirmed";
   const isProvider = Boolean(company && company.id === preview.providerId);
+  const invite = preview.inviteEmail?.trim().toLowerCase() || null;
+  const signedIn = userEmail?.trim().toLowerCase() || null;
+  const wrongInbox = Boolean(
+    invite && signedIn && invite !== signedIn && (isProvider || Boolean(company)),
+  );
 
   if (confirmed) {
     return (
@@ -62,27 +71,27 @@ export function ConfirmReferencePanel({
         next={next}
         invitedEmail={preview.inviteEmail ?? undefined}
         title="Sign in to respond"
-        description={`Confirm as ${preview.clientName} — the company that receives this service.`}
+        description={`Use ${invite ?? "the invited email"} — confirm as ${preview.clientName}.`}
+      />
+    );
+  }
+
+  if (isProvider || wrongInbox) {
+    return (
+      <SwitchAccount
+        next={next}
+        title={isProvider ? "Wrong account for this link" : "Sign in with the invite email"}
+        body={
+          isProvider
+            ? `You’re signed in as ${signedIn ?? company?.name} (the sender). This invite went to ${invite ?? preview.clientName}. Sign out, then sign in with that inbox.`
+            : `This invite was sent to ${invite}. You’re signed in as ${signedIn}. Switch accounts to confirm.`
+        }
       />
     );
   }
 
   if (!company) {
-    return (
-      <Status
-        title="Company profile required"
-        body={`Create or switch to “${preview.clientName}”, then return to this link to confirm.`}
-      />
-    );
-  }
-
-  if (isProvider) {
-    return (
-      <Status
-        title="This is your own request"
-        body={`You’re signed in as ${company.name}, who sent this reference. The client (${preview.clientName}) must open this link and confirm from their account.`}
-      />
-    );
+    return <ConfirmCompanyForm next={next} defaultName={preview.clientName} />;
   }
 
   return (
@@ -96,11 +105,7 @@ export function ConfirmReferencePanel({
         {preview.startedYear ? ` since ${preview.startedYear}` : ""}.
       </h2>
       <p className="mt-3 text-[14px] text-ink-soft">
-        Confirm as <span className="font-semibold text-ink">{company.name}</span>
-        {preview.clientName && preview.clientName !== company.name
-          ? ` (listed as ${preview.clientName})`
-          : null}
-        .
+        Confirm as <span className="font-semibold text-ink">{company.name}</span>.
       </p>
       <div className="mt-6 flex flex-col gap-2 sm:flex-row">
         <form action={confirmServiceReference} className="flex-1">
@@ -116,6 +121,31 @@ export function ConfirmReferencePanel({
           </Button>
         </form>
       </div>
+    </div>
+  );
+}
+
+function SwitchAccount({
+  next,
+  title,
+  body,
+}: {
+  next: string;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="rounded-[24px] border border-line bg-surface px-5 py-8 text-center sm:px-7">
+      <h2 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
+        {title}
+      </h2>
+      <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-soft">{body}</p>
+      <form action={signOutTo} className="mt-6">
+        <input type="hidden" name="next" value={next} />
+        <Button type="submit" className="h-11 w-full sm:w-auto sm:px-6">
+          Sign out and continue
+        </Button>
+      </form>
     </div>
   );
 }
