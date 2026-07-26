@@ -9,7 +9,7 @@ import { PRODUCT } from "@/lib/product-model";
 type AuthState =
   | { status: "loading" }
   | { status: "anon" }
-  | { status: "user"; companySlug: string | null };
+  | { status: "user"; companySlug: string | null; email: string };
 
 export function SiteHeaderAuth() {
   const [auth, setAuth] = useState<AuthState>({ status: "loading" });
@@ -38,7 +38,11 @@ export function SiteHeaderAuth() {
           .limit(1)
           .maybeSingle();
         if (!cancelled) {
-          setAuth({ status: "user", companySlug: company?.slug ?? null });
+          setAuth({
+            status: "user",
+            companySlug: company?.slug ?? null,
+            email: user.email ?? "account",
+          });
         }
       } catch (err) {
         console.error("[SiteHeaderAuth]", err);
@@ -91,6 +95,12 @@ export function SiteHeaderAuth() {
             </Link>
           )}
         </nav>
+        <span
+          className="hidden max-w-[11rem] truncate text-[11px] text-muted lg:inline"
+          title={auth.email}
+        >
+          Signed in as {auth.email}
+        </span>
         <form action={signOut}>
           <Button
             type="submit"
@@ -117,7 +127,7 @@ export function SiteHeaderAuth() {
       <Button
         variant="ghost"
         href="/login"
-        className="hidden h-9 px-3 sm:inline-flex"
+        className="h-9 px-3 text-[12px]"
       >
         Sign in
       </Button>
