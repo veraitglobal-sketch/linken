@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { SchedulingProvider } from "@/features/scheduling/types";
 
 type Props = {
+  companySlug: string;
   companyName: string;
   logoInitials: string;
   logoUrl?: string | null;
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export function BookCallButton({
+  companySlug,
   companyName,
   logoInitials,
   logoUrl,
@@ -39,6 +41,7 @@ export function BookCallButton({
       <BookSheet
         open={open}
         onClose={() => setOpen(false)}
+        profileHref={`/c/${companySlug}`}
         companyName={companyName}
         logoInitials={logoInitials}
         logoUrl={logoUrl}

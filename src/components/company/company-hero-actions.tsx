@@ -43,6 +43,7 @@ export function CompanyHeroActions({
     <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
       {bookingUrl ? (
         <BookCallButton
+          companySlug={slug}
           companyName={name}
           logoInitials={logoInitials}
           logoUrl={logoUrl}

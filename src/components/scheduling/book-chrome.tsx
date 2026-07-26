@@ -4,6 +4,7 @@ import {
   schedulingEmbedUrl,
   type SchedulingProvider,
 } from "@/features/scheduling/types";
+import { cn } from "@/lib/cn";
 
 export type BookChromeProps = {
   companyName: string;
@@ -12,6 +13,8 @@ export type BookChromeProps = {
   bookingUrl: string;
   provider: SchedulingProvider | null;
   label?: string;
+  /** Stretch iframe to fill parent (sheet / full page). */
+  fill?: boolean;
 };
 
 export function BookChrome({
@@ -21,6 +24,7 @@ export function BookChrome({
   bookingUrl,
   provider,
   label = "Book a call",
+  fill = false,
 }: BookChromeProps) {
   const embedSrc = schedulingEmbedUrl(bookingUrl, provider);
   const via = provider ? providerLabel(provider) : "calendar";
@@ -48,7 +52,10 @@ export function BookChrome({
         <iframe
           title={`Book with ${companyName}`}
           src={embedSrc}
-          className="h-[min(70vh,640px)] w-full border-0 bg-white"
+          className={cn(
+            "w-full border-0 bg-white",
+            fill ? "h-full min-h-[28rem]" : "h-[min(70vh,640px)]",
+          )}
           loading="lazy"
           allow="payment *; camera; microphone"
         />

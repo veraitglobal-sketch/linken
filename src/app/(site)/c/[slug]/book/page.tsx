@@ -46,7 +46,7 @@ export default async function CompanyBookPage({ params }: Props) {
           ← {company.name}
         </Link>
       </p>
-      <div className="overflow-hidden rounded-[28px] border border-line bg-white/90 shadow-[0_24px_64px_rgba(8,20,18,0.1)] backdrop-blur-xl">
+      <div className="min-h-[70vh] overflow-hidden rounded-[28px] border border-line bg-white/90 shadow-[0_24px_64px_rgba(8,20,18,0.1)] backdrop-blur-xl">
         <BookChrome
           companyName={company.name}
           logoInitials={company.logoInitials}
@@ -54,6 +54,7 @@ export default async function CompanyBookPage({ params }: Props) {
           bookingUrl={scheduling.url}
           provider={scheduling.provider}
           label={scheduling.label}
+          fill
         />
       </div>
     </main>
