@@ -94,7 +94,13 @@ async function respondServiceReference(
   });
 
   if (error) {
-    redirect(`${path}?error=${encodeURIComponent(error.message)}`);
+    const raw = error.message ?? "Could not respond.";
+    const message = /already resolved|not found/i.test(raw)
+      ? "This request can’t be confirmed with the company you’re signed in as. Sign in as the client company, or ask them to open this link."
+      : /Not company owner/i.test(raw)
+        ? "Only the company owner can confirm this request."
+        : raw;
+    redirect(`${path}?error=${encodeURIComponent(message)}`);
   }
 
   revalidatePath(path);

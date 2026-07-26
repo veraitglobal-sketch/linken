@@ -11,7 +11,7 @@ type Props = {
   preview: ReferencePreview;
   token: string;
   userId: string | null;
-  companyName: string | null;
+  company: { id: string; name: string } | null;
   error?: string;
   done?: string;
   assessed?: boolean;
@@ -23,7 +23,7 @@ export function ConfirmReferencePanel({
   preview,
   token,
   userId,
-  companyName,
+  company,
   error,
   done,
   assessed = false,
@@ -32,15 +32,12 @@ export function ConfirmReferencePanel({
 }: Props) {
   const next = `/confirm-reference/${token}`;
   const confirmed = done === "confirmed" || preview.status === "confirmed";
+  const isProvider = Boolean(company && company.id === preview.providerId);
 
   if (confirmed) {
     return (
       <div className="space-y-4">
-        {error ? (
-          <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-            {error}
-          </p>
-        ) : null}
+        {error ? <ErrorNote>{error}</ErrorNote> : null}
         <PostConfirmAssessment
           sourceType="reference"
           sourceId={preview.id}
@@ -65,27 +62,32 @@ export function ConfirmReferencePanel({
         next={next}
         invitedEmail={preview.inviteEmail ?? undefined}
         title="Sign in to respond"
-        description="Confirm as the company that receives this service."
+        description={`Confirm as ${preview.clientName} — the company that receives this service.`}
       />
     );
   }
 
-  if (!companyName) {
+  if (!company) {
     return (
       <Status
         title="Company profile required"
-        body="Create your company profile first, then return to this link to confirm."
+        body={`Create or switch to “${preview.clientName}”, then return to this link to confirm.`}
+      />
+    );
+  }
+
+  if (isProvider) {
+    return (
+      <Status
+        title="This is your own request"
+        body={`You’re signed in as ${company.name}, who sent this reference. The client (${preview.clientName}) must open this link and confirm from their account.`}
       />
     );
   }
 
   return (
     <div className="rounded-[24px] border border-line bg-surface px-5 py-6 sm:px-7">
-      {error ? (
-        <p className="mb-4 rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-          {error}
-        </p>
-      ) : null}
+      {error ? <ErrorNote>{error}</ErrorNote> : null}
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
         Service reference
       </p>
@@ -94,8 +96,11 @@ export function ConfirmReferencePanel({
         {preview.startedYear ? ` since ${preview.startedYear}` : ""}.
       </h2>
       <p className="mt-3 text-[14px] text-ink-soft">
-        Confirm as <span className="font-semibold text-ink">{companyName}</span>
-        {preview.clientName ? ` (${preview.clientName})` : null}.
+        Confirm as <span className="font-semibold text-ink">{company.name}</span>
+        {preview.clientName && preview.clientName !== company.name
+          ? ` (listed as ${preview.clientName})`
+          : null}
+        .
       </p>
       <div className="mt-6 flex flex-col gap-2 sm:flex-row">
         <form action={confirmServiceReference} className="flex-1">
@@ -112,6 +117,14 @@ export function ConfirmReferencePanel({
         </form>
       </div>
     </div>
+  );
+}
+
+function ErrorNote({ children }: { children: string }) {
+  return (
+    <p className="mb-4 rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+      {children}
+    </p>
   );
 }
 

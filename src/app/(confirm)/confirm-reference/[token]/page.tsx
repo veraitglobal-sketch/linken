@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ConfirmReferencePanel } from "@/components/references/confirm-reference-panel";
 import { hasAssessmentForSource } from "@/features/assessments/queries";
 import { getReferencePreview } from "@/features/references/queries";
-import { viewerOwnsClaimedCompany } from "@/features/partners/queries";
+import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
 
 export const metadata: Metadata = {
   title: "Confirm service reference",
@@ -27,7 +27,7 @@ export default async function ConfirmReferencePage({
   const { token } = await params;
   const { error, done, assessed, skipped } = await searchParams;
   const preview = await getReferencePreview(token);
-  const { user, company } = await viewerOwnsClaimedCompany();
+  const { user, company } = await getOwnedActiveCompany();
 
   if (!preview) {
     return (
@@ -66,7 +66,7 @@ export default async function ConfirmReferencePage({
           preview={preview}
           token={token}
           userId={user?.id ?? null}
-          companyName={company?.name ?? null}
+          company={company ? { id: company.id, name: company.name } : null}
           error={error}
           done={done}
           assessed={assessed === "1"}
