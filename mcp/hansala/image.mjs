@@ -19,7 +19,9 @@ export async function loadImageInput(args) {
         ? "image/png"
         : ext === "webp"
           ? "image/webp"
-          : "image/jpeg");
+          : ext === "svg"
+            ? "image/svg+xml"
+            : "image/jpeg");
     return { bytes, contentType };
   }
   if (args.image_url) {

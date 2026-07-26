@@ -58,6 +58,10 @@ export function LogoMotionRow({
                 theme={theme}
                 mono={mono}
                 size={size}
+                scale={e.scale}
+                padding={e.padding}
+                grayscale={e.grayscale}
+                invertOnDark={e.invertOnDark}
               />
             </a>
           </li>

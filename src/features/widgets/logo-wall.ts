@@ -1,5 +1,23 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import {
+  applyLogoWallOrder,
+  displayLogoForWall,
+  resolveLogoWallState,
+  type LogoWallLogoState,
+} from "@/features/widgets/logo-wall-resolve";
 import { parseWidgetSettings } from "@/features/widgets/settings";
+
+export type { LogoWallLogoState } from "@/features/widgets/logo-wall-resolve";
+export type {
+  LogoWallLabel,
+  LogoWallPendingInvite,
+} from "@/features/widgets/logo-wall-pending";
+export {
+  getLogoWallPendingInvites,
+  logoWallLabelText,
+  parseLogoWallLabel,
+} from "@/features/widgets/logo-wall-pending";
 
 export type LogoWallEntry = {
   id: string;
@@ -12,16 +30,13 @@ export type LogoWallEntry = {
   kind: "client" | "partner";
   ongoing: boolean;
   evidenceScore: number;
-};
-
-export type LogoWallPendingInvite = {
-  companyId: string;
-  partnershipId: string;
-  name: string;
-  slug: string;
-  inviteEmail: string | null;
-  website: string | null;
-  logoUrl: string | null;
+  logoSource: string | null;
+  logoState: LogoWallLogoState;
+  scale: number;
+  padding: number;
+  grayscale: boolean;
+  invertOnDark: boolean;
+  included: boolean;
 };
 
 function initials(name: string) {
@@ -34,18 +49,19 @@ function initials(name: string) {
 }
 
 /**
- * Confirmed partners + confirmed clients (with company id), deduped, max 12.
+ * Confirmed partners + confirmed clients (with company id), deduped, max 30.
  * Sort: ongoing clients → other clients → partners by shared evidence.
- * When `applySelection` is true (public embed), respects widget_settings.logoWall.excludedCompanyIds.
+ * When `applySelection` is true (public embed), respects excludedCompanyIds.
+ * Entries missing from `order` render after ordered ones (evidence sort kept).
  */
 export async function getLogoWallEntries(
   companyId: string,
-  opts?: { applySelection?: boolean },
+  opts?: { applySelection?: boolean; client?: SupabaseClient },
 ): Promise<LogoWallEntry[]> {
   if (!companyId) return [];
 
   try {
-    const supabase = await createClient();
+    const supabase = opts?.client ?? (await createClient());
 
     const [asReq, asRec, refs, settingsRes] = await Promise.all([
       supabase
@@ -64,13 +80,11 @@ export async function getLogoWallEntries(
         .eq("provider_company_id", companyId)
         .eq("status", "confirmed")
         .not("client_company_id", "is", null),
-      opts?.applySelection
-        ? supabase
-            .from("companies")
-            .select("widget_settings")
-            .eq("id", companyId)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
+      supabase
+        .from("companies")
+        .select("widget_settings")
+        .eq("id", companyId)
+        .maybeSingle(),
     ]);
 
     const partnerIds = new Set<string>();
@@ -93,23 +107,21 @@ export async function getLogoWallEntries(
     allIds.delete(companyId);
     if (allIds.size === 0) return [];
 
-    const excluded = new Set(
-      opts?.applySelection
-        ? parseWidgetSettings(settingsRes.data?.widget_settings).logoWall
-            .excludedCompanyIds
-        : [],
-    );
+    const settings = parseWidgetSettings(settingsRes.data?.widget_settings);
+    const excluded = new Set(settings.logoWall.excludedCompanyIds);
+    const overrides = settings.logoWall.overrides;
 
     const { data: companies } = await supabase
       .from("companies")
-      .select("id, slug, name, logo_url, website, allow_logo_in_partner_widgets")
+      .select(
+        "id, slug, name, logo_url, website, allow_logo_in_partner_widgets, logo_source",
+      )
       .in("id", [...allIds]);
 
     const byId = new Map((companies ?? []).map((c) => [c.id as string, c]));
-
     const entries: LogoWallEntry[] = [];
+
     for (const id of allIds) {
-      if (excluded.has(id)) continue;
       const c = byId.get(id);
       if (!c) continue;
       const isClient = clientMeta.has(id);
@@ -121,17 +133,39 @@ export async function getLogoWallEntries(
       if (isClient) evidenceScore += 2;
       if (ongoing) evidenceScore += 2;
 
+      const showLogo = c.allow_logo_in_partner_widgets !== false;
+      const override = overrides[id] ?? null;
+      const profileLogo = (c.logo_url as string | null) ?? null;
+      const display = displayLogoForWall({
+        showLogo,
+        profileLogoUrl: profileLogo,
+        override,
+      });
+      const logoSource = (c.logo_source as string | null) ?? null;
+
       entries.push({
         id: c.id as string,
         slug: c.slug as string,
         name: c.name as string,
-        logoUrl: (c.logo_url as string | null) ?? null,
+        logoUrl: display.logoUrl,
         website: (c.website as string | null) ?? null,
         initials: initials(c.name as string),
-        showLogo: c.allow_logo_in_partner_widgets !== false,
+        showLogo,
         kind,
         ongoing,
         evidenceScore,
+        logoSource,
+        logoState: resolveLogoWallState({
+          showLogo,
+          overrideLogoUrl: override?.logoUrl,
+          logoUrl: profileLogo,
+          logoSource,
+        }),
+        scale: display.scale,
+        padding: display.padding,
+        grayscale: display.grayscale,
+        invertOnDark: display.invertOnDark,
+        included: !excluded.has(id),
       });
     }
 
@@ -149,88 +183,21 @@ export async function getLogoWallEntries(
       return a.name.localeCompare(b.name);
     });
 
-    return entries.slice(0, 24);
+    const ordered = applyLogoWallOrder(entries, settings.logoWall.order);
+    const filtered = opts?.applySelection
+      ? ordered.filter((e) => e.included)
+      : ordered;
+
+    return filtered.slice(0, 30);
   } catch {
     return [];
   }
 }
 
-/** All confirmed candidates for the configurator (ignores exclusion list). */
+/** All confirmed candidates for the studio (ignores exclusion list). */
 export async function getLogoWallConfirmedCandidates(
   companyId: string,
+  client?: SupabaseClient,
 ): Promise<LogoWallEntry[]> {
-  return getLogoWallEntries(companyId, { applySelection: false });
-}
-
-/**
- * Pending partnership invites created by this firm — owner-only UI.
- * Never shown in the public Logo wall embed.
- */
-export async function getLogoWallPendingInvites(
-  companyId: string,
-): Promise<LogoWallPendingInvite[]> {
-  if (!companyId) return [];
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("partnerships")
-      .select(
-        `
-        id,
-        recipient:companies!recipient_id(
-          id, slug, name, website, logo_url, claimed
-        )
-      `,
-      )
-      .eq("requester_id", companyId)
-      .eq("status", "pending")
-      .order("created_at", { ascending: false });
-
-    const out: LogoWallPendingInvite[] = [];
-    for (const row of data ?? []) {
-      const raw = row.recipient;
-      const c = Array.isArray(raw) ? raw[0] : raw;
-      if (!c) continue;
-      out.push({
-        companyId: c.id as string,
-        partnershipId: row.id as string,
-        name: c.name as string,
-        slug: c.slug as string,
-        inviteEmail: null,
-        website: (c.website as string | null) ?? null,
-        logoUrl: (c.logo_url as string | null) ?? null,
-      });
-    }
-    return out;
-  } catch {
-    return [];
-  }
-}
-
-export type LogoWallLabel = "none" | "partners" | "clients" | "both";
-
-export function parseLogoWallLabel(raw: string | undefined): LogoWallLabel {
-  if (
-    raw === "none" ||
-    raw === "partners" ||
-    raw === "clients" ||
-    raw === "both"
-  ) {
-    return raw;
-  }
-  return "both";
-}
-
-export function logoWallLabelText(label: LogoWallLabel): string | null {
-  switch (label) {
-    case "none":
-      return null;
-    case "partners":
-      return "Our verified partners";
-    case "clients":
-      return "Trusted by";
-    case "both":
-    default:
-      return "Verified partners & clients";
-  }
+  return getLogoWallEntries(companyId, { applySelection: false, client });
 }

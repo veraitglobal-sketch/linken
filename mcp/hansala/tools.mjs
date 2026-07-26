@@ -1,4 +1,6 @@
 /** Hansala Agent MCP tool definitions. */
+import { WIDGET_TOOLS } from "./widget-tools.mjs";
+
 export const TOOLS = [
   {
     name: "hansala_get_company",
@@ -442,4 +444,5 @@ export const TOOLS = [
       additionalProperties: false,
     },
   },
+  ...WIDGET_TOOLS,
 ];

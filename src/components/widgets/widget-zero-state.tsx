@@ -12,6 +12,7 @@ const COPY: Partial<Record<WidgetVariant, string>> = {
   signature: "Ready once your profile is claimed.",
   references: "Confirm a client reference to unlock.",
   assessment: "Needs 3+ client assessment answers.",
+  "logo-wall": "Confirm a partner or client to unlock the wall.",
 };
 
 type Props = {

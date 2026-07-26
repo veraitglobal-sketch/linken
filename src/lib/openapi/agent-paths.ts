@@ -107,9 +107,24 @@ export const AGENT_OPENAPI_PATHS = {
   "/widgets": {
     get: op("Embed variant catalog/snippets (requires settings:write)", "listWidgets"),
   },
+  "/widgets/partners": {
+    get: op(
+      "Confirmed partners/clients for Logo wall (settings:write)",
+      "listWidgetPartners",
+    ),
+  },
+  "/widgets/partners/{companyId}/logo": {
+    put: op(
+      "Upload Logo wall override logo for a confirmed partner (PNG/SVG/WebP)",
+      "putWidgetPartnerLogo",
+    ),
+  },
   "/widget-settings": {
-    get: op("Read widget_settings", "getWidgetSettings"),
-    patch: op("Update widget settings", "patchWidgetSettings"),
+    get: op("Read widget_settings including logoWall", "getWidgetSettings"),
+    patch: op(
+      "Merge widget settings / logo_wall (order, background transparent|light|dark|#RRGGBB, exclusions, presentation overrides)",
+      "patchWidgetSettings",
+    ),
   },
   "/scheduling": {
     get: op("Read Calendly/Cal.com booking link (Book a call)", "getScheduling"),

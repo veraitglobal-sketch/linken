@@ -107,6 +107,46 @@ export async function handleTool(name, args, { jsonAgent, agentFetch }) {
       return jsonAgent("POST", `/webhooks/${args.id}/test`, {
         event: args.event,
       });
+    case "hansala_list_widget_variants":
+      return jsonAgent("GET", "/widgets");
+    case "hansala_list_widget_partners":
+      return jsonAgent("GET", "/widgets/partners");
+    case "hansala_get_widget_settings":
+      return jsonAgent("GET", "/widget-settings");
+    case "hansala_update_widget_settings": {
+      const body = {};
+      if (args.logo_wall) body.logo_wall = args.logo_wall;
+      if (typeof args.allow_logo_in_partner_widgets === "boolean") {
+        body.allow_logo_in_partner_widgets = args.allow_logo_in_partner_widgets;
+      }
+      if (typeof args.accepting_clients === "boolean") {
+        body.accepting_clients = args.accepting_clients;
+      }
+      return jsonAgent("PATCH", "/widget-settings", body);
+    }
+    case "hansala_upload_partner_logo":
+      return uploadImage(
+        agentFetch,
+        `/widgets/partners/${args.company_id}/logo`,
+        args,
+      );
+    case "hansala_get_widget_snippet": {
+      const variants = await jsonAgent("GET", "/widgets");
+      const list = variants?.data?.variants ?? variants?.variants ?? [];
+      const want = String(args.variant ?? "logo-wall");
+      const hit =
+        list.find((v) => v.id === want) ??
+        list.find((v) => v.id === "logo-wall") ??
+        list[0];
+      if (!hit) throw new Error("No widget variants returned.");
+      return {
+        variant: hit.id,
+        name: hit.name,
+        embed_url: hit.embed_url,
+        snippet: hit.snippet,
+        note: "Paste the iframe once. Logo wall partners, order, background, and overrides are managed via hansala_update_widget_settings / hansala_upload_partner_logo.",
+      };
+    }
     default:
       throw new Error(`Unknown tool: ${name}`);
   }

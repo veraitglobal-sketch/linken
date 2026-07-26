@@ -455,7 +455,7 @@ export default function DevelopersPage() {
                       ["Team invite / remove", "…/team…", "team:manage"],
                       ["Team profile + photo + permissions", "PATCH …/team/members/{id} · PUT …/photo", "team:manage"],
                       ["Group / subsidiary / hierarchy", "…/group…", "structure:manage"],
-                      ["Widgets & logo wall", "GET|PATCH /widget-settings · GET /widgets", "settings:write"],
+                      ["Widgets & logo wall", "GET /widgets · GET|PUT /widgets/partners · GET|PATCH /widget-settings", "settings:write"],
                       ["Calendly / Cal.com booking", "GET|PUT|DELETE /scheduling", "read · settings:write"],
                       ["Outbound webhooks", "GET|POST|PATCH|DELETE /webhooks…", "webhooks:manage"],
                       ["Triage inquiries", "GET /inquiries · PATCH /inquiries/{id}", "read · inquiries:manage"],
@@ -496,7 +496,8 @@ export default function DevelopersPage() {
                 <li>3. <code className="text-ink">POST /case-studies</code> — dossier text</li>
                 <li>4. <code className="text-ink">PUT …/case-studies/{"{id}"}/cover</code> — hero photo (base64 or multipart)</li>
                 <li>5. <code className="text-ink">POST /team/invitations</code> — invite teammates</li>
-                <li>6. <code className="text-ink">GET /widgets</code> — pick embed snippet</li>
+                <li>6. <code className="text-ink">GET /widgets</code> + <code className="text-ink">GET /widgets/partners</code> — pick embed + curate Logo wall</li>
+                <li>7. <code className="text-ink">PUT /widgets/partners/&#123;id&#125;/logo</code> — upload replacement marks from a local folder via MCP</li>
               </ul>
               <p className="text-[13px] text-muted">
                 Create your key in{" "}
@@ -526,8 +527,12 @@ export default function DevelopersPage() {
                   Local bridge for{" "}
                   <strong className="text-ink">your</strong> company — same{" "}
                   <code className="text-[12px]">hs_…</code> key as{" "}
-                  <code className="text-[12px]">HANSALA_AGENT_API_KEY</code>. No
-                  separate MCP key.
+                  <code className="text-[12px]">HANSALA_AGENT_API_KEY</code>. Logo
+                  wall:{" "}
+                  <code className="text-[12px]">hansala_list_widget_partners</code>,{" "}
+                  <code className="text-[12px]">hansala_upload_partner_logo</code>{" "}
+                  (<code className="text-[12px]">image_path</code>),{" "}
+                  <code className="text-[12px]">hansala_update_widget_settings</code>.
                 </p>
                 <p className="mt-3">
                   1. Create key in{" "}

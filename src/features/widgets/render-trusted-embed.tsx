@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
-import {
-  type EmbedTheme,
-} from "@/components/embed/embed-theme";
+import { type EmbedTheme } from "@/components/embed/embed-theme";
+import { EmbedLogoWallGrid } from "@/components/embed/embed-logo-wall-grid";
 import {
   embedWrapCenter,
   embedWrapTransparent,
@@ -13,8 +12,15 @@ import type { Company } from "@/types/company";
 import { getEntitlements } from "@/features/plan/entitlements";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
-import { resolvePublicEmbedVariant } from "@/features/widgets/embed-access";
+import {
+  normalizeEmbedVariant,
+  resolvePublicEmbedVariant,
+} from "@/features/widgets/embed-access";
+import { resolveLogoWallPresentation } from "@/features/widgets/logo-wall-background";
+import { getLogoWallEntries } from "@/features/widgets/logo-wall";
+import { parseWidgetSettings } from "@/features/widgets/settings";
 import { getSiteUrl } from "@/lib/site";
+import { createClient } from "@/lib/supabase/server";
 
 /** Trusted embed body (owned / internal / unknown / preview). */
 export async function renderTrustedEmbed(input: {
@@ -25,7 +31,53 @@ export async function renderTrustedEmbed(input: {
   isPreview: boolean;
 }) {
   const { company, theme, variant, w, isPreview } = input;
-  const profileUrl = `${getSiteUrl()}/c/${company.slug}?src=embed`;
+  const siteUrl = getSiteUrl();
+  const profileUrl = `${siteUrl}/c/${company.slug}?src=embed`;
+
+  const entitlements = getEntitlements(company.plan);
+  const resolved = resolvePublicEmbedVariant({
+    variant,
+    premiumEmbeds: entitlements.premiumEmbeds,
+    preview: isPreview,
+  });
+
+  if (normalizeEmbedVariant(resolved.variant) === "logo-wall") {
+    const supabase = await createClient();
+    const { data: settingsRow } = await supabase
+      .from("companies")
+      .select("widget_settings")
+      .eq("id", company.id)
+      .maybeSingle();
+    const background = parseWidgetSettings(settingsRow?.widget_settings).logoWall
+      .background;
+    const presentation = resolveLogoWallPresentation(background, theme);
+
+    const entries = await getLogoWallEntries(company.id, {
+      applySelection: true,
+    });
+    const node = (
+      <>
+        <EmbedLogoWallGrid
+          ownerProfileUrl={profileUrl}
+          entries={entries}
+          theme={presentation.theme}
+          siteUrl={siteUrl}
+        />
+        {resolved.locked ? (
+          <EmbedProLockedNote
+            name={company.name}
+            profileUrl={profileUrl}
+            theme={presentation.theme}
+          />
+        ) : null}
+      </>
+    );
+    return wrapEmbed(node, presentation.theme, w, {
+      center: false,
+      wrapBackground: presentation.wrapBackground,
+      bare: presentation.bare,
+    });
+  }
 
   const [trust, assessment, references] = await Promise.all([
     getTrustProfile(company.id, company.slug),
@@ -52,13 +104,6 @@ export async function renderTrustedEmbed(input: {
     trust.breakdown.confirmedPartners +
     trust.breakdown.confirmedReferences +
     trust.breakdown.ongoingReferences;
-
-  const entitlements = getEntitlements(company.plan);
-  const resolved = resolvePublicEmbedVariant({
-    variant,
-    premiumEmbeds: entitlements.premiumEmbeds,
-    preview: isPreview,
-  });
 
   const node = (
     <>
@@ -93,7 +138,12 @@ export function wrapEmbed(
   node: ReactNode,
   theme: EmbedTheme,
   w?: string,
-  opts?: { center?: boolean; transparent?: boolean },
+  opts?: {
+    center?: boolean;
+    transparent?: boolean;
+    wrapBackground?: string;
+    bare?: boolean;
+  },
 ) {
   const width =
     w && (/^\d+$/.test(w) || /^\d+%$/.test(w) || /^\d+px$/.test(w))
@@ -101,11 +151,18 @@ export function wrapEmbed(
         ? `${w}px`
         : w
       : "100%";
-  const bg = opts?.transparent
-    ? "transparent"
-    : theme === "dark"
-      ? "#081412"
-      : "transparent";
+
+  let bg: string;
+  if (opts?.wrapBackground !== undefined) {
+    bg = opts.wrapBackground;
+  } else if (opts?.transparent || opts?.bare) {
+    bg = "transparent";
+  } else if (theme === "dark") {
+    bg = "#081412";
+  } else {
+    bg = "transparent";
+  }
+
   return (
     <div
       className={
@@ -113,7 +170,12 @@ export function wrapEmbed(
           ? "box-border flex min-h-full w-full items-center justify-center"
           : "box-border min-h-full w-full"
       }
-      style={{ width, maxWidth: "100%", background: bg }}
+      style={{
+        width,
+        maxWidth: "100%",
+        background: bg,
+        border: opts?.bare ? "none" : undefined,
+      }}
     >
       {node}
     </div>

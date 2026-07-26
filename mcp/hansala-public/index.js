@@ -3,7 +3,7 @@
  * Hansala Public MCP — keyless stdio server for verify + proof + widgets.
  *
  * Env (optional):
- *   HANSALA_API_BASE=https://hansala.com
+ *   HANSALA_API_BASE=https://www.hansala.com
  *
  * HANSALA_AGENT_API_KEY is intentionally ignored — this server never authenticates.
  */
@@ -19,10 +19,9 @@ import { TOOLS } from "./tools.mjs";
 // Ignore agent keys if present — wrong audience for this server.
 void process.env.HANSALA_AGENT_API_KEY;
 
-const BASE = (process.env.HANSALA_API_BASE || "https://hansala.com").replace(
-  /\/$/,
-  "",
-);
+const BASE = (
+  process.env.HANSALA_API_BASE || "https://www.hansala.com"
+).replace(/\/$/, "");
 
 async function publicGet(path) {
   const url = `${BASE}${path}`;

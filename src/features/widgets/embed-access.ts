@@ -5,7 +5,6 @@ const LEGACY: Record<string, string> = {
   badge: "horizontal",
   "proof-panel": "horizontal",
   "network-card": "score",
-  "logo-wall": "starter",
 };
 
 export function normalizeEmbedVariant(raw: string): string {

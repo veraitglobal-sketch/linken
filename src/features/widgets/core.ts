@@ -7,11 +7,8 @@ import {
   type WidgetTheme,
   type WidgetVariant,
 } from "@/features/widgets/catalog";
-import {
-  mergeLogoWallExcluded,
-  parseWidgetSettings,
-  type WidgetSettings,
-} from "@/features/widgets/settings";
+import { parseWidgetSettings, type WidgetSettings } from "@/features/widgets/settings";
+import { applyWidgetSettingsBody } from "@/features/widgets/widget-settings-patch";
 import { getSiteUrl } from "@/lib/site";
 
 export type CoreResult<T> =
@@ -59,6 +56,7 @@ export async function updateWidgetSettingsCore(
     "allow_logo_in_partner_widgets",
     "accepting_clients",
     "excluded_company_ids",
+    "logo_wall",
   ]);
   const rejected = Object.keys(body).filter((k) => !allowed.has(k));
   if (rejected.length) {
@@ -74,36 +72,15 @@ export async function updateWidgetSettingsCore(
     .eq("id", companyId)
     .maybeSingle();
 
+  const applied = applyWidgetSettingsBody(current?.widget_settings, body);
+  if (!applied.ok) return applied;
+
   const patch: Record<string, unknown> = {};
   const updated: string[] = [];
 
-  if ("excluded_company_ids" in body) {
-    if (!Array.isArray(body.excluded_company_ids)) {
-      return { ok: false, error: "excluded_company_ids must be an array." };
-    }
-    const ids = body.excluded_company_ids.filter(
-      (id): id is string => typeof id === "string",
-    );
-    patch.widget_settings = mergeLogoWallExcluded(
-      current?.widget_settings,
-      ids,
-    );
+  if (applied.touched) {
+    patch.widget_settings = applied.widgetSettings;
     updated.push("widget_settings");
-  }
-
-  if ("widget_settings" in body) {
-    if (
-      body.widget_settings === null ||
-      typeof body.widget_settings !== "object" ||
-      Array.isArray(body.widget_settings)
-    ) {
-      return { ok: false, error: "widget_settings must be an object." };
-    }
-    const parsed = parseWidgetSettings(body.widget_settings);
-    patch.widget_settings = {
-      logoWall: { excludedCompanyIds: parsed.logoWall.excludedCompanyIds },
-    };
-    if (!updated.includes("widget_settings")) updated.push("widget_settings");
   }
 
   if ("allow_logo_in_partner_widgets" in body) {

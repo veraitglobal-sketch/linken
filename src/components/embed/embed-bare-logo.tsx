@@ -17,6 +17,10 @@ type Props = {
   mono?: boolean;
   size?: LogoSize;
   className?: string;
+  scale?: number;
+  padding?: number;
+  grayscale?: boolean;
+  invertOnDark?: boolean;
 };
 
 /**
@@ -32,14 +36,21 @@ export function EmbedBareLogo({
   mono = true,
   size = "md",
   className,
+  scale = 1,
+  padding = 0,
+  grayscale = false,
+  invertOnDark = false,
 }: Props) {
   const px = LOGO_SIZE_PX[size];
   const candidates = useMemo(() => {
     const list: string[] = [];
     const primary = logoUrl?.trim();
     if (primary) list.push(primary);
-    for (const url of faviconFallbackUrls(website)) {
-      if (!list.includes(url)) list.push(url);
+    // Custom / curated overrides should not fall back to favicons.
+    if (!primary) {
+      for (const url of faviconFallbackUrls(website)) {
+        if (!list.includes(url)) list.push(url);
+      }
     }
     return list;
   }, [logoUrl, website]);
@@ -65,13 +76,18 @@ export function EmbedBareLogo({
     }
   }, [src]);
 
+  const invert =
+    (mono && theme === "dark") || (invertOnDark && theme === "dark");
+
   return (
     <span
-      className={cn(
-        "inline-flex items-center justify-center",
-        className,
-      )}
-      style={{ height: px, maxWidth: px * 3.2 }}
+      className={cn("inline-flex items-center justify-center", className)}
+      style={{
+        height: px,
+        maxWidth: px * 3.2,
+        padding,
+        transform: scale !== 1 ? `scale(${scale})` : undefined,
+      }}
       title={name}
     >
       {src ? (
@@ -83,8 +99,9 @@ export function EmbedBareLogo({
           loading="lazy"
           className={cn(
             "h-full w-auto max-w-full object-contain",
-            mono && theme === "dark" && "brightness-0 invert",
+            grayscale && "grayscale",
             mono && theme === "light" && "brightness-0",
+            invert && "brightness-0 invert",
           )}
           onError={() => setIndex((i) => i + 1)}
         />

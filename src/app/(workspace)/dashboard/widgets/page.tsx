@@ -3,10 +3,13 @@ import Link from "next/link";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { WidgetAnalyticsSection } from "@/components/widgets/widget-analytics-section";
+import { LogoWallStudio } from "@/components/widgets/logo-wall-studio";
 import { WidgetsStudio } from "@/components/widgets/widgets-studio";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import { getReferencesForCompany } from "@/features/references/queries";
+import { getLogoWallConfirmedCandidates } from "@/features/widgets/logo-wall";
+import { parseWidgetSettings } from "@/features/widgets/settings";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getSiteUrl } from "@/lib/site";
 
@@ -55,15 +58,30 @@ export default async function DashboardWidgetsPage() {
     );
   }
 
-  const [assessment, references] = await Promise.all([
-    getClientAssessmentSummary(company.id),
-    getReferencesForCompany(company.id),
-  ]);
+  const [assessment, references, wallCandidates, settingsRes] =
+    await Promise.all([
+      getClientAssessmentSummary(company.id),
+      getReferencesForCompany(company.id),
+      getLogoWallConfirmedCandidates(company.id),
+      (async () => {
+        const { createClient } = await import("@/lib/supabase/server");
+        const supabase = await createClient();
+        return supabase
+          .from("companies")
+          .select("widget_settings")
+          .eq("id", company.id)
+          .maybeSingle();
+      })(),
+    ]);
 
   const confirmedRefs = references.filter((r) => r.status === "confirmed");
   const isPro = getEntitlements(company.plan).premiumEmbeds;
   const hasProof = confirmedRefs.length > 0;
   const domainReady = Boolean(company.verified && company.website?.trim());
+  const hasWall = wallCandidates.length > 0;
+  const wallBackground = parseWidgetSettings(
+    settingsRes.data?.widget_settings,
+  ).logoWall.background;
 
   const availability = {
     verified: true,
@@ -76,6 +94,7 @@ export default async function DashboardWidgetsPage() {
     signature: true,
     references: confirmedRefs.length > 0,
     assessment: assessment.wouldWorkAgainTotal >= 3,
+    "logo-wall": hasWall,
   };
 
   return (
@@ -92,18 +111,24 @@ export default async function DashboardWidgetsPage() {
         </Link>
       }
     >
-      <WidgetAnalyticsSection
-        companyId={company.id}
-        website={company.website}
-        plan={parsePlan(company.plan)}
-      />
-      <WidgetsStudio
-        siteUrl={siteUrl}
-        slug={company.slug}
-        isPro={isPro}
-        domainReady={domainReady}
-        availability={availability}
-      />
+      <div className="space-y-8">
+        <WidgetAnalyticsSection
+          companyId={company.id}
+          website={company.website}
+          plan={parsePlan(company.plan)}
+        />
+        <LogoWallStudio
+          entries={wallCandidates}
+          background={wallBackground}
+        />
+        <WidgetsStudio
+          siteUrl={siteUrl}
+          slug={company.slug}
+          isPro={isPro}
+          domainReady={domainReady}
+          availability={availability}
+        />
+      </div>
     </WorkspacePage>
   );
 }

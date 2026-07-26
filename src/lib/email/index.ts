@@ -8,6 +8,7 @@ export {
   sendPartnershipRequestEmail,
   sendPartnershipEndedEmail,
 } from "@/lib/email/trust";
+export { sendLogoWallOverrideEmail } from "@/lib/email/logo-wall";
 export {
   sendInquiryNotifyEmail,
   sendGroupInviteEmail,

@@ -1,9 +1,3 @@
-import {
-  logoWallHeight,
-  type LogoMotion,
-  type LogoSize,
-} from "@/features/widgets/logo-motion";
-
 export type WidgetVariant =
   | "verified"
   | "micro"
@@ -14,7 +8,8 @@ export type WidgetVariant =
   | "credentials"
   | "signature"
   | "references"
-  | "assessment";
+  | "assessment"
+  | "logo-wall";
 
 export type WidgetTheme = "light" | "dark";
 export type WidgetSection = "essential" | "proof" | "signature";
@@ -128,6 +123,18 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     section: "signature",
     pro: true,
     height: 160,
+  },
+  {
+    id: "logo-wall",
+    name: "Logo wall",
+    description:
+      "Hansala Verified lockup above partner logos — curated from the studio.",
+    section: "proof",
+    pro: true,
+    height: 240,
+    requirementHint: "Requires at least one confirmed partner or client.",
+    unavailableCtaHref: "/dashboard/partners",
+    unavailableCtaLabel: "Confirm partners",
   },
 ];
 

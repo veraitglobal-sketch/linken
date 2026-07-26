@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createUnclaimedPartnerCore } from "@/features/partners/core";
-import { mergeLogoWallExcluded } from "@/features/widgets/settings";
+import { saveLogoWallSelection as saveSelection } from "@/features/widgets/logo-wall-studio-actions";
 import { sendClaimInviteEmail } from "@/lib/email";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -13,40 +13,13 @@ function safeWidgetsBack(raw: string) {
   return back.startsWith("/dashboard") ? back : "/dashboard/widgets";
 }
 
-async function requireOperatorCompany() {
-  return getOperatorActiveCompany();
-}
-
 /** Persist which confirmed firms are hidden from the public Logo wall. */
 export async function saveLogoWallSelection(formData: FormData) {
   const back = safeWidgetsBack(String(formData.get("back") ?? "/dashboard/widgets"));
-  const included = formData.getAll("included_id").map(String).filter(Boolean);
-  const allIds = formData.getAll("candidate_id").map(String).filter(Boolean);
-
-  const { supabase, user, company } = await requireOperatorCompany();
-  if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
-  if (!company) {
-    redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
+  const result = await saveSelection(formData);
+  if (!result.ok) {
+    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
   }
-
-  const includedSet = new Set(included);
-  const excludedCompanyIds = allIds.filter((id) => !includedSet.has(id));
-  const next = mergeLogoWallExcluded(
-    company.widget_settings,
-    excludedCompanyIds,
-  );
-
-  const { error } = await supabase
-    .from("companies")
-    .update({ widget_settings: next })
-    .eq("id", company.id);
-
-  if (error) {
-    redirect(`${back}?error=${encodeURIComponent(error.message)}`);
-  }
-
-  revalidatePath(back);
-  revalidatePath(`/embed/${company.slug}`);
   redirect(`${back}?wallSaved=1`);
 }
 
@@ -55,7 +28,7 @@ export async function resendLogoWallInvite(formData: FormData) {
   const companyId = String(formData.get("company_id") ?? "").trim();
   const back = safeWidgetsBack(String(formData.get("back") ?? "/dashboard/widgets"));
 
-  const { supabase, user, company } = await requireOperatorCompany();
+  const { supabase, user, company } = await getOperatorActiveCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);
@@ -130,7 +103,7 @@ export async function createUnclaimedPartnerFromWidgets(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent("Company name is required.")}`);
   }
 
-  const { supabase, user, company } = await requireOperatorCompany();
+  const { supabase, user, company } = await getOperatorActiveCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(back)}`);
   if (!company) {
     redirect(`${back}?error=${encodeURIComponent("Create your company first.")}`);

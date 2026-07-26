@@ -41,17 +41,33 @@ export function LogoMotionGrid({
               href={`${siteUrl}/c/${e.slug}?src=embed`}
               target="_blank"
               rel="noopener noreferrer"
+              title={e.name}
               className="block no-underline opacity-75 transition-opacity hover:opacity-100"
             >
-              <EmbedBareLogo
-                name={e.name}
-                initials={e.initials}
-                logoUrl={e.showLogo ? e.logoUrl : null}
-                website={e.website}
-                theme={theme}
-                mono={mono}
-                size={size}
-              />
+              {e.showLogo ? (
+                <EmbedBareLogo
+                  name={e.name}
+                  initials={e.initials}
+                  logoUrl={e.logoUrl}
+                  website={e.website}
+                  theme={theme}
+                  mono={mono}
+                  size={size}
+                  scale={e.scale}
+                  padding={e.padding}
+                  grayscale={e.grayscale}
+                  invertOnDark={e.invertOnDark}
+                />
+              ) : (
+                <span
+                  className={cn(
+                    "text-[11px] font-semibold tracking-[0.06em]",
+                    theme === "dark" ? "text-white/80" : "text-[#0d1210]",
+                  )}
+                >
+                  {e.name}
+                </span>
+              )}
             </a>
           </li>
         );

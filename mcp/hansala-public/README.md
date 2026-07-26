@@ -13,10 +13,12 @@ npx hansala-mcp-public
 Optional env:
 
 ```bash
-HANSALA_API_BASE=https://hansala.com
+HANSALA_API_BASE=https://www.hansala.com
 ```
 
 `HANSALA_AGENT_API_KEY` is ignored if set.
+
+> Prefer `www.hansala.com` — apex `hansala.com` 308-redirects to www. Node `fetch` follows redirects; plain `curl` without `-L` only shows `Redirecting...`.
 
 ## Cursor
 
@@ -39,10 +41,17 @@ Local (repo checkout):
     "hansala-public": {
       "command": "node",
       "args": ["mcp/hansala-public/index.js"],
-      "env": { "HANSALA_API_BASE": "https://hansala.com" }
+      "env": { "HANSALA_API_BASE": "https://www.hansala.com" }
     }
   }
 }
+```
+
+## Smoke test (local package)
+
+```bash
+cd mcp/hansala-public
+node smoke.mjs
 ```
 
 ## Tools

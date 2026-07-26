@@ -35,14 +35,13 @@ export type EmbedRenderInput = {
   confirmedCount: number;
 };
 
-/** Legacy embed params map to logo-free widgets. */
+/** Legacy embed params map to current variants. */
 function normalizeVariant(raw: string): string {
   const map: Record<string, string> = {
     compact: "micro",
     badge: "horizontal",
     "proof-panel": "horizontal",
     "network-card": "score",
-    "logo-wall": "starter",
   };
   return map[raw] ?? raw;
 }
@@ -160,5 +159,6 @@ export function embedWrapCenter(variant: string): boolean {
 }
 
 export function embedWrapTransparent(variant: string): boolean {
-  return normalizeVariant(variant) === "verified";
+  const v = normalizeVariant(variant);
+  return v === "verified" || v === "logo-wall";
 }
