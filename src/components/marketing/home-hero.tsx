@@ -56,12 +56,12 @@ export function HomeHero() {
 
         <div className="relative min-h-[280px]">
           <Image
-            src="/images/hero-partner-v2.jpg"
+            src="/images/hero-partner-v3.jpg"
             alt="Architecture firm partner reviewing plans outside a project site"
             fill
             priority
             fetchPriority="high"
-            quality={72}
+            quality={90}
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 42vw"
           />
