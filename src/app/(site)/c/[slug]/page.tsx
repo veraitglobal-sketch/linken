@@ -37,6 +37,7 @@ type Props = {
     created?: string;
     src?: string;
     domainVerified?: string;
+    partnerConfirmed?: string;
     add?: string;
     q?: string;
     mode?: string;
@@ -166,6 +167,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         partnerCreated={sp.created}
         siteUrl={siteUrl}
         domainVerifiedJustNow={sp.domainVerified === "1"}
+        partnerConfirmedJustNow={sp.partnerConfirmed === "1"}
         groupBadge={groupBadge}
         teamMembers={teamMembers}
         nextActivationStep={checklist?.next ?? null}

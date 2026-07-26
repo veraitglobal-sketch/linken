@@ -37,6 +37,7 @@ type Props = {
   groupBadge?: ConfirmedGroupBadge | null;
   networkMap?: ReactNode;
   domainVerifiedJustNow?: boolean;
+  partnerConfirmedJustNow?: boolean;
   teamMembers?: PublicTeamMember[];
   nextActivationStep?: ActivationStep | null;
   showAddPartner?: boolean;
@@ -67,6 +68,7 @@ export function CompanyProfile({
   groupBadge = null,
   networkMap = null,
   domainVerifiedJustNow = false,
+  partnerConfirmedJustNow = false,
   teamMembers = [],
   nextActivationStep = null,
   showAddPartner = false,
@@ -104,6 +106,14 @@ export function CompanyProfile({
           <p className="rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
             Domain verified — your email matches your website. The Verified badge
             is live on this profile.
+          </p>
+        </div>
+      ) : null}
+      {partnerConfirmedJustNow ? (
+        <div className="mx-auto mt-4 max-w-6xl px-4">
+          <p className="rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
+            Partnership confirmed. Your company is claimed and the link is live
+            on the map.
           </p>
         </div>
       ) : null}

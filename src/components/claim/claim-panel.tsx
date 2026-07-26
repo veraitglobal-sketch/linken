@@ -1,4 +1,4 @@
-import { InviteAuth } from "@/components/auth/invite-auth";
+import { ConfirmContinueGate } from "@/components/auth/confirm-continue-gate";
 import { claimCompanyProfile } from "@/features/partners/actions";
 import type { ClaimPreview } from "@/features/partners/queries";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ type Props = {
   token: string;
   userId: string | null;
   error?: string;
+  checkEmail?: boolean;
+  checkEmailAddress?: string;
 };
 
 export function ClaimPanel({
@@ -15,6 +17,8 @@ export function ClaimPanel({
   token,
   userId,
   error,
+  checkEmail = false,
+  checkEmailAddress,
 }: Props) {
   const next = `/claim/${token}`;
 
@@ -29,11 +33,14 @@ export function ClaimPanel({
 
   if (!userId) {
     return (
-      <InviteAuth
+      <ConfirmContinueGate
         next={next}
         invitedEmail={preview.inviteEmail ?? undefined}
-        title="Sign in to claim this profile"
-        description={`${preview.inviterName ?? "A partner"} drafted ${preview.companyName} for you. Sign in to take ownership.`}
+        companyName={preview.companyName}
+        inviterName={preview.inviterName}
+        error={error}
+        checkEmail={checkEmail}
+        checkEmailAddress={checkEmailAddress}
       />
     );
   }
@@ -46,19 +53,22 @@ export function ClaimPanel({
         </p>
       ) : null}
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-        Ready to claim
+        Ready
       </p>
       <h2 className="mt-2 font-display text-2xl font-medium tracking-[-0.03em] text-ink">
-        Take ownership of {preview.companyName}
+        Confirm partnership
       </h2>
       <p className="mt-2 text-[14px] text-ink-soft">
-        Partnerships stay pending until you confirm them — claiming does not
-        auto-verify anyone.
+        Take ownership of {preview.companyName}
+        {preview.inviterName
+          ? ` and confirm the partnership with ${preview.inviterName}`
+          : ""}
+        .
       </p>
       <form action={claimCompanyProfile} className="mt-6">
         <input type="hidden" name="token" value={token} />
         <Button type="submit" className="h-11 w-full">
-          Claim this profile
+          Confirm partnership
         </Button>
       </form>
     </div>

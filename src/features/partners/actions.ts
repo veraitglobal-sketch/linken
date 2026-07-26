@@ -69,12 +69,29 @@ export async function claimCompanyProfile(formData: FormData) {
     redirect(`${path}?error=${encodeURIComponent(error.message)}`);
   }
 
-  const slug = data?.slug as string | undefined;
+  const claimed = data as { id?: string; slug?: string } | null;
+  const companyId = claimed?.id;
+  const slug = claimed?.slug;
+
+  // Invite path: claiming also confirms pending partnerships with this company.
+  if (companyId) {
+    await supabase
+      .from("partnerships")
+      .update({
+        status: "accepted",
+        responded_at: new Date().toISOString(),
+      })
+      .eq("recipient_id", companyId)
+      .eq("status", "pending");
+  }
+
   revalidatePath("/dashboard");
   revalidatePath("/welcome");
-  if (slug) revalidatePath(`/c/${slug}`);
-  // Activation: claim invitees land on a short setup path, not an empty graph
-  redirect(slug ? "/welcome?from=claim" : "/dashboard");
+  if (slug) {
+    revalidatePath(`/c/${slug}`);
+    revalidatePath("/dashboard/partners");
+  }
+  redirect(slug ? `/c/${slug}?partnerConfirmed=1` : "/dashboard");
 }
 
 /** Resend claim email without exposing claim_token in the browser. */

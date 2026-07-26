@@ -63,15 +63,15 @@ export async function sendClaimInviteEmail(input: {
   const claimUrl = `${getEmailSiteUrl()}/claim/${input.claimToken}`;
   return sendBrandedEmail({
     to: input.to,
-    subject: `${input.inviterName} listed ${input.companyName} as a partner on Hansala`,
+    subject: `${input.inviterName} invited ${input.companyName} to partner on Hansala`,
     content: {
-      eyebrow: "Partner profile",
-      headline: `Claim ${input.companyName}`,
+      eyebrow: "Partnership invite",
+      headline: `Confirm partnership with ${input.inviterName}`,
       paragraphs: [
-        `${input.inviterName} added ${input.companyName} as a partner on Hansala.`,
-        "A draft profile is waiting — claim it to manage partnerships and appear as confirmed.",
+        `${input.inviterName} listed ${input.companyName} as a partner on Hansala.`,
+        "Open the link to confirm — you can continue with a one-time email link or a password. No separate signup maze.",
       ],
-      cta: { label: "Claim profile", href: claimUrl },
+      cta: { label: "Confirm partnership", href: claimUrl },
       finePrint: "If this was unexpected, you can ignore this email.",
     },
     logLabel: "claim-invite",
