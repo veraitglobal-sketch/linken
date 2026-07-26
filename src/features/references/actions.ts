@@ -21,7 +21,6 @@ export async function addReference(formData: FormData) {
   const inviteEmail = String(formData.get("invite_email") ?? "")
     .trim()
     .toLowerCase();
-  const createGhost = String(formData.get("create_ghost") ?? "") === "on";
   const website = String(formData.get("website") ?? "").trim();
   const companySlug = String(formData.get("company_slug") ?? "").trim();
 
@@ -39,7 +38,8 @@ export async function addReference(formData: FormData) {
     ongoing,
     endedYear: endedYear || null,
     inviteEmail: inviteEmail || null,
-    createGhost,
+    // Ghosts must not become workspaces — confirm email only.
+    createGhost: false,
     website: website || null,
   });
 

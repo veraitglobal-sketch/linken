@@ -7,7 +7,6 @@ type Props = {
   preview: ClaimPreview;
   token: string;
   userId: string | null;
-  alreadyOwnsCompany: boolean;
   error?: string;
 };
 
@@ -15,7 +14,6 @@ export function ClaimPanel({
   preview,
   token,
   userId,
-  alreadyOwnsCompany,
   error,
 }: Props) {
   const next = `/claim/${token}`;
@@ -25,15 +23,6 @@ export function ClaimPanel({
       <Status
         title="Already claimed"
         body="This company profile has already been claimed."
-      />
-    );
-  }
-
-  if (alreadyOwnsCompany) {
-    return (
-      <Status
-        title="One company per account"
-        body="Your account already owns a company on Hansala. Contact support if you need to claim this draft under a different arrangement."
       />
     );
   }

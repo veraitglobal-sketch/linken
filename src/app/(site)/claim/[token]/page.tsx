@@ -20,7 +20,7 @@ export default async function ClaimTokenPage({ params, searchParams }: Props) {
   const { token } = await params;
   const { error } = await searchParams;
   const preview = await getClaimPreview(token);
-  const { user, company } = await viewerOwnsClaimedCompany();
+  const { user } = await viewerOwnsClaimedCompany();
 
   if (!preview) {
     return (
@@ -70,7 +70,6 @@ export default async function ClaimTokenPage({ params, searchParams }: Props) {
           preview={preview}
           token={token}
           userId={user?.id ?? null}
-          alreadyOwnsCompany={Boolean(company)}
           error={error}
         />
       </div>

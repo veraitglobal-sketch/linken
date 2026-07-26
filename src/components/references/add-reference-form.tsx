@@ -75,10 +75,6 @@ export function AddReferenceForm({ companySlug }: Props) {
           </span>
           <Input name="website" type="url" placeholder="https://" />
         </label>
-        <label className="flex items-center gap-2 text-[13px] text-ink sm:col-span-2">
-          <input type="checkbox" name="create_ghost" className="size-4 rounded border-line" />
-          Also create an unclaimed draft profile for this client
-        </label>
       </div>
 
       <div className="mt-4 flex gap-2">

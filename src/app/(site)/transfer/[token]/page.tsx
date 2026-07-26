@@ -57,7 +57,7 @@ export default async function TransferPage({ params, searchParams }: Props) {
       <SectionTitle
         eyebrow="Transfer"
         title={`Own ${preview.companyName}`}
-        description="You are accepting ownership of this company profile. Confirmed evidence stays with the company. You must not already own another claimed company."
+        description="You are accepting ownership of this company profile. Confirmed evidence stays with the company."
       />
 
       {error ? (

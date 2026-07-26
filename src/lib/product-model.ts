@@ -3,14 +3,15 @@
  * Everything else is secondary (More).
  */
 export const PRODUCT = {
-  oneLiner: "Company is you. Map is who you’re linked to. Inbox is requests.",
+  oneLiner:
+    "Company is you. Map shows confirmed partners. Inbox is requests.",
   company: {
     label: "Company",
     job: "Your page — add partners, team, and proof here.",
   },
   map: {
     label: "Map",
-    job: "Who you’re connected to. Confirmed links only.",
+    job: "Confirmed partners and links for your workspaces. Lines draw themselves.",
   },
   inbox: {
     label: "Inbox",
@@ -24,7 +25,7 @@ export const PRODUCT = {
   /** @deprecated alias — use map */
   network: {
     label: "Map",
-    job: "Who you’re connected to. Confirmed links only.",
+    job: "Confirmed partners and links for your workspaces. Lines draw themselves.",
   },
   partners: {
     label: "Partners",
@@ -54,6 +55,6 @@ export const HOW_IT_WORKS = [
   {
     n: "3",
     title: "Map",
-    body: "See your connections. That’s it.",
+    body: "See confirmed connections. Add more workspaces you own from the switcher.",
   },
 ] as const;

@@ -67,22 +67,27 @@ export async function getWorkspaceContexts(
     const { data: branches } = await supabase
       .from("companies")
       .select(
-        "id, name, slug, logo_url, website, claimed, created_at, created_by_company_id, group_members:company_group_members!company_id(status)",
+        "id, name, slug, logo_url, website, claimed, created_at, created_by_company_id",
       )
       .eq("claimed", false)
       .in("created_by_company_id", creatorIds);
 
+    const branchIds = (branches ?? []).map((c) => c.id as string);
+    const inGroup = new Set<string>();
+    if (branchIds.length > 0) {
+      const { data: memberships } = await supabase
+        .from("company_group_members")
+        .select("company_id")
+        .in("company_id", branchIds)
+        .eq("status", "confirmed");
+      for (const m of memberships ?? []) {
+        inGroup.add(m.company_id as string);
+      }
+    }
+
     for (const c of branches ?? []) {
       if (seen.has(c.id as string)) continue;
-      const memberships = Array.isArray(c.group_members)
-        ? c.group_members
-        : c.group_members
-          ? [c.group_members]
-          : [];
-      const inGroup = memberships.some(
-        (m: { status?: string }) => m.status === "confirmed",
-      );
-      if (!inGroup) continue;
+      if (!inGroup.has(c.id as string)) continue;
       seen.add(c.id as string);
       out.push({
         type: "company",

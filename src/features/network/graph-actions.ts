@@ -323,15 +323,10 @@ export async function addExistingCompanyToWorkspace(input: {
   }
 
   if (input.intent === "partner") {
-    if (viewer.companyId === target.id) {
-      return { ok: false, error: "That is already your company." };
-    }
-
-    return connectGraphNodes({
-      mode: "partner",
-      sourceNodeId: `company:${viewer.companyId}`,
-      targetNodeId: `company:${target.id}`,
-    });
+    return {
+      ok: false,
+      error: "Add partners on Company — they appear on the map after both confirm.",
+    };
   }
 
   // Group invite — can invite before they verify; they stay muted until domain verify

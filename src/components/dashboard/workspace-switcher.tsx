@@ -26,7 +26,6 @@ type Props = {
 export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const multi = contexts.length > 1;
   const draftActive = isDraftWorkspace(active);
 
   const { companies, drafts } = useMemo(() => {
@@ -48,38 +47,6 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
     return () => document.removeEventListener("mousedown", onDoc);
   }, [open]);
 
-  if (!multi) {
-    const href =
-      active.type === "company"
-        ? `/c/${active.slug}/edit`
-        : "/dashboard/group";
-    return (
-      <Link
-        href={href}
-        className={cn(
-          "group flex items-center gap-2 rounded-xl px-2 py-2 transition-colors hover:bg-navy/[0.035]",
-          draftActive && "ring-1 ring-dashed ring-[#c5cdc8]",
-        )}
-        title={active.type === "company" ? "Edit company" : "Group"}
-      >
-        <SwitcherMark ctx={active} />
-        <SwitcherMeta
-          name={active.name}
-          subtitle={
-            draftActive
-              ? workspaceRoleLabel(active)
-              : active.type === "group"
-                ? "Group"
-                : verified
-                  ? "Verified workspace"
-                  : "Workspace"
-          }
-          draft={draftActive}
-        />
-      </Link>
-    );
-  }
-
   return (
     <div ref={rootRef} className="relative">
       <button
@@ -96,7 +63,13 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
         <SwitcherMeta
           name={active.name}
           subtitle={
-            active.type === "group" ? "Group" : workspaceRoleLabel(active)
+            draftActive
+              ? workspaceRoleLabel(active)
+              : active.type === "group"
+                ? "Group"
+                : verified
+                  ? "Verified workspace"
+                  : workspaceRoleLabel(active)
           }
           draft={draftActive}
         />
@@ -122,11 +95,11 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
             {drafts.length > 0 ? (
               <>
                 <SwitcherGroupLabel className="mt-1 border-t border-line pt-2">
-                  Draft profiles you manage
+                  Branch drafts
                 </SwitcherGroupLabel>
                 <li className="px-2.5 pb-1">
                   <p className="text-[10px] leading-snug text-muted">
-                    Not yet claimed by their owner.
+                    Group subsidiaries waiting to be claimed.
                   </p>
                 </li>
                 {drafts.map((ctx) => (
@@ -140,6 +113,13 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
             ) : null}
           </ul>
           <div className="border-t border-line px-1 py-1">
+            <Link
+              href="/dashboard/workspaces/new"
+              onClick={() => setOpen(false)}
+              className="block rounded-lg px-2.5 py-2 text-[12px] font-semibold text-ink transition-colors hover:bg-paper"
+            >
+              Add workspace
+            </Link>
             {active.type === "company" ? (
               <Link
                 href={`/c/${active.slug}/edit`}

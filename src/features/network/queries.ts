@@ -888,7 +888,8 @@ async function graphForCompany(
 
   if (group && expand === "full") {
     const members = await loadGroupMembers(group.id);
-    return buildGroupGraph(group, members, company.id);
+    const built = await buildGroupGraph(group, members, company.id);
+    return attachSiblingOwnedCompanies(built, company.id);
   }
 
   let descendants: MemberRow[] = [];
@@ -904,11 +905,74 @@ async function graphForCompany(
     }
   }
 
-  return buildLocalCompanyGraph(company, {
+  const local = await buildLocalCompanyGraph(company, {
     descendants,
     parent,
     group: group
       ? { id: group.id, name: group.name, slug: group.slug }
       : null,
   });
+
+  if (expand === "full") {
+    return attachSiblingOwnedCompanies(local, company.id);
+  }
+
+  return local;
+}
+
+/** Include other claimed companies the viewer owns + their partners. */
+async function attachSiblingOwnedCompanies(
+  graph: NetworkGraph,
+  focusCompanyId: string,
+): Promise<NetworkGraph> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return graph;
+
+  const { data: owned } = await supabase
+    .from("companies")
+    .select(
+      "id, slug, name, category, city, claimed, verified, logo_url, website, logo_source",
+    )
+    .eq("owner_id", user.id)
+    .eq("claimed", true)
+    .neq("id", focusCompanyId);
+
+  if (!owned?.length) return graph;
+
+  const nodes = [...graph.nodes];
+  const edges = [...graph.edges];
+  const seen = new Set(nodes.map((n) => n.id));
+  const memberIdSet = new Set(
+    nodes
+      .filter((n) => n.data.companyId)
+      .map((n) => n.data.companyId as string),
+  );
+
+  const siblingNodes = await Promise.all(
+    owned.map((row) => companyNode(row as CompanyRow, "company")),
+  );
+  for (const node of siblingNodes) {
+    if (seen.has(node.id)) continue;
+    nodes.push(node);
+    seen.add(node.id);
+    if (node.data.companyId) memberIdSet.add(node.data.companyId);
+  }
+
+  await attachPartnersAndClients(
+    owned.map((r) => r.id as string),
+    memberIdSet,
+    nodes,
+    edges,
+    seen,
+  );
+
+  return {
+    ...graph,
+    nodes,
+    edges,
+    summary: summarize(nodes),
+  };
 }

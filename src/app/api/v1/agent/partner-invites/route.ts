@@ -1,6 +1,6 @@
 /**
- * Agent API — invite unclaimed partner (pending partnership only).
- * Checklist: every DB query is hard-scoped to ctx.companyId from the API key.
+ * Agent API — invite unclaimed partner (pending partnership + claim email).
+ * Ghost stubs are not workspaces for the inviter — only Inbox / Company.
  * Never auto-accepts — confirmations stay human-only.
  */
 import type { NextRequest } from "next/server";
