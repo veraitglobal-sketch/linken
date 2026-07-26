@@ -6,12 +6,14 @@ import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { WidgetsFlash } from "@/components/widgets/widgets-flash";
 import {
-  cancelProSubscription,
-  endManualProPlan,
   openBillingPortal,
-  resumeProSubscription,
   startProCheckout,
 } from "@/features/billing/actions";
+import {
+  cancelProSubscription,
+  endManualProPlan,
+  resumeProSubscription,
+} from "@/features/billing/subscription-actions";
 import {
   PRO_FEATURES,
   PRO_PLAN_LABEL,
