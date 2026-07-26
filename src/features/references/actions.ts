@@ -87,11 +87,14 @@ async function respondServiceReference(
     loginNext: path,
   });
 
-  const { error } = await supabase.rpc("confirm_service_reference", {
-    p_token: token,
-    p_decision: decision,
-    p_company_id: company.id,
-  });
+  const { data: refRow, error } = await supabase.rpc(
+    "confirm_service_reference",
+    {
+      p_token: token,
+      p_decision: decision,
+      p_company_id: company.id,
+    },
+  );
 
   if (error) {
     const raw = error.message ?? "Could not respond.";
@@ -101,6 +104,30 @@ async function respondServiceReference(
         ? "Only the company owner can confirm this request."
         : raw;
     redirect(`${path}?error=${encodeURIComponent(message)}`);
+  }
+
+  if (decision === "confirmed" && refRow) {
+    const raw = Array.isArray(refRow) ? refRow[0] : refRow;
+    const row = raw as {
+      id?: string;
+      provider_company_id?: string;
+      client_name?: string;
+      service?: string;
+    } | null;
+    if (row?.provider_company_id && row.id) {
+      const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
+      emitWebhookEvent(
+        row.provider_company_id,
+        "reference.confirmed",
+        {
+          reference_id: row.id,
+          client_name: row.client_name ?? null,
+          service: row.service ?? null,
+          confirmed_by_company_id: company.id,
+        },
+        `reference_${row.id}`,
+      );
+    }
   }
 
   revalidatePath(path);

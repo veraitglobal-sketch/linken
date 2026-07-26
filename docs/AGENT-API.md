@@ -16,6 +16,7 @@ OpenAPI: `GET /api/v1/openapi` (index) · `GET /api/v1/openapi/agent` (full agen
 | `content:write` | PATCH profile, case studies, image uploads, references content |
 | `invites:send` | Reference / partner / client confirmation emails (20/day) |
 | `verification:run` | Domain verification status, instructions, check |
+| `webhooks:manage` | Outbound webhook endpoints (create/list/update/delete/test) |
 | `team:manage` | Team list, invitations, members, photos (**including GET /team**) |
 | `structure:manage` | Company groups, subsidiaries, parent proposals |
 | `settings:write` | Widgets catalog + widget-settings (**including GET /widgets**) |

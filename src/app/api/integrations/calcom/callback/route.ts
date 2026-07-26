@@ -91,6 +91,18 @@ export async function GET(request: Request) {
     return back(`error=${encodeURIComponent(error.message)}`);
   }
 
+  const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
+  emitWebhookEvent(
+    parsed.companyId,
+    "booking.connected",
+    {
+      provider: "calcom",
+      url: schedulingUrl,
+      label: "Book a call",
+    },
+    `booking_${parsed.companyId}_calcom`,
+  );
+
   revalidatePath("/dashboard/integrations");
   if (company?.slug) revalidatePath(`/c/${company.slug}`);
   return back("connected=calcom");

@@ -51,7 +51,7 @@ export async function respondPartnership(formData: FormData) {
 
   const { data: row } = await supabase
     .from("partnerships")
-    .select("id, status, recipient_id")
+    .select("id, status, recipient_id, requester_id")
     .eq("id", partnershipId)
     .maybeSingle();
 
@@ -64,13 +64,36 @@ export async function respondPartnership(formData: FormData) {
 
   // DB check: rejected | accepted (app UI still says "declined")
   const status = decision === "declined" ? "rejected" : "accepted";
+  const respondedAt = new Date().toISOString();
   const { error } = await supabase
     .from("partnerships")
-    .update({ status, responded_at: new Date().toISOString() })
+    .update({ status, responded_at: respondedAt })
     .eq("id", partnershipId);
 
   if (error) {
     redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  if (decision === "accepted") {
+    const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
+    const payload = {
+      partnership_id: partnershipId,
+      requester_id: row.requester_id,
+      recipient_id: row.recipient_id,
+      responded_at: respondedAt,
+    };
+    emitWebhookEvent(
+      row.recipient_id as string,
+      "partnership.accepted",
+      payload,
+      `partnership_${partnershipId}`,
+    );
+    emitWebhookEvent(
+      row.requester_id as string,
+      "partnership.accepted",
+      payload,
+      `partnership_${partnershipId}`,
+    );
   }
 
   revalidatePath(back);

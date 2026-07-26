@@ -368,6 +368,7 @@ export default function DevelopersPage() {
                       ["settings:write", "Widget settings, embed catalog, accepting clients"],
                       ["inquiries:manage", "Patch inquiry status"],
                       ["verification:run", "Verify token/instructions + run checks"],
+                      ["webhooks:manage", "Outbound webhook endpoints + test"],
                     ].map(([scope, allows]) => (
                       <tr key={scope}>
                         <td className="px-4 py-2.5 font-mono text-[12px] text-ink">
@@ -418,6 +419,7 @@ export default function DevelopersPage() {
                       ["Group / subsidiary / hierarchy", "…/group…", "structure:manage"],
                       ["Widgets & logo wall", "GET|PATCH /widget-settings · GET /widgets", "settings:write"],
                       ["Calendly / Cal.com booking", "GET|PUT|DELETE /scheduling", "read · settings:write"],
+                      ["Outbound webhooks", "GET|POST|PATCH|DELETE /webhooks…", "webhooks:manage"],
                       ["Triage inquiries", "GET /inquiries · PATCH /inquiries/{id}", "read · inquiries:manage"],
                       ["Analytics / audit", "GET /analytics · GET /audit-log", "read"],
                     ].map(([action, endpoint, scope]) => (

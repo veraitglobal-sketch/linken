@@ -12,6 +12,7 @@ export const AGENT_SCOPES = [
   "settings:write",
   "inquiries:manage",
   "verification:run",
+  "webhooks:manage",
 ] as const;
 export type AgentScope = (typeof AGENT_SCOPES)[number];
 

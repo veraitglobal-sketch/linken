@@ -90,6 +90,30 @@ export async function sendInquiry(formData: FormData) {
     );
   }
 
+  const { data: companyRow } = await admin
+    .from("companies")
+    .select("id")
+    .eq("slug", row.company_slug)
+    .maybeSingle();
+
+  if (companyRow?.id) {
+    const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
+    emitWebhookEvent(
+      companyRow.id as string,
+      "inquiry.created",
+      {
+        inquiry_id: row.inquiry_id,
+        sender_name: senderName,
+        sender_email: senderEmail,
+        sender_company: senderCompany || null,
+        service_interest: serviceInterest || null,
+        message: message.slice(0, 2000),
+        company_slug: row.company_slug,
+      },
+      `inquiry_${row.inquiry_id}`,
+    );
+  }
+
   const { data: notifyEmail } = await admin.rpc("get_inquiry_notify_email", {
     p_inquiry_id: row.inquiry_id,
   });

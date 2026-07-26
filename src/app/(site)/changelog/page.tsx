@@ -11,6 +11,7 @@ const ENTRIES = [
   {
     date: "26 July 2026",
     items: [
+      "Outbound webhooks: HMAC-signed POSTs, dashboard + Agent API (`webhooks:manage`).",
       "security.txt (RFC 9116) + /api/health liveness.",
       "Public + Agent OpenAPI specs under /api/v1/openapi/*.",
       "Developer portal baseline: Privacy, Terms, API Terms, Security, Status.",

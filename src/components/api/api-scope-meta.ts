@@ -50,6 +50,11 @@ export const SCOPE_META: {
     label: "Verification",
     description: "Read verify instructions and run domain / backlink checks.",
   },
+  {
+    id: "webhooks:manage",
+    label: "Webhooks",
+    description: "Create and manage outbound webhook endpoints and secrets.",
+  },
 ];
 
 export const KEY_PRESETS: {

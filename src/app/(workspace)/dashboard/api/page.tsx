@@ -3,9 +3,14 @@ import Link from "next/link";
 import { ApiAgentGuide } from "@/components/api/api-agent-guide";
 import { ApiAuditList } from "@/components/api/api-audit-list";
 import { ApiKeysPanel } from "@/components/api/api-keys-panel";
+import { ApiWebhooksPanel } from "@/components/api/api-webhooks-panel";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { listApiKeys, listRecentAudit } from "@/features/agent-api/keys";
+import {
+  listWebhookDeliveries,
+  listWebhookEndpoints,
+} from "@/features/webhooks/actions";
 import { getEntitlements } from "@/features/plan/entitlements";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 
@@ -79,7 +84,12 @@ export default async function DashboardApiPage() {
     );
   }
 
-  const [keys, audit] = await Promise.all([listApiKeys(), listRecentAudit(50)]);
+  const [keys, audit, endpoints, deliveries] = await Promise.all([
+    listApiKeys(),
+    listRecentAudit(50),
+    listWebhookEndpoints(),
+    listWebhookDeliveries(30),
+  ]);
 
   return (
     <WorkspacePage
@@ -97,6 +107,7 @@ export default async function DashboardApiPage() {
       <div className="space-y-10">
         <ApiAgentGuide />
         <ApiKeysPanel keys={keys} />
+        <ApiWebhooksPanel endpoints={endpoints} deliveries={deliveries} />
         <ApiAuditList
           rows={audit.map((row) => ({
             id: row.id as string | number,

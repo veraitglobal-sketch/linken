@@ -115,6 +115,15 @@ export async function setSchedulingAgentCore(
     .eq("id", companyId);
 
   if (error) return { ok: false, error: error.message };
+
+  const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
+  emitWebhookEvent(
+    companyId,
+    "booking.connected",
+    { provider, url, label },
+    `booking_${companyId}_${provider}`,
+  );
+
   return getSchedulingAgentCore(admin, companyId);
 }
 

@@ -380,4 +380,66 @@ export const TOOLS = [
     description: "Remove booking link from the company profile. Requires settings:write.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
   },
+  {
+    name: "hansala_list_webhooks",
+    description: "List outbound webhook endpoints. Requires webhooks:manage.",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+  },
+  {
+    name: "hansala_create_webhook",
+    description:
+      "Create webhook endpoint (HTTPS URL + events). Secret returned once. Requires webhooks:manage.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        url: { type: "string" },
+        description: { type: "string" },
+        events: {
+          type: "array",
+          items: {
+            type: "string",
+            enum: [
+              "inquiry.created",
+              "partnership.accepted",
+              "reference.confirmed",
+              "booking.connected",
+            ],
+          },
+        },
+      },
+      required: ["url", "events"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "hansala_delete_webhook",
+    description: "Delete a webhook endpoint by id. Requires webhooks:manage.",
+    inputSchema: {
+      type: "object",
+      properties: { id: { type: "string" } },
+      required: ["id"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "hansala_test_webhook",
+    description: "Queue a test delivery to an endpoint. Requires webhooks:manage.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        event: {
+          type: "string",
+          enum: [
+            "inquiry.created",
+            "partnership.accepted",
+            "reference.confirmed",
+            "booking.connected",
+          ],
+        },
+      },
+      required: ["id"],
+      additionalProperties: false,
+    },
+  },
 ];

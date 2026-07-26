@@ -93,6 +93,20 @@ export async function handleTool(name, args, { jsonAgent, agentFetch }) {
       });
     case "hansala_disconnect_scheduling":
       return jsonAgent("DELETE", "/scheduling");
+    case "hansala_list_webhooks":
+      return jsonAgent("GET", "/webhooks");
+    case "hansala_create_webhook":
+      return jsonAgent("POST", "/webhooks", {
+        url: args.url,
+        description: args.description,
+        events: args.events,
+      });
+    case "hansala_delete_webhook":
+      return jsonAgent("DELETE", `/webhooks/${args.id}`);
+    case "hansala_test_webhook":
+      return jsonAgent("POST", `/webhooks/${args.id}/test`, {
+        event: args.event,
+      });
     default:
       throw new Error(`Unknown tool: ${name}`);
   }

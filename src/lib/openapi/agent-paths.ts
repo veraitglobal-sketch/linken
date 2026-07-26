@@ -116,4 +116,15 @@ export const AGENT_OPENAPI_PATHS = {
     put: op("Set Calendly or Cal.com public booking URL (settings:write)", "putScheduling"),
     delete: op("Disconnect booking link (settings:write)", "deleteScheduling"),
   },
+  "/webhooks": {
+    get: op("List webhook endpoints (webhooks:manage)", "listWebhooks"),
+    post: op("Create webhook endpoint (secret returned once)", "createWebhook"),
+  },
+  "/webhooks/{id}": {
+    patch: op("Update webhook endpoint", "patchWebhook"),
+    delete: op("Delete webhook endpoint", "deleteWebhook"),
+  },
+  "/webhooks/{id}/test": {
+    post: op("Queue a test delivery for an endpoint", "testWebhook"),
+  },
 } as const;

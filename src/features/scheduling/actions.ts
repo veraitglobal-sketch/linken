@@ -49,6 +49,18 @@ export async function saveSchedulingLink(formData: FormData) {
     );
   }
 
+  const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
+  emitWebhookEvent(
+    company.id,
+    "booking.connected",
+    {
+      provider,
+      url,
+      label: label.slice(0, 40),
+    },
+    `booking_${company.id}_${provider}`,
+  );
+
   revalidatePath(back);
   revalidatePath(`/c/${company.slug}`);
   redirect(`${back}?saved=1`);
