@@ -4,7 +4,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_list_widget_variants",
     description:
-      "List every embed variant from WIDGET_CATALOG: id, name, description, pro. Call before picking a snippet. Logo wall id is \"logo-wall\".",
+      "List every embed variant from WIDGET_CATALOG: id, name, description, pro. Call before picking a snippet. Placement widgets: footer-strip, partners-rotate, case-gallery. Logo wall id is \"logo-wall\".",
     inputSchema: {
       type: "object",
       properties: {},
@@ -24,7 +24,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_get_widget_settings",
     description:
-      "Read widget_settings including logoWall (excludedCompanyIds, order, background, limit, motion, size, overrides) plus allow_logo_in_partner_widgets and accepting_clients.",
+      "Read widget_settings including logoWall and placements (footer/partners/cases limits + partners motion/size) plus allow_logo_in_partner_widgets and accepting_clients.",
     inputSchema: {
       type: "object",
       properties: {},

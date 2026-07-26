@@ -1,6 +1,5 @@
 /**
- * companies.widget_settings — logoWall: excludedCompanyIds, order,
- * background, limit, motion, size, overrides.
+ * companies.widget_settings — logoWall + placements (footer/partners/cases).
  */
 
 import {
@@ -9,6 +8,12 @@ import {
   type LogoMotion,
   type LogoSize,
 } from "@/features/widgets/logo-motion";
+import {
+  parsePlacements,
+  type PlacementSettings,
+} from "@/features/widgets/placement-settings";
+
+export type { PlacementSettings } from "@/features/widgets/placement-settings";
 
 export type LogoWallOverride = {
   logoUrl?: string;
@@ -35,6 +40,7 @@ export type LogoWallSettings = {
 
 export type WidgetSettings = {
   logoWall: LogoWallSettings;
+  placements: PlacementSettings;
 };
 
 function clamp(n: number, min: number, max: number) {
@@ -125,5 +131,6 @@ export function parseWidgetSettings(raw: unknown): WidgetSettings {
       size,
       overrides,
     },
+    placements: parsePlacements(obj.placements),
   };
 }

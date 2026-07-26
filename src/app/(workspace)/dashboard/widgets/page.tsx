@@ -4,10 +4,12 @@ import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { WidgetAnalyticsSection } from "@/components/widgets/widget-analytics-section";
 import { LogoWallStudio } from "@/components/widgets/logo-wall-studio";
+import { PlacementStudioControls } from "@/components/widgets/placement-studio-controls";
 import { WidgetsStudio } from "@/components/widgets/widgets-studio";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import { getReferencesForCompany } from "@/features/references/queries";
+import { countConfirmedCases } from "@/features/widgets/case-gallery";
 import { getLogoWallConfirmedCandidates } from "@/features/widgets/logo-wall";
 import { parseWidgetSettings } from "@/features/widgets/settings";
 import { assertCompanySection } from "@/features/workspace/company-gate";
@@ -58,7 +60,7 @@ export default async function DashboardWidgetsPage() {
     );
   }
 
-  const [assessment, references, wallCandidates, settingsRes] =
+  const [assessment, references, wallCandidates, settingsRes, confirmedCases] =
     await Promise.all([
       getClientAssessmentSummary(company.id),
       getReferencesForCompany(company.id),
@@ -72,6 +74,7 @@ export default async function DashboardWidgetsPage() {
           .eq("id", company.id)
           .maybeSingle();
       })(),
+      countConfirmedCases(company.id),
     ]);
 
   const confirmedRefs = references.filter((r) => r.status === "confirmed");
@@ -79,11 +82,14 @@ export default async function DashboardWidgetsPage() {
   const hasProof = confirmedRefs.length > 0;
   const domainReady = Boolean(company.verified && company.website?.trim());
   const hasWall = wallCandidates.length > 0;
-  const wallSettings = parseWidgetSettings(
-    settingsRes.data?.widget_settings,
-  ).logoWall;
+  const settings = parseWidgetSettings(settingsRes.data?.widget_settings);
+  const wallSettings = settings.logoWall;
+  const placements = settings.placements;
 
   const availability = {
+    "footer-strip": true,
+    "partners-rotate": hasWall,
+    "case-gallery": confirmedCases > 0,
     verified: true,
     micro: true,
     horizontal: true,
@@ -101,7 +107,7 @@ export default async function DashboardWidgetsPage() {
   return (
     <WorkspacePage
       title="Widgets"
-      description="Logo-free embeds — proof strip and confirmed counts only."
+      description="Embeds by placement — footer, partners, cases, and proof bars."
       wide
       action={
         <Link
@@ -124,6 +130,13 @@ export default async function DashboardWidgetsPage() {
           limit={wallSettings.limit}
           motion={wallSettings.motion}
           size={wallSettings.size}
+        />
+        <PlacementStudioControls
+          footerLimit={placements.footer.limit}
+          partnersMotion={placements.partners.motion}
+          partnersSize={placements.partners.size}
+          partnersLimit={placements.partners.limit}
+          casesLimit={placements.cases.limit}
         />
         <WidgetsStudio
           siteUrl={siteUrl}

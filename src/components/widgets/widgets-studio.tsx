@@ -17,9 +17,40 @@ type Props = {
   slug: string;
   availability: Availability;
   isPro: boolean;
-  /** Verified domain present — badge can frame on the company site. */
   domainReady: boolean;
 };
+
+const SECTIONS: {
+  id: WidgetDefinition["section"];
+  title: string;
+  blurb: string;
+  columns: "two" | "three";
+}[] = [
+  {
+    id: "placement",
+    title: "Where it lives",
+    blurb: "Pick by spot on your site — footer, partners, or cases.",
+    columns: "three",
+  },
+  {
+    id: "essential",
+    title: "Essential",
+    blurb: "Logo-free trust bars.",
+    columns: "three",
+  },
+  {
+    id: "proof",
+    title: "Proof",
+    blurb: "Scores, references, and the curated logo wall.",
+    columns: "three",
+  },
+  {
+    id: "signature",
+    title: "Signature",
+    blurb: "Centered seals for about pages.",
+    columns: "two",
+  },
+];
 
 export function WidgetsStudio({
   siteUrl,
@@ -29,65 +60,49 @@ export function WidgetsStudio({
   domainReady,
 }: Props) {
   const [active, setActive] = useState<WidgetDefinition | null>(null);
-  const essential = useMemo(
-    () =>
-      WIDGET_CATALOG.filter(
-        (w) => w.section === "essential" && !w.caseScoped,
-      ),
-    [],
-  );
-  const proof = useMemo(
-    () =>
-      WIDGET_CATALOG.filter((w) => w.section === "proof" && !w.caseScoped),
-    [],
-  );
-  const signature = useMemo(
-    () =>
-      WIDGET_CATALOG.filter(
-        (w) => w.section === "signature" && !w.caseScoped,
-      ),
-    [],
-  );
+  const sections = useMemo(() => {
+    const map = new Map<WidgetDefinition["section"], WidgetDefinition[]>();
+    for (const w of WIDGET_CATALOG) {
+      if (w.caseScoped) continue;
+      const list = map.get(w.section) ?? [];
+      list.push(w);
+      map.set(w.section, list);
+    }
+    const filled = SECTIONS.map((section) => ({
+      ...section,
+      items: map.get(section.id) ?? [],
+    })).filter((s) => s.items.length > 0);
+
+    return filled.map((section, i) => ({
+      ...section,
+      indexOffset: filled
+        .slice(0, i)
+        .reduce((n, s) => n + s.items.length, 0),
+    }));
+  }, []);
 
   return (
     <>
-      <Section
-        title="Essential"
-        meta={`${essential.filter((w) => availability[w.id]).length} of ${essential.length} ready`}
-        items={essential}
-        columns="three"
-        availability={availability}
-        siteUrl={siteUrl}
-        slug={slug}
-        isPro={isPro}
-        onConfigure={setActive}
-      />
-      <Section
-        title="Proof"
-        meta={`${proof.filter((w) => availability[w.id]).length} of ${proof.length} ready`}
-        items={proof}
-        columns="three"
-        className="mt-10"
-        availability={availability}
-        siteUrl={siteUrl}
-        slug={slug}
-        isPro={isPro}
-        onConfigure={setActive}
-        indexOffset={essential.length}
-      />
-      <Section
-        title="Signature"
-        meta={`${signature.filter((w) => availability[w.id]).length} of ${signature.length} ready`}
-        items={signature}
-        columns="two"
-        className="mt-10"
-        availability={availability}
-        siteUrl={siteUrl}
-        slug={slug}
-        isPro={isPro}
-        onConfigure={setActive}
-        indexOffset={essential.length + proof.length}
-      />
+      {sections.map((section) => {
+        const ready = section.items.filter((w) => availability[w.id]).length;
+        return (
+          <Section
+            key={section.id}
+            title={section.title}
+            blurb={section.blurb}
+            meta={`${ready} of ${section.items.length} ready`}
+            items={section.items}
+            columns={section.columns}
+            className={section.id === "placement" ? undefined : "mt-10"}
+            availability={availability}
+            siteUrl={siteUrl}
+            slug={slug}
+            isPro={isPro}
+            onConfigure={setActive}
+            indexOffset={section.indexOffset}
+          />
+        );
+      })}
 
       {active ? (
         <WidgetConfigurator
@@ -105,6 +120,7 @@ export function WidgetsStudio({
 
 function Section({
   title,
+  blurb,
   meta,
   items,
   columns,
@@ -117,6 +133,7 @@ function Section({
   indexOffset = 0,
 }: {
   title: string;
+  blurb: string;
   meta: string;
   items: WidgetDefinition[];
   columns: "two" | "three";
@@ -131,9 +148,12 @@ function Section({
   return (
     <section className={className}>
       <header className="mb-3 flex flex-wrap items-end justify-between gap-2">
-        <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
-          {title}
-        </h2>
+        <div>
+          <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
+            {title}
+          </h2>
+          <p className="mt-0.5 text-[12px] text-muted">{blurb}</p>
+        </div>
         <p className="text-[12px] font-medium text-plus">{meta}</p>
       </header>
       <div

@@ -1,12 +1,10 @@
-import type { ReactNode } from "react";
-import { type EmbedTheme } from "@/components/embed/embed-theme";
-import { EmbedLogoWallGrid } from "@/components/embed/embed-logo-wall-grid";
 import {
   embedWrapCenter,
   embedWrapTransparent,
   renderEmbedVariant,
 } from "@/components/embed/render-embed-variant";
 import { EmbedProLockedNote } from "@/components/embed/embed-pro-locked-note";
+import type { EmbedTheme } from "@/components/embed/embed-theme";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import type { Company } from "@/types/company";
 import { getEntitlements } from "@/features/plan/entitlements";
@@ -16,11 +14,12 @@ import {
   normalizeEmbedVariant,
   resolvePublicEmbedVariant,
 } from "@/features/widgets/embed-access";
-import { resolveLogoWallPresentation } from "@/features/widgets/logo-wall-background";
-import { getLogoWallEntries } from "@/features/widgets/logo-wall";
-import { parseWidgetSettings } from "@/features/widgets/settings";
+import {
+  isPlacementVariant,
+  renderPlacementEmbed,
+} from "@/features/widgets/render-placement-embed";
+import { wrapEmbed } from "@/features/widgets/wrap-embed";
 import { getSiteUrl } from "@/lib/site";
-import { createClient } from "@/lib/supabase/server";
 
 /** Trusted embed body (owned / internal / unknown / preview). */
 export async function renderTrustedEmbed(input: {
@@ -42,44 +41,24 @@ export async function renderTrustedEmbed(input: {
     preview: isPreview,
   });
 
-  if (normalizeEmbedVariant(resolved.variant) === "logo-wall") {
-    const supabase = await createClient();
-    const { data: settingsRow } = await supabase
-      .from("companies")
-      .select("widget_settings")
-      .eq("id", company.id)
-      .maybeSingle();
-    const settings = parseWidgetSettings(settingsRow?.widget_settings).logoWall;
-    const presentation = resolveLogoWallPresentation(settings.background, theme);
+  const normalized = normalizeEmbedVariant(resolved.variant);
 
-    const entries = await getLogoWallEntries(company.id, {
-      applySelection: true,
-    });
-    const node = (
-      <>
-        <EmbedLogoWallGrid
-          ownerProfileUrl={profileUrl}
-          ownerCompanyId={company.id}
-          viaHost={viaHost}
-          entries={entries}
-          theme={presentation.theme}
-          siteUrl={siteUrl}
-          motion={settings.motion}
-          size={settings.size}
-        />
-        {resolved.locked ? (
-          <EmbedProLockedNote
-            name={company.name}
-            profileUrl={profileUrl}
-            theme={presentation.theme}
-          />
-        ) : null}
-      </>
-    );
-    return wrapEmbed(node, presentation.theme, w, {
-      center: false,
-      wrapBackground: presentation.wrapBackground,
-      bare: presentation.bare,
+  if (isPlacementVariant(normalized)) {
+    const [trust] = await Promise.all([
+      getTrustProfile(company.id, company.slug),
+    ]);
+    const confirmedCount =
+      trust.breakdown.confirmedPartners +
+      trust.breakdown.confirmedReferences +
+      trust.breakdown.ongoingReferences;
+    return renderPlacementEmbed({
+      company,
+      theme,
+      variant: normalized,
+      w,
+      resolved,
+      viaHost,
+      confirmedCount,
     });
   }
 
@@ -138,50 +117,4 @@ export async function renderTrustedEmbed(input: {
   });
 }
 
-export function wrapEmbed(
-  node: ReactNode,
-  theme: EmbedTheme,
-  w?: string,
-  opts?: {
-    center?: boolean;
-    transparent?: boolean;
-    wrapBackground?: string;
-    bare?: boolean;
-  },
-) {
-  const width =
-    w && (/^\d+$/.test(w) || /^\d+%$/.test(w) || /^\d+px$/.test(w))
-      ? /^\d+$/.test(w)
-        ? `${w}px`
-        : w
-      : "100%";
-
-  let bg: string;
-  if (opts?.wrapBackground !== undefined) {
-    bg = opts.wrapBackground;
-  } else if (opts?.transparent || opts?.bare) {
-    bg = "transparent";
-  } else if (theme === "dark") {
-    bg = "#081412";
-  } else {
-    bg = "transparent";
-  }
-
-  return (
-    <div
-      className={
-        opts?.center
-          ? "box-border flex min-h-full w-full items-center justify-center"
-          : "box-border min-h-full w-full"
-      }
-      style={{
-        width,
-        maxWidth: "100%",
-        background: bg,
-        border: opts?.bare ? "none" : undefined,
-      }}
-    >
-      {node}
-    </div>
-  );
-}
+export { wrapEmbed } from "@/features/widgets/wrap-embed";

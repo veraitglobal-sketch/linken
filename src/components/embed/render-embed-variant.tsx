@@ -160,5 +160,11 @@ export function embedWrapCenter(variant: string): boolean {
 
 export function embedWrapTransparent(variant: string): boolean {
   const v = normalizeVariant(variant);
-  return v === "verified" || v === "logo-wall";
+  return (
+    v === "verified" ||
+    v === "logo-wall" ||
+    v === "footer-strip" ||
+    v === "partners-rotate" ||
+    v === "case-gallery"
+  );
 }
