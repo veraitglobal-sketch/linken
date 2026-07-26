@@ -33,8 +33,8 @@ export function WorkspaceDesktopAside({
   if (!isDesktop) return null;
 
   return (
-    <aside className="flex w-[212px] shrink-0 flex-col border-r border-line/70 bg-[#f7f8f6]">
-      <div className="flex h-11 items-center gap-2 px-3.5">
+    <aside className="flex w-[220px] shrink-0 flex-col border-r border-line/60 bg-surface">
+      <div className="flex h-12 items-center gap-2 px-3.5">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-ink transition-opacity hover:opacity-75"

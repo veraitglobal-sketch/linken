@@ -45,8 +45,8 @@ export function WorkspaceMobileMenu({
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 flex flex-col bg-[#f7f8f6]" role="dialog">
-          <div className="flex h-12 items-center justify-between border-b border-line px-4">
+        <div className="fixed inset-0 z-50 flex flex-col bg-paper" role="dialog">
+          <div className="flex h-12 items-center justify-between border-b border-line/70 bg-surface px-4">
             <Link
               href="/"
               className="inline-flex items-center gap-2 text-ink"

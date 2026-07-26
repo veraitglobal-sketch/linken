@@ -19,7 +19,7 @@ export function WorkspaceMobileNav({ pathname, companySlug }: Props) {
   ];
 
   return (
-    <div className="flex gap-1 overflow-x-auto border-b border-line/70 bg-[#f7f8f6] px-3 py-2 lg:hidden">
+    <div className="flex gap-1 overflow-x-auto border-b border-line/60 bg-surface/90 px-3 py-2 lg:hidden">
       {items.map(([href, label]) => {
         const on =
           href === "/dashboard"

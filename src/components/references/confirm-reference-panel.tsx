@@ -95,7 +95,7 @@ export function ConfirmReferencePanel({
   }
 
   return (
-    <div className="rounded-[24px] border border-line bg-surface px-5 py-6 sm:px-7">
+    <div className="rounded-[24px] border border-line/80 bg-surface px-5 py-6 shadow-[0_12px_36px_rgba(8,20,18,0.05)] sm:px-7">
       {error ? <ErrorNote>{error}</ErrorNote> : null}
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
         Service reference
@@ -135,7 +135,7 @@ function SwitchAccount({
   body: string;
 }) {
   return (
-    <div className="rounded-[24px] border border-line bg-surface px-5 py-8 text-center sm:px-7">
+    <div className="rounded-[24px] border border-line/80 bg-surface px-5 py-8 text-center shadow-[0_12px_36px_rgba(8,20,18,0.05)] sm:px-7">
       <h2 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
         {title}
       </h2>

@@ -29,11 +29,11 @@ export function WorkspacePage({
     >
       <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 max-w-2xl">
-          <h1 className="font-display text-[24px] font-medium tracking-[-0.04em] text-ink">
+          <h1 className="font-display text-[clamp(1.35rem,2.2vw,1.65rem)] font-medium tracking-[-0.04em] text-ink">
             {title}
           </h1>
           {description ? (
-            <p className="mt-2 max-w-lg text-[13px] leading-relaxed text-muted">
+            <p className="mt-2 max-w-lg text-[13px] leading-relaxed text-ink-soft">
               {description}
             </p>
           ) : null}
@@ -57,7 +57,7 @@ export function WorkspaceCard({
   return (
     <section
       className={cn(
-        "rounded-2xl bg-surface ring-1 ring-black/[0.05] shadow-[0_1px_0_rgba(8,20,18,0.03)]",
+        "rounded-[20px] border border-line/80 bg-surface shadow-[0_10px_30px_rgba(8,20,18,0.04)]",
         padded && "p-5 sm:p-6",
         className,
       )}

@@ -56,7 +56,7 @@ export function WorkspaceShell({
         allowedSections={allowedSections}
       />
 
-      <div className="relative flex min-w-0 flex-1 flex-col bg-[#f0f2f0]">
+      <div className="relative flex min-w-0 flex-1 flex-col bg-paper">
         {operatorBanner}
 
         {isGraph ? (
@@ -76,7 +76,7 @@ export function WorkspaceShell({
               {publicHref ? (
                 <Link
                   href={publicHref}
-                  className="pointer-events-auto inline-flex h-8 shrink-0 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)] backdrop-blur-md transition-colors hover:bg-paper"
+                  className="pointer-events-auto inline-flex h-8 shrink-0 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)] transition-colors hover:bg-paper"
                 >
                   Company
                 </Link>
@@ -90,14 +90,14 @@ export function WorkspaceShell({
           </>
         ) : (
           <>
-            <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-line/80 bg-[#f7f8f6]/90 px-4 py-2 backdrop-blur-md sm:h-11 sm:flex-nowrap sm:py-0 sm:px-6">
+            <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-line/60 bg-surface/85 px-4 py-2.5 sm:h-12 sm:flex-nowrap sm:py-0 sm:px-6">
               <div className="flex min-w-0 flex-1 items-center gap-2.5">
                 <WorkspaceMobileMenu
                   active={active}
                   allowedSections={allowedSections}
                 />
                 <div className="min-w-0 flex-1">
-                  <h1 className="truncate text-[13px] font-semibold tracking-[-0.02em] text-ink">
+                  <h1 className="truncate font-display text-[15px] font-medium tracking-[-0.03em] text-ink">
                     {active?.type === "group" && pathname === "/dashboard"
                       ? "Company group"
                       : meta.title}

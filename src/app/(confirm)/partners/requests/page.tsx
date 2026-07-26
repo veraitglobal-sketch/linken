@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ConfirmPage } from "@/components/confirm/confirm-page";
 import { PartnerRequestsPanel } from "@/components/partners/partner-requests-panel";
 import { getPartnershipInbox } from "@/features/partners/inbox";
 import { resolveActiveWorkspace } from "@/features/workspace/context";
@@ -61,30 +62,21 @@ export default async function PartnerRequestsPage({ searchParams }: Props) {
   ]);
 
   return (
-    <section className="mx-auto w-full max-w-xl px-4 py-8 sm:py-12">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-        Hansala · Partnership
-      </p>
-      <h1 className="mt-3 font-display text-[clamp(1.7rem,4vw,2.3rem)] font-medium tracking-[-0.04em] text-ink">
-        Partnership requests
-      </h1>
-      <p className="mt-2 text-[14px] text-ink-soft">
-        Responding as{" "}
-        <span className="font-semibold text-ink">{company.name}</span>
-      </p>
-
-      <div className="mt-8">
-        <PartnerRequestsPanel
-          incoming={inbox.incomingPending}
-          verified={Boolean(full?.verified)}
-          companySlug={company.slug}
-          error={params.error}
-          accepted={params.accepted === "1"}
-          declined={params.declined === "1"}
-          needVerify={params.needVerify === "1"}
-        />
-      </div>
-    </section>
+    <ConfirmPage
+      eyebrow="Hansala · Partnership"
+      title="Partnership requests"
+      subtitle={`Responding as ${company.name}`}
+    >
+      <PartnerRequestsPanel
+        incoming={inbox.incomingPending}
+        verified={Boolean(full?.verified)}
+        companySlug={company.slug}
+        error={params.error}
+        accepted={params.accepted === "1"}
+        declined={params.declined === "1"}
+        needVerify={params.needVerify === "1"}
+      />
+    </ConfirmPage>
   );
 }
 
@@ -100,7 +92,7 @@ function Gate({
   cta: string;
 }) {
   return (
-    <section className="mx-auto max-w-lg px-4 py-16 text-center">
+    <section className="mx-auto max-w-lg py-10 text-center">
       <h1 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
         {title}
       </h1>
