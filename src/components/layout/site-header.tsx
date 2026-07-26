@@ -2,7 +2,7 @@ import Link from "next/link";
 import { NetworkMark } from "@/components/marketing/network-mark";
 import { SiteHeaderAuth } from "@/components/layout/site-header-auth";
 
-/** Static shell — auth state loads on the client so public pages can cache. */
+/** Static shell — auth loads via /api/auth/session (same cookies as the server). */
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 px-4 pt-3">

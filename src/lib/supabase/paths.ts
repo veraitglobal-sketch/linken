@@ -1,8 +1,10 @@
 /**
  * Auth routing model (Hansala):
  *
- * - Public/marketing: no session refresh in middleware → ISR/prerender stays safe
- *   when a user is signed in. Header auth is client-only (SiteHeaderAuth).
+ * - Marketing/ISR pages: no session refresh in middleware.
+ * - Company profiles (/c/…): refresh when cookies exist — owner chrome calls
+ *   getUser on the server; without refresh the header can show Sign in while
+ *   the page still renders editable forms.
  * - App routes: middleware refreshes JWT cookies (Supabase SSR practice).
  * - Edit gates (/c/[slug]/edit): authorize in the page via getUser +
  *   is_company_operator — never via workspace cookie alone.
@@ -11,15 +13,10 @@
 export function needsSessionRefresh(pathname: string): boolean {
   if (pathname.startsWith("/dashboard")) return true;
   if (pathname.startsWith("/auth/")) return true;
-  if (isCompanyEditPath(pathname)) return true;
+  if (pathname.startsWith("/c/")) return true;
   if (isAuthGatedPublicPath(pathname)) return true;
   if (pathname.startsWith("/api/") && !isPublicApi(pathname)) return true;
   return false;
-}
-
-/** /c/{slug}/edit and nested edit surfaces */
-function isCompanyEditPath(pathname: string): boolean {
-  return /^\/c\/[^/]+\/edit(?:\/|$)/.test(pathname);
 }
 
 /** Token/invite flows that call getUser on the server */

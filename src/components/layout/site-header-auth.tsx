@@ -19,31 +19,24 @@ export function SiteHeaderAuth() {
 
     async function load() {
       try {
-        const { createClient } = await import("@/lib/supabase/client");
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const res = await fetch("/api/auth/session", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error("session");
+        const json = (await res.json()) as {
+          user: { email: string; companySlug: string | null } | null;
+        };
         if (cancelled) return;
-        if (!user) {
+        if (!json.user) {
           setAuth({ status: "anon" });
           return;
         }
-        const { data: company } = await supabase
-          .from("companies")
-          .select("slug")
-          .eq("owner_id", user.id)
-          .eq("claimed", true)
-          .order("created_at", { ascending: true })
-          .limit(1)
-          .maybeSingle();
-        if (!cancelled) {
-          setAuth({
-            status: "user",
-            companySlug: company?.slug ?? null,
-            email: user.email ?? "account",
-          });
-        }
+        setAuth({
+          status: "user",
+          companySlug: json.user.companySlug,
+          email: json.user.email,
+        });
       } catch (err) {
         console.error("[SiteHeaderAuth]", err);
         if (!cancelled) setAuth({ status: "anon" });
@@ -124,11 +117,7 @@ export function SiteHeaderAuth() {
           Workspace
         </Link>
       </nav>
-      <Button
-        variant="ghost"
-        href="/login"
-        className="h-9 px-3 text-[12px]"
-      >
+      <Button variant="ghost" href="/login" className="h-9 px-3 text-[12px]">
         Sign in
       </Button>
       <Button href="/onboarding" className="h-9 px-4 text-[12px]">
