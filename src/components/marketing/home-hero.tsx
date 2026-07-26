@@ -6,14 +6,6 @@ export function HomeHero() {
   return (
     <section className="flex min-h-[calc(100svh-4.75rem)] items-center px-4 pt-1">
       <div className="hero-live relative mx-auto grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-[32px] shadow-[0_28px_90px_rgba(8,20,18,0.28)] lg:min-h-[82vh] lg:grid-cols-[1.15fr_0.85fr]">
-        <div
-          className="pointer-events-none absolute inset-0 z-[1] hidden opacity-60 lg:block"
-          style={{
-            background:
-              "radial-gradient(ellipse 50% 65% at 58% 68%, rgba(217,165,92,0.12), transparent 70%)",
-          }}
-        />
-
         <div className="relative z-10 flex flex-col justify-between px-7 py-9 sm:px-11 sm:py-12">
           <div className="animate-rise flex items-center gap-2.5 text-white/50">
             <NetworkMark size={17} animate={false} />
@@ -55,22 +47,20 @@ export function HomeHero() {
         </div>
 
         <div className="relative min-h-[280px]">
+          {/* unoptimized: skip Next/AVIF re-encode — hero stays crisp */}
           <Image
             src="/images/hero-partner-v3.jpg"
             alt="Architecture firm partner reviewing plans outside a project site"
             fill
             priority
             fetchPriority="high"
-            quality={90}
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 42vw"
+            unoptimized
+            className="object-cover object-[center_28%]"
+            sizes="(max-width: 1024px) 100vw, 900px"
           />
           <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to right, var(--navy) 0%, rgba(14,31,28,0.72) 25%, rgba(14,31,28,0.4) 42%, rgba(14,31,28,0.12) 58%, transparent 72%)",
-            }}
+            className="pointer-events-none absolute inset-y-0 left-0 w-[28%] bg-gradient-to-r from-[var(--navy)] via-[var(--navy)]/35 to-transparent"
+            aria-hidden
           />
         </div>
       </div>
