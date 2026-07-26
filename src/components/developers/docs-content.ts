@@ -15,11 +15,13 @@ export const DOCS_NAV: NavItem[] = [
     children: [
       { id: "endpoint-company", label: "Company" },
       { id: "endpoint-references", label: "References" },
+      { id: "endpoint-partners", label: "Partners" },
       { id: "endpoint-case-studies", label: "Case studies" },
       { id: "endpoint-verify", label: "Verify (oracle)" },
     ],
   },
   { id: "embeds", label: "Embeds" },
+  { id: "registry", label: "React registry" },
   { id: "llms", label: "llms.txt & llm.md" },
   {
     id: "agent-api",

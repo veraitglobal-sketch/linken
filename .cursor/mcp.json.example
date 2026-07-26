@@ -10,6 +10,13 @@
         "HANSALA_AGENT_API_KEY": "hs_your_key_here",
         "HANSALA_API_BASE": "https://hansala.com"
       }
+    },
+    "hansala-public": {
+      "command": "npx",
+      "args": ["-y", "hansala-mcp-public"],
+      "env": {
+        "HANSALA_API_BASE": "https://hansala.com"
+      }
     }
   }
 }

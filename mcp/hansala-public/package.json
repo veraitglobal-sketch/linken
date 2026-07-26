@@ -1,0 +1,39 @@
+{
+  "name": "hansala-mcp-public",
+  "version": "0.1.0",
+  "description": "Public, keyless Hansala MCP — verify companies and fetch widget install snippets.",
+  "type": "module",
+  "bin": {
+    "hansala-mcp-public": "bin/hansala-mcp-public"
+  },
+  "files": [
+    "bin",
+    "index.js",
+    "tools.mjs",
+    "handlers.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "hansala",
+    "mcp",
+    "cursor",
+    "claude",
+    "verified",
+    "b2b"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hansala/hansala.git",
+    "directory": "mcp/hansala-public"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  }
+}

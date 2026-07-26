@@ -12,6 +12,9 @@ export const PUBLIC_OPENAPI_PATHS = {
   "/companies/{slug}/references": {
     get: op("List confirmed client references", "getPublicReferences"),
   },
+  "/companies/{slug}/partners": {
+    get: op("List confirmed partners", "getPublicPartners"),
+  },
   "/companies/{slug}/case-studies": {
     get: op("List confirmed case studies", "getPublicCaseStudies"),
   },

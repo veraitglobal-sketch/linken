@@ -11,9 +11,11 @@ import type {
   ApiCaseStudiesResponse,
   ApiCompanyResponse,
   ApiCompanyStats,
+  ApiPartnersResponse,
   ApiReferencesResponse,
   ApiVerifyResponse,
 } from "@/features/public-api/v1/types";
+import { getPartnersForCompany } from "@/features/partners/public-queries";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
 import { extractDomain } from "@/features/verification/domain";
@@ -147,6 +149,25 @@ export async function getPublicReferencesApi(
     });
 
   return serializeReferences(confirmed);
+}
+
+export async function getPublicPartnersApi(
+  slug: string,
+): Promise<ApiPartnersResponse | null> {
+  const company = await getCompanyForPage(slug);
+  if (!company) return null;
+
+  if (company.claimed === false) {
+    return { partners: [], count: 0 };
+  }
+
+  const partners = await getPartnersForCompany(company.id);
+  const rows = partners.map((p) => ({
+    name: p.name,
+    slug: p.slug,
+    verified: Boolean(p.verified),
+  }));
+  return { partners: rows, count: rows.length };
 }
 
 export async function getPublicCaseStudiesApi(

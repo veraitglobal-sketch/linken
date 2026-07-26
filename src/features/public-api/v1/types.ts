@@ -85,6 +85,18 @@ export type ApiReferencesResponse = {
   count: number;
 };
 
+/** GET /api/v1/companies/{slug}/partners — accepted mutual partnerships only. */
+export type ApiPartner = {
+  name: string;
+  slug: string;
+  verified: boolean;
+};
+
+export type ApiPartnersResponse = {
+  partners: ApiPartner[];
+  count: number;
+};
+
 export type ApiCaseStudyPartner = {
   name: string;
   slug: string;

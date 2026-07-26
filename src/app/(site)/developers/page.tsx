@@ -18,6 +18,7 @@ import { DocsSectionHeading } from "@/components/developers/docs-section-heading
 import { DocsShell } from "@/components/developers/docs-shell";
 import { DocsSignal } from "@/components/developers/docs-signal";
 import { EmbedsSection } from "@/components/developers/embeds-section";
+import { RegistrySection } from "@/components/developers/registry-section";
 import { EndpointSection } from "@/components/developers/endpoint-section";
 import {
   caseStudiesExample,
@@ -222,8 +223,43 @@ export default function DevelopersPage() {
             />
 
             <EndpointSection
-              id="endpoint-case-studies"
+              id="endpoint-partners"
               index="03.3"
+              path={`/api/v1/companies/{slug}/partners`}
+              title="Partners"
+              description="Accepted mutual partnerships only — name, slug, verified. No emails or tokens."
+              fields={[
+                {
+                  name: "partners",
+                  type: "ApiPartner[]",
+                  description: "Confirmed partners.",
+                },
+                { name: "count", type: "number", description: "Length of partners." },
+                {
+                  name: "partners[].name",
+                  type: "string",
+                  description: "Partner company name.",
+                },
+                {
+                  name: "partners[].slug",
+                  type: "string",
+                  description: "Public profile slug.",
+                },
+                {
+                  name: "partners[].verified",
+                  type: "boolean",
+                  description: "Domain-verified partner.",
+                },
+              ]}
+              requestTabs={requestTabs(`${companyUrl}/partners`)}
+              responseTabs={responseTab(
+                `{\n  "partners": [{ "name": "Nordwerk Holding", "slug": "nordwerk-holding", "verified": true }],\n  "count": 1\n}`,
+              )}
+            />
+
+            <EndpointSection
+              id="endpoint-case-studies"
+              index="03.4"
               path={`/api/v1/companies/{slug}/case-studies`}
               title="Case studies"
               description="Case studies with client or partner confirmation (max 20)."
@@ -234,7 +270,7 @@ export default function DevelopersPage() {
 
             <EndpointSection
               id="endpoint-verify"
-              index="03.4"
+              index="03.5"
               path={`/api/v1/verify?domain={domain}`}
               title="Verify (trust oracle)"
               description="One call to check a firm by website domain before you work with them. No API key. Unknown domains return found:false with HTTP 200."
@@ -294,6 +330,8 @@ export default function DevelopersPage() {
             </p>
             <EmbedsSection variants={embeds} />
           </section>
+
+          <RegistrySection />
 
           <section id="agent-api" className="scroll-mt-28">
             <DocsSectionHeading
@@ -473,35 +511,49 @@ export default function DevelopersPage() {
               <h3 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
                 Cursor & Claude (MCP)
               </h3>
-              <p className="text-[14px] text-ink-soft">
-                MCP is a local bridge — there is <strong className="font-semibold text-ink">no separate MCP key</strong>.
-                Use the same Agent API key (<code className="text-[12px]">hs_…</code>) as{" "}
-                <code className="text-[12px]">HANSALA_AGENT_API_KEY</code>.
-              </p>
               <div className="rounded-2xl border border-line bg-[#fafbfc] px-5 py-4 text-[13px] text-ink-soft">
-                <p className="font-semibold text-ink">1. Create key</p>
+                <p className="font-semibold text-ink">Public MCP (no key)</p>
                 <p className="mt-1">
+                  Anyone can install{" "}
+                  <code className="text-[12px]">npx hansala-mcp-public</code> —
+                  verify companies, pull confirmed proof, get shadcn + iframe
+                  snippets. See{" "}
+                  <code className="text-[12px]">.cursor/mcp.json.example</code>{" "}
+                  → <code className="text-[12px]">hansala-public</code>.
+                </p>
+                <p className="mt-4 font-semibold text-ink">Agent MCP (Pro)</p>
+                <p className="mt-1">
+                  Local bridge for{" "}
+                  <strong className="text-ink">your</strong> company — same{" "}
+                  <code className="text-[12px]">hs_…</code> key as{" "}
+                  <code className="text-[12px]">HANSALA_AGENT_API_KEY</code>. No
+                  separate MCP key.
+                </p>
+                <p className="mt-3">
+                  1. Create key in{" "}
                   <DocsDashboardApiLink className="text-ink">
                     /dashboard/api
                   </DocsDashboardApiLink>{" "}
-                  → Create key → <strong className="text-ink">AI agent</strong>
+                  → <strong className="text-ink">AI agent</strong>
                 </p>
-                <p className="mt-4 font-semibold text-ink">2. Configure MCP</p>
-                <p className="mt-1">
-                  Copy <code className="text-[12px]">.cursor/mcp.json.example</code> →{" "}
-                  <code className="text-[12px]">.cursor/mcp.json</code>, run{" "}
+                <p className="mt-2">
+                  2. Copy{" "}
+                  <code className="text-[12px]">.cursor/mcp.json.example</code> →{" "}
+                  <code className="text-[12px]">.cursor/mcp.json</code>,{" "}
                   <code className="text-[12px]">npm install</code> in{" "}
                   <code className="text-[12px]">mcp/hansala</code>
                 </p>
-                <p className="mt-4 font-semibold text-ink">3. Tools exposed</p>
-                <p className="mt-1">
-                  <code className="text-[12px]">hansala_create_case_study</code>, cover/gallery uploads,
-                  team invites, logo upload — same permissions as the key scopes.
+                <p className="mt-2">
+                  3. Tools:{" "}
+                  <code className="text-[12px]">hansala_create_case_study</code>,
+                  uploads, invites — scoped to the key.
                 </p>
               </div>
               <p className="text-[13px] text-muted">
-                Direct HTTP? Call <code className="text-[12px]">{docsUrl}/api/v1/agent</code> with{" "}
-                <code className="text-[12px]">Authorization: Bearer hs_…</code> — no MCP required.
+                Direct HTTP? Call{" "}
+                <code className="text-[12px]">{docsUrl}/api/v1/agent</code> with{" "}
+                <code className="text-[12px]">Authorization: Bearer hs_…</code> —
+                no MCP required.
               </p>
             </div>
 
