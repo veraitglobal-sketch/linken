@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LegalConsent } from "@/components/legal/legal-consent";
 import { createCompany } from "@/features/company/actions";
 import type { OnboardingDraft } from "@/features/company/onboarding-draft";
 import { COMPANY_SHARE_PREFIX } from "@/lib/site";
@@ -118,6 +119,7 @@ export function OnboardingForm({ error, draft = null }: Props) {
         <Button type="submit" className="mt-1 h-12 w-full">
           Create company profile
         </Button>
+        <LegalConsent action="create" />
       </form>
     </div>
   );

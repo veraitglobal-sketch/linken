@@ -62,11 +62,11 @@ export function EmbedLogoMotion({
       {entries.length === 0 ? (
         <p
           className={cn(
-            "text-center text-[11px]",
-            dark ? "text-white/45" : "text-[#66706b]",
+            "text-center text-[11px] font-medium tracking-[-0.01em]",
+            dark ? "text-white/40" : "text-[#66706b]",
           )}
         >
-          No confirmed partners yet
+          Awaiting confirmed partners
         </p>
       ) : effective === "swap-batch" || effective === "swap-random" ? (
         <LogoMotionSwap
@@ -94,7 +94,7 @@ export function EmbedLogoMotion({
           ) : null}
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 md:grid-cols-4">
+        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
           {entries.map((e) => (
             <li key={e.id} className="flex items-center justify-center">
               <LogoWallMarkLink

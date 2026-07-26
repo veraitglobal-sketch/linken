@@ -1,9 +1,12 @@
 "use client";
 
 import { EmbedLogoMotion } from "@/components/embed/embed-logo-motion";
-import { EmbedVerified } from "@/components/embed/embed-verified";
-import type { EmbedTheme } from "@/components/embed/embed-theme";
-import type { LogoSize } from "@/features/widgets/logo-motion";
+import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
+import {
+  embedInkClass,
+  embedMutedClass,
+  type EmbedTheme,
+} from "@/components/embed/embed-theme";
 import type { LogoWallEntry } from "@/features/widgets/logo-wall";
 import { cn } from "@/lib/cn";
 
@@ -17,7 +20,10 @@ type Props = {
   confirmedCount: number;
 };
 
-/** Slim footer strip — Verified + drifting partner logos. */
+/**
+ * Enterprise footer — one locked row: Verified · logos · count.
+ * Fixed height so host footers never jump.
+ */
 export function EmbedFooterStrip({
   ownerProfileUrl,
   ownerCompanyId,
@@ -28,49 +34,69 @@ export function EmbedFooterStrip({
   confirmedCount,
 }: Props) {
   const dark = theme === "dark";
-  const size: LogoSize = "sm";
 
   return (
     <div
       className={cn(
-        "box-border flex w-full flex-wrap items-center gap-4 px-2 py-1.5",
-        "sm:flex-nowrap",
+        "box-border flex h-12 w-full min-w-0 items-center gap-3 overflow-hidden px-1",
+        dark ? "text-white" : "text-[#0d1210]",
       )}
     >
-      <div className="shrink-0">
-        <EmbedVerified profileUrl={ownerProfileUrl} theme={theme} />
-      </div>
+      <a
+        href={ownerProfileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Verified on Hansala"
+        className="shrink-0 no-underline opacity-95 transition-opacity hover:opacity-100"
+      >
+        <EmbedVerifiedLockup theme={theme} size="sm" subtitle="Verified" />
+      </a>
+
+      <span
+        className={cn(
+          "hidden h-5 w-px shrink-0 sm:block",
+          dark ? "bg-white/12" : "bg-[#0e1f1c]/12",
+        )}
+        aria-hidden
+      />
+
       {entries.length > 0 ? (
-        <>
-          <span
-            className={cn(
-              "hidden h-4 w-px shrink-0 sm:block",
-              dark ? "bg-white/15" : "bg-[#0e1f1c]/12",
-            )}
-            aria-hidden
-          />
+        <div className="min-w-0 flex-1 opacity-[0.72] transition-opacity hover:opacity-100">
           <EmbedLogoMotion
             entries={entries}
             theme={theme}
             siteUrl={siteUrl}
             motion="row"
-            size={size}
+            size="sm"
             ownerCompanyId={ownerCompanyId}
             viaHost={viaHost}
           />
-        </>
+        </div>
       ) : (
         <p
           className={cn(
-            "text-[11px] font-medium",
-            dark ? "text-white/50" : "text-[#66706b]",
+            "min-w-0 flex-1 truncate text-[11px] font-medium tracking-[-0.01em]",
+            embedMutedClass(theme),
           )}
         >
-          {confirmedCount > 0
-            ? `${confirmedCount} confirmed on Hansala`
-            : "Verified on Hansala"}
+          Mutually confirmed network
         </p>
       )}
+
+      {confirmedCount > 0 ? (
+        <p
+          className={cn(
+            "hidden shrink-0 tabular-nums sm:block",
+            "text-[11px]",
+            embedMutedClass(theme),
+          )}
+        >
+          <span className={cn("font-display text-[13px] font-medium", embedInkClass(theme))}>
+            {confirmedCount}
+          </span>
+          <span className="ml-1 tracking-[0.04em]">confirmed</span>
+        </p>
+      ) : null}
     </div>
   );
 }

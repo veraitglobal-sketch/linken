@@ -19,6 +19,7 @@ const developers = [
 const legal = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
+  { label: "Cookies", href: "/cookies" },
   { label: "Security", href: "/security" },
   { label: "Contact", href: "mailto:developers@hansala.com" },
 ];

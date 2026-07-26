@@ -56,6 +56,7 @@ export default function TermsPage() {
       <p>
         <a href="mailto:developers@hansala.com">developers@hansala.com</a> ·{" "}
         <Link href="/privacy">Privacy</Link> ·{" "}
+        <Link href="/cookies">Cookies</Link> ·{" "}
         <Link href="/security">Security</Link>
       </p>
     </LegalDoc>

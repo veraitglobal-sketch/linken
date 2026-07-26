@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn, signUp, resendSignupConfirmation } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LegalConsent } from "@/components/legal/legal-consent";
 import { cn } from "@/lib/cn";
 
 type Mode = "sign-in" | "create";
@@ -119,6 +120,7 @@ export function LoginPanel({
           <Button type="submit" className="mt-1 h-12 w-full">
             {isCreate ? "Create account" : "Sign in"}
           </Button>
+          <LegalConsent action={isCreate ? "create" : "continue"} />
         </form>
 
         <p className="text-center text-[13px] text-ink-soft">

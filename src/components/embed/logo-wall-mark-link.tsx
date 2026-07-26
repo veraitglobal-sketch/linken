@@ -35,7 +35,7 @@ export function LogoWallMarkLink({
       target="_blank"
       rel="noopener noreferrer"
       title={e.name}
-      className="block no-underline opacity-75 transition-opacity hover:opacity-100"
+      className="block no-underline opacity-[0.62] transition-opacity duration-200 hover:opacity-100"
     >
       {e.showLogo ? (
         <EmbedBareLogo
