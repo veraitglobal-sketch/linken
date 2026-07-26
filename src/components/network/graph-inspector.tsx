@@ -61,6 +61,7 @@ export function GraphInspector({
             initials={selected.logoInitials}
             logoUrl={selected.logoUrl}
             website={selected.website}
+            allowFavicon
             size="md"
           />
           <div className="min-w-0">

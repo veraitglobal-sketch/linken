@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" fill="none" role="img" aria-label="Hansala">
+  <title>Hansala</title>
+  <rect width="300" height="300" fill="#0e1f1c"/>
+  <g transform="translate(150 150) scale(3.2) translate(-24 -24)">
+    <line x1="14" y1="24" x2="34" y2="24" stroke="#7eb8a4" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="12" cy="24" r="5" fill="#7eb8a4"/>
+    <circle cx="36" cy="24" r="5" fill="#7eb8a4"/>
+  </g>
+</svg>

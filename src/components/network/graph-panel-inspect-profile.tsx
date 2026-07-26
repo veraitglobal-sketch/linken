@@ -27,6 +27,7 @@ export function GraphPanelInspectProfile({ selected, context }: Props) {
           initials={selected.logoInitials}
           logoUrl={selected.logoUrl}
           website={selected.website}
+          allowFavicon
           size="md"
         />
         <div className="min-w-0">

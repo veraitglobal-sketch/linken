@@ -87,7 +87,9 @@ async function companyNode(
     logoUrl: companyDisplayLogoUrl({
       logoUrl: row.logo_url,
       website: row.website,
-      allowFavicon: false,
+      // Graph: favicon OK so partner nodes aren't blank initials.
+      // Logo wall / partner rail stay allowFavicon: false.
+      allowFavicon: true,
     }),
     website: row.website ?? null,
     logoSource: row.logo_source ?? null,

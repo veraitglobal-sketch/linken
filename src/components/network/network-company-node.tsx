@@ -110,6 +110,7 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
             initials={d.logoInitials}
             logoUrl={d.logoUrl}
             website={d.website}
+            allowFavicon
             size={expanded ? (isHub ? "md" : "sm") : "xs"}
           />
           {expanded ? (
