@@ -90,14 +90,14 @@ export function WorkspaceShell({
           </>
         ) : (
           <>
-            <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-line/60 bg-surface/85 px-4 py-2.5 sm:h-12 sm:flex-nowrap sm:py-0 sm:px-6">
-              <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-line/50 bg-surface/90 px-4 py-3 backdrop-blur-sm sm:h-14 sm:flex-nowrap sm:py-0 sm:px-7">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
                 <WorkspaceMobileMenu
                   active={active}
                   allowedSections={allowedSections}
                 />
                 <div className="min-w-0 flex-1">
-                  <h1 className="truncate font-display text-[15px] font-medium tracking-[-0.03em] text-ink">
+                  <h1 className="truncate font-display text-[16px] font-medium tracking-[-0.04em] text-ink">
                     {active?.type === "group" && pathname === "/dashboard"
                       ? "Company group"
                       : meta.title}
@@ -115,7 +115,7 @@ export function WorkspaceShell({
               {publicHref ? (
                 <Link
                   href={publicHref}
-                  className="inline-flex h-8 shrink-0 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+                  className="inline-flex h-8 shrink-0 items-center rounded-full border border-line/80 bg-paper/80 px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
                 >
                   {active?.type === "group" ? "Public group" : "Company"}
                 </Link>

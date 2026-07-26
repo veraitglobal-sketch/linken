@@ -33,28 +33,30 @@ export function WorkspaceDesktopAside({
   if (!isDesktop) return null;
 
   return (
-    <aside className="flex w-[220px] shrink-0 flex-col border-r border-line/60 bg-surface">
-      <div className="flex h-12 items-center gap-2 px-3.5">
+    <aside className="flex w-[240px] shrink-0 flex-col border-r border-line/55 bg-surface">
+      <div className="flex h-14 items-center gap-2.5 px-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-ink transition-opacity hover:opacity-75"
+          className="inline-flex items-center gap-2.5 text-ink transition-opacity hover:opacity-75"
         >
-          <NetworkMark size={18} className="text-navy" />
-          <span className="font-display text-[14px] font-semibold tracking-[-0.04em]">
+          <NetworkMark size={19} className="text-navy" />
+          <span className="font-display text-[15px] font-semibold tracking-[-0.045em]">
             Hansala
           </span>
         </Link>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col px-2.5 pb-2.5">
+      <div className="flex min-h-0 flex-1 flex-col px-3 pb-3">
         {active ? (
-          <WorkspaceSwitcher
-            active={active}
-            contexts={contexts}
-            verified={verified}
-          />
+          <div className="mb-5 rounded-2xl border border-line/65 bg-paper/70 px-0.5 py-0.5">
+            <WorkspaceSwitcher
+              active={active}
+              contexts={contexts}
+              verified={verified}
+            />
+          </div>
         ) : (
-          <div className="mb-4 rounded-xl border border-dashed border-line bg-surface/80 px-3 py-2.5">
+          <div className="mb-5 rounded-2xl border border-dashed border-line bg-paper/50 px-3.5 py-3">
             <p className="text-[12px] font-semibold text-ink">No company</p>
             <Link
               href="/onboarding"
@@ -65,7 +67,7 @@ export function WorkspaceDesktopAside({
           </div>
         )}
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto px-0.5">
           <WorkspaceNav
             companySlug={active?.type === "company" ? active.slug : null}
             groupSlug={active?.type === "group" ? active.slug : null}

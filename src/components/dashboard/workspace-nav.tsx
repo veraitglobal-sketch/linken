@@ -2,71 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconHome, IconLock } from "@/components/dashboard/workspace-icons";
+import { IconHome } from "@/components/dashboard/workspace-icons";
+import { WorkspaceNavLink } from "@/components/dashboard/workspace-nav-link";
 import {
   MORE_NAV,
   primaryNav,
   type NavItem,
 } from "@/components/dashboard/workspace-nav-items";
 import type { WorkspaceContextType } from "@/features/workspace/types";
+import type { WorkspaceSection } from "@/features/workspace/sections";
 import { PRODUCT } from "@/lib/product-model";
-import { cn } from "@/lib/cn";
-
-function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
-  const active =
-    item.match === "exact"
-      ? pathname === item.href
-      : pathname === item.href || pathname.startsWith(`${item.href}/`);
-  const Icon = item.icon;
-  const hint = item.lockedHint ?? "Coming soon";
-  const className = cn(
-    "group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium transition-colors",
-    item.locked
-      ? "cursor-default text-muted/70"
-      : active
-        ? "bg-navy/[0.07] font-semibold text-ink"
-        : "text-muted hover:bg-black/[0.03] hover:text-ink",
-  );
-
-  const body = (
-    <>
-      <Icon
-        className={cn(
-          "shrink-0 transition-colors",
-          item.locked
-            ? "text-plus/70"
-            : active
-              ? "text-navy"
-              : "text-plus group-hover:text-muted",
-        )}
-      />
-      <span className="min-w-0 flex-1 truncate">{item.label}</span>
-      {item.locked ? <IconLock className="shrink-0 text-plus/80" /> : null}
-    </>
-  );
-
-  if (item.locked) {
-    return (
-      <span className={className} title={hint} aria-disabled="true">
-        {body}
-      </span>
-    );
-  }
-
-  return (
-    <Link href={item.href} className={className}>
-      {body}
-    </Link>
-  );
-}
 
 function NavList({ items, pathname }: { items: NavItem[]; pathname: string }) {
   if (items.length === 0) return null;
   return (
-    <ul className="space-y-px">
+    <ul className="space-y-0.5">
       {items.map((item) => (
         <li key={item.href}>
-          <NavLink item={item} pathname={pathname} />
+          <WorkspaceNavLink item={item} pathname={pathname} />
         </li>
       ))}
     </ul>
@@ -77,7 +30,7 @@ type Props = {
   companySlug?: string | null;
   groupSlug?: string | null;
   contextType?: WorkspaceContextType | null;
-  allowedSections?: import("@/features/workspace/sections").WorkspaceSection[] | null;
+  allowedSections?: WorkspaceSection[] | null;
 };
 
 export function WorkspaceNav({
@@ -101,9 +54,9 @@ export function WorkspaceNav({
   const more = filter(MORE_NAV);
 
   return (
-    <nav className="flex flex-col gap-5" aria-label="Workspace">
+    <nav className="flex flex-col gap-6" aria-label="Workspace">
       <div>
-        <p className="mb-1 px-2 text-[9px] font-semibold tracking-[0.16em] text-plus/90 uppercase">
+        <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
           Main
         </p>
         <NavList items={main} pathname={pathname} />
@@ -111,7 +64,7 @@ export function WorkspaceNav({
 
       {more.length > 0 ? (
         <div>
-          <p className="mb-1 px-2 text-[9px] font-semibold tracking-[0.16em] text-plus/90 uppercase">
+          <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
             {PRODUCT.operate.label}
           </p>
           <NavList items={more} pathname={pathname} />
@@ -120,16 +73,16 @@ export function WorkspaceNav({
 
       {groupSlug && !companySlug ? (
         <div>
-          <p className="mb-1 px-2 text-[9px] font-semibold tracking-[0.16em] text-plus/90 uppercase">
+          <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
             Open
           </p>
-          <ul className="space-y-px">
+          <ul className="space-y-0.5">
             <li>
               <Link
                 href={`/g/${groupSlug}`}
-                className="group flex h-8 items-center gap-2 rounded-lg px-2 text-[12.5px] font-medium text-muted transition-colors hover:bg-black/[0.03] hover:text-ink"
+                className="group flex h-9 items-center gap-2.5 rounded-xl px-2.5 text-[13px] font-medium text-ink-soft transition-colors hover:bg-navy/[0.035] hover:text-ink"
               >
-                <IconHome className="text-plus group-hover:text-muted" />
+                <IconHome className="text-plus group-hover:text-ink-soft" />
                 Public group
               </Link>
             </li>

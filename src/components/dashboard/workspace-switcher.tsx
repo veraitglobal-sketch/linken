@@ -9,6 +9,7 @@ import {
   SwitcherMeta,
   SwitcherRow,
 } from "@/components/dashboard/workspace-switcher-parts";
+import { signOut } from "@/features/auth/actions";
 import {
   isDraftWorkspace,
   workspaceRoleLabel,
@@ -56,7 +57,7 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
       <Link
         href={href}
         className={cn(
-          "group mb-4 flex items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-black/[0.03]",
+          "group flex items-center gap-2 rounded-xl px-2 py-2 transition-colors hover:bg-navy/[0.035]",
           draftActive && "ring-1 ring-dashed ring-[#c5cdc8]",
         )}
         title={active.type === "company" ? "Edit company" : "Group"}
@@ -80,12 +81,12 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
   }
 
   return (
-    <div ref={rootRef} className="relative mb-5">
+    <div ref={rootRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-black/[0.03]",
+          "flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left transition-colors hover:bg-navy/[0.035]",
           draftActive && "ring-1 ring-dashed ring-[#c5cdc8]",
         )}
         aria-expanded={open}
@@ -105,7 +106,7 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
       {open ? (
         <div
           role="listbox"
-          className="absolute top-[calc(100%+4px)] left-0 z-50 w-full min-w-[220px] overflow-hidden rounded-xl border border-line bg-surface py-1 shadow-[0_16px_40px_rgba(8,20,18,0.12)]"
+          className="absolute top-[calc(100%+6px)] left-0 z-50 w-full min-w-[220px] overflow-hidden rounded-2xl border border-line/80 bg-surface py-1.5 shadow-[0_18px_48px_rgba(8,20,18,0.12)]"
         >
           <ul className="max-h-72 overflow-y-auto py-1">
             {companies.length > 0 ? (
@@ -138,8 +139,8 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
               </>
             ) : null}
           </ul>
-          {active.type === "company" ? (
-            <div className="border-t border-line px-1 py-1">
+          <div className="border-t border-line px-1 py-1">
+            {active.type === "company" ? (
               <Link
                 href={`/c/${active.slug}/edit`}
                 onClick={() => setOpen(false)}
@@ -147,8 +148,16 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
               >
                 Edit company
               </Link>
-            </div>
-          ) : null}
+            ) : null}
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="block w-full rounded-lg px-2.5 py-2 text-left text-[12px] font-semibold text-muted transition-colors hover:bg-paper hover:text-ink"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
       ) : null}
     </div>

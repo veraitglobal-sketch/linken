@@ -45,8 +45,8 @@ export function SwitcherRow({
         <button
           type="submit"
           className={cn(
-            "flex w-full items-center gap-2.5 px-2.5 py-2 text-left transition-colors hover:bg-paper",
-            isActive && "bg-accent-soft",
+            "flex w-full items-center gap-2.5 px-2.5 py-2 text-left transition-colors hover:bg-navy/[0.035]",
+            isActive && "bg-navy/[0.06]",
           )}
         >
           <SwitcherMark ctx={ctx} />
@@ -65,7 +65,7 @@ export function SwitcherRow({
             </p>
           </div>
           {isActive ? (
-            <span className="text-[12px] font-semibold text-blue">✓</span>
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-navy" aria-hidden />
           ) : null}
         </button>
       </form>

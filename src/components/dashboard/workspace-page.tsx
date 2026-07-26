@@ -10,7 +10,7 @@ type Props = {
   wide?: boolean;
 };
 
-/** Quiet page frame: title, description, primary action, airy content. */
+/** Quiet page frame — display title, air, premium surface cards. */
 export function WorkspacePage({
   title,
   description,
@@ -22,23 +22,23 @@ export function WorkspacePage({
   return (
     <div
       className={cn(
-        "mx-auto w-full px-5 py-8 sm:px-8",
+        "mx-auto w-full px-5 py-9 sm:px-8 sm:py-10",
         wide ? "max-w-6xl" : "max-w-3xl",
         className,
       )}
     >
-      <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
+      <header className="mb-9 flex flex-wrap items-end justify-between gap-4 border-b border-line/50 pb-6">
         <div className="min-w-0 max-w-2xl">
-          <h1 className="font-display text-[clamp(1.35rem,2.2vw,1.65rem)] font-medium tracking-[-0.04em] text-ink">
+          <h1 className="font-display text-[clamp(1.55rem,2.4vw,1.9rem)] font-medium tracking-[-0.045em] text-ink">
             {title}
           </h1>
           {description ? (
-            <p className="mt-2 max-w-lg text-[13px] leading-relaxed text-ink-soft">
+            <p className="mt-2.5 max-w-lg text-[14px] leading-relaxed text-ink-soft">
               {description}
             </p>
           ) : null}
         </div>
-        {action ? <div className="shrink-0">{action}</div> : null}
+        {action ? <div className="shrink-0 pb-0.5">{action}</div> : null}
       </header>
       {children}
     </div>
@@ -57,7 +57,7 @@ export function WorkspaceCard({
   return (
     <section
       className={cn(
-        "rounded-[20px] border border-line/80 bg-surface shadow-[0_10px_30px_rgba(8,20,18,0.04)]",
+        "rounded-[22px] border border-line/70 bg-surface shadow-[0_14px_40px_rgba(8,20,18,0.045)]",
         padded && "p-5 sm:p-6",
         className,
       )}
