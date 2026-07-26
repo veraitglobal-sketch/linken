@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
 import { requireOperatorForCompanySlug } from "@/features/workspace/require-operator-slug";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -99,6 +100,8 @@ export async function updateCompanyCover(formData: FormData) {
     revalidatePath(`/c/${company.slug}/edit`);
     redirect(`${back}?coverUpdated=1`);
   } catch (err) {
+    // redirect() throws — must rethrow or success looks like failure.
+    if (isRedirectError(err)) throw err;
     console.error("[updateCompanyCover]", err);
     redirect(
       `${back}?error=${encodeURIComponent("Upload failed. Use JPG/PNG under 8MB and try again.")}`,
@@ -130,6 +133,7 @@ export async function clearCompanyCover(formData: FormData) {
     revalidatePath(`/c/${company.slug}/edit`);
     redirect(`${back}?coverCleared=1`);
   } catch (err) {
+    if (isRedirectError(err)) throw err;
     console.error("[clearCompanyCover]", err);
     redirect(
       `${back}?error=${encodeURIComponent("Could not remove cover. Try again.")}`,
