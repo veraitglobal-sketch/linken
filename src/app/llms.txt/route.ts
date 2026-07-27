@@ -39,8 +39,8 @@ Docs: ${siteUrl}/developers#registry
 - [Verify (trust oracle)](${siteUrl}/api/v1/verify?domain={domain}): Look up a claimed company by website domain before you work with them.
 
 ## Profiles
-- Human HTML: ${siteUrl}/c/{slug}
-- LLM markdown snapshot (same confirmed facts as the API): ${siteUrl}/c/{slug}/llm.md
+- Human HTML: ${siteUrl}/c/{slug} (links \`rel="alternate" type="text/markdown"\` → llm.md)
+- LLM markdown snapshot (same confirmed facts as the API, including published testimonials): ${siteUrl}/c/{slug}/llm.md
 
 ## Trust model
 - **Verified** means the company proved control of its website domain (email domain match, DNS TXT, or meta/well-known) — not that Hansala audited their books.

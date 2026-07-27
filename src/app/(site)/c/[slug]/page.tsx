@@ -57,7 +57,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: company.name,
     description: company.tagline,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: {
+        "text/markdown": `${url}/llm.md`,
+      },
+    },
     openGraph: {
       type: "profile",
       title: `${company.name} · Hansala`,

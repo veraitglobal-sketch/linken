@@ -1,6 +1,37 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site";
 
+const PRIVATE = [
+  "/dashboard",
+  "/onboarding",
+  "/login",
+  "/welcome",
+  "/auth/",
+  "/api/",
+  "/embed/",
+  "/dev/",
+  "/claim/",
+  "/confirm/",
+  "/confirm-reference/",
+  "/join/",
+  "/transfer/",
+  "/verify-domain/",
+  "/testimonial/",
+  "/requests/",
+  "/logo-wall/",
+];
+
+/** Explicit allow for AI crawlers so llm.md / llms.txt stay discoverable. */
+const AI_AGENTS = [
+  "GPTBot",
+  "ChatGPT-User",
+  "ClaudeBot",
+  "anthropic-ai",
+  "Google-Extended",
+  "PerplexityBot",
+  "Applebot-Extended",
+];
+
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
 
@@ -9,26 +40,13 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/dashboard",
-          "/onboarding",
-          "/login",
-          "/welcome",
-          "/auth/",
-          "/api/",
-          "/embed/",
-          "/dev/",
-          "/claim/",
-          "/confirm/",
-          "/confirm-reference/",
-          "/join/",
-          "/transfer/",
-          "/verify-domain/",
-          "/testimonial/",
-          "/requests/",
-          "/logo-wall/",
-        ],
+        disallow: PRIVATE,
       },
+      ...AI_AGENTS.map((userAgent) => ({
+        userAgent,
+        allow: ["/", "/llms.txt", "/c/", "/g/", "/developers"],
+        disallow: PRIVATE,
+      })),
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl.replace(/^https?:\/\//, ""),

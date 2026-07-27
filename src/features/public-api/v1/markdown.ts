@@ -1,9 +1,16 @@
 import "server-only";
 import { getPartnersForCompany } from "@/features/partners/public-queries";
 import {
+  linesForCaseStudies,
+  linesForPartners,
+  linesForReferences,
+  linesForTestimonials,
+} from "@/features/public-api/v1/markdown-evidence";
+import {
   getPublicCaseStudiesApi,
   getPublicCompanyApi,
   getPublicReferencesApi,
+  getPublicTestimonialsApi,
 } from "@/features/public-api/v1/queries";
 import { getTrustProfile } from "@/features/trust/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
@@ -25,9 +32,7 @@ export async function buildCompanyLlmMarkdown(
 
   const lines: string[] = [];
   lines.push(`# ${company.name}`);
-  if (company.tagline.trim()) {
-    lines.push(company.tagline.trim());
-  }
+  if (company.tagline.trim()) lines.push(company.tagline.trim());
   lines.push("");
   lines.push(
     `- Category: ${company.category || "—"} · City: ${company.city || "—"} · Country: ${company.country || "—"} · Website: ${company.website || "—"}`,
@@ -73,50 +78,19 @@ export async function buildCompanyLlmMarkdown(
   );
   lines.push("");
 
-  const [refsApi, casesApi, partners] = await Promise.all([
+  const [refsApi, casesApi, partners, testimonialsApi] = await Promise.all([
     getPublicReferencesApi(company.slug),
     getPublicCaseStudiesApi(company.slug),
     getPartnersForCompany(company.id),
+    getPublicTestimonialsApi(company.slug),
   ]);
 
-  const refs = refsApi?.references ?? [];
-  if (refs.length > 0) {
-    lines.push(`## Confirmed clients (${refs.length})`);
-    for (const r of refs) {
-      const client = r.client_slug
-        ? `[${r.client_name}](${siteUrl}/c/${r.client_slug})`
-        : r.client_name;
-      const period = r.ongoing
-        ? `${r.started_year || "?"}–present (ongoing)`
-        : `${r.started_year || "?"}${r.ended_year ? `–${r.ended_year}` : ""}`;
-      lines.push(`- ${client} · ${r.service} · ${period}`);
-    }
-    lines.push("");
-  }
-
-  if (partners.length > 0) {
-    lines.push(`## Confirmed partners (${partners.length})`);
-    for (const p of partners) {
-      lines.push(`- [${p.name}](${siteUrl}/c/${p.slug})`);
-    }
-    lines.push("");
-  }
-
-  const cases = casesApi?.case_studies ?? [];
-  if (cases.length > 0) {
-    lines.push(`## Case studies (${cases.length}, confirmed only)`);
-    for (const c of cases) {
-      const summary = c.summary.trim()
-        ? c.summary.trim().replace(/\s+/g, " ")
-        : "—";
-      const oneLine =
-        summary.length > 160 ? `${summary.slice(0, 157)}…` : summary;
-      lines.push(
-        `- [${c.title}](${c.url})${c.year ? ` · ${c.year}` : ""} — ${oneLine}`,
-      );
-    }
-    lines.push("");
-  }
+  lines.push(...linesForReferences(refsApi?.references ?? [], siteUrl));
+  lines.push(...linesForPartners(partners, siteUrl));
+  lines.push(...linesForCaseStudies(casesApi?.case_studies ?? []));
+  lines.push(
+    ...linesForTestimonials(testimonialsApi?.testimonials ?? [], siteUrl),
+  );
 
   if (api.assessment) {
     const a = api.assessment;
