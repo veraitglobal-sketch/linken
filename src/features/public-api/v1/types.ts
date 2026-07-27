@@ -120,6 +120,31 @@ export type ApiCaseStudiesResponse = {
   count: number;
 };
 
+export type ApiTestimonialAuthorCompany = {
+  name: string;
+  slug: string;
+};
+
+/** Client-written testimonial — author text is immutable for the receiving company. */
+export type ApiTestimonial = {
+  id: string;
+  body: string;
+  author_name: string;
+  author_role: string;
+  author_company: ApiTestimonialAuthorCompany | null;
+  source: "partnership" | "reference" | "case_study" | "standalone";
+  /** ISO-8601 when published. */
+  published_at: string;
+  /** Absolute URL to the company profile. */
+  profile_url: string;
+};
+
+/** GET /api/v1/companies/{slug}/testimonials */
+export type ApiTestimonialsResponse = {
+  testimonials: ApiTestimonial[];
+  count: number;
+};
+
 /**
  * GET /api/v1/verify?domain={domain}
  * Trust oracle — domain → claimed company snapshot (confirmed evidence only).

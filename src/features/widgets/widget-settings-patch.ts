@@ -1,4 +1,5 @@
 import "server-only";
+import { applyTestimonialsPatch } from "@/features/testimonials/widget-patch";
 import { parseLogoWallOverride, type LogoWallOverride } from "@/features/widgets/settings";
 import {
   mergeLogoWallExcluded,
@@ -35,6 +36,17 @@ export function applyWidgetSettingsBody(
     touched = true;
   }
 
+  if ("testimonials" in body) {
+    const t = body.testimonials;
+    if (!t || typeof t !== "object" || Array.isArray(t)) {
+      return { ok: false, error: "testimonials must be an object." };
+    }
+    const applied = applyTestimonialsPatch(widgetSettings, t as Record<string, unknown>);
+    if (!applied.ok) return applied;
+    widgetSettings = applied.widgetSettings;
+    touched = true;
+  }
+
   if ("widget_settings" in body) {
     if (
       body.widget_settings === null ||
@@ -51,6 +63,16 @@ export function applyWidgetSettingsBody(
       });
       if (!patched.ok) return patched;
       widgetSettings = mergeLogoWallPatch(widgetSettings, patched.patch);
+      touched = true;
+    }
+    const tm = raw.testimonials;
+    if (tm && typeof tm === "object" && !Array.isArray(tm)) {
+      const applied = applyTestimonialsPatch(
+        widgetSettings,
+        tm as Record<string, unknown>,
+      );
+      if (!applied.ok) return applied;
+      widgetSettings = applied.widgetSettings;
       touched = true;
     }
   }

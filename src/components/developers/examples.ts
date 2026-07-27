@@ -82,6 +82,27 @@ export function caseStudiesExample(siteUrl: string) {
 }`;
 }
 
+export function testimonialsExample(siteUrl: string) {
+  return `{
+  "testimonials": [
+    {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "body": "They delivered on scope and kept us informed at every stage. We would work with them again.",
+      "author_name": "Elena Vogt",
+      "author_role": "Project Director",
+      "author_company": {
+        "name": "Nordwerk Holding",
+        "slug": "nordwerk-holding"
+      },
+      "source": "case_study",
+      "published_at": "2025-09-12T14:30:00.000Z",
+      "profile_url": "${siteUrl}/c/example-architecture?src=testimonial"
+    }
+  ],
+  "count": 1
+}`;
+}
+
 export function errorExample() {
   return `{
   "error": {

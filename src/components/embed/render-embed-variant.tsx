@@ -165,6 +165,7 @@ export function embedWrapTransparent(variant: string): boolean {
     v === "logo-wall" ||
     v === "footer-strip" ||
     v === "partners-rotate" ||
-    v === "case-gallery"
+    v === "case-gallery" ||
+    v === "testimonials"
   );
 }

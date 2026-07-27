@@ -6,6 +6,7 @@ import {
   isCompanyOwnerSlug,
 } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
+import { hasPublishedTestimonialForCase } from "@/features/testimonials/queries";
 import { logProfileEvent } from "@/features/analytics/log";
 import { parseProfileSource } from "@/features/analytics/sources";
 import { getSiteUrl } from "@/lib/site";
@@ -38,13 +39,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CaseStudyPage({ params, searchParams }: Props) {
   const { slug, caseSlug } = await params;
   const { error, requested, src } = await searchParams;
-  const [company, caseStudy] = await Promise.all([
+  const [company, caseStudy, editable] = await Promise.all([
     getCompanyForPage(slug),
     getCaseStudyForPage(slug, caseSlug),
+    isCompanyOwnerSlug(slug),
   ]);
   if (!company || !caseStudy) notFound();
 
-  const editable = await isCompanyOwnerSlug(slug);
+  const hideCompanyQuote = await hasPublishedTestimonialForCase(caseStudy.id);
   const siteUrl = getSiteUrl();
 
   if (!editable && company.claimed !== false) {
@@ -106,6 +108,7 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
         editable={editable}
         requested={requested === "1"}
         error={error}
+        hideCompanyQuote={hideCompanyQuote}
       />
     </>
   );

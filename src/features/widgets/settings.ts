@@ -12,8 +12,13 @@ import {
   parsePlacements,
   type PlacementSettings,
 } from "@/features/widgets/placement-settings";
+import {
+  parseTestimonialsSettings,
+  type TestimonialsSettings,
+} from "@/features/testimonials/settings";
 
 export type { PlacementSettings } from "@/features/widgets/placement-settings";
+export type { TestimonialsSettings } from "@/features/testimonials/settings";
 
 export type LogoWallOverride = {
   logoUrl?: string;
@@ -41,6 +46,7 @@ export type LogoWallSettings = {
 export type WidgetSettings = {
   logoWall: LogoWallSettings;
   placements: PlacementSettings;
+  testimonials: TestimonialsSettings;
 };
 
 function clamp(n: number, min: number, max: number) {
@@ -132,5 +138,6 @@ export function parseWidgetSettings(raw: unknown): WidgetSettings {
       overrides,
     },
     placements: parsePlacements(obj.placements),
+    testimonials: parseTestimonialsSettings(obj.testimonials),
   };
 }

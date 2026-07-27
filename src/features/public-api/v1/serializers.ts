@@ -1,5 +1,6 @@
 import { STRENGTH_LABELS } from "@/features/assessments/catalog";
 import type { ClientAssessmentSummary } from "@/features/assessments/queries";
+import type { PublicTestimonial } from "@/features/testimonials/types";
 import type {
   ApiAssessment,
   ApiCaseStudiesResponse,
@@ -8,6 +9,8 @@ import type {
   ApiCompanyStats,
   ApiReference,
   ApiReferencesResponse,
+  ApiTestimonial,
+  ApiTestimonialsResponse,
   ApiTrustLevel,
 } from "@/features/public-api/v1/types";
 import type { TrustLevel } from "@/features/trust/score";
@@ -122,4 +125,26 @@ export function serializeCaseStudies(
     .slice(0, 20)
     .map((row) => serializeCaseStudy(row, urlFor(row.slug)));
   return { case_studies, count: case_studies.length };
+}
+
+export function serializeTestimonial(row: PublicTestimonial): ApiTestimonial {
+  return {
+    id: row.id,
+    body: row.body,
+    author_name: row.authorName,
+    author_role: row.authorRole,
+    author_company: row.authorCompany
+      ? { name: row.authorCompany.name, slug: row.authorCompany.slug }
+      : null,
+    source: row.source,
+    published_at: row.publishedAt,
+    profile_url: row.profileUrl,
+  };
+}
+
+export function serializeTestimonials(
+  rows: PublicTestimonial[],
+): ApiTestimonialsResponse {
+  const testimonials = rows.map(serializeTestimonial).slice(0, 50);
+  return { testimonials, count: testimonials.length };
 }

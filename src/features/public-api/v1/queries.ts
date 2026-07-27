@@ -5,6 +5,7 @@ import {
   serializeCaseStudies,
   serializeCompany,
   serializeReferences,
+  serializeTestimonials,
   type PublicCaseStudyRow,
 } from "@/features/public-api/v1/serializers";
 import type {
@@ -13,8 +14,13 @@ import type {
   ApiCompanyStats,
   ApiPartnersResponse,
   ApiReferencesResponse,
+  ApiTestimonialsResponse,
   ApiVerifyResponse,
 } from "@/features/public-api/v1/types";
+import {
+  getPublishedTestimonials,
+  toPublicTestimonials,
+} from "@/features/testimonials/queries";
 import { getPartnersForCompany } from "@/features/partners/public-queries";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
@@ -186,6 +192,21 @@ export async function getPublicCaseStudiesApi(
     rows,
     (caseSlug) => `${siteUrl}/c/${company.slug}/case-studies/${caseSlug}`,
   );
+}
+
+export async function getPublicTestimonialsApi(
+  slug: string,
+): Promise<ApiTestimonialsResponse | null> {
+  const company = await getCompanyForPage(slug);
+  if (!company) return null;
+
+  if (company.claimed === false) {
+    return { testimonials: [], count: 0 };
+  }
+
+  const rows = await getPublishedTestimonials(company.id);
+  const publicRows = await toPublicTestimonials(rows, company.slug);
+  return serializeTestimonials(publicRows);
 }
 
 /**

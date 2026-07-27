@@ -52,7 +52,12 @@ export function buildEmbedSnippet(input: {
   });
   const widthAttr = isFluid ? "100%" : px;
   const styleWidth = isFluid ? "100%" : `${px}px`;
-  return `<iframe src="${src}" width="${widthAttr}" height="${height}" style="border:0;width:${styleWidth};max-width:100%;background:transparent" title="Verified on Hansala" loading="lazy"></iframe>`;
+  const resizeAttr =
+    input.variant === "testimonials" ? ' data-hansala-embed="1"' : "";
+  const iframe = `<iframe src="${src}" width="${widthAttr}" height="${height}"${resizeAttr} style="border:0;width:${styleWidth};max-width:100%;background:transparent" title="Verified on Hansala" loading="lazy"></iframe>`;
+  if (input.variant !== "testimonials") return iframe;
+  const scriptSrc = `${input.siteUrl}/embed-resize.js`;
+  return `${iframe}\n<script src="${scriptSrc}" async></script>`;
 }
 
 /** Pasteable iframe for /embed/[slug]/case/[caseSlug]. */

@@ -16,6 +16,7 @@ const COPY: Partial<Record<WidgetVariant, string>> = {
   "footer-strip": "Ready — logos appear when partners confirm.",
   "partners-rotate": "Confirm a partner or client to unlock.",
   "case-gallery": "Confirm a case study with a client to unlock.",
+  testimonials: "Publish a client testimonial to unlock.",
 };
 
 type Props = {

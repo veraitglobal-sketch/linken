@@ -3,9 +3,14 @@ import { EmbedCaseGallery } from "@/components/embed/embed-case-gallery";
 import { EmbedFooterStrip } from "@/components/embed/embed-footer-strip";
 import { EmbedLogoWallGrid } from "@/components/embed/embed-logo-wall-grid";
 import { EmbedPartnersRotate } from "@/components/embed/embed-partners-rotate";
+import { EmbedTestimonials } from "@/components/embed/embed-testimonials";
 import { EmbedProLockedNote } from "@/components/embed/embed-pro-locked-note";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 import { getCaseGalleryEntries } from "@/features/widgets/case-gallery";
+import {
+  getSelectedTestimonials,
+  toPublicTestimonials,
+} from "@/features/testimonials/queries";
 import { resolveLogoWallPresentation } from "@/features/widgets/logo-wall-background";
 import { getLogoWallEntries } from "@/features/widgets/logo-wall";
 import { parseWidgetSettings } from "@/features/widgets/settings";
@@ -153,6 +158,33 @@ export async function renderPlacementEmbed(input: {
     return wrapEmbed(node, theme, w, { transparent: true });
   }
 
+  if (variant === "testimonials") {
+    const settings = await loadWidgetSettings(company.id);
+    const rows = await getSelectedTestimonials(company.id, settings);
+    const items = await toPublicTestimonials(rows, company.slug);
+    const layout = settings.testimonials.layout;
+    const node = (
+      <>
+        <EmbedTestimonials
+          items={items}
+          layout={layout}
+          theme={settings.testimonials.theme}
+          themeParam={theme}
+          profileUrl={profileUrl}
+          companyName={company.name}
+        />
+        {resolved.locked ? (
+          <EmbedProLockedNote
+            name={company.name}
+            profileUrl={profileUrl}
+            theme={theme}
+          />
+        ) : null}
+      </>
+    );
+    return wrapEmbed(node, theme, w, { transparent: true });
+  }
+
   return null;
 }
 
@@ -161,6 +193,7 @@ export function isPlacementVariant(variant: string): boolean {
     variant === "logo-wall" ||
     variant === "footer-strip" ||
     variant === "partners-rotate" ||
-    variant === "case-gallery"
+    variant === "case-gallery" ||
+    variant === "testimonials"
   );
 }

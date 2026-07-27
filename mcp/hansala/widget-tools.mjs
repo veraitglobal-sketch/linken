@@ -4,7 +4,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_list_widget_variants",
     description:
-      "List every embed variant from WIDGET_CATALOG: id, name, description, pro. Call before picking a snippet. Placement widgets: footer-strip, partners-rotate, case-gallery. Logo wall id is \"logo-wall\".",
+      "List every embed variant from WIDGET_CATALOG: id, name, description, pro. Call before picking a snippet. Placement widgets: footer-strip, partners-rotate, case-gallery. Proof: testimonials (client-written, studio-curated). Logo wall id is \"logo-wall\".",
     inputSchema: {
       type: "object",
       properties: {},
@@ -24,7 +24,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_get_widget_settings",
     description:
-      "Read widget_settings including logoWall and placements (footer/partners/cases limits + partners motion/size) plus allow_logo_in_partner_widgets and accepting_clients.",
+      "Read widget_settings including logoWall, placements (footer/partners/cases), testimonials (excluded_ids, order, layout, limit), plus allow_logo_in_partner_widgets and accepting_clients.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -34,7 +34,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_update_widget_settings",
     description:
-      "Partial PATCH for Logo wall presentation. Omitted fields stay unchanged (merge, never wipe). Selection is exclusion-based — default shows every confirmed partner. logo_wall.background: \"transparent\" | \"light\" | \"dark\" | \"#RRGGBB\". logo_wall.limit: 1–30 (default 12) — how many included entries render (order first, then evidence). logo_wall.motion: \"row\" | \"stack\" | \"fade\" | \"grid\" | \"swap-batch\" | \"swap-random\". logo_wall.size: \"sm\" | \"md\" | \"lg\" | \"xl\". logo_wall.order is company_id UUID array. logo_wall.excluded_company_ids hides firms. logo_wall.overrides[company_id] may set scale/padding/grayscale/invertOnDark — not logoUrl (use hansala_upload_partner_logo).",
+      "Partial PATCH for widget presentation. Omitted fields stay unchanged (merge, never wipe). Logo wall: exclusion-based — default shows every confirmed partner. logo_wall.background: \"transparent\" | \"light\" | \"dark\" | \"#RRGGBB\". logo_wall.limit: 1–30. logo_wall.motion: \"row\" | \"stack\" | \"fade\" | \"grid\" | \"swap-batch\" | \"swap-random\". logo_wall.size: \"sm\" | \"md\" | \"lg\" | \"xl\". logo_wall.order / excluded_company_ids / overrides. Testimonials: testimonials.excluded_ids, testimonials.order, testimonials.layout (single|carousel|grid|masonry|marquee|editorial|featured|strip), testimonials.limit 1–30. New published testimonials appear automatically unless excluded.",
     inputSchema: {
       type: "object",
       properties: {
@@ -85,6 +85,25 @@ export const WIDGET_TOOLS = [
         },
         allow_logo_in_partner_widgets: { type: "boolean" },
         accepting_clients: { type: "boolean" },
+        testimonials: {
+          type: "object",
+          properties: {
+            excluded_ids: { type: "array", items: { type: "string" } },
+            order: { type: "array", items: { type: "string" } },
+            layout: {
+              type: "string",
+              description:
+                "single | carousel | grid | masonry | marquee | editorial | featured | strip",
+            },
+            limit: { type: "number", description: "1–30" },
+            theme: {
+              type: "object",
+              description:
+                "preset, fontFamily, fontSize, lineHeight, textColor, mutedColor, accentColor, background, cardBackground, borderColor, borderWidth, radius, shadow (none|soft|lifted), spacing, align (left|center), customCss",
+            },
+          },
+          additionalProperties: false,
+        },
       },
       additionalProperties: false,
     },
@@ -109,7 +128,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_get_widget_snippet",
     description:
-      "Return the pasteable iframe for the company. Default variant is logo-wall. Pass variant to override (e.g. horizontal, verified, logo-wall). Background and partner selection come from saved widget_settings — paste once; manage forever from API/dashboard.",
+      "Return the pasteable iframe for the company. Default variant is logo-wall. Pass variant to override (e.g. horizontal, verified, logo-wall, testimonials). testimonials snippet includes embed-resize.js for auto height. Background and selection come from saved widget_settings — paste once; manage forever from API/dashboard.",
     inputSchema: {
       type: "object",
       properties: {

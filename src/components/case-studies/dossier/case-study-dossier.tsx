@@ -21,6 +21,7 @@ type Props = {
   error?: string;
   index?: number;
   companyHref?: string;
+  hideCompanyQuote?: boolean;
 };
 
 export function CaseStudyDossier({
@@ -31,6 +32,7 @@ export function CaseStudyDossier({
   error,
   index = 0,
   companyHref,
+  hideCompanyQuote = false,
 }: Props) {
   const clientConfirmed = caseStudy.clientConfirmation?.status === "confirmed";
 
@@ -71,7 +73,7 @@ export function CaseStudyDossier({
           metrics={caseStudy.metrics}
         />
         <div className="mx-auto max-w-3xl px-6">
-          <DossierExhibit caseStudy={caseStudy} />
+          <DossierExhibit caseStudy={caseStudy} hideCompanyQuote={hideCompanyQuote} />
         </div>
         <DossierFilmstrip urls={caseStudy.galleryUrls} title={caseStudy.title} />
         <div className="mx-auto max-w-3xl space-y-20 px-6">

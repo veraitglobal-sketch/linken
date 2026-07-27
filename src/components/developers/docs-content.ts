@@ -17,6 +17,7 @@ export const DOCS_NAV: NavItem[] = [
       { id: "endpoint-references", label: "References" },
       { id: "endpoint-partners", label: "Partners" },
       { id: "endpoint-case-studies", label: "Case studies" },
+      { id: "endpoint-testimonials", label: "Testimonials" },
       { id: "endpoint-verify", label: "Verify (oracle)" },
     ],
   },
@@ -223,6 +224,51 @@ export const CASE_STUDY_FIELDS: FieldRow[] = [
     name: "case_studies[].confirmed_partners[].slug",
     type: "string",
     description: "Partner public slug.",
+  },
+];
+
+export const TESTIMONIAL_FIELDS: FieldRow[] = [
+  {
+    name: "testimonials",
+    type: "ApiTestimonial[]",
+    description: "Published client-written quotes only, max 50. Full body — never truncated.",
+  },
+  { name: "count", type: "number", description: "Length of testimonials." },
+  { name: "testimonials[].id", type: "string", description: "Stable testimonial id." },
+  {
+    name: "testimonials[].body",
+    type: "string",
+    description: "Client's words. Immutable after publish.",
+  },
+  {
+    name: "testimonials[].author_name",
+    type: "string",
+    description: "Named author (required at publish).",
+  },
+  {
+    name: "testimonials[].author_role",
+    type: "string",
+    description: "Author role or title when provided.",
+  },
+  {
+    name: "testimonials[].author_company",
+    type: "{ name, slug } | null",
+    description: "Author's company when linked to a Hansala profile.",
+  },
+  {
+    name: "testimonials[].source",
+    type: '"partnership" | "reference" | "case_study" | "standalone"',
+    description: "What the testimonial is attached to.",
+  },
+  {
+    name: "testimonials[].published_at",
+    type: "string",
+    description: "ISO-8601 when the client published.",
+  },
+  {
+    name: "testimonials[].profile_url",
+    type: "string",
+    description: "Absolute URL to the receiving company's profile.",
   },
 ];
 

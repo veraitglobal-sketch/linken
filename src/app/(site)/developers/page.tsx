@@ -9,6 +9,7 @@ import {
   COMPANY_FIELDS,
   ERROR_FIELDS,
   REFERENCE_FIELDS,
+  TESTIMONIAL_FIELDS,
   VERIFY_FIELDS,
 } from "@/components/developers/docs-content";
 import { CodePanel } from "@/components/developers/code-panel";
@@ -22,6 +23,7 @@ import { RegistrySection } from "@/components/developers/registry-section";
 import { EndpointSection } from "@/components/developers/endpoint-section";
 import {
   caseStudiesExample,
+  testimonialsExample,
   companyExample,
   embedSnippet,
   errorExample,
@@ -49,11 +51,13 @@ export default function DevelopersPage() {
   const companyUrl = `${docsUrl}${basePath}/companies/${EXAMPLE_SLUG}`;
   const referencesUrl = `${companyUrl}/references`;
   const caseStudiesUrl = `${companyUrl}/case-studies`;
+  const testimonialsUrl = `${companyUrl}/testimonials`;
   const verifyUrl = `${docsUrl}${basePath}/verify?domain=example.com`;
 
   const companyJson = companyExample(docsUrl);
   const referencesJson = referencesExample();
   const caseStudiesJson = caseStudiesExample(docsUrl);
+  const testimonialsJson = testimonialsExample(docsUrl);
   const verifyJson = verifyExample(docsUrl);
   const errorJson = errorExample();
 
@@ -119,7 +123,7 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="01"
               title="Overview"
-              description="The Public API exposes the same confirmed facts you see on a Hansala company page — partners, references, case studies, and assessment aggregates."
+              description="The Public API exposes the same confirmed facts you see on a Hansala company page — partners, references, case studies, client testimonials, and assessment aggregates."
             />
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
               {[
@@ -269,8 +273,28 @@ export default function DevelopersPage() {
             />
 
             <EndpointSection
-              id="endpoint-verify"
+              id="endpoint-testimonials"
               index="03.5"
+              path={`/api/v1/companies/{slug}/testimonials`}
+              title="Testimonials"
+              description="Published client-written testimonials only (max 50). Full text with named attribution — never truncated."
+              notes={
+                <p>
+                  Written and published by the client, not the profile owner. Only{" "}
+                  <code className="text-[12px]">status: published</code> with{" "}
+                  <code className="text-[12px]">consent_public: true</code> appear.
+                  Testimonials tied to undisclosed references or case confirmations are
+                  omitted. Author email is never returned.
+                </p>
+              }
+              fields={TESTIMONIAL_FIELDS}
+              requestTabs={requestTabs(testimonialsUrl)}
+              responseTabs={responseTab(testimonialsJson)}
+            />
+
+            <EndpointSection
+              id="endpoint-verify"
+              index="03.6"
               path={`/api/v1/verify?domain={domain}`}
               title="Verify (trust oracle)"
               description="One call to check a firm by website domain before you work with them. No API key. Unknown domains return found:false with HTTP 200."
@@ -327,6 +351,13 @@ export default function DevelopersPage() {
               >
                 Configure in your dashboard →
               </a>
+            </p>
+            <p className="mt-3 text-[13px] leading-relaxed text-muted">
+              <strong className="font-semibold text-ink-soft">Testimonials embed:</strong>{" "}
+              the dashboard snippet includes <code className="text-[12px]">embed-resize.js</code>{" "}
+              — it only listens for <code className="text-[12px]">postMessage</code> height
+              updates from the iframe (no analytics, no network). Fixed-height iframes still work
+              without the script.
             </p>
             <EmbedsSection variants={embeds} />
           </section>

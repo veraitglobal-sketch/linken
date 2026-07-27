@@ -8,6 +8,7 @@ import {
 } from "@/features/acquisition/listing-companies";
 import { hasAssessmentForSource } from "@/features/assessments/queries";
 import { loadPostConfirmSubject } from "@/features/confirm/post-confirm-subject";
+import { ensureTestimonialAfterConfirm } from "@/features/testimonials/post-confirm";
 import { getReferencePreview } from "@/features/references/queries";
 import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
 
@@ -74,6 +75,11 @@ export default async function ConfirmReferencePage({
       })
     : null;
 
+  const testimonialUrl =
+    confirmed && company
+      ? await ensureTestimonialAfterConfirm({ token, source: "reference" })
+      : null;
+
   return (
     <ConfirmPage
       eyebrow="Hansala · Reference confirmation"
@@ -98,6 +104,7 @@ export default async function ConfirmReferencePage({
         assessed={assessed === "1"}
         skipped={skipped === "1"}
         alreadyAssessed={alreadyAssessed}
+        testimonialUrl={testimonialUrl}
       />
     </ConfirmPage>
   );

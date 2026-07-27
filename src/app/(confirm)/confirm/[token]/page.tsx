@@ -12,6 +12,7 @@ import {
   getViewerCompany,
 } from "@/features/case-studies/queries";
 import { loadPostConfirmSubject } from "@/features/confirm/post-confirm-subject";
+import { ensureTestimonialAfterConfirm } from "@/features/testimonials/post-confirm";
 
 export const metadata: Metadata = {
   title: "Confirm project",
@@ -77,6 +78,11 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
       })
     : null;
 
+  const testimonialUrl =
+    confirmed && company
+      ? await ensureTestimonialAfterConfirm({ token, source: "case_study" })
+      : null;
+
   return (
     <ConfirmPage
       eyebrow="Hansala · Client confirmation"
@@ -95,6 +101,7 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
         assessed={assessed === "1"}
         skipped={skipped === "1"}
         alreadyAssessed={alreadyAssessed}
+        testimonialUrl={testimonialUrl}
       />
     </ConfirmPage>
   );

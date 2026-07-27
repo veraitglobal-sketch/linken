@@ -3,11 +3,12 @@ import type { CaseStudy } from "@/types/case-study";
 
 type Props = {
   caseStudy: CaseStudy;
+  hideCompanyQuote?: boolean;
 };
 
-export function CaseStudyClientQuote({ caseStudy }: Props) {
+export function CaseStudyClientQuote({ caseStudy, hideCompanyQuote = false }: Props) {
   const quote = caseStudy.clientQuote.trim();
-  if (!quote) return null;
+  if (!quote || hideCompanyQuote) return null;
 
   const confirmed = caseStudy.clientConfirmation?.status === "confirmed";
   const attribution = caseStudy.clientConfirmation?.confirmedBy?.name ?? "Client";
@@ -29,7 +30,8 @@ export function CaseStudyClientQuote({ caseStudy }: Props) {
           </div>
         ) : (
           <p className="mt-4 text-[12px] text-white/40">
-            Quote shown — strongest when the client confirms on Hansala.
+            Unverified — written by {caseStudy.clientLabel || "the company"}. Strongest
+            when the client confirms on Hansala.
           </p>
         )}
       </div>

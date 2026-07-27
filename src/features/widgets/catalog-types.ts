@@ -2,6 +2,7 @@ export type WidgetVariant =
   | "footer-strip"
   | "partners-rotate"
   | "case-gallery"
+  | "testimonials"
   | "verified"
   | "micro"
   | "horizontal"

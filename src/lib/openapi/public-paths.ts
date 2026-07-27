@@ -18,6 +18,9 @@ export const PUBLIC_OPENAPI_PATHS = {
   "/companies/{slug}/case-studies": {
     get: op("List confirmed case studies", "getPublicCaseStudies"),
   },
+  "/companies/{slug}/testimonials": {
+    get: op("List published client testimonials", "getPublicTestimonials"),
+  },
   "/verify": {
     get: op("Trust oracle — look up a firm by website domain", "verifyDomain"),
   },

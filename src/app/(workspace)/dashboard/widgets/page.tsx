@@ -5,7 +5,9 @@ import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notic
 import { WidgetAnalyticsSection } from "@/components/widgets/widget-analytics-section";
 import { LogoWallStudio } from "@/components/widgets/logo-wall-studio";
 import { PlacementStudioControls } from "@/components/widgets/placement-studio-controls";
+import { TestimonialsStudio } from "@/components/widgets/testimonials-studio";
 import { WidgetsStudio } from "@/components/widgets/widgets-studio";
+import { countPublishedTestimonials, getTestimonialsStudioEntries } from "@/features/testimonials/queries";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import { getReferencesForCompany } from "@/features/references/queries";
@@ -60,7 +62,7 @@ export default async function DashboardWidgetsPage() {
     );
   }
 
-  const [assessment, references, wallCandidates, settingsRes, confirmedCases] =
+  const [assessment, references, wallCandidates, settingsRes, confirmedCases, publishedTestimonials] =
     await Promise.all([
       getClientAssessmentSummary(company.id),
       getReferencesForCompany(company.id),
@@ -75,6 +77,7 @@ export default async function DashboardWidgetsPage() {
           .maybeSingle();
       })(),
       countConfirmedCases(company.id),
+      countPublishedTestimonials(company.id),
     ]);
 
   const confirmedRefs = references.filter((r) => r.status === "confirmed");
@@ -85,11 +88,17 @@ export default async function DashboardWidgetsPage() {
   const settings = parseWidgetSettings(settingsRes.data?.widget_settings);
   const wallSettings = settings.logoWall;
   const placements = settings.placements;
+  const testimonialSettings = settings.testimonials;
+  const testimonialEntries = await getTestimonialsStudioEntries(
+    company.id,
+    settingsRes.data?.widget_settings,
+  );
 
   const availability = {
     "footer-strip": true,
     "partners-rotate": hasWall,
     "case-gallery": confirmedCases > 0,
+    testimonials: publishedTestimonials > 0,
     verified: true,
     micro: true,
     horizontal: true,
@@ -130,6 +139,12 @@ export default async function DashboardWidgetsPage() {
           limit={wallSettings.limit}
           motion={wallSettings.motion}
           size={wallSettings.size}
+        />
+        <TestimonialsStudio
+          entries={testimonialEntries}
+          layout={testimonialSettings.layout}
+          limit={testimonialSettings.limit}
+          theme={testimonialSettings.theme}
         />
         <PlacementStudioControls
           footerLimit={placements.footer.limit}

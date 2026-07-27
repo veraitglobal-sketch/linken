@@ -1,10 +1,14 @@
 import type { CaseStudy } from "@/types/case-study";
 
-type Props = { caseStudy: CaseStudy };
+type Props = {
+  caseStudy: CaseStudy;
+  /** Hide company-written quote when a client testimonial is published. */
+  hideCompanyQuote?: boolean;
+};
 
-export function DossierExhibit({ caseStudy }: Props) {
+export function DossierExhibit({ caseStudy, hideCompanyQuote = false }: Props) {
   const quote = caseStudy.clientQuote.trim();
-  if (!quote) return null;
+  if (!quote || hideCompanyQuote) return null;
 
   const who = caseStudy.clientConfirmation?.confirmedBy?.name ?? "Client";
   const confirmed = caseStudy.clientConfirmation?.status === "confirmed";
@@ -19,7 +23,11 @@ export function DossierExhibit({ caseStudy }: Props) {
         <p className="mt-2 text-[11px] tracking-[0.1em] text-[var(--cf-accent)] uppercase">
           Confirmed on Hansala
         </p>
-      ) : null}
+      ) : (
+        <p className="mt-2 text-[11px] tracking-[0.1em] text-[var(--cf-muted)] uppercase">
+          Unverified — written by {caseStudy.clientLabel || "the company"}
+        </p>
+      )}
     </section>
   );
 }

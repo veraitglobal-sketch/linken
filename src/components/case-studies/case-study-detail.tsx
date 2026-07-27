@@ -10,6 +10,7 @@ type Props = {
   error?: string;
   index?: number;
   companyHref?: string;
+  hideCompanyQuote?: boolean;
 };
 
 export function CaseStudyDetail(props: Props) {

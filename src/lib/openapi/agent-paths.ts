@@ -120,11 +120,14 @@ export const AGENT_OPENAPI_PATHS = {
     ),
   },
   "/widget-settings": {
-    get: op("Read widget_settings including logoWall", "getWidgetSettings"),
+    get: op("Read widget_settings including logoWall and testimonials", "getWidgetSettings"),
     patch: op(
-      "Merge widget settings / logo_wall (order, background transparent|light|dark|#RRGGBB, limit 1–30, motion, size, exclusions, presentation overrides)",
+      "Merge widget settings / logo_wall / testimonials (order, layout, exclusions, limit)",
       "patchWidgetSettings",
     ),
+  },
+  "/testimonials/invite": {
+    post: op("Create testimonial invite (author submits via token link)", "createTestimonialInvite"),
   },
   "/scheduling": {
     get: op("Read Calendly/Cal.com booking link (Book a call)", "getScheduling"),

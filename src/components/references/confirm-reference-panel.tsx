@@ -1,4 +1,5 @@
 import { PostConfirmSuccess } from "@/components/confirm/post-confirm-success";
+import { PostConfirmTestimonial } from "@/components/confirm/post-confirm-testimonial";
 import type { PostConfirmSubject } from "@/features/confirm/post-confirm-subject";
 import { ConfirmDepthFields } from "@/components/confirm/confirm-depth-fields";
 import {
@@ -26,6 +27,7 @@ type Props = {
   listings: ListingCompany[];
   suggestedWebsite: string;
   subject: PostConfirmSubject | null;
+  testimonialUrl?: string | null;
   error?: string;
   done?: string;
   assessed?: boolean;
@@ -42,6 +44,7 @@ export function ConfirmReferencePanel({
   listings,
   suggestedWebsite,
   subject,
+  testimonialUrl,
   error,
   done,
   assessed = false,
@@ -69,6 +72,10 @@ export function ConfirmReferencePanel({
             suggestedWebsite={suggestedWebsite}
           />
         ) : null}
+        <PostConfirmTestimonial
+          requesterName={preview.providerName}
+          testimonialUrl={testimonialUrl ?? null}
+        />
         <PostConfirmAssessment
           sourceType="reference"
           sourceId={preview.id}

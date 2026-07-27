@@ -1,4 +1,5 @@
 import { logoWallHeight } from "@/features/widgets/logo-motion";
+import { testimonialHeight } from "@/features/testimonials/testimonial-height";
 import type { WidgetDefinition } from "@/features/widgets/catalog-types";
 
 export const WIDGET_CATALOG: WidgetDefinition[] = [
@@ -38,6 +39,18 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     requirementHint: "Requires at least one client-confirmed case study.",
     unavailableCtaHref: "/dashboard/cases",
     unavailableCtaLabel: "Open cases",
+  },
+  {
+    id: "testimonials",
+    name: "Testimonials",
+    description:
+      "Client-written words — curated from the studio, auto-updates when new ones publish.",
+    section: "proof",
+    pro: true,
+    height: testimonialHeight("grid", 3),
+    requirementHint: "Requires at least one published client testimonial.",
+    unavailableCtaHref: "/dashboard/widgets",
+    unavailableCtaLabel: "Invite clients",
   },
   {
     id: "verified",

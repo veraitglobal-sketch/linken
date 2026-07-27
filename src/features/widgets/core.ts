@@ -57,6 +57,7 @@ export async function updateWidgetSettingsCore(
     "accepting_clients",
     "excluded_company_ids",
     "logo_wall",
+    "testimonials",
   ]);
   const rejected = Object.keys(body).filter((k) => !allowed.has(k));
   if (rejected.length) {
