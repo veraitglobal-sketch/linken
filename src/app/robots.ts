@@ -8,17 +8,29 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: [
-          "/",
-          "/api/v1/openapi",
-          "/api/v1/openapi/public",
-          "/api/v1/openapi/agent",
-          "/api/health",
-          "/.well-known/security.txt",
+        allow: "/",
+        disallow: [
+          "/dashboard",
+          "/onboarding",
+          "/login",
+          "/welcome",
+          "/auth/",
+          "/api/",
+          "/embed/",
+          "/dev/",
+          "/claim/",
+          "/confirm/",
+          "/confirm-reference/",
+          "/join/",
+          "/transfer/",
+          "/verify-domain/",
+          "/testimonial/",
+          "/requests/",
+          "/logo-wall/",
         ],
-        disallow: ["/dashboard", "/onboarding", "/login", "/auth/", "/api/"],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl.replace(/^https?:\/\//, ""),
   };
 }
