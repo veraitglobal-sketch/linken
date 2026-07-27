@@ -1,4 +1,6 @@
-/** Pure domain helpers — no I/O. Exact match or www-variant only. */
+import { allowedEmailDomainsForWebsite } from "@/features/verification/domain-allowed";
+
+/** Pure domain helpers — no I/O. */
 
 const PUBLIC_EMAIL_PROVIDERS = new Set([
   "gmail.com",
@@ -90,12 +92,26 @@ export function emailDomain(email: string): string | null {
   const trimmed = email.trim().toLowerCase();
   const at = trimmed.lastIndexOf("@");
   if (at < 1 || at === trimmed.length - 1) return null;
-  const domain = trimmed.slice(at + 1).replace(/\.$/, "");
+  const domain = normalizeDomain(trimmed.slice(at + 1));
   if (!domain || domain === "localhost" || IPV4.test(domain)) return null;
   return domain;
 }
 
-/** Exact match, or www.X vs X already normalized away by extractDomain. */
+/** Lowercase host; strips leading www. Accepts bare host or URL. */
+export function normalizeDomain(input: string): string | null {
+  const host = extractDomain(input) ?? input.trim().toLowerCase().replace(/\.$/, "");
+  if (!host) return null;
+  return host.startsWith("www.") ? host.slice(4) : host;
+}
+
+export function emailAllowedOnWebsite(website: string, email: string): boolean {
+  const mail = emailDomain(email);
+  if (!mail || isPublicEmailProvider(mail)) return false;
+  const allowed = allowedEmailDomainsForWebsite(website);
+  return allowed.includes(mail);
+}
+
+/** Website host must match email domain or an allowed parent domain. */
 export function domainsMatch(
   website: string,
   email: string,
@@ -117,12 +133,12 @@ export function domainsMatch(
       reason: "Public email providers cannot verify a company domain.",
     };
   }
-  if (site !== mail) {
+  if (!emailAllowedOnWebsite(website, email)) {
     return {
       ok: false,
       websiteDomain: site,
       emailDomain: mail,
-      reason: `Email domain (${mail}) does not match website domain (${site}).`,
+      reason: `Email domain (${mail}) is not on an allowed domain for ${site}.`,
     };
   }
   return { ok: true, websiteDomain: site, emailDomain: mail };

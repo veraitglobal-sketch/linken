@@ -12,15 +12,15 @@ import {
 import { VerificationLinked } from "@/components/verification/verification-linked";
 import {
   DnsVerifyPanel,
-  EmailVerifyPanel,
   MetaVerifyPanel,
 } from "@/components/verification/verification-method-panels";
+import { EmailVerifyPanel } from "@/components/verification/email-verify-panel";
 import {
-  domainsMatch,
   emailDomain,
   extractDomain,
   isPublicEmailProvider,
 } from "@/features/verification/domain";
+import type { DiscoveredEmail } from "@/features/verification/email-discovery";
 import type { CompanyVerification } from "@/features/verification/queries";
 import { cn } from "@/lib/cn";
 
@@ -33,6 +33,11 @@ type Props = {
   token: string | null;
   companySlug: string;
   siteUrl: string;
+  lockDomain: string | null;
+  roleOnly: boolean;
+  sentTo?: string | null;
+  initialAddresses?: DiscoveredEmail[];
+  discoveryError?: string;
   flash?: {
     ok?: "email" | "dns" | "meta" | "linked" | "logo";
     error?: string;
@@ -40,15 +45,17 @@ type Props = {
 };
 
 const METHODS: { id: Method; label: string; hint: string }[] = [
-  { id: "email", label: "Email", hint: "Work email" },
+  { id: "email", label: "Email", hint: "Site mailbox" },
   { id: "dns", label: "DNS TXT", hint: "DNS host" },
   { id: "meta", label: "Meta / file", hint: "On site" },
 ];
 
 function pickDefaultMethod(website: string, ownerEmail: string): Method {
-  const check = domainsMatch(website, ownerEmail);
   const mail = emailDomain(ownerEmail);
-  if (check.ok && mail && !isPublicEmailProvider(mail)) return "email";
+  if (extractDomain(website) && mail && !isPublicEmailProvider(mail)) {
+    return "email";
+  }
+  if (extractDomain(website)) return "email";
   return "dns";
 }
 
@@ -59,6 +66,11 @@ export function VerificationCard({
   token,
   companySlug,
   siteUrl,
+  lockDomain,
+  roleOnly,
+  sentTo,
+  initialAddresses,
+  discoveryError,
   flash,
 }: Props) {
   const domain = extractDomain(website);
@@ -145,6 +157,11 @@ export function VerificationCard({
                 mail={mail}
                 website={website}
                 ownerEmail={ownerEmail}
+                lockDomain={lockDomain}
+                roleOnly={roleOnly}
+                sentTo={sentTo}
+                initialAddresses={initialAddresses}
+                discoveryError={discoveryError}
               />
             ) : null}
             {method === "dns" ? (

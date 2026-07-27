@@ -12,7 +12,9 @@ import {
   VerificationError,
   VerificationSuccess,
 } from "@/components/verification/verification-flash";
-import { extractDomain } from "@/features/verification/domain";
+import { extractDomain, domainsMatch } from "@/features/verification/domain";
+import { getEmailVerificationContext } from "@/features/verification/email-verification-context";
+import { discoverVerificationEmails } from "@/features/verification/email-verification-discover";
 import { getCompanyVerification } from "@/features/verification/queries";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getSiteUrl } from "@/lib/site";
@@ -29,6 +31,7 @@ type Props = {
     linked?: string;
     ok?: string;
     domainChanged?: string;
+    sent?: string;
   }>;
 };
 
@@ -76,18 +79,24 @@ export default async function DashboardVerificationPage({
   }
 
   const supabase = await createClient();
-  const [{ data: full }, verification, tokenRes] = await Promise.all([
+  const [{ data: full }, verification, tokenRes, emailCtx] = await Promise.all([
     supabase
       .from("companies")
-      .select("website")
+      .select("website, created_by_company_id")
       .eq("id", company.id)
       .maybeSingle(),
     getCompanyVerification(company.id),
     supabase.rpc("get_verify_token", { p_company_id: company.id }),
+    getEmailVerificationContext(company.id),
   ]);
 
   const website = full?.website ?? "";
   const domain = extractDomain(website);
+  const shortcutMatch = domainsMatch(website, user.email ?? "");
+  const discovery =
+    !shortcutMatch.ok && domain
+      ? await discoverVerificationEmails()
+      : null;
   const verified = Boolean(verification?.verified);
   const verifiedDate = verification?.verifiedAt
     ? new Date(verification.verifiedAt).toLocaleDateString("en-GB", {
@@ -174,6 +183,15 @@ export default async function DashboardVerificationPage({
             token={(tokenRes.data as string | null) ?? null}
             companySlug={company.slug}
             siteUrl={getSiteUrl()}
+            lockDomain={emailCtx?.lockDomain ?? null}
+            roleOnly={emailCtx?.roleOnly ?? Boolean(full?.created_by_company_id)}
+            sentTo={params.sent ?? null}
+            initialAddresses={
+              discovery?.ok ? discovery.addresses : undefined
+            }
+            discoveryError={
+              discovery && !discovery.ok ? discovery.error : undefined
+            }
             flash={{
               ok: flashOk,
               error: params.error,

@@ -8,6 +8,7 @@
     "start": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "eslint",
     "test:resend": "node scripts/test-resend.mjs",
+    "test:domain": "node --test scripts/test-domain-allowed.mjs",
     "prepublishOnly": "echo 'Do not publish the Hansala app. Publish only mcp/hansala-public.' && exit 1"
   },
   "dependencies": {
@@ -21,7 +22,8 @@
     "recharts": "^3.9.2",
     "resend": "^6.17.2",
     "server-only": "^0.0.1",
-    "stripe": "^17.7.0"
+    "stripe": "^17.7.0",
+    "tldts": "^7.4.9"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

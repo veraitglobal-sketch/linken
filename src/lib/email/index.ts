@@ -1,4 +1,5 @@
 export { sendBrandedEmail } from "@/lib/email/send";
+export { sendDomainVerificationEmail } from "@/lib/email/domain-verification";
 export {
   sendClientConfirmationEmail,
   sendReferenceConfirmEmail,
