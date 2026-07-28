@@ -4,6 +4,7 @@ import {
   renderPlainText,
   type BrandedEmailContent,
 } from "@/lib/email/template";
+import { isEmailSuppressed } from "@/lib/email/suppression";
 import { getEmailSiteUrl } from "@/lib/site";
 
 export type SendBrandedInput = {
@@ -48,6 +49,15 @@ function resolveFromAddress():
 }
 
 export async function sendBrandedEmail(input: SendBrandedInput) {
+  if (await isEmailSuppressed(input.to)) {
+    console.info(`[${input.logLabel}] Recipient is suppressed — not sending.`);
+    return {
+      ok: false as const,
+      mode: "suppressed" as const,
+      error: "Recipient is suppressed.",
+    };
+  }
+
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const siteUrl = getEmailSiteUrl();
   const text = renderPlainText(input.content);

@@ -24,12 +24,21 @@ export function AdminCompaniesTable({ rows, title = "Recent companies" }: Props)
               <tr key={row.id} className="border-b border-line/60 last:border-0">
                 <td className="px-4 py-3">
                   <Link
-                    href={`/c/${row.slug}`}
+                    href={`/admin/companies/${row.id}`}
                     className="font-semibold text-ink underline-offset-2 hover:underline"
                   >
                     {row.name}
                   </Link>
-                  <p className="text-[11px] text-muted">/{row.slug}</p>
+                  <p className="text-[11px] text-muted">
+                    /{row.slug}
+                    {" · "}
+                    <Link
+                      href={`/c/${row.slug}`}
+                      className="underline-offset-2 hover:underline"
+                    >
+                      Public
+                    </Link>
+                  </p>
                 </td>
                 <td className="px-4 py-3 text-ink-soft">
                   {row.claimed ? "Claimed" : "Unclaimed"}

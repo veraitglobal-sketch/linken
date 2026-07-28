@@ -1,7 +1,12 @@
 import Link from "next/link";
+import { AdminTestimonialModeration } from "@/components/admin/admin-testimonial-moderation";
 import type { AdminTestimonialRow } from "@/features/admin/types";
 
-type Props = { rows: AdminTestimonialRow[]; title?: string };
+type Props = {
+  rows: AdminTestimonialRow[];
+  title?: string;
+  canModerate?: boolean;
+};
 
 function excerpt(body: string, max = 80) {
   const t = body.trim().replace(/\s+/g, " ");
@@ -11,6 +16,7 @@ function excerpt(body: string, max = 80) {
 export function AdminTestimonialsTable({
   rows,
   title = "Recent testimonials",
+  canModerate = false,
 }: Props) {
   return (
     <section className="rounded-2xl border border-line bg-surface">
@@ -26,6 +32,9 @@ export function AdminTestimonialsTable({
               <th className="px-4 py-2 font-semibold">Quote</th>
               <th className="px-4 py-2 font-semibold">Status</th>
               <th className="px-4 py-2 font-semibold">Provenance</th>
+              {canModerate ? (
+                <th className="px-4 py-2 font-semibold">Actions</th>
+              ) : null}
             </tr>
           </thead>
           <tbody>
@@ -54,6 +63,11 @@ export function AdminTestimonialsTable({
                     ? `${row.authorDomain}${row.authorDomainVerified ? " · verified" : ""}`
                     : "—"}
                 </td>
+                {canModerate ? (
+                  <td className="min-w-[180px] px-4 py-3">
+                    <AdminTestimonialModeration id={row.id} status={row.status} />
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>

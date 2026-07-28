@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
 import { AdminNav } from "@/components/admin/admin-nav";
+import type { PlatformStaffRole } from "@/features/admin/roles";
 
 type Props = {
   email: string;
+  role: PlatformStaffRole;
   children: ReactNode;
 };
 
-export function AdminShell({ email, children }: Props) {
+export function AdminShell({ email, role, children }: Props) {
   return (
     <div className="flex min-h-dvh flex-col bg-paper text-ink">
       <header className="border-b border-line bg-surface px-4 py-3">
@@ -19,7 +21,10 @@ export function AdminShell({ email, children }: Props) {
               Admin
             </h1>
           </div>
-          <p className="hidden truncate text-[12px] text-muted sm:block">{email}</p>
+          <p className="hidden truncate text-[12px] text-muted sm:block">
+            {email}
+            <span className="ml-2 text-ink-soft">· {role}</span>
+          </p>
         </div>
         <AdminNav />
       </header>
