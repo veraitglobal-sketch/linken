@@ -17,6 +17,10 @@ export type PlatformStaffSession = {
   email: string;
 };
 
+function deny(reason: string) {
+  redirect(`/admin-access-denied?reason=${encodeURIComponent(reason)}`);
+}
+
 /**
  * Dual gate: PLATFORM_ADMIN_EMAILS (outer) AND platform_staff row (inner).
  * Defaults to highest role requirement when callers omit minRole.
@@ -36,26 +40,30 @@ export async function requirePlatformStaff(
 
   const email = user.email?.trim() ?? "";
   if (!isPlatformAdminEmail(email)) {
-    redirect("/admin-access-denied");
+    deny("env");
   }
 
   const admin = createAdminClient();
   if (!admin) {
-    redirect("/admin-access-denied");
+    deny("service");
   }
 
-  const { data: staff } = await admin
+  const { data: staff, error } = await admin!
     .from("platform_staff")
     .select("role")
     .eq("user_id", user.id)
     .maybeSingle();
 
-  const role = parsePlatformStaffRole(staff?.role as string | undefined);
-  if (!role || !roleMeetsMinimum(role, minRole)) {
-    redirect("/admin-access-denied");
+  if (error) {
+    deny("table");
   }
 
-  return { user, role, email };
+  const role = parsePlatformStaffRole(staff?.role as string | undefined);
+  if (!role || !roleMeetsMinimum(role, minRole)) {
+    deny("staff");
+  }
+
+  return { user, role: role!, email };
 }
 
 /** @deprecated Prefer requirePlatformStaff — kept for gradual call-site migration. */
