@@ -35,6 +35,26 @@ function IconCases({ className }: { className?: string }) {
   );
 }
 
+function IconTestimonials({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d="M5 6.5h14M5 12h9M5 17.5h11"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export type NavItem = {
   href: string;
   label: string;
@@ -86,6 +106,13 @@ export const MORE_NAV: NavItem[] = [
     label: "Case studies",
     icon: IconCases,
     companyOnly: true,
+  },
+  {
+    href: "/dashboard/testimonials",
+    label: "Testimonials",
+    icon: IconTestimonials,
+    companyOnly: true,
+    section: "widgets",
   },
   {
     href: "/dashboard/verification",

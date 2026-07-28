@@ -19,9 +19,14 @@ const LINKS = [
     body: "Client evidence — stays on this company profile.",
   },
   {
-    href: (s: string) => `/c/${s}#testimonials`,
+    href: (s: string) => `/dashboard/testimonials`,
     title: "Testimonials",
-    body: "Client-written words — appear here after they confirm and publish.",
+    body: "Client-written quotes — manage order, layout, and embed settings.",
+  },
+  {
+    href: (s: string) => `/c/${s}#testimonials`,
+    title: "Profile section",
+    body: "How testimonials appear publicly on your company page.",
   },
   {
     href: (_s: string) => `/dashboard/cases`,

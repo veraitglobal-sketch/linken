@@ -52,10 +52,10 @@ export function ProfileTestimonialsSection({
         <p className="mt-5 text-[13px] text-muted">
           Choose layout and embed code in{" "}
           <Link
-            href="/dashboard/widgets"
+            href="/dashboard/testimonials"
             className="font-semibold text-ink underline-offset-2 hover:underline"
           >
-            Widgets
+            Testimonials
           </Link>
           . Profile section updates when clients publish.
         </p>
