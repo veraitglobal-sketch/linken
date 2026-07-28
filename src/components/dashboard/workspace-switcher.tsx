@@ -9,7 +9,6 @@ import {
   SwitcherMeta,
   SwitcherRow,
 } from "@/components/dashboard/workspace-switcher-parts";
-import { signOut } from "@/features/auth/actions";
 import {
   isDraftWorkspace,
   workspaceRoleLabel,
@@ -129,14 +128,6 @@ export function WorkspaceSwitcher({ active, contexts, verified }: Props) {
                 Edit company
               </Link>
             ) : null}
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="block w-full rounded-lg px-2.5 py-2 text-left text-[12px] font-semibold text-muted transition-colors hover:bg-paper hover:text-ink"
-              >
-                Sign out
-              </button>
-            </form>
           </div>
         </div>
       ) : null}
