@@ -19,6 +19,11 @@ const LINKS = [
     body: "Client evidence — stays on this company profile.",
   },
   {
+    href: (s: string) => `/c/${s}#testimonials`,
+    title: "Testimonials",
+    body: "Client-written words — appear here after they confirm and publish.",
+  },
+  {
     href: (_s: string) => `/dashboard/cases`,
     title: "Case studies",
     body: "Create in dashboard — email the client for confirmation in one step.",

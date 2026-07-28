@@ -17,6 +17,7 @@ import type { CaseStudy } from "@/types/case-study";
 import type { Company } from "@/types/company";
 import type { Partner } from "@/types/partner";
 import type { ServiceReference } from "@/types/service-reference";
+import type { PublicTestimonial } from "@/features/testimonials/types";
 
 type Props = {
   company: Company;
@@ -24,6 +25,7 @@ type Props = {
   partnerRail?: PartnerRailSettings;
   caseStudies: CaseStudy[];
   references: ServiceReference[];
+  testimonials: PublicTestimonial[];
   trust: TrustProfile;
   assessmentSummary: ClientAssessmentSummary;
   editable?: boolean;
@@ -55,6 +57,7 @@ export function CompanyProfile({
   partnerRail,
   caseStudies,
   references,
+  testimonials,
   trust,
   assessmentSummary,
   editable = false,
@@ -153,6 +156,7 @@ export function CompanyProfile({
         partnerRail={partnerRail}
         caseStudies={caseStudies}
         references={references}
+        testimonials={testimonials}
         trust={trust}
         assessmentSummary={assessmentSummary}
         teamMembers={teamMembers}
@@ -162,6 +166,7 @@ export function CompanyProfile({
         showRefs={references.length > 0 || editable}
         showCases={caseStudies.length > 0 || editable}
         showPartners={partners.length > 0 || editable}
+        showTestimonials={testimonials.length > 0 || (editable && !isUnclaimed)}
         showWhyPublic={trust.points > 0}
         showOwnerProgress={editable && !isUnclaimed}
         showAddPartner={showAddPartner}

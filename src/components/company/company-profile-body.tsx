@@ -4,6 +4,7 @@ import { CompanyAbout } from "@/components/company/company-about";
 import { CompanyTeamSection } from "@/components/company/company-team-section";
 import { PartnerSidebar } from "@/components/partners/partner-sidebar";
 import { ReferencesSection } from "@/components/references/references-section";
+import { ProfileTestimonialsSection } from "@/components/testimonials/profile-testimonials-section";
 import { TrustProgressCard } from "@/components/trust/trust-progress-card";
 import { TrustWhyCard } from "@/components/trust/trust-why-card";
 import type { ClientAssessmentSummary } from "@/features/assessments/queries";
@@ -17,6 +18,7 @@ import type { CaseStudy } from "@/types/case-study";
 import type { Company } from "@/types/company";
 import type { Partner } from "@/types/partner";
 import type { ServiceReference } from "@/types/service-reference";
+import type { PublicTestimonial } from "@/features/testimonials/types";
 
 type Props = {
   company: Company;
@@ -24,6 +26,7 @@ type Props = {
   partnerRail?: PartnerRailSettings;
   caseStudies: CaseStudy[];
   references: ServiceReference[];
+  testimonials: PublicTestimonial[];
   trust: TrustProfile;
   assessmentSummary: ClientAssessmentSummary;
   teamMembers: PublicTeamMember[];
@@ -33,6 +36,7 @@ type Props = {
   showRefs: boolean;
   showCases: boolean;
   showPartners: boolean;
+  showTestimonials: boolean;
   showWhyPublic: boolean;
   showOwnerProgress: boolean;
   showAddPartner: boolean;
@@ -51,6 +55,7 @@ export function CompanyProfileBody({
   partnerRail,
   caseStudies,
   references,
+  testimonials,
   trust,
   assessmentSummary,
   teamMembers,
@@ -60,6 +65,7 @@ export function CompanyProfileBody({
   showRefs,
   showCases,
   showPartners,
+  showTestimonials,
   showWhyPublic,
   showOwnerProgress,
   showAddPartner,
@@ -98,6 +104,12 @@ export function CompanyProfileBody({
             caseStudies={caseStudies}
             editable={editable}
             caseStudyBase={caseStudyBase}
+          />
+        ) : null}
+        {showTestimonials ? (
+          <ProfileTestimonialsSection
+            testimonials={testimonials}
+            editable={editable && !isUnclaimed}
           />
         ) : null}
       </div>

@@ -42,6 +42,7 @@ export default function DemoPage() {
         partners={DEMO_PARTNERS}
         caseStudies={DEMO_CASE_STUDIES}
         references={DEMO_REFERENCES}
+        testimonials={[]}
         trust={getDemoTrust()}
         assessmentSummary={DEMO_ASSESSMENT}
         siteUrl={getSiteUrl()}

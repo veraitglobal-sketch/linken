@@ -26,6 +26,10 @@ import { getReferencesForCompany } from "@/features/references/queries";
 import { getPublicTeam } from "@/features/team/queries";
 import { resolveConfirmedRelationship } from "@/features/trust/relationship-banner";
 import { getTrustProfile } from "@/features/trust/queries";
+import {
+  getPublishedTestimonials,
+  toPublicTestimonials,
+} from "@/features/testimonials/queries";
 import { PRODUCT } from "@/lib/product-model";
 import { getSiteUrl } from "@/lib/site";
 
@@ -93,6 +97,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     groupBadge,
     teamMembers,
     relationship,
+    testimonials,
   ] = await Promise.all([
     getPartnersForCompany(company.id),
     getPartnerRailSettings(company.id),
@@ -106,6 +111,9 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     getConfirmedGroupForCompany(company.id),
     getPublicTeam(company.id),
     resolveConfirmedRelationship(company.id, sp.rel),
+    getPublishedTestimonials(company.id).then((rows) =>
+      toPublicTestimonials(rows, company.slug),
+    ),
   ]);
 
   const editable = isOwner;
@@ -175,6 +183,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         partnerRail={partnerRail}
         caseStudies={caseStudies}
         references={references}
+        testimonials={testimonials}
         trust={trust}
         assessmentSummary={assessmentSummary}
         editable={editable}
