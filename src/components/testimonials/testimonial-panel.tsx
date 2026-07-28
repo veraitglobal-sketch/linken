@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatTestimonialProvenance } from "@/features/testimonials/provenance";
 import {
   submitTestimonialForm,
   withdrawTestimonialForm,
@@ -50,6 +51,12 @@ export function TestimonialPanel({ view, token, error, done }: Props) {
   }
 
   if (published) {
+    const provenanceLine = formatTestimonialProvenance({
+      source: view.source,
+      authorDomain: view.authorDomain,
+      authorDomainVerified: view.authorDomainVerified,
+      authorIsFreeProvider: view.authorIsFreeProvider,
+    });
     return (
       <div className="space-y-6">
         <div className="rounded-2xl border border-line bg-surface px-6 py-8">
@@ -63,6 +70,7 @@ export function TestimonialPanel({ view, token, error, done }: Props) {
             — {view.authorName}
             {view.authorRole ? `, ${view.authorRole}` : ""}
           </p>
+          <p className="mt-3 text-[13px] text-muted">{provenanceLine}</p>
         </div>
         <form action={withdrawTestimonialForm}>
           <input type="hidden" name="token" value={token} />

@@ -138,6 +138,7 @@ export function serializeTestimonial(row: PublicTestimonial): ApiTestimonial {
       : null,
     source: row.source,
     published_at: row.publishedAt,
+    provenance_line: row.provenanceLine,
     profile_url: row.profileUrl,
   };
 }

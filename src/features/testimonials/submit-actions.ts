@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { resolveSubmitProvenance } from "@/features/testimonials/provenance-submit";
+import { getTestimonialByToken } from "@/features/testimonials/token-queries";
 import { createClient } from "@/lib/supabase/server";
 
 export async function submitTestimonialForm(formData: FormData) {
@@ -15,6 +17,16 @@ export async function submitTestimonialForm(formData: FormData) {
     redirect("/?error=testimonial");
   }
 
+  const view = await getTestimonialByToken(token);
+  if (!view) {
+    redirect("/?error=testimonial");
+  }
+
+  const provenance = await resolveSubmitProvenance({
+    authorCompanyId: authorCompanyId ?? view.authorCompanyId,
+    storedAuthorEmail: view.authorEmail,
+  });
+
   const supabase = await createClient();
   const { error } = await supabase.rpc("submit_testimonial", {
     p_token: token,
@@ -23,6 +35,11 @@ export async function submitTestimonialForm(formData: FormData) {
     p_author_role: authorRole,
     p_consent_public: consent,
     p_author_company_id: authorCompanyId,
+    p_author_email: provenance.email,
+    p_author_domain: provenance.authorDomain,
+    p_author_domain_verified: provenance.authorDomainVerified,
+    p_author_is_free_provider: provenance.authorIsFreeProvider,
+    p_author_company_claimed: provenance.authorCompanyClaimed,
   });
 
   if (error) {

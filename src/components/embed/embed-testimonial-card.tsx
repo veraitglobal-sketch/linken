@@ -64,10 +64,10 @@ export function EmbedTestimonialCard({
       </p>
       {!compact ? (
         <p
-          className="hs-tm-attribution mt-2 text-[0.72em] tracking-[0.1em] uppercase"
-          style={{ color: "var(--hs-tm-accent)" }}
+          className="hs-tm-attribution mt-2 text-[0.78em] leading-relaxed"
+          style={{ color: "var(--hs-tm-muted)" }}
         >
-          Verified client testimonial on Hansala
+          {item.provenanceLine}
         </p>
       ) : null}
     </a>

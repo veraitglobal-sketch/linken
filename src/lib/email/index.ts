@@ -3,6 +3,7 @@ export { sendDomainVerificationEmail } from "@/lib/email/domain-verification";
 export {
   sendClientConfirmationEmail,
   sendReferenceConfirmEmail,
+  sendPostConfirmTestimonialEmail,
   sendClaimInviteEmail,
   sendTeamJoinInviteEmail,
   sendOwnershipTransferEmail,

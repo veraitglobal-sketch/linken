@@ -142,6 +142,7 @@ async function computeTrustForCompany(
     ongoingReferences: ongoingRefs.count ?? 0,
     clientConfirmedCaseStudies,
     partnerConfirmedCaseStudies,
+    testimonialPoints: 0,
   });
 }
 

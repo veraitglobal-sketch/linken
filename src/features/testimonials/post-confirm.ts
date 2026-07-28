@@ -5,7 +5,7 @@ import { getSiteUrl } from "@/lib/site";
 
 export async function ensureTestimonialAfterConfirm(input: {
   token: string;
-  source: Extract<TestimonialSource, "case_study" | "reference">;
+  source: Extract<TestimonialSource, "case_study" | "reference" | "partnership">;
 }): Promise<string | null> {
   try {
     const supabase = await createClient();

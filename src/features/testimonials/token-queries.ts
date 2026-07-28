@@ -18,6 +18,11 @@ export type TestimonialTokenView = {
   sourceId: string | null;
   consentPublic: boolean;
   publishedAt: string | null;
+  authorEmail: string | null;
+  authorDomain: string | null;
+  authorDomainVerified: boolean;
+  authorIsFreeProvider: boolean;
+  authorCompanyClaimed: boolean;
 };
 
 export async function getTestimonialByToken(
@@ -50,6 +55,11 @@ export async function getTestimonialByToken(
       sourceId: (row.source_id as string | null) ?? null,
       consentPublic: Boolean(row.consent_public),
       publishedAt: (row.published_at as string | null) ?? null,
+      authorEmail: (row.author_email as string | null) ?? null,
+      authorDomain: (row.author_domain as string | null) ?? null,
+      authorDomainVerified: Boolean(row.author_domain_verified),
+      authorIsFreeProvider: Boolean(row.author_is_free_provider),
+      authorCompanyClaimed: Boolean(row.author_company_claimed),
     };
   } catch (err) {
     console.error("[getTestimonialByToken]", err);

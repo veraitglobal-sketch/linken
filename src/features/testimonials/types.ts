@@ -19,6 +19,10 @@ export type TestimonialRow = {
   consentPublic: boolean;
   createdAt: string;
   publishedAt: string | null;
+  authorDomain: string | null;
+  authorDomainVerified: boolean;
+  authorIsFreeProvider: boolean;
+  authorCompanyClaimed: boolean;
 };
 
 export type PublicTestimonial = {
@@ -30,4 +34,5 @@ export type PublicTestimonial = {
   source: TestimonialSource;
   publishedAt: string;
   profileUrl: string;
+  provenanceLine: string;
 };

@@ -22,6 +22,7 @@ const BREAKDOWN: TrustBreakdown = {
   ongoingReferences: 3,
   clientConfirmedCaseStudies: 2,
   partnerConfirmedCaseStudies: 1,
+  testimonialPoints: 0,
 };
 
 const REFS = [

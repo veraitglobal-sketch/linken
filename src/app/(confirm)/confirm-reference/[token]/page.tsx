@@ -75,10 +75,9 @@ export default async function ConfirmReferencePage({
       })
     : null;
 
-  const testimonialUrl =
-    confirmed && company
-      ? await ensureTestimonialAfterConfirm({ token, source: "reference" })
-      : null;
+  const testimonialUrl = confirmed
+    ? await ensureTestimonialAfterConfirm({ token, source: "reference" })
+    : null;
 
   return (
     <ConfirmPage

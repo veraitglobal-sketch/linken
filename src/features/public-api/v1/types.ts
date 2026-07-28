@@ -135,6 +135,8 @@ export type ApiTestimonial = {
   source: "partnership" | "reference" | "case_study" | "standalone";
   /** ISO-8601 when published. */
   published_at: string;
+  /** Factual provenance line for readers. */
+  provenance_line: string;
   /** Absolute URL to the company profile. */
   profile_url: string;
 };

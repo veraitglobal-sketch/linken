@@ -6,6 +6,14 @@ export type TrustBreakdown = {
   ongoingReferences: number;
   clientConfirmedCaseStudies: number;
   partnerConfirmedCaseStudies: number;
+  testimonialPoints: number;
+};
+
+export type TestimonialTrustRow = {
+  source: "partnership" | "reference" | "case_study" | "standalone";
+  sourceId: string | null;
+  authorDomainVerified: boolean;
+  authorIsFreeProvider: boolean;
 };
 
 export type TrustScoreInput = TrustBreakdown;
@@ -18,6 +26,25 @@ export type TrustScoreResult = {
 
 const LEVELS: TrustLevel[] = ["Member", "Established", "Trusted", "Pillar"];
 
+/** Weight published testimonials by evidence behind them (display stays open). */
+export function computeTestimonialTrustPoints(
+  rows: TestimonialTrustRow[],
+): number {
+  let total = 0;
+  for (const row of rows) {
+    if (row.authorIsFreeProvider) continue;
+    const attached = row.source !== "standalone" && row.sourceId !== null;
+    if (attached && row.authorDomainVerified) {
+      total += 1;
+    } else if (attached) {
+      total += 0.5;
+    } else if (row.source === "standalone" && row.authorDomainVerified) {
+      total += 0.25;
+    }
+  }
+  return total;
+}
+
 /** Pure, testable scoring — confirmed evidence only. */
 export function computeTrustScore(input: TrustScoreInput): TrustScoreResult {
   const breakdown: TrustBreakdown = {
@@ -26,6 +53,7 @@ export function computeTrustScore(input: TrustScoreInput): TrustScoreResult {
     ongoingReferences: Math.max(0, input.ongoingReferences),
     clientConfirmedCaseStudies: Math.max(0, input.clientConfirmedCaseStudies),
     partnerConfirmedCaseStudies: Math.max(0, input.partnerConfirmedCaseStudies),
+    testimonialPoints: Math.max(0, input.testimonialPoints),
   };
 
   const points =
@@ -33,7 +61,8 @@ export function computeTrustScore(input: TrustScoreInput): TrustScoreResult {
     breakdown.confirmedReferences * 2 +
     breakdown.ongoingReferences * 3 +
     breakdown.clientConfirmedCaseStudies * 3 +
-    breakdown.partnerConfirmedCaseStudies * 2;
+    breakdown.partnerConfirmedCaseStudies * 2 +
+    breakdown.testimonialPoints;
 
   let level: TrustLevel = "Member";
   if (

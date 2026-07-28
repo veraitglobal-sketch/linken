@@ -152,6 +152,29 @@ export async function sendPartnershipRequestEmail(input: {
   });
 }
 
+export async function sendPostConfirmTestimonialEmail(input: {
+  to: string;
+  providerName: string;
+  testimonialUrl: string;
+}) {
+  return sendBrandedEmail({
+    to: input.to,
+    subject: `Optional: share your experience with ${input.providerName}`,
+    content: {
+      eyebrow: "Client testimonial",
+      headline: "Share your experience (optional)",
+      paragraphs: [
+        `You confirmed work with ${input.providerName} on Hansala.`,
+        "If you'd like, write a short testimonial they can show on their profile. Only you control the text — you can edit or withdraw it anytime.",
+      ],
+      cta: { label: "Write a testimonial", href: input.testimonialUrl },
+      finePrint: "This is optional. If you skip it, nothing is published.",
+    },
+    logLabel: "post-confirm-testimonial",
+    linkForLog: input.testimonialUrl,
+  });
+}
+
 export async function sendPartnershipEndedEmail(input: {
   to: string;
   actorName: string;

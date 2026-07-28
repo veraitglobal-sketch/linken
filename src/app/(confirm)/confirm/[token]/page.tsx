@@ -78,10 +78,9 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
       })
     : null;
 
-  const testimonialUrl =
-    confirmed && company
-      ? await ensureTestimonialAfterConfirm({ token, source: "case_study" })
-      : null;
+  const testimonialUrl = confirmed
+    ? await ensureTestimonialAfterConfirm({ token, source: "case_study" })
+    : null;
 
   return (
     <ConfirmPage

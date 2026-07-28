@@ -69,7 +69,7 @@ export function linesForTestimonials(
     const firm = t.author_company
       ? ` · [${t.author_company.name}](${siteUrl}/c/${t.author_company.slug})`
       : "";
-    lines.push(`- “${quote}” — ${who || "Client"}${firm}`);
+    lines.push(`- “${quote}” — ${who || "Client"}${firm} (${t.provenance_line})`);
   }
   lines.push("");
   return lines;

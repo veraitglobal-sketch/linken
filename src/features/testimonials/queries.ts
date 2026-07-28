@@ -1,5 +1,6 @@
 import "server-only";
 import { isUndisclosedPublic, parseDisclosure } from "@/features/confirmations/meta";
+import { formatTestimonialProvenance } from "@/features/testimonials/provenance";
 import { parseTestimonialsSettings } from "@/features/testimonials/settings";
 import type { PublicTestimonial, TestimonialRow } from "@/features/testimonials/types";
 import { createClient } from "@/lib/supabase/server";
@@ -18,6 +19,10 @@ type RawRow = {
   consent_public: boolean;
   created_at: string;
   published_at: string | null;
+  author_domain: string | null;
+  author_domain_verified: boolean;
+  author_is_free_provider: boolean;
+  author_company_claimed: boolean;
 };
 
 function mapRow(r: RawRow): TestimonialRow {
@@ -34,6 +39,10 @@ function mapRow(r: RawRow): TestimonialRow {
     consentPublic: r.consent_public,
     createdAt: r.created_at,
     publishedAt: r.published_at,
+    authorDomain: r.author_domain,
+    authorDomainVerified: Boolean(r.author_domain_verified),
+    authorIsFreeProvider: Boolean(r.author_is_free_provider),
+    authorCompanyClaimed: Boolean(r.author_company_claimed),
   };
 }
 
@@ -57,11 +66,11 @@ async function filterUndisclosed(
   if (caseIds.length) {
     const { data } = await supabase
       .from("case_study_client_confirmation_requests")
-      .select("id, disclosure")
-      .in("id", caseIds);
+      .select("case_study_id, disclosure")
+      .in("case_study_id", caseIds);
     for (const r of data ?? []) {
       if (isUndisclosedPublic(parseDisclosure(r.disclosure))) {
-        undisclosedCase.add(r.id as string);
+        undisclosedCase.add(r.case_study_id as string);
       }
     }
   }
@@ -139,7 +148,7 @@ export async function getPublishedTestimonials(
   const { data, error } = await supabase
     .from("testimonials")
     .select(
-      "id, company_id, author_company_id, body, author_name, author_role, source, source_id, status, consent_public, created_at, published_at",
+      "id, company_id, author_company_id, body, author_name, author_role, source, source_id, status, consent_public, created_at, published_at, author_domain, author_domain_verified, author_is_free_provider, author_company_claimed",
     )
     .eq("company_id", companyId)
     .eq("status", "published")
@@ -275,6 +284,12 @@ export async function toPublicTestimonials(
       source: r.source,
       publishedAt: r.publishedAt ?? r.createdAt,
       profileUrl: `${siteUrl}/c/${companySlug}?src=testimonial`,
+      provenanceLine: formatTestimonialProvenance({
+        source: r.source,
+        authorDomain: r.authorDomain,
+        authorDomainVerified: r.authorDomainVerified,
+        authorIsFreeProvider: r.authorIsFreeProvider,
+      }),
     };
   });
 }

@@ -29,6 +29,7 @@ export function getDemoTrust(): TrustProfile {
     ongoingReferences: 1,
     clientConfirmedCaseStudies: DEMO_CASE_STUDIES.length,
     partnerConfirmedCaseStudies: DEMO_CASE_STUDIES.length,
+    testimonialPoints: 0,
   });
   return {
     ...result,

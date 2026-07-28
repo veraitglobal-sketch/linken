@@ -1,11 +1,13 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import {
+  computeTestimonialTrustPoints,
   computeTrustScore,
   getTrustNextStep,
   type TrustScoreResult,
   type TrustNextStep,
 } from "@/features/trust/score";
+import { getPublishedTestimonials } from "@/features/testimonials/queries";
 
 export type TrustProfile = TrustScoreResult & {
   nextStep: TrustNextStep;
@@ -18,6 +20,7 @@ function emptyTrust(companySlug: string): TrustProfile {
     ongoingReferences: 0,
     clientConfirmedCaseStudies: 0,
     partnerConfirmedCaseStudies: 0,
+    testimonialPoints: 0,
   });
   return { ...result, nextStep: getTrustNextStep(result, companySlug) };
 }
@@ -102,12 +105,23 @@ async function getTrustProfileUncached(
       partnerConfirmedCaseStudies = partnerOnly.size;
     }
 
+    const testimonialRows = await getPublishedTestimonials(companyId);
+    const testimonialPoints = computeTestimonialTrustPoints(
+      testimonialRows.map((row) => ({
+        source: row.source,
+        sourceId: row.sourceId,
+        authorDomainVerified: row.authorDomainVerified,
+        authorIsFreeProvider: row.authorIsFreeProvider,
+      })),
+    );
+
     const result = computeTrustScore({
       confirmedPartners,
       confirmedReferences,
       ongoingReferences,
       clientConfirmedCaseStudies,
       partnerConfirmedCaseStudies,
+      testimonialPoints,
     });
 
     return {

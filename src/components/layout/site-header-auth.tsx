@@ -70,7 +70,7 @@ export function SiteHeaderAuth() {
                 href="/dashboard"
                 className="text-[13px] font-medium text-ink-soft hover:text-ink"
               >
-                {PRODUCT.map.label}
+                Dashboard
               </Link>
               <Link
                 href="/dashboard/inbox"
@@ -84,7 +84,7 @@ export function SiteHeaderAuth() {
               href="/dashboard"
               className="text-[13px] font-medium text-ink-soft hover:text-ink"
             >
-              Workspace
+              Dashboard
             </Link>
           )}
         </nav>
