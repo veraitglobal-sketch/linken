@@ -17,6 +17,7 @@ export const config = {
   matcher: [
     "/embed/:path*",
     "/dashboard/:path*",
+    "/admin/:path*",
     "/auth/:path*",
     "/c/:slug/edit",
     "/c/:slug/edit/:path*",

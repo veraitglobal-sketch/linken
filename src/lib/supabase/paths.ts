@@ -12,6 +12,7 @@
 
 export function needsSessionRefresh(pathname: string): boolean {
   if (pathname.startsWith("/dashboard")) return true;
+  if (pathname.startsWith("/admin")) return true;
   if (pathname.startsWith("/auth/")) return true;
   if (pathname.startsWith("/c/")) return true;
   if (isAuthGatedPublicPath(pathname)) return true;

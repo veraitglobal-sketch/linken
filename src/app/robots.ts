@@ -3,6 +3,7 @@ import { getSiteUrl } from "@/lib/site";
 
 const PRIVATE = [
   "/dashboard",
+  "/admin",
   "/onboarding",
   "/login",
   "/welcome",
