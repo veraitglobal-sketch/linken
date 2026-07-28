@@ -36,12 +36,12 @@ export async function requirePlatformStaff(
 
   const email = user.email?.trim() ?? "";
   if (!isPlatformAdminEmail(email)) {
-    redirect("/?error=admin");
+    redirect("/admin-access-denied");
   }
 
   const admin = createAdminClient();
   if (!admin) {
-    redirect("/?error=admin");
+    redirect("/admin-access-denied");
   }
 
   const { data: staff } = await admin
@@ -52,7 +52,7 @@ export async function requirePlatformStaff(
 
   const role = parsePlatformStaffRole(staff?.role as string | undefined);
   if (!role || !roleMeetsMinimum(role, minRole)) {
-    redirect("/?error=admin");
+    redirect("/admin-access-denied");
   }
 
   return { user, role, email };
