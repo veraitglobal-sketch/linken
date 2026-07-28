@@ -35,7 +35,7 @@ Docs: ${siteUrl}/developers#registry
 - [References](${siteUrl}/api/v1/companies/{slug}/references): Confirmed client relationships only.
 - [Partners](${siteUrl}/api/v1/companies/{slug}/partners): Confirmed mutual partnerships only.
 - [Case studies](${siteUrl}/api/v1/companies/{slug}/case-studies): Case studies with client or partner confirmation.
-- [Testimonials](${siteUrl}/api/v1/companies/{slug}/testimonials): Client-written, published testimonials with full attribution.
+- [Testimonials](${siteUrl}/api/v1/companies/{slug}/testimonials): Client-written quotes + theme tokens for any host site. Drop-in: ${siteUrl}/hs-testimonials.js
 - [Verify (trust oracle)](${siteUrl}/api/v1/verify?domain={domain}): Look up a claimed company by website domain before you work with them.
 
 ## Profiles

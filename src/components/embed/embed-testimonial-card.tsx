@@ -8,20 +8,13 @@ type Props = {
   featured?: boolean;
 };
 
+/** Editorial proof card — quiet enough for any host, precise enough for Hansala. */
 export function EmbedTestimonialCard({
   item,
   profileUrl,
   compact = false,
   featured = false,
 }: Props) {
-  const authorLine = [
-    item.authorName,
-    item.authorRole,
-    item.authorCompany?.name,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-
   const published = new Date(item.publishedAt).toLocaleDateString("en-GB", {
     month: "short",
     year: "numeric",
@@ -33,8 +26,9 @@ export function EmbedTestimonialCard({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "hs-tm-card block w-full no-underline transition-[transform,box-shadow] duration-150",
-        compact ? "px-1 py-2" : "border p-[var(--hs-tm-spacing)]",
+        "hs-tm-card group block w-full no-underline",
+        compact ? "px-0 py-3" : "p-[var(--hs-tm-spacing)]",
+        !compact && "border",
       )}
       style={{
         background: compact ? "transparent" : "var(--hs-tm-card-bg)",
@@ -45,31 +39,69 @@ export function EmbedTestimonialCard({
         color: "var(--hs-tm-text)",
       }}
     >
+      {!compact ? (
+        <span
+          aria-hidden
+          className="hs-tm-mark block font-display leading-none select-none"
+          style={{
+            color: "var(--hs-tm-accent)",
+            fontSize: featured ? "2.4em" : "1.85em",
+            opacity: 0.55,
+            marginBottom: "0.15em",
+          }}
+        >
+          “
+        </span>
+      ) : null}
+
       <blockquote
         className={cn(
-          "leading-snug tracking-[-0.02em]",
-          featured ? "text-[1.05em] font-medium" : compact ? "text-[0.92em]" : "text-[1em]",
+          "hs-tm-body m-0 font-display font-medium leading-[1.35] tracking-[-0.03em]",
+          featured ? "text-[1.12em]" : compact ? "text-[0.95em]" : "text-[1.02em]",
         )}
         style={{ color: "var(--hs-tm-text)" }}
       >
-        &ldquo;{item.body}&rdquo;
+        {item.body}
       </blockquote>
-      <p
-        className={cn("hs-tm-attribution mt-2", compact ? "text-[0.85em]" : "text-[0.9em]")}
-        style={{ color: "var(--hs-tm-muted)" }}
-      >
-        — {authorLine}
-        <span className="mx-1 opacity-40">·</span>
-        <time dateTime={item.publishedAt}>{published}</time>
-      </p>
-      {!compact ? (
-        <p
-          className="hs-tm-attribution mt-2 text-[0.78em] leading-relaxed"
-          style={{ color: "var(--hs-tm-muted)" }}
-        >
-          {item.provenanceLine}
-        </p>
-      ) : null}
+
+      <footer className={cn("hs-tm-attribution mt-4", compact && "mt-2.5")}>
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p
+              className="m-0 text-[0.82em] font-semibold tracking-[-0.01em]"
+              style={{ color: "var(--hs-tm-text)" }}
+            >
+              {item.authorName}
+            </p>
+            {(item.authorRole || item.authorCompany?.name) && (
+              <p
+                className="m-0 mt-0.5 truncate text-[0.75em] leading-snug"
+                style={{ color: "var(--hs-tm-muted)" }}
+              >
+                {[item.authorRole, item.authorCompany?.name]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            )}
+            {!compact ? (
+              <p
+                className="m-0 mt-1.5 text-[0.7em] leading-relaxed"
+                style={{ color: "var(--hs-tm-muted)" }}
+              >
+                {item.provenanceLine}
+                <span className="mx-1 opacity-40">·</span>
+                <time dateTime={item.publishedAt}>{published}</time>
+              </p>
+            ) : null}
+          </div>
+          <span
+            className="hs-tm-seal shrink-0 text-[9px] font-bold tracking-[0.14em] uppercase"
+            style={{ color: "var(--hs-tm-accent)" }}
+          >
+            Hansala
+          </span>
+        </div>
+      </footer>
     </a>
   );
 }

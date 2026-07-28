@@ -1,28 +1,28 @@
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 
-/** Premium widget shells — editorial, not SaaS card kitsch. */
+/**
+ * Pro widget shells — quiet authority, not SaaS chrome.
+ * No hover lift: embeds must stay still inside host layouts.
+ */
 export function embedPremiumShell(
   theme: EmbedTheme,
   tier: "pro" | "signature" = "pro",
 ): string {
-  const base =
-    "rounded-2xl border transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-px";
+  const base = "rounded-xl border transition-colors duration-150 ease-out";
 
   if (theme === "dark") {
     return [
       base,
       tier === "signature"
-        ? "border-white/18 bg-[linear-gradient(165deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.02)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_12px_40px_rgba(0,0,0,0.35)]"
-        : "border-white/14 bg-[radial-gradient(ellipse_80%_60%_at_0%_0%,rgba(126,184,164,0.16),transparent_55%),linear-gradient(165deg,#081412_0%,#0e1f1c_100%)]",
-      "hover:shadow-[0_14px_36px_rgba(0,0,0,0.42)]",
+        ? "border-white/16 bg-[#0c1412]/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+        : "border-white/12 bg-[#0c1412]/92",
     ].join(" ");
   }
 
   return [
     base,
     tier === "signature"
-      ? "border-[#0e1f1c]/12 bg-[linear-gradient(180deg,#ffffff_0%,#f4f7f6_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_10px_32px_rgba(10,23,20,0.07)]"
-      : "border-[#0e1f1c]/10 bg-[radial-gradient(ellipse_75%_55%_at_0%_0%,rgba(126,184,164,0.12),transparent_50%),linear-gradient(180deg,#ffffff_0%,#f8faf9_100%)]",
-    "hover:shadow-[0_12px_28px_rgba(10,23,20,0.09)]",
+      ? "border-black/[0.09] bg-white/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+      : "border-black/[0.08] bg-white/92",
   ].join(" ");
 }

@@ -17,23 +17,20 @@ export function ProfileTestimonialsSection({
   if (visible.length === 0 && !editable) return null;
 
   return (
-    <section
-      id="testimonials"
-      className="scroll-mt-24 rounded-[28px] border border-line bg-surface px-5 py-6 sm:px-7 sm:py-7"
-    >
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+    <section id="testimonials" className="scroll-mt-24 py-2">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-blue uppercase">
         Testimonials
       </p>
-      <h2 className="mt-2 font-display text-[clamp(1.45rem,2.4vw,1.85rem)] font-medium tracking-[-0.035em] text-ink">
+      <h2 className="mt-2 font-display text-[clamp(1.5rem,2.5vw,1.95rem)] font-medium tracking-[-0.04em] text-ink">
         In their own words
       </h2>
-      <p className="mt-2 max-w-xl text-[13px] text-ink-soft">
-        Written and published by clients themselves — the company cannot edit this
-        text. Each line states how it was confirmed.
+      <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-ink-soft">
+        Written by clients — this company cannot edit the text. Each line states
+        how it was confirmed.
       </p>
 
       {visible.length > 0 ? (
-        <ul className="mt-5 flex flex-col gap-3">
+        <ul className="mt-8 flex flex-col gap-8">
           {visible.map((item) => (
             <li key={item.id}>
               <ProfileTestimonialCard item={item} />
@@ -41,29 +38,28 @@ export function ProfileTestimonialsSection({
           ))}
         </ul>
       ) : (
-        <p className="mt-5 rounded-2xl border border-dashed border-line bg-paper/30 px-4 py-5 text-[14px] text-ink-soft">
-          No published testimonials yet. After a client confirms a project or
-          reference, they can write one from the confirmation page — it appears
-          here automatically.
+        <p className="mt-8 border border-dashed border-line px-4 py-6 text-[14px] text-ink-soft">
+          No published testimonials yet. After a client confirms, they can write
+          one — it appears here automatically.
         </p>
       )}
 
       {editable ? (
-        <p className="mt-5 text-[13px] text-muted">
-          Choose layout and embed code in{" "}
+        <p className="mt-6 text-[13px] text-muted">
+          Layout and embed in{" "}
           <Link
             href="/dashboard/testimonials"
             className="font-semibold text-ink underline-offset-2 hover:underline"
           >
             Testimonials
           </Link>
-          . Profile section updates when clients publish.
+          .
         </p>
       ) : null}
 
       {testimonials.length > PROFILE_LIMIT ? (
         <p className="mt-3 text-[12px] text-muted">
-          Showing {PROFILE_LIMIT} of {testimonials.length} published testimonials.
+          Showing {PROFILE_LIMIT} of {testimonials.length}.
         </p>
       ) : null}
     </section>

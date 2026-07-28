@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 
-/** Shared iframe shell for public embeds. */
+/** Shared iframe shell — transparent by default so the host page shows through. */
 export function wrapEmbed(
   node: ReactNode,
   theme: EmbedTheme,
@@ -23,11 +23,10 @@ export function wrapEmbed(
   let bg: string;
   if (opts?.wrapBackground !== undefined) {
     bg = opts.wrapBackground;
-  } else if (opts?.transparent || opts?.bare) {
+  } else if (opts?.transparent || opts?.bare || theme === "light") {
     bg = "transparent";
-  } else if (theme === "dark") {
-    bg = "#081412";
   } else {
+    // Dark theme: only fill when the widget itself needs a dark stage.
     bg = "transparent";
   }
 

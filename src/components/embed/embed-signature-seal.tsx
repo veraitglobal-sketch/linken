@@ -46,12 +46,13 @@ export function EmbedSignatureSeal({
 
       <span
         className={cn(
-          "mt-4 flex h-14 w-14 items-center justify-center rounded-[16px]",
-          dark ? "bg-white text-[#0e1f1c]" : "bg-[#0e1f1c] text-[#7eb8a4]",
-          "shadow-[0_8px_28px_rgba(10,23,20,0.14)]",
+          "mt-4 flex h-12 w-12 items-center justify-center rounded-lg ring-1",
+          dark
+            ? "bg-[#7eb8a4] text-[#081412] ring-[#7eb8a4]/35"
+            : "bg-[#0e1f1c] text-[#7eb8a4] ring-black/10",
         )}
       >
-        <NetworkMark size={26} animate={false} />
+        <NetworkMark size={22} animate={false} />
       </span>
 
       <p className={cn("mt-4 font-display text-[1.35rem] font-medium tracking-[-0.04em]", embedInkClass(theme))}>

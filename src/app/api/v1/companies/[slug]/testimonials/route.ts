@@ -3,7 +3,7 @@ import {
   apiJson,
   apiOptions,
 } from "@/features/public-api/v1/http";
-import { getPublicTestimonialsApi } from "@/features/public-api/v1/queries";
+import { getPublicTestimonialsForSites } from "@/features/public-api/v1/testimonials-api";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -11,14 +11,27 @@ export function OPTIONS() {
   return apiOptions();
 }
 
-export async function GET(_request: Request, { params }: Props) {
+/**
+ * Public testimonials for any host site.
+ * CORS * — fetch from your domain, or use /hs-testimonials.js drop-in.
+ * Query: ?preset=minimal|editorial|card|bordered|glass|dark&limit=1-50
+ */
+export async function GET(request: Request, { params }: Props) {
   try {
     const { slug } = await params;
     if (!slug?.trim()) {
       return apiError("invalid_request", "Company slug is required.", 400);
     }
 
-    const body = await getPublicTestimonialsApi(slug.trim());
+    const url = new URL(request.url);
+    const preset = url.searchParams.get("preset");
+    const limitRaw = url.searchParams.get("limit");
+    const limit = limitRaw ? Number(limitRaw) : null;
+
+    const body = await getPublicTestimonialsForSites(slug.trim(), {
+      preset,
+      limit: Number.isFinite(limit) ? limit : null,
+    });
     if (!body) {
       return apiError("not_found", "Company not found.", 404);
     }

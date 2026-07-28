@@ -277,15 +277,23 @@ export default function DevelopersPage() {
               index="03.5"
               path={`/api/v1/companies/{slug}/testimonials`}
               title="Testimonials"
-              description="Published client-written testimonials only (max 50). Full text with named attribution — never truncated."
+              description="Published client quotes + universal theme tokens for any host site. CORS *. Optional ?preset=&limit=."
               notes={
-                <p>
-                  Written and published by the client, not the profile owner. Only{" "}
-                  <code className="text-[12px]">status: published</code> with{" "}
-                  <code className="text-[12px]">consent_public: true</code> appear.
-                  Testimonials tied to undisclosed references or case confirmations are
-                  omitted. Author email is never returned.
-                </p>
+                <div className="space-y-3">
+                  <p>
+                    Written and published by the client, not the profile owner. Only{" "}
+                    <code className="text-[12px]">status: published</code> with{" "}
+                    <code className="text-[12px]">consent_public: true</code> appear.
+                    Author email is never returned. Response includes{" "}
+                    <code className="text-[12px]">theme.css_vars</code> so any
+                    site can match Hansala quality without our iframe.
+                  </p>
+                  <p className="text-[13px] text-ink-soft">
+                    Drop-in (no build step):
+                  </p>
+                  <pre className="overflow-x-auto rounded-xl border border-line bg-paper px-3 py-2 text-[12px] text-ink">{`<div data-hansala-testimonials="your-slug" data-preset="minimal"></div>
+<script async src="${docsUrl}/hs-testimonials.js"></script>`}</pre>
+                </div>
               }
               fields={TESTIMONIAL_FIELDS}
               requestTabs={requestTabs(testimonialsUrl)}

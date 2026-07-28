@@ -4,16 +4,12 @@ import { cn } from "@/lib/cn";
 
 type Props = {
   theme: EmbedTheme;
-  /** When set, seal is a real link. Omit inside a parent `<a>`. */
   href?: string;
   title?: string;
   className?: string;
 };
 
-/**
- * Fixed trust seal — always the same place on every widget.
- * Partners/clients move; Hansala stays.
- */
+/** Fixed trust seal — partners move; Hansala stays. Quiet enough for any host. */
 export function EmbedHansalaSeal({
   theme,
   href,
@@ -25,11 +21,13 @@ export function EmbedHansalaSeal({
     <>
       <span
         className={cn(
-          "flex h-9 w-9 items-center justify-center rounded-xl",
-          dark ? "bg-[#7eb8a4] text-[#081412]" : "bg-[#0e1f1c] text-[#7eb8a4]",
+          "flex h-8 w-8 items-center justify-center rounded-md ring-1",
+          dark
+            ? "bg-[#7eb8a4] text-[#081412] ring-[#7eb8a4]/35"
+            : "bg-[#0e1f1c] text-[#7eb8a4] ring-black/10",
         )}
       >
-        <NetworkMark size={16} animate={false} />
+        <NetworkMark size={14} animate={false} />
       </span>
       <span className="flex min-w-0 flex-col leading-none">
         <span
@@ -42,7 +40,7 @@ export function EmbedHansalaSeal({
         </span>
         <span
           className={cn(
-            "mt-0.5 text-[9px] font-semibold tracking-[0.12em] uppercase",
+            "mt-0.5 text-[8px] font-semibold tracking-[0.14em] uppercase",
             dark ? "text-white/45" : "text-[#66706b]",
           )}
         >
@@ -54,7 +52,7 @@ export function EmbedHansalaSeal({
 
   const shell = cn(
     "flex h-full shrink-0 items-center gap-2 border-l py-0.5 pl-3",
-    dark ? "border-white/12" : "border-[#e2e6e3]",
+    dark ? "border-white/12" : "border-black/[0.08]",
     className,
   );
 

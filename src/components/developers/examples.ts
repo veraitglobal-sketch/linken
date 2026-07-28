@@ -84,6 +84,35 @@ export function caseStudiesExample(siteUrl: string) {
 
 export function testimonialsExample(siteUrl: string) {
   return `{
+  "company": {
+    "name": "Example Architecture",
+    "slug": "example-architecture",
+    "profile_url": "${siteUrl}/c/example-architecture"
+  },
+  "layout": "grid",
+  "theme": {
+    "preset": "minimal",
+    "font_family": "\\"Newsreader\\", Georgia, serif",
+    "font_size": 15,
+    "text_color": "#0e1f1c",
+    "muted_color": "#5c6b68",
+    "accent_color": "#1a5c51",
+    "background": "transparent",
+    "card_background": "transparent",
+    "css_vars": {
+      "--hs-tm-text": "#0e1f1c",
+      "--hs-tm-muted": "#5c6b68",
+      "--hs-tm-accent": "#1a5c51"
+    }
+  },
+  "attribution": {
+    "label": "Verified on Hansala",
+    "url": "${siteUrl}/c/example-architecture?src=testimonial_api"
+  },
+  "embed": {
+    "iframe_url": "${siteUrl}/embed/example-architecture?variant=testimonials",
+    "script_url": "${siteUrl}/hs-testimonials.js"
+  },
   "testimonials": [
     {
       "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -96,6 +125,7 @@ export function testimonialsExample(siteUrl: string) {
       },
       "source": "case_study",
       "published_at": "2025-09-12T14:30:00.000Z",
+      "provenance_line": "Confirmed client · nordwerk-holding.com",
       "profile_url": "${siteUrl}/c/example-architecture?src=testimonial"
     }
   ],

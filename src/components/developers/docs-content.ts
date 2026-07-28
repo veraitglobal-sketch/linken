@@ -234,6 +234,37 @@ export const TESTIMONIAL_FIELDS: FieldRow[] = [
     description: "Published client-written quotes only, max 50. Full body — never truncated.",
   },
   { name: "count", type: "number", description: "Length of testimonials." },
+  {
+    name: "company",
+    type: "{ name, slug, profile_url }",
+    description: "Receiving company — for host-site headers and links.",
+  },
+  {
+    name: "theme",
+    type: "object",
+    description:
+      "Universal theme tokens + css_vars. Safe for any site. Override with ?preset=.",
+  },
+  {
+    name: "theme.css_vars",
+    type: "Record<string,string>",
+    description: "CSS custom properties ready to apply on a host wrapper.",
+  },
+  {
+    name: "layout",
+    type: "string",
+    description: "Studio layout hint (single, grid, carousel, …).",
+  },
+  {
+    name: "attribution",
+    type: "{ label, url }",
+    description: "Required Hansala attribution link for host renders.",
+  },
+  {
+    name: "embed",
+    type: "{ iframe_url, script_url }",
+    description: "iframe embed URL and drop-in /hs-testimonials.js.",
+  },
   { name: "testimonials[].id", type: "string", description: "Stable testimonial id." },
   {
     name: "testimonials[].body",
@@ -264,6 +295,11 @@ export const TESTIMONIAL_FIELDS: FieldRow[] = [
     name: "testimonials[].published_at",
     type: "string",
     description: "ISO-8601 when the client published.",
+  },
+  {
+    name: "testimonials[].provenance_line",
+    type: "string",
+    description: "Factual provenance line for readers.",
   },
   {
     name: "testimonials[].profile_url",

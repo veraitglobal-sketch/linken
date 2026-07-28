@@ -5,49 +5,44 @@ export function parseEmbedTheme(raw: string | undefined): EmbedTheme {
 }
 
 /**
- * Shared shell — quiet mesh from our hero language, rounded-2xl, live hover.
- * Dark is designed (not inverted light); logo tiles stay white.
+ * Universal embed chrome — fits any host site.
+ * Hairline precision, no mint mesh, no hover lift (iframes shouldn't jump).
+ * Hansala is recognized by the seal, not by a product card.
  */
 export function embedShellClass(theme: EmbedTheme): string {
   const base =
-    "rounded-2xl border transition-[transform,box-shadow,background-color] duration-150 ease-out hover:-translate-y-px";
+    "rounded-xl border transition-colors duration-150 ease-out";
   return theme === "dark"
-    ? cnDark(base)
-    : cnLight(base);
+    ? `${base} border-white/14 bg-[#0c1412]/92`
+    : `${base} border-black/[0.08] bg-white/92`;
 }
 
-function cnLight(base: string): string {
-  return [
-    base,
-    "border-line",
-    "bg-[radial-gradient(ellipse_80%_70%_at_0%_0%,rgba(126, 184, 164,0.10),transparent_55%),radial-gradient(ellipse_60%_50%_at_100%_100%,rgba(31,107,92,0.06),transparent_50%),linear-gradient(180deg,#ffffff_0%,#f7faf9_100%)]",
-    "hover:shadow-[0_8px_24px_rgba(10,23,20,0.08)]",
-  ].join(" ");
-}
-
-function cnDark(base: string): string {
-  return [
-    base,
-    "border-white/12",
-    "bg-[radial-gradient(ellipse_80%_70%_at_8%_0%,rgba(126, 184, 164,0.14),transparent_55%),radial-gradient(ellipse_55%_45%_at_100%_100%,rgba(31,107,92,0.22),transparent_50%),linear-gradient(165deg,#081412_0%,#0e1f1c_100%)]",
-    "hover:shadow-[0_10px_28px_rgba(0,0,0,0.35)]",
-  ].join(" ");
+/** Quieter bar for free essentials — almost invisible on the host page. */
+export function embedBarClass(theme: EmbedTheme): string {
+  const base =
+    "rounded-lg border transition-colors duration-150 ease-out";
+  return theme === "dark"
+    ? `${base} border-white/12 bg-white/[0.04]`
+    : `${base} border-black/[0.07] bg-white/80`;
 }
 
 export function embedInkClass(theme: EmbedTheme): string {
-  return theme === "dark" ? "text-white" : "text-ink";
+  return theme === "dark" ? "text-white" : "text-[#0d1210]";
 }
 
 export function embedMutedClass(theme: EmbedTheme): string {
-  return theme === "dark" ? "text-white/55" : "text-muted";
+  return theme === "dark" ? "text-white/50" : "text-[#66706b]";
 }
 
 export function embedSoftClass(theme: EmbedTheme): string {
-  return theme === "dark" ? "text-white/70" : "text-ink-soft";
+  return theme === "dark" ? "text-white/68" : "text-[#3a423e]";
 }
 
-/** Mint on both themes — our recognition color. */
+/** Soft teal — recognition color, used sparingly. */
 export function embedAccentClass(theme: EmbedTheme): string {
-  void theme;
-  return "text-[#7eb8a4]";
+  return theme === "dark" ? "text-[#8fc4b3]" : "text-[#1a5c51]";
+}
+
+export function embedHairlineClass(theme: EmbedTheme): string {
+  return theme === "dark" ? "border-white/12" : "border-black/[0.08]";
 }

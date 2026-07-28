@@ -11,12 +11,15 @@ type Props = {
 };
 
 const SIZES = {
-  sm: { box: "h-8 w-8 rounded-[10px]", icon: 14, name: "text-[12px]", sub: "text-[8px]" },
-  md: { box: "h-10 w-10 rounded-[12px]", icon: 17, name: "text-[13px]", sub: "text-[9px]" },
-  lg: { box: "h-12 w-12 rounded-[14px]", icon: 20, name: "text-[15px]", sub: "text-[10px]" },
+  sm: { box: "h-7 w-7 rounded-md", icon: 12, name: "text-[12px]", sub: "text-[8px]" },
+  md: { box: "h-9 w-9 rounded-lg", icon: 15, name: "text-[13px]", sub: "text-[9px]" },
+  lg: { box: "h-11 w-11 rounded-lg", icon: 18, name: "text-[15px]", sub: "text-[10px]" },
 } as const;
 
-/** Hansala Verified lockup — the free-tier signature mark. */
+/**
+ * Hansala quality mark — the thing hosts want on their site.
+ * Precise seal + wordmark. Recognizable without fighting the host brand.
+ */
 export function EmbedVerifiedLockup({
   theme = "light",
   size = "md",
@@ -27,13 +30,16 @@ export function EmbedVerifiedLockup({
   const s = SIZES[size];
 
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
+    <span className={cn("inline-flex items-center gap-2", className)}>
       <span
         className={cn(
-          "flex shrink-0 items-center justify-center shadow-[0_2px_8px_rgba(10,23,20,0.12)]",
+          "flex shrink-0 items-center justify-center ring-1",
           s.box,
-          dark ? "bg-[#7eb8a4] text-[#081412]" : "bg-[#0e1f1c] text-[#7eb8a4]",
+          dark
+            ? "bg-[#7eb8a4] text-[#081412] ring-[#7eb8a4]/40"
+            : "bg-[#0e1f1c] text-[#7eb8a4] ring-black/10",
         )}
+        aria-hidden
       >
         <NetworkMark size={s.icon} animate={false} />
       </span>
@@ -49,7 +55,7 @@ export function EmbedVerifiedLockup({
         </span>
         <span
           className={cn(
-            "mt-0.5 font-semibold tracking-[0.14em] uppercase",
+            "mt-0.5 font-semibold tracking-[0.16em] uppercase",
             s.sub,
             embedMutedClass(theme),
           )}

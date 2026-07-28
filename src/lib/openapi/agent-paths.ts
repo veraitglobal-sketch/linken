@@ -126,6 +126,9 @@ export const AGENT_OPENAPI_PATHS = {
       "patchWidgetSettings",
     ),
   },
+  "/testimonials": {
+    get: op("List published testimonials for this company", "listTestimonials"),
+  },
   "/testimonials/invite": {
     post: op("Create testimonial invite (author submits via token link)", "createTestimonialInvite"),
   },
