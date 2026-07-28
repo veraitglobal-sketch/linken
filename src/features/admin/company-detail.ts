@@ -1,47 +1,10 @@
 import "server-only";
 
+import type { AdminCompanyDetail } from "@/features/admin/types";
 import { resolveOwnerEmails } from "@/features/admin/owner-emails";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export type AdminCompanyDetail = {
-  id: string;
-  name: string;
-  slug: string;
-  website: string;
-  category: string;
-  city: string;
-  country: string;
-  claimed: boolean;
-  verified: boolean;
-  plan: string | null;
-  radar: boolean;
-  ownerId: string | null;
-  ownerEmail: string | null;
-  createdAt: string;
-  slugHistory: { slug: string; changedAt: string }[];
-  verification: {
-    method: string | null;
-    verifiedAt: string | null;
-    lastCheck: string | null;
-    websiteLinked: boolean;
-  } | null;
-  creditsBalance: number;
-  creditLedger: {
-    delta: number;
-    reason: string;
-    createdAt: string;
-  }[];
-  billing: {
-    status: string | null;
-    subscriptionId: string | null;
-    periodEnd: string | null;
-    cancelAtPeriodEnd: boolean;
-  } | null;
-  partnersCount: number;
-  testimonialsCount: number;
-  casesCount: number;
-  placementsCount: number;
-};
+export type { AdminCompanyDetail };
 
 export async function getAdminCompanyDetail(
   id: string,
@@ -86,11 +49,7 @@ export async function getAdminCompanyDetail(
       )
       .eq("company_id", id)
       .maybeSingle(),
-    admin
-      .from("company_credits")
-      .select("balance")
-      .eq("company_id", id)
-      .maybeSingle(),
+    admin.from("company_credits").select("balance").eq("company_id", id).maybeSingle(),
     admin
       .from("credit_ledger")
       .select("delta, reason, created_at")
@@ -144,9 +103,7 @@ export async function getAdminCompanyDetail(
     plan: (c.plan as string | null) ?? null,
     radar: Boolean(c.radar),
     ownerId: (c.owner_id as string | null) ?? null,
-    ownerEmail: c.owner_id
-      ? (emails.get(c.owner_id as string) ?? null)
-      : null,
+    ownerEmail: c.owner_id ? (emails.get(c.owner_id as string) ?? null) : null,
     createdAt: c.created_at as string,
     slugHistory: (history.data ?? []).map((r) => ({
       slug: r.old_slug as string,

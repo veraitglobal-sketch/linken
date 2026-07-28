@@ -117,10 +117,11 @@ export async function mergeCompanies(
   }
 
   const mergedSlug = `merged-${loserId.slice(0, 8)}`;
-  const { error: markErr } = await admin
-    .from("companies")
-    .update({ merged_into_company_id: winnerId, slug: mergedSlug })
-    .eq("id", loserId);
+  const { error: markErr } = await admin.rpc("admin_soft_mark_merged_company", {
+    p_loser_id: loserId,
+    p_winner_id: winnerId,
+    p_merged_slug: mergedSlug,
+  });
   if (markErr) conflicts.push(`soft-mark loser: ${markErr.message}`);
 
   return {

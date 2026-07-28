@@ -1,9 +1,14 @@
 # Admin credit grants (pre-Stripe)
 
+**Deprecated path.** Use the panel at `/admin/companies/[id]` (Credits & plan
+card) instead — it goes through `runAdminAction`, requires a reason, and
+writes an audit row automatically. The SQL below is kept for reference /
+break-glass only; prefer it never to be needed.
+
 Credits are required only for **Linken Radar** marketplace requests
 (`/dashboard/radar`). Direct profile inquiries remain free forever.
 
-Enable Radar + grant credits:
+Enable Radar + grant credits (deprecated — use the admin panel):
 
 ```sql
 update public.companies

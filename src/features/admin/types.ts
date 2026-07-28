@@ -34,3 +34,39 @@ export type AdminTestimonialRow = {
   createdAt: string;
   publishedAt: string | null;
 };
+
+export type AdminCompanyDetail = {
+  id: string;
+  name: string;
+  slug: string;
+  website: string;
+  category: string;
+  city: string;
+  country: string;
+  claimed: boolean;
+  verified: boolean;
+  plan: string | null;
+  radar: boolean;
+  ownerId: string | null;
+  ownerEmail: string | null;
+  createdAt: string;
+  slugHistory: { slug: string; changedAt: string }[];
+  verification: {
+    method: string | null;
+    verifiedAt: string | null;
+    lastCheck: string | null;
+    websiteLinked: boolean;
+  } | null;
+  creditsBalance: number;
+  creditLedger: { delta: number; reason: string; createdAt: string }[];
+  billing: {
+    status: string | null;
+    subscriptionId: string | null;
+    periodEnd: string | null;
+    cancelAtPeriodEnd: boolean;
+  } | null;
+  partnersCount: number;
+  testimonialsCount: number;
+  casesCount: number;
+  placementsCount: number;
+};

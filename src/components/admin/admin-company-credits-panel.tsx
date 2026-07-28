@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import {
   adminGrantCredits,
   adminSetPlan,
@@ -15,17 +15,11 @@ type Props = {
   canWrite: boolean;
 };
 
-export function AdminCompanyCreditsPanel({
-  companyId,
-  companyName,
-  radar,
-  plan,
-  canWrite,
-}: Props) {
+export function AdminCompanyCreditsPanel(props: Props) {
   const [pending, start] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
 
-  if (!canWrite) {
+  if (!props.canWrite) {
     return (
       <p className="text-[13px] text-muted">
         Credits and plan changes require admin role.
@@ -38,7 +32,7 @@ export function AdminCompanyCreditsPanel({
     form: HTMLFormElement,
   ) {
     const fd = new FormData(form);
-    fd.set("companyId", companyId);
+    fd.set("companyId", props.companyId);
     start(async () => {
       const res = await fn(fd);
       setMessage(res.ok ? "Saved." : (res.error ?? "Failed."));
@@ -48,92 +42,50 @@ export function AdminCompanyCreditsPanel({
 
   return (
     <div className="space-y-4">
-      {message ? (
-        <p className="text-[13px] text-ink-soft">{message}</p>
-      ) : null}
+      {message ? <p className="text-[13px] text-ink-soft">{message}</p> : null}
 
-      <form
-        className="space-y-2 rounded-xl border border-line p-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          run(adminGrantCredits, e.currentTarget);
-        }}
+      <ActionForm
+        title="Grant credits"
+        pending={pending}
+        submitLabel="Grant"
+        onSubmit={(form) => run(adminGrantCredits, form)}
       >
-        <p className="text-[12px] font-semibold text-ink">Grant credits</p>
         <input
           name="amount"
           type="number"
           min={1}
           required
           placeholder="Amount"
-          className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px]"
+          className={fieldClass}
         />
-        <input
-          name="reason"
-          required
-          placeholder="Reason (required)"
-          className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px]"
-        />
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-full bg-navy px-3 py-1.5 text-[12px] font-semibold text-paper disabled:opacity-50"
-        >
-          Grant
-        </button>
-      </form>
+      </ActionForm>
 
-      <form
-        className="space-y-2 rounded-xl border border-line p-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          run(adminToggleRadar, e.currentTarget);
-        }}
+      <ActionForm
+        title={`Radar is ${props.radar ? "on" : "off"}`}
+        pending={pending}
+        submitLabel={props.radar ? "Disable Radar" : "Enable Radar"}
+        onSubmit={(form) => run(adminToggleRadar, form)}
       >
-        <p className="text-[12px] font-semibold text-ink">
-          Radar is {radar ? "on" : "off"}
-        </p>
-        <input type="hidden" name="enabled" value={radar ? "false" : "true"} />
-        <input
-          name="reason"
-          required
-          placeholder="Reason (required)"
-          className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px]"
-        />
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-full bg-navy px-3 py-1.5 text-[12px] font-semibold text-paper disabled:opacity-50"
-        >
-          {radar ? "Disable Radar" : "Enable Radar"}
-        </button>
-      </form>
+        <input type="hidden" name="enabled" value={props.radar ? "false" : "true"} />
+      </ActionForm>
 
-      <form
-        className="space-y-2 rounded-xl border border-line p-3"
-        onSubmit={(e) => {
-          e.preventDefault();
+      <ActionForm
+        title={`Change plan (current: ${props.plan})`}
+        hint="Stripe remains source of truth — webhooks can overwrite this."
+        pending={pending}
+        submitLabel="Set plan"
+        onSubmit={(form) => {
           const typed = (
-            e.currentTarget.elements.namedItem("confirmName") as HTMLInputElement
+            form.elements.namedItem("confirmName") as HTMLInputElement
           ).value;
-          if (typed.trim() !== companyName) {
+          if (typed.trim() !== props.companyName) {
             setMessage("Type the exact company name to confirm plan change.");
             return;
           }
-          run(adminSetPlan, e.currentTarget);
+          run(adminSetPlan, form);
         }}
       >
-        <p className="text-[12px] font-semibold text-ink">
-          Change plan (current: {plan})
-        </p>
-        <p className="text-[11px] text-muted">
-          Stripe remains source of truth — webhooks can overwrite this.
-        </p>
-        <select
-          name="plan"
-          defaultValue={plan}
-          className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px]"
-        >
+        <select name="plan" defaultValue={props.plan} className={fieldClass}>
           <option value="free">free</option>
           <option value="pro">pro</option>
           <option value="founding">founding</option>
@@ -141,23 +93,56 @@ export function AdminCompanyCreditsPanel({
         <input
           name="confirmName"
           required
-          placeholder={`Type “${companyName}” to confirm`}
-          className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px]"
+          placeholder={`Type “${props.companyName}” to confirm`}
+          className={fieldClass}
         />
-        <input
-          name="reason"
-          required
-          placeholder="Reason (required)"
-          className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px]"
-        />
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-full bg-navy px-3 py-1.5 text-[12px] font-semibold text-paper disabled:opacity-50"
-        >
-          Set plan
-        </button>
-      </form>
+      </ActionForm>
     </div>
+  );
+}
+
+const fieldClass =
+  "w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px]";
+
+function ActionForm({
+  title,
+  hint,
+  pending,
+  submitLabel,
+  onSubmit,
+  children,
+}: {
+  title: string;
+  hint?: string;
+  pending: boolean;
+  submitLabel: string;
+  onSubmit: (form: HTMLFormElement) => void;
+  children?: ReactNode;
+}) {
+  return (
+    <form
+      className="space-y-2 rounded-xl border border-line p-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(e.currentTarget);
+      }}
+    >
+      <p className="text-[12px] font-semibold text-ink">{title}</p>
+      {hint ? <p className="text-[11px] text-muted">{hint}</p> : null}
+      {children}
+      <input
+        name="reason"
+        required
+        placeholder="Reason (required)"
+        className={fieldClass}
+      />
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-full bg-navy px-3 py-1.5 text-[12px] font-semibold text-paper disabled:opacity-50"
+      >
+        {submitLabel}
+      </button>
+    </form>
   );
 }

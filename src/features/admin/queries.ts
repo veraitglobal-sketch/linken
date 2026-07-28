@@ -132,12 +132,6 @@ export async function getAdminRecentTestimonials(
   });
 }
 
-export async function listAdminCompanies(
-  limit = 100,
-): Promise<AdminCompanyRow[]> {
-  return getAdminRecentCompanies(limit);
-}
-
 export async function listAdminTestimonials(
   limit = 100,
 ): Promise<AdminTestimonialRow[]> {
