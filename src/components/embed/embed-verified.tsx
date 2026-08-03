@@ -5,10 +5,16 @@ import { cn } from "@/lib/cn";
 type Props = {
   profileUrl: string;
   theme?: EmbedTheme;
+  /** Hosts that place the mark as a foreground signature can size it up. */
+  size?: "sm" | "md" | "lg";
 };
 
 /** Free essential — clean Hansala Verified lockup, no chrome. */
-export function EmbedVerified({ profileUrl, theme = "light" }: Props) {
+export function EmbedVerified({
+  profileUrl,
+  theme = "light",
+  size = "md",
+}: Props) {
   return (
     <a
       href={profileUrl}
@@ -20,7 +26,7 @@ export function EmbedVerified({ profileUrl, theme = "light" }: Props) {
         "transition-opacity duration-150 hover:opacity-90",
       )}
     >
-      <EmbedVerifiedLockup theme={theme} size="md" />
+      <EmbedVerifiedLockup theme={theme} size={size} />
     </a>
   );
 }

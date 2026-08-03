@@ -80,6 +80,72 @@ export function computeTrustScore(input: TrustScoreInput): TrustScoreResult {
   return { points, level, breakdown };
 }
 
+export type TrustEvidenceLine = {
+  key: "partners" | "ongoing" | "references" | "client-cases" | "partner-cases";
+  label: string;
+  points: number;
+};
+
+/**
+ * The scored lines behind a level, in the order they are earned. Same weights
+ * `computeTrustScore` applies — they must never drift apart, so both read here.
+ */
+export function trustEvidenceLines(
+  breakdown: TrustBreakdown,
+): TrustEvidenceLine[] {
+  const rows: {
+    key: TrustEvidenceLine["key"];
+    count: number;
+    weight: number;
+    one: string;
+    many: string;
+  }[] = [
+    {
+      key: "partners",
+      count: breakdown.confirmedPartners,
+      weight: 2,
+      one: "confirmed partner",
+      many: "confirmed partners",
+    },
+    {
+      key: "ongoing",
+      count: breakdown.ongoingReferences,
+      weight: 3,
+      one: "ongoing client",
+      many: "ongoing clients",
+    },
+    {
+      key: "references",
+      count: breakdown.confirmedReferences,
+      weight: 2,
+      one: "completed reference",
+      many: "completed references",
+    },
+    {
+      key: "client-cases",
+      count: breakdown.clientConfirmedCaseStudies,
+      weight: 3,
+      one: "client-confirmed case study",
+      many: "client-confirmed case studies",
+    },
+    {
+      key: "partner-cases",
+      count: breakdown.partnerConfirmedCaseStudies,
+      weight: 2,
+      one: "partner-confirmed case study",
+      many: "partner-confirmed case studies",
+    },
+  ];
+
+  return rows
+    .filter((row) => row.count > 0)
+    .map((row) => ({
+      key: row.key,
+      label: `${row.count} ${row.count === 1 ? row.one : row.many}`,
+      points: row.count * row.weight,
+    }));
+}
+
 export type TrustNextStep = {
   nextLevel: TrustLevel | null;
   pointsNeeded: number;

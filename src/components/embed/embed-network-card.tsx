@@ -1,13 +1,13 @@
 import type { EmbedProofCompany } from "@/components/embed/embed-brand";
-import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
-import { LogoTile } from "@/components/ui/logo-tile";
+import { EmbedHansalaSeal } from "@/components/embed/embed-linken-seal";
 import {
+  embedHairlineClass,
   embedInkClass,
   embedMutedClass,
+  embedRecordShell,
   embedSoftClass,
   type EmbedTheme,
 } from "@/components/embed/embed-theme";
-import { embedPremiumShell } from "@/components/embed/embed-premium-shell";
 import { cn } from "@/lib/cn";
 
 type Props = {
@@ -18,7 +18,10 @@ type Props = {
   theme?: EmbedTheme;
 };
 
-/** Pro — large network count + overlapping partner stack. */
+/**
+ * Pro — the network record. The counterparties are named, not reduced to
+ * generated initial tiles: a register lists who, not how many avatars fit.
+ */
 export function EmbedNetworkCard({
   name,
   confirmedCount,
@@ -26,61 +29,78 @@ export function EmbedNetworkCard({
   profileUrl,
   theme = "light",
 }: Props) {
-  const dark = theme === "dark";
-  const shown = proofCompanies.slice(0, 6);
-  const frameTone = dark ? "dark" : "light";
+  const shown = proofCompanies.slice(0, 4);
+  const rest = Math.max(0, proofCompanies.length - shown.length);
 
   return (
     <a
       href={profileUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn(
-        "flex w-full items-center gap-4 px-4 py-3.5 no-underline",
-        embedPremiumShell(theme, "pro"),
-      )}
+      className={cn("block w-full px-4 py-3.5 no-underline", embedRecordShell(theme))}
     >
-      <div className="min-w-0 flex-1">
-        <p className={cn("text-[10px] font-semibold tracking-[0.12em] uppercase", embedMutedClass(theme))}>
+      <div className="flex items-baseline justify-between gap-4">
+        <p
+          className={cn(
+            "text-[10px] font-semibold tracking-[0.16em] uppercase",
+            embedMutedClass(theme),
+          )}
+        >
           Confirmed network
         </p>
         <p
           className={cn(
-            "mt-1 font-display text-[2.4rem] font-medium leading-none tracking-[-0.05em] tabular-nums",
+            "font-display text-[1.35rem] leading-none font-medium tracking-[-0.04em] tabular-nums",
             embedInkClass(theme),
           )}
         >
           {confirmedCount}
         </p>
-        <p className={cn("mt-1 max-w-[14rem] truncate text-[12px]", embedSoftClass(theme))}>
-          {name} · verified relationships
-        </p>
-        {shown.length > 0 ? (
-          <ul className="mt-2.5 flex items-center pl-0.5" aria-hidden>
-            {shown.map((c, i) => (
-              <li
-                key={`${c.name}-${i}`}
-                className={cn(
-                  i > 0 && "-ml-2",
-                  "rounded-lg ring-2",
-                  dark ? "ring-[#081412]" : "ring-white",
-                )}
-                style={{ zIndex: shown.length - i }}
-              >
-                <LogoTile
-                  name={c.name}
-                  initials={c.initials}
-                  logoUrl={c.logoUrl}
-                  website={c.website}
-                  size="xs"
-                  frameTone={frameTone}
-                />
-              </li>
-            ))}
-          </ul>
-        ) : null}
       </div>
-      <EmbedVerifiedLockup theme={theme} size="md" />
+      <p
+        className={cn(
+          "mt-1 text-[14px] font-medium tracking-[-0.02em]",
+          embedInkClass(theme),
+        )}
+      >
+        {name}
+      </p>
+
+      {shown.length > 0 ? (
+        <ul
+          className={cn(
+            "mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 border-t pt-3 text-[12px]",
+            embedHairlineClass(theme),
+            embedSoftClass(theme),
+          )}
+        >
+          {shown.map((company, index) => (
+            <li key={`${company.name}-${index}`} className="flex items-baseline">
+              {index > 0 ? (
+                <span className={cn("mr-2", embedMutedClass(theme))} aria-hidden>
+                  ·
+                </span>
+              ) : null}
+              <span className="truncate">{company.name}</span>
+            </li>
+          ))}
+          {rest > 0 ? (
+            <li className={cn(embedMutedClass(theme))}>· and {rest} more</li>
+          ) : null}
+        </ul>
+      ) : null}
+
+      <div
+        className={cn(
+          "mt-3 flex items-center justify-between gap-3 border-t pt-3",
+          embedHairlineClass(theme),
+        )}
+      >
+        <span className={cn("text-[11px]", embedMutedClass(theme))}>
+          Partners and clients, each confirmed by both sides
+        </span>
+        <EmbedHansalaSeal theme={theme} />
+      </div>
     </a>
   );
 }

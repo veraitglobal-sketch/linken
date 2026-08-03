@@ -1,9 +1,10 @@
-import { EmbedHansalaSeal } from "@/components/embed/embed-linken-seal";
+import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import {
   embedAccentClass,
+  embedHairlineClass,
   embedInkClass,
   embedMutedClass,
-  embedShellClass,
+  embedRecordShell,
   embedSoftClass,
   type EmbedTheme,
 } from "@/components/embed/embed-theme";
@@ -14,6 +15,7 @@ export type EmbedReferenceItem = {
   service: string;
   period: string;
   ongoing?: boolean;
+  /** Kept for callers; a record prints names, never generated initials. */
   initials?: string;
 };
 
@@ -26,31 +28,11 @@ type Props = {
   theme?: EmbedTheme;
 };
 
-function initialsFrom(name: string) {
-  return name
-    .split(/\s+/)
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
-
-function InitialDisc({ initials, theme }: { initials: string; theme: EmbedTheme }) {
-  const dark = theme === "dark";
-  return (
-    <span
-      className={cn(
-        "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[10px] font-semibold",
-        dark ? "bg-white/10 text-white/80" : "bg-[#0e1f1c]/06 text-ink-soft",
-      )}
-      aria-hidden
-    >
-      {initials}
-    </span>
-  );
-}
-
-/** Pro — client list with initials only, never fetched logos. */
+/**
+ * Pro — the client record, set as a ruled extract rather than a stat card:
+ * a title line, one ruled row per confirmed relationship, and the count
+ * stated at the foot where a register states its total. Dense on purpose.
+ */
 export function EmbedReferences({
   name,
   references,
@@ -66,45 +48,98 @@ export function EmbedReferences({
       href={profileUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn("relative block w-full border px-3.5 py-3 no-underline", embedShellClass(theme))}
+      className={cn("block w-full px-3.5 py-3 no-underline", embedRecordShell(theme))}
     >
-      <div className="flex items-start gap-2">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-baseline justify-between gap-3">
-            <p className={cn("text-[10px] font-semibold tracking-[0.12em] uppercase", embedMutedClass(theme))}>
-              Confirmed clients
-            </p>
-            <p className={cn("font-display text-[1.35rem] font-medium leading-none", embedInkClass(theme))}>
-              {count}
-            </p>
-          </div>
-          <p className={cn("mt-0.5 text-[11px]", embedSoftClass(theme))}>
-            {name}
-            {undisclosedCount > 0
-              ? ` · ${undisclosedCount} undisclosed`
-              : null}
-          </p>
-          <ul className="mt-2.5 space-y-2">
-            {references.map((ref) => (
-              <li key={`${ref.clientName}-${ref.service}`} className="flex items-center gap-2.5">
-                <InitialDisc initials={ref.initials || initialsFrom(ref.clientName)} theme={theme} />
-                <div className="min-w-0 flex-1">
-                  <p className={cn("truncate text-[12px] font-medium", embedInkClass(theme))}>
-                    {ref.clientName}
-                  </p>
-                  <p className={cn("truncate text-[11px]", embedMutedClass(theme))}>{ref.service}</p>
-                </div>
-                <span className={cn("shrink-0 text-[11px]", embedMutedClass(theme))}>
-                  {ref.ongoing ? (
-                    <span className={cn("mr-1 inline-block h-1.5 w-1.5 rounded-full bg-current", embedAccentClass(theme))} />
-                  ) : null}
-                  {ref.period}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <EmbedHansalaSeal theme={theme} />
+      <div className="flex items-baseline justify-between gap-3">
+        <p
+          className={cn(
+            "text-[9px] font-semibold tracking-[0.16em] uppercase",
+            embedMutedClass(theme),
+          )}
+        >
+          Confirmed clients
+        </p>
+        <p
+          className={cn(
+            "truncate text-[11px] tracking-[-0.01em]",
+            embedSoftClass(theme),
+          )}
+        >
+          {name}
+        </p>
+      </div>
+
+      <ul className={cn("mt-2.5 border-t", embedHairlineClass(theme))}>
+        {references.map((ref) => (
+          <li
+            key={`${ref.clientName}-${ref.service}`}
+            className={cn(
+              "flex items-baseline justify-between gap-3 border-b py-2 last:border-b-0",
+              embedHairlineClass(theme),
+            )}
+          >
+            <span className="min-w-0">
+              <span
+                className={cn(
+                  "block truncate text-[12px] font-medium tracking-[-0.01em]",
+                  embedInkClass(theme),
+                )}
+              >
+                {ref.clientName}
+              </span>
+              <span
+                className={cn(
+                  "mt-px block truncate text-[10px]",
+                  embedMutedClass(theme),
+                )}
+              >
+                {ref.service}
+              </span>
+            </span>
+            <span
+              className={cn(
+                "flex shrink-0 items-center gap-1.5 text-[10px] tabular-nums",
+                embedSoftClass(theme),
+              )}
+            >
+              {ref.ongoing ? (
+                <span
+                  className={cn(
+                    "inline-block h-1 w-1 rounded-full bg-current",
+                    embedAccentClass(theme),
+                  )}
+                  aria-hidden
+                />
+              ) : null}
+              {ref.period}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <div
+        className={cn(
+          "flex items-end justify-between gap-3 border-t pt-2.5",
+          embedHairlineClass(theme),
+        )}
+      >
+        <span className="flex items-baseline gap-2">
+          <span
+            className={cn(
+              "font-display text-[1.6rem] leading-none font-medium tracking-[-0.05em] tabular-nums",
+              embedInkClass(theme),
+            )}
+          >
+            {count}
+          </span>
+          <span className={cn("text-[10px] leading-tight", embedMutedClass(theme))}>
+            confirmed by
+            <br />
+            both sides
+            {undisclosedCount > 0 ? ` · ${undisclosedCount} undisclosed` : null}
+          </span>
+        </span>
+        <EmbedVerifiedLockup theme={theme} size="sm" />
       </div>
     </a>
   );

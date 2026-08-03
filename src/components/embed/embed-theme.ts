@@ -26,6 +26,17 @@ export function embedBarClass(theme: EmbedTheme): string {
     : `${base} border-black/[0.07] bg-white/80`;
 }
 
+/**
+ * Record shell — a sheet, not a UI card. Stock fill rather than pure white,
+ * hairline edge, no elevation: the rules inside carry the structure.
+ */
+export function embedRecordShell(theme: EmbedTheme): string {
+  const base = "rounded-xl border transition-colors duration-150 ease-out";
+  return theme === "dark"
+    ? `${base} border-white/12 bg-[#0b100f]/92`
+    : `${base} border-black/[0.09] bg-[#fcfcfb]/94`;
+}
+
 export function embedInkClass(theme: EmbedTheme): string {
   return theme === "dark" ? "text-white" : "text-[#0d1210]";
 }

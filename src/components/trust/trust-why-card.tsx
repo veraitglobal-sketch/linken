@@ -1,49 +1,25 @@
 import type { TrustProfile } from "@/features/trust/queries";
+import {
+  trustEvidenceLines,
+  type TrustEvidenceLine,
+} from "@/features/trust/score";
 
 type Props = {
   trust: TrustProfile;
 };
 
+const ANCHORS: Record<TrustEvidenceLine["key"], string> = {
+  partners: "#partners",
+  ongoing: "#references",
+  references: "#references",
+  "client-cases": "#case-studies",
+  "partner-cases": "#case-studies",
+};
+
 export function TrustWhyCard({ trust }: Props) {
   if (trust.points === 0) return null;
 
-  const lines = [
-    trust.breakdown.confirmedPartners > 0
-      ? {
-          label: `${trust.breakdown.confirmedPartners} confirmed partner${trust.breakdown.confirmedPartners === 1 ? "" : "s"}`,
-          href: "#partners",
-          points: trust.breakdown.confirmedPartners * 2,
-        }
-      : null,
-    trust.breakdown.ongoingReferences > 0
-      ? {
-          label: `${trust.breakdown.ongoingReferences} ongoing client${trust.breakdown.ongoingReferences === 1 ? "" : "s"}`,
-          href: "#references",
-          points: trust.breakdown.ongoingReferences * 3,
-        }
-      : null,
-    trust.breakdown.confirmedReferences > 0
-      ? {
-          label: `${trust.breakdown.confirmedReferences} completed reference${trust.breakdown.confirmedReferences === 1 ? "" : "s"}`,
-          href: "#references",
-          points: trust.breakdown.confirmedReferences * 2,
-        }
-      : null,
-    trust.breakdown.clientConfirmedCaseStudies > 0
-      ? {
-          label: `${trust.breakdown.clientConfirmedCaseStudies} client-confirmed case stud${trust.breakdown.clientConfirmedCaseStudies === 1 ? "y" : "ies"}`,
-          href: "#case-studies",
-          points: trust.breakdown.clientConfirmedCaseStudies * 3,
-        }
-      : null,
-    trust.breakdown.partnerConfirmedCaseStudies > 0
-      ? {
-          label: `${trust.breakdown.partnerConfirmedCaseStudies} partner-confirmed case stud${trust.breakdown.partnerConfirmedCaseStudies === 1 ? "y" : "ies"}`,
-          href: "#case-studies",
-          points: trust.breakdown.partnerConfirmedCaseStudies * 2,
-        }
-      : null,
-  ].filter(Boolean) as { label: string; href: string; points: number }[];
+  const lines = trustEvidenceLines(trust.breakdown);
 
   if (lines.length === 0) return null;
 
@@ -61,9 +37,9 @@ export function TrustWhyCard({ trust }: Props) {
       </p>
       <ul className="mt-4 space-y-2.5 border-t border-line pt-4">
         {lines.map((line) => (
-          <li key={line.label}>
+          <li key={line.key}>
             <a
-              href={line.href}
+              href={ANCHORS[line.key]}
               className="flex items-baseline justify-between gap-3 text-[13px] text-ink transition-colors hover:text-[#1a5c51]"
             >
               <span>{line.label}</span>
