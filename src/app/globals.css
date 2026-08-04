@@ -303,6 +303,17 @@ a {
   background: var(--navy);
 }
 
+/* Mark assemble — dark stage (scrubbed in JS; CSS play classes unused) */
+.mark-stage {
+  background:
+    radial-gradient(ellipse 70% 55% at 20% 15%, rgba(126, 184, 164, 0.14), transparent 55%),
+    radial-gradient(ellipse 50% 45% at 85% 80%, rgba(26, 92, 81, 0.28), transparent 55%),
+    linear-gradient(155deg, #070f0d 0%, #0e1f1c 45%, #122824 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 32px 80px -24px rgba(8, 20, 18, 0.45);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-rise,
   .animate-rise-delay,

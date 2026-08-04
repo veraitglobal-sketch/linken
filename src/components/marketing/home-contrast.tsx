@@ -1,9 +1,9 @@
 import { MarkAssemble } from "@/components/marketing/mark-assemble";
 
-/** Logo birth — replaces the Elsewhere / Hansala comparison grid. */
+/** Scroll assembles the mark, then opens it again. */
 export function HomeContrast() {
   return (
-    <section className="bg-paper">
+    <section>
       <MarkAssemble />
     </section>
   );
