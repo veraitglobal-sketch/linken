@@ -34,7 +34,7 @@ const AI_AGENTS = [
   "Applebot-Extended",
 ];
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
   const siteUrl = getSiteUrl();
 
   return {
@@ -50,7 +50,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: PRIVATE,
       })),
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: [`${siteUrl}/sitemap.xml`, `${siteUrl}/sitemap/0.xml`],
     host: siteUrl.replace(/^https?:\/\//, ""),
   };
 }

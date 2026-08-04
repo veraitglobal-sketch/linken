@@ -8,6 +8,14 @@ type Props = { params: Promise<{ slug: string }> };
 /** Short URL: hansala.com/{slug} → /c/{slug} */
 export default async function ShortCompanyProfilePage({ params }: Props) {
   const { slug } = await params;
+  // Reserved metadata paths must never resolve as company slugs.
+  if (
+    slug === "sitemap.xml" ||
+    slug === "robots.txt" ||
+    slug === "llms.txt"
+  ) {
+    notFound();
+  }
   const company = await getCompanyForPage(slug);
   if (company) permanentRedirect(companyProfilePath(company.slug));
 

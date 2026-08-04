@@ -54,6 +54,10 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    // `/sitemap.xml` was swallowed by `(site)/[slug]` → company 404.
+    return [{ source: "/sitemap.xml", destination: "/api/sitemap-index" }];
+  },
 };
 
 export default nextConfig;
