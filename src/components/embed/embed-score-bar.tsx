@@ -1,4 +1,4 @@
-import { EmbedAttribution, EmbedProBadge } from "@/components/embed/embed-pro-chrome";
+import { EmbedAttribution } from "@/components/embed/embed-pro-chrome";
 import { EmbedLevelMark } from "@/components/embed/embed-level-mark";
 import { levelHeadline } from "@/components/embed/embed-level-headline";
 import {
@@ -53,10 +53,7 @@ export function EmbedScoreBar({
           </p>
         </div>
         <div className="min-w-0 flex-1 border-l pl-4" style={{ borderColor: dark ? "rgba(255,255,255,0.1)" : "rgba(14,31,28,0.08)" }}>
-          <div className="flex flex-wrap items-center gap-2">
-            <EmbedProBadge dark={dark} />
-            {level !== "Member" ? <EmbedLevelMark level={level} theme={theme} /> : null}
-          </div>
+          {level !== "Member" ? <EmbedLevelMark level={level} theme={theme} /> : null}
           <p className={cn("mt-1.5 font-display text-[16px] font-medium tracking-[-0.03em]", embedInkClass(theme))}>
             {headline}
           </p>

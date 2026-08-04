@@ -1,5 +1,4 @@
-import { EmbedAttribution, EmbedProBadge } from "@/components/embed/embed-pro-chrome";
-import { EmbedLevelMark } from "@/components/embed/embed-level-mark";
+import { EmbedAttribution } from "@/components/embed/embed-pro-chrome";
 import {
   embedAccentClass,
   embedInkClass,
@@ -32,7 +31,6 @@ export function EmbedAssessment({
   profileUrl,
   theme = "light",
 }: Props) {
-  const dark = theme === "dark";
   const strengths = topStrengths.slice(0, 3);
   const pct = wouldTotal > 0 ? Math.round((wouldYes / wouldTotal) * 100) : 0;
 
@@ -43,8 +41,7 @@ export function EmbedAssessment({
       rel="noopener noreferrer"
       className={cn("relative block w-full border px-4 py-4 no-underline", embedShellClass(theme))}
     >
-      <div className="flex items-start justify-between gap-3">
-        <EmbedProBadge dark={dark} />
+      <div className="flex items-start justify-end">
         <EmbedAttribution theme={theme} />
       </div>
 

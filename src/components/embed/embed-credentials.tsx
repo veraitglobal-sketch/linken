@@ -1,4 +1,4 @@
-import { EmbedAttribution, EmbedProBadge } from "@/components/embed/embed-pro-chrome";
+import { EmbedAttribution } from "@/components/embed/embed-pro-chrome";
 import { EmbedLevelMark } from "@/components/embed/embed-level-mark";
 import {
   embedInkClass,
@@ -58,10 +58,9 @@ export function EmbedCredentials({
       className={cn("block w-full overflow-hidden no-underline", embedPremiumShell(theme, "pro"))}
     >
       <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
-        <div className="flex min-w-0 items-center gap-2">
-          <EmbedProBadge dark={dark} />
-          <p className={cn("truncate text-[12px] font-medium", embedInkClass(theme))}>{name}</p>
-        </div>
+        <p className={cn("min-w-0 truncate text-[12px] font-medium", embedInkClass(theme))}>
+          {name}
+        </p>
         <EmbedLevelMark level={level} theme={theme} />
       </div>
       <div

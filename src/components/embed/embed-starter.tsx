@@ -1,4 +1,4 @@
-import { EmbedAttribution, EmbedProBadge } from "@/components/embed/embed-pro-chrome";
+import { EmbedAttribution } from "@/components/embed/embed-pro-chrome";
 import { levelHeadline, levelSubline } from "@/components/embed/embed-level-headline";
 import { embedPremiumShell } from "@/components/embed/embed-premium-shell";
 import {
@@ -33,7 +33,6 @@ export function EmbedStarter({
   const subline = levelSubline(level);
   const countLabel =
     confirmedCount === 1 ? "confirmed relationship" : "confirmed relationships";
-  const dark = theme === "dark";
 
   return (
     <a
@@ -42,8 +41,7 @@ export function EmbedStarter({
       rel="noopener noreferrer"
       className={cn("block w-full px-5 py-4 no-underline", embedPremiumShell(theme, "pro"))}
     >
-      <div className="flex items-center justify-between gap-3">
-        <EmbedProBadge dark={dark} />
+      <div className="flex items-center justify-end">
         <EmbedAttribution theme={theme} />
       </div>
 

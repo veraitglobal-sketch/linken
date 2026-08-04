@@ -1,4 +1,4 @@
-import { EmbedAttribution, EmbedProBadge } from "@/components/embed/embed-pro-chrome";
+import { EmbedAttribution } from "@/components/embed/embed-pro-chrome";
 import { EmbedLevelMark } from "@/components/embed/embed-level-mark";
 import {
   embedInkClass,
@@ -52,10 +52,7 @@ export function EmbedTrustCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <EmbedProBadge dark={dark} />
-            <EmbedLevelMark level={level} theme={theme} />
-          </div>
+          <EmbedLevelMark level={level} theme={theme} />
           <p className={cn("mt-2 truncate font-display text-[15px] font-medium tracking-[-0.03em]", embedInkClass(theme))}>
             {name}
           </p>

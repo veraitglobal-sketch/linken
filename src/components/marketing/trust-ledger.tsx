@@ -9,21 +9,22 @@ type Props = {
   lines: TrustEvidenceLine[];
 };
 
-/** Hairline drawing grid — the sheet the record is set on. */
+/** Faint drawing texture — sits under the record, never competes with it. */
 const RULED_SHEET =
-  "repeating-linear-gradient(to right,rgba(255,255,255,0.032) 0 1px,transparent 1px 88px)," +
-  "repeating-linear-gradient(to bottom,rgba(255,255,255,0.032) 0 1px,transparent 1px 88px)";
+  "repeating-linear-gradient(to right,rgba(255,255,255,0.022) 0 1px,transparent 1px 88px)," +
+  "repeating-linear-gradient(to bottom,rgba(255,255,255,0.022) 0 1px,transparent 1px 88px)";
 
-const ROW_STAGGER = 140;
+const ROW_STAGGER = 130;
 
 /**
- * Each row draws the mark's own grammar — node, link, node — at a width set by
- * what the line is worth. The link is made left to right and the far node lands
- * once it arrives: a record exists only after the other side is reached.
+ * Every row is one confirmed relationship, drawn the way the mark is drawn:
+ * a node, a link, a node. The link crosses the whole row so the gesture is
+ * legible, and how far the mint reaches is what the line is worth — the track
+ * behind it is the distance a full-weight record would travel.
  *
- * Markup renders drawn, so the points survive no JS, a dead observer or reduced
- * motion. Hydration sets `data-armed` to collapse before the first paint, and
- * entering the viewport removes it — which is what plays the animation.
+ * Markup renders finished, so the points survive no JS, a dead observer or
+ * reduced motion. Hydration sets `data-armed` to collapse before the first
+ * paint; entering the viewport removes it, and that is what plays the draw.
  */
 export function TrustLedger({ points, level, lines }: Props) {
   const ref = useRef<HTMLDivElement>(null);
@@ -64,53 +65,58 @@ export function TrustLedger({ points, level, lines }: Props) {
           How the level is earned
         </p>
 
-        <div className="mt-7 flex items-end gap-4">
-          <p className="font-display text-[clamp(3.4rem,7vw,4.75rem)] leading-[0.82] font-medium tracking-[-0.055em] text-white tabular-nums">
+        <div className="mt-7 flex items-baseline gap-5">
+          <p className="font-display text-[clamp(3.4rem,7vw,4.75rem)] leading-[0.8] font-medium tracking-[-0.055em] text-white tabular-nums">
             {points}
           </p>
-          <p className="pb-1.5 text-[13px] leading-snug text-white/55">
-            points, from
-            <br />
-            confirmed evidence only
+          <p className="font-display text-[clamp(1.25rem,2vw,1.6rem)] font-medium tracking-[-0.035em] text-white">
+            Hansala {level}
           </p>
         </div>
-        <p className="mt-4 font-display text-[1.35rem] font-medium tracking-[-0.03em] text-white">
-          Hansala {level}
+        <p className="mt-3 text-[13px] text-white/50">
+          points, from confirmed evidence only
         </p>
 
-        <ul className="mt-8 border-t border-white/10">
+        <ul className="mt-9 border-t border-white/10">
           {lines.map((line, index) => (
             <li
               key={line.key}
-              className="flex items-center gap-4 border-b border-white/10 py-3"
+              className="grid grid-cols-[minmax(0,1fr)_2.25rem] items-center gap-x-5 border-b border-white/10 py-3.5 sm:grid-cols-[minmax(0,1fr)_minmax(120px,0.85fr)_2.25rem]"
               style={
                 {
-                  "--link-w": `${(line.points / widest) * 56 + 16}px`,
+                  "--reach": `${(line.points / widest) * 100}%`,
                   "--link-delay": `${index * ROW_STAGGER}ms`,
                 } as CSSProperties
               }
             >
-              <span className="min-w-0 flex-1 text-[13px] leading-snug text-white/70">
+              <span className="min-w-0 text-[13px] leading-snug text-white/70">
                 {line.label}
               </span>
 
+              {/* Track is the full-weight distance; the mint is this line's. */}
+              {/* Below sm the cell collapses to ~88px, where the gesture has
+                  nowhere to travel — the row keeps label and points only. */}
               <span
-                className="relative flex w-[var(--link-w)] shrink-0 items-center"
+                className="relative hidden h-[7px] items-center sm:flex"
                 aria-hidden
               >
-                <span className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-[#7eb8a4]/70 transition-[width] duration-[520ms] ease-out [transition-delay:calc(var(--link-delay)+120ms)] group-data-armed/ledger:w-0 motion-reduce:transition-none" />
-                <span className="relative h-[5px] w-[5px] shrink-0 scale-100 rounded-full bg-[#7eb8a4] transition-transform duration-200 ease-out [transition-delay:var(--link-delay)] group-data-armed/ledger:scale-0 motion-reduce:transition-none" />
-                <span className="relative ml-auto h-[5px] w-[5px] shrink-0 scale-100 rounded-full bg-[#7eb8a4] transition-transform duration-200 ease-out [transition-delay:calc(var(--link-delay)+600ms)] group-data-armed/ledger:scale-0 motion-reduce:transition-none" />
+                <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-white/12" />
+                <span
+                  className="absolute top-1/2 left-0 h-px w-[var(--reach)] -translate-y-1/2 bg-[#7eb8a4] transition-[width] duration-[720ms] ease-out [transition-delay:calc(var(--link-delay)+110ms)] group-data-armed/ledger:w-0 motion-reduce:transition-none"
+                >
+                  <span className="absolute top-1/2 -right-[3px] h-[7px] w-[7px] -translate-y-1/2 rounded-full bg-[#7eb8a4] shadow-[0_0_0_3px_rgba(126,184,164,0.16)]" />
+                </span>
+                <span className="absolute top-1/2 left-0 h-[5px] w-[5px] -translate-y-1/2 scale-100 rounded-full bg-[#7eb8a4] transition-transform duration-200 ease-out [transition-delay:var(--link-delay)] group-data-armed/ledger:scale-0 motion-reduce:transition-none" />
               </span>
 
-              <span className="w-7 shrink-0 text-right text-[12px] text-[#7eb8a4] tabular-nums opacity-100 transition-opacity duration-500 ease-out [transition-delay:calc(var(--link-delay)+640ms)] group-data-armed/ledger:opacity-0 motion-reduce:transition-none">
+              <span className="text-right text-[12px] text-[#7eb8a4] tabular-nums opacity-100 transition-opacity duration-500 ease-out [transition-delay:calc(var(--link-delay)+660ms)] group-data-armed/ledger:opacity-0 motion-reduce:transition-none">
                 +{line.points}
               </span>
             </li>
           ))}
         </ul>
 
-        <p className="mt-6 max-w-sm text-[13px] leading-relaxed text-white/50">
+        <p className="mt-7 max-w-sm text-[13px] leading-relaxed text-white/50">
           Nothing on this list can be self-reported. Every line is a record the
           other company clicked.
         </p>
