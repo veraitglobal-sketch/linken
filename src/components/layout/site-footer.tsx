@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import { Button } from "@/components/ui/button";
-import { NetworkMark } from "@/components/marketing/network-mark";
 
 const product = [
   { label: "Developers", href: "/developers" },
@@ -38,13 +38,10 @@ export function SiteFooter() {
       <div className="mx-auto max-w-6xl px-6 py-14 sm:px-8 lg:px-10">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.7fr_0.7fr_0.7fr] lg:gap-10">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2.5 text-white">
-              <NetworkMark size={22} className="text-blue-soft" animate={false} />
-              <span className="font-display text-[1.35rem] font-semibold leading-none tracking-[-0.035em]">
-                Hansala
-              </span>
+            <Link href="/" className="inline-flex no-underline">
+              <EmbedVerifiedLockup theme="dark" size="lg" />
             </Link>
-            <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-white/55">
+            <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-white/55">
               Company profiles, case studies, and partners — public only after
               both sides confirm.
             </p>
