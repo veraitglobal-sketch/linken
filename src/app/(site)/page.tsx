@@ -7,6 +7,7 @@ import { HomeHighlights } from "@/components/marketing/home-highlights";
 import { HomeIconLine } from "@/components/marketing/home-icon-line";
 import { HomeOverview } from "@/components/marketing/home-overview";
 import { HomeStories } from "@/components/marketing/home-stories";
+import { HomeProductFlow } from "@/components/marketing/product-flow";
 import { HomeTalks } from "@/components/marketing/home-talks";
 
 export const revalidate = 3600;
@@ -36,6 +37,7 @@ export default function HomePage() {
       <HomeHero />
       <HomeIconLine />
       <HomeOverview />
+      <HomeProductFlow />
       <HomeContrast />
       <HomeStories />
       <HomeTalks />

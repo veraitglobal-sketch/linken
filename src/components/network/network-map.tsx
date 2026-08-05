@@ -258,8 +258,8 @@ export function NetworkMap({
   }, [signature, layoutKey, editable, onSelect, onAdd, setNodes, setEdges, buildFlowEdges]);
 
   useEffect(() => {
-    setNodes((prev) =>
-      prev.map((n) => {
+    setNodes((prev) => {
+      const next = prev.map((n) => {
         if (n.type === "clusterHalo" || isClusterNodeId(n.id)) return n;
         return {
           ...n,
@@ -272,14 +272,14 @@ export function NetworkMap({
             editable,
           },
         };
-      }),
-    );
-    setEdges((prevEdges) => {
-      const company = nodes.filter((n) => !isClusterNodeId(n.id));
-      if (company.length === 0) return prevEdges;
-      return buildFlowEdges(company, selectedId);
+      });
+      const company = next.filter((n) => !isClusterNodeId(n.id));
+      if (company.length > 0) {
+        setEdges(buildFlowEdges(company, selectedId));
+      }
+      return next;
     });
-  }, [selectedId, onSelect, onAdd, editable, setNodes, setEdges, buildFlowEdges, nodes]);
+  }, [selectedId, onSelect, onAdd, editable, setNodes, setEdges, buildFlowEdges]);
 
   const flash = useCallback((msg: string, isError = false) => {
     if (!isError) return;

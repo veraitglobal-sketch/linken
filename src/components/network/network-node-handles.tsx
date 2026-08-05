@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Handle, Position } from "@xyflow/react";
 import { cn } from "@/lib/cn";
 
@@ -15,13 +16,13 @@ const HANDLE = cn(
 /** Wire ports — hidden until edit mode; reveal on node hover. */
 export function NetworkNodeHandles({ canWire }: { canWire: boolean }) {
   const show = canWire
-    ? "!pointer-events-auto !cursor-crosshair !opacity-0 group-hover/node:!opacity-100 linken-flow-connecting:!opacity-100"
+    ? "!pointer-events-auto !cursor-crosshair !opacity-0 group-hover/node:!opacity-100 [.linken-flow-connecting_&]:!opacity-100"
     : "!pointer-events-none !opacity-0";
 
   return (
     <>
       {PAIRS.map(({ side, t, s }) => (
-        <span key={side} className="contents">
+        <Fragment key={side}>
           <Handle
             id={t}
             type="target"
@@ -40,7 +41,7 @@ export function NetworkNodeHandles({ canWire }: { canWire: boolean }) {
             isConnectableEnd={canWire}
             className={cn(HANDLE, show)}
           />
-        </span>
+        </Fragment>
       ))}
     </>
   );
