@@ -1,12 +1,13 @@
 import {
   BaseEdge,
   EdgeLabelRenderer,
-  getSmoothStepPath,
   useReactFlow,
   type EdgeProps,
 } from "@xyflow/react";
+import { buildEdgePath } from "@/components/network/network-edge-path";
+import type { NetworkEdge } from "@/features/network/types";
 
-/** Smoothstep edge — rounded corners, detach control when selected. */
+/** Hairline edges — bezier for partners, smoothstep for structure. */
 export function NetworkEdgeLine(props: EdgeProps) {
   const {
     id,
@@ -20,24 +21,33 @@ export function NetworkEdgeLine(props: EdgeProps) {
     markerEnd,
     selected,
     deletable,
+    data,
   } = props;
   const { deleteElements } = useReactFlow();
+  const raw = data as NetworkEdge | undefined;
 
-  const [edgePath, labelX, labelY] = getSmoothStepPath({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-    borderRadius: 16,
-    offset: 6,
-  });
+  const [edgePath, labelX, labelY] = buildEdgePath(
+    {
+      sourceX,
+      sourceY,
+      targetX,
+      targetY,
+      sourcePosition,
+      targetPosition,
+    },
+    raw?.type,
+  );
 
   const showDetach = Boolean(selected && deletable);
+  const halo = selected
+    ? { stroke: "rgba(26, 92, 81, 0.12)", strokeWidth: 5 }
+    : null;
 
   return (
     <>
+      {halo ? (
+        <BaseEdge id={`${id}-halo`} path={edgePath} style={halo} />
+      ) : null}
       <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />
       {showDetach ? (
         <EdgeLabelRenderer>
@@ -48,7 +58,7 @@ export function NetworkEdgeLine(props: EdgeProps) {
               e.stopPropagation();
               deleteElements({ edges: [{ id }] });
             }}
-            className="nodrag nopan absolute flex h-5 w-5 items-center justify-center rounded-full border border-line bg-white text-[11px] font-semibold text-ink shadow-[0_2px_8px_rgba(8,20,18,0.18)] transition-colors hover:bg-paper"
+            className="nodrag nopan absolute flex h-5 w-5 items-center justify-center rounded-full border border-line/80 bg-white text-[11px] font-medium text-muted shadow-sm transition-colors hover:border-blue/30 hover:text-blue"
             style={{
               transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
               pointerEvents: "all",

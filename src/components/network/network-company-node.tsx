@@ -1,7 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { Handle, Position, type NodeProps } from "@xyflow/react";
+import type { NodeProps } from "@xyflow/react";
+import { NetworkNodeHandles } from "@/components/network/network-node-handles";
 import { NetworkNodeTeam } from "@/components/network/network-node-team";
 import { LogoTile } from "@/components/ui/logo-tile";
 import type { NetworkNodeData, NetworkNodeKind } from "@/features/network/types";
@@ -13,11 +14,10 @@ export type FlowNodeData = NetworkNodeData & {
   selected?: boolean;
   nodeId?: string;
   editable?: boolean;
-  /** Hub / root firm — slightly stronger card. */
   isHub?: boolean;
 };
 
-const ROLE_LABEL: Record<NetworkNodeKind, string> = {
+const ROLE: Record<NetworkNodeKind, string> = {
   group: "Group",
   company: "Company",
   subsidiary: "Subsidiary",
@@ -25,73 +25,28 @@ const ROLE_LABEL: Record<NetworkNodeKind, string> = {
   client: "Client",
 };
 
-const HANDLE = cn(
-  "linken-handle !h-3 !w-3 !min-h-0 !min-w-0 !border-[1.5px] !border-white !bg-navy !z-20",
-);
+const CARD =
+  "border bg-white transition-[border-color,box-shadow] duration-200";
 
-function wireClass(can: boolean) {
-  return can
-    ? "!pointer-events-auto !cursor-crosshair !opacity-100"
-    : "!pointer-events-none !opacity-0";
-}
-
-/** Premium card — hub emphasis, quiet partners, handles outside click target. */
+/** Quiet enterprise cards — hub reads first, partners stay compact. */
 function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
   const d = data as FlowNodeData;
-  const isSelected = Boolean(selected || d.selected);
+  const on = Boolean(selected || d.selected);
   const canWire = Boolean(d.editable) && d.kind !== "group" && !d.moreCount;
-  const needsVerify =
+  const hub = Boolean(d.isHub);
+  const partner = d.kind === "partner" || d.kind === "client";
+  const open = !partner || on;
+  const unverified =
     d.kind !== "group" && !d.moreCount && d.domainVerified === false;
-  const isHub = Boolean(d.isHub);
-  const isPartner = d.kind === "partner" || d.kind === "client";
-  // Structure (group/company/subsidiary) always reads full. Partners stay
-  // logo-only until clicked — quieter, less competing with the ownership tree.
-  const expanded = !isPartner || isSelected;
 
   return (
     <div
       className={cn(
         "linken-node group/node relative linken-node-enter",
-        expanded ? (isHub ? "w-[164px]" : "w-[150px]") : "w-11",
+        open ? (hub ? "w-[152px]" : "w-[140px]") : "w-12",
       )}
     >
-      <Handle
-        id="left-t"
-        type="target"
-        position={Position.Left}
-        isConnectable={canWire}
-        isConnectableStart={canWire}
-        isConnectableEnd={canWire}
-        className={cn(HANDLE, wireClass(canWire))}
-      />
-      <Handle
-        id="left-s"
-        type="source"
-        position={Position.Left}
-        isConnectable={canWire}
-        isConnectableStart={canWire}
-        isConnectableEnd={canWire}
-        className={cn(HANDLE, wireClass(canWire))}
-      />
-
-      <Handle
-        id="top-t"
-        type="target"
-        position={Position.Top}
-        isConnectable={canWire}
-        isConnectableStart={canWire}
-        isConnectableEnd={canWire}
-        className={cn(HANDLE, wireClass(canWire))}
-      />
-      <Handle
-        id="top-s"
-        type="source"
-        position={Position.Top}
-        isConnectable={canWire}
-        isConnectableStart={canWire}
-        isConnectableEnd={canWire}
-        className={cn(HANDLE, wireClass(canWire))}
-      />
+      <NetworkNodeHandles canWire={canWire} />
 
       <div
         onClick={() => d.onSelect?.(id, d)}
@@ -104,24 +59,23 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
         role="button"
         tabIndex={0}
         className={cn(
-          "relative w-full cursor-grab border bg-surface text-left",
-          "transition-[border-color,box-shadow,transform,width] duration-150 active:cursor-grabbing",
-          expanded ? (isHub ? "rounded-2xl" : "rounded-xl") : "rounded-full",
-          d.kind === "client" ? "border-dashed border-line" : "border-line/90",
-          isPartner && !isSelected && "opacity-[0.9]",
-          isHub && !isSelected && "border-navy/20 ring-1 ring-navy/[0.06]",
-          isSelected
-            ? "border-blue/40 shadow-[0_0_0_2px_rgba(26,92,81,0.1),0_10px_24px_rgba(8,20,18,0.07)]"
+          CARD,
+          "relative w-full cursor-grab text-left active:cursor-grabbing",
+          open ? "rounded-xl" : "rounded-[14px]",
+          d.kind === "client" ? "border-dashed border-line" : "border-line/80",
+          on
+            ? "border-blue/35 shadow-[0_0_0_1px_rgba(26,92,81,0.08),0_8px_20px_rgba(8,20,18,0.06)]"
             : cn(
-                "shadow-[0_1px_0_rgba(255,255,255,0.95)_inset,0_4px_14px_rgba(8,20,18,0.04)]",
-                "hover:border-navy/15 hover:shadow-[0_1px_0_rgba(255,255,255,0.95)_inset,0_10px_22px_rgba(8,20,18,0.06)]",
+                "shadow-[0_1px_2px_rgba(8,20,18,0.04)]",
+                hub && "border-navy/15",
+                "hover:border-line hover:shadow-[0_4px_16px_rgba(8,20,18,0.05)]",
               ),
         )}
       >
         <div
           className={cn(
-            "flex items-center gap-2.5",
-            expanded ? (isHub ? "px-3.5 py-3" : "px-3 py-2.5") : "p-1",
+            "flex items-center gap-2",
+            open ? (hub ? "px-3 py-2.5" : "px-2.5 py-2") : "p-1.5",
           )}
         >
           <LogoTile
@@ -130,22 +84,22 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
             logoUrl={d.logoUrl}
             website={d.website}
             allowFavicon
-            size={expanded ? (isHub ? "md" : "sm") : "xs"}
+            size={open ? (hub ? "md" : "sm") : "xs"}
           />
-          {expanded ? (
+          {open ? (
             <>
               <div className="min-w-0 flex-1">
                 <p
                   className={cn(
-                    "truncate font-semibold tracking-[-0.025em] text-ink",
-                    isHub ? "text-[13px]" : "text-[12px]",
+                    "truncate font-semibold tracking-[-0.02em] text-ink",
+                    hub ? "text-[13px]" : "text-[12px]",
                   )}
                 >
                   {d.name}
                 </p>
-                <p className="mt-0.5 truncate text-[10px] font-medium text-muted">
-                  {ROLE_LABEL[d.kind]}
-                  {needsVerify ? " · Unverified" : ""}
+                <p className="mt-px truncate text-[10px] text-muted">
+                  {ROLE[d.kind]}
+                  {unverified ? " · Unverified" : ""}
                 </p>
               </div>
               {d.publicTeamCount && d.publicTeamCount > 0 && d.companyId ? (
@@ -160,64 +114,26 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
         </div>
       </div>
 
-      <Handle
-        id="right-t"
-        type="target"
-        position={Position.Right}
-        isConnectable={canWire}
-        isConnectableStart={canWire}
-        isConnectableEnd={canWire}
-        className={cn(HANDLE, wireClass(canWire))}
-      />
-      <Handle
-        id="right-s"
-        type="source"
-        position={Position.Right}
-        isConnectable={canWire}
-        isConnectableStart={canWire}
-        isConnectableEnd={canWire}
-        className={cn(HANDLE, wireClass(canWire))}
-      />
-
-      <Handle
-        id="bottom-t"
-        type="target"
-        position={Position.Bottom}
-        isConnectable={canWire}
-        isConnectableStart={canWire}
-        isConnectableEnd={canWire}
-        className={cn(HANDLE, wireClass(canWire))}
-      />
-      <Handle
-        id="bottom-s"
-        type="source"
-        position={Position.Bottom}
-        isConnectable={canWire}
-        isConnectableStart={canWire}
-        isConnectableEnd={canWire}
-        className={cn(HANDLE, wireClass(canWire))}
-      />
-
       {d.editable && !d.moreCount ? (
         <button
           type="button"
           title="Add"
           className={cn(
-            "nodrag nopan absolute -bottom-8 left-1/2 z-10 flex h-6 w-6 -translate-x-1/2 items-center justify-center",
-            "rounded-full border border-line bg-surface text-ink shadow-sm",
+            "nodrag nopan absolute -bottom-7 left-1/2 z-10 flex h-5 w-5 -translate-x-1/2 items-center justify-center",
+            "rounded-full border border-line/80 bg-white text-muted shadow-sm",
             "opacity-0 transition-opacity group-hover/node:opacity-100",
-            isSelected && "opacity-100",
+            on && "opacity-100",
           )}
           onClick={(e) => {
             e.stopPropagation();
             d.onAdd?.(id, d);
           }}
         >
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path
               d="M12 5v14M5 12h14"
               stroke="currentColor"
-              strokeWidth="2.25"
+              strokeWidth="2.5"
               strokeLinecap="round"
             />
           </svg>

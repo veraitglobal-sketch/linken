@@ -8,8 +8,8 @@ function nodeCentre(
 ) {
   const kind = nodes.get(id)?.data.kind;
   const partner = kind === "partner" || kind === "client";
-  const w = partner ? 44 : kind === "group" ? 164 : 158;
-  const h = partner ? 44 : 56;
+  const w = partner ? 48 : kind === "group" ? 152 : 148;
+  const h = partner ? 48 : 52;
   return { x: pos.x + w / 2, y: pos.y + h / 2 };
 }
 

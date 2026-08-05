@@ -6,62 +6,56 @@ type Props = {
   showPartner: boolean;
 };
 
-function LegendLine({
-  color,
-  dashed,
-}: {
-  color: string;
-  dashed?: boolean;
-}) {
+function Swatch({ dashed, dark }: { dashed?: boolean; dark?: boolean }) {
   return (
-    <svg width="20" height="8" viewBox="0 0 20 8" aria-hidden>
+    <svg width="18" height="6" viewBox="0 0 18 6" aria-hidden>
       <line
-        x1="1"
-        y1="4"
-        x2="19"
-        y2="4"
-        stroke={color}
-        strokeWidth="1.6"
-        strokeDasharray={dashed ? "3 2.5" : undefined}
+        x1="0"
+        y1="3"
+        x2="18"
+        y2="3"
+        stroke={dark ? "#0e1f1c" : "#b0b8b3"}
+        strokeWidth="1.25"
+        strokeDasharray={dashed ? "2.5 3.5" : undefined}
         strokeLinecap="round"
       />
     </svg>
   );
 }
 
-/** Small floating key for the map's line colors — only lists what's actually drawn. */
 export function NetworkMapLegend({
   showOwnership,
   showCoOwner,
   showPartner,
 }: Props) {
-  if (!showOwnership && !showCoOwner && !showPartner) return null;
+  const items = [
+    showOwnership && { label: "Owns", dark: true },
+    showCoOwner && { label: "Shared", dark: true, dashed: true },
+    showPartner && { label: "Partner", dashed: true },
+  ].filter(Boolean) as {
+    label: string;
+    dark?: boolean;
+    dashed?: boolean;
+  }[];
+
+  if (items.length === 0) return null;
 
   return (
     <div
       className={cn(
-        "pointer-events-none absolute bottom-4 right-4 z-20 flex flex-col gap-1.5 rounded-2xl px-3 py-2.5",
-        "border border-white/80 bg-white/80 shadow-[0_10px_32px_rgba(8,20,18,0.07)] backdrop-blur-xl",
+        "pointer-events-none absolute right-4 bottom-4 z-20 flex items-center gap-4 rounded-xl px-3.5 py-2",
+        "border border-line/60 bg-white/90 shadow-[0_4px_20px_rgba(8,20,18,0.04)] backdrop-blur-md",
       )}
     >
-      {showOwnership ? (
-        <div className="flex items-center gap-2 text-[11px] font-medium text-ink-soft">
-          <LegendLine color="#0e1f1c" />
-          Owns
+      {items.map((item) => (
+        <div
+          key={item.label}
+          className="flex items-center gap-1.5 text-[10px] font-medium tracking-[0.06em] text-muted uppercase"
+        >
+          <Swatch dashed={item.dashed} dark={item.dark} />
+          {item.label}
         </div>
-      ) : null}
-      {showCoOwner ? (
-        <div className="flex items-center gap-2 text-[11px] font-medium text-ink-soft">
-          <LegendLine color="#0e1f1c" dashed />
-          Shared ownership
-        </div>
-      ) : null}
-      {showPartner ? (
-        <div className="flex items-center gap-2 text-[11px] font-medium text-ink-soft">
-          <LegendLine color="#8a948e" dashed />
-          Partner
-        </div>
-      ) : null}
+      ))}
     </div>
   );
 }

@@ -576,21 +576,21 @@ export function NetworkMap({
         preventScrolling
         proOptions={{ hideAttribution: true }}
         defaultEdgeOptions={{ type: "smoothstep" }}
-        connectionLineStyle={{ stroke: "#1a5c51", strokeWidth: 1.75 }}
+        connectionLineStyle={{ stroke: "#1a5c51", strokeWidth: 1.25 }}
         onPaneClick={closePanel}
         className="linken-flow-canvas"
       >
         <Background
-          variant={BackgroundVariant.Lines}
-          gap={24}
-          lineWidth={0.5}
-          color="rgba(14, 31, 28, 0.04)"
+          variant={BackgroundVariant.Dots}
+          gap={22}
+          size={1}
+          color="rgba(14, 31, 28, 0.07)"
           bgColor="transparent"
         />
         <Controls
           showInteractive={false}
           position="bottom-left"
-          className="!m-4 !overflow-hidden !rounded-xl !border !border-line/80 !bg-surface/90 !shadow-[0_8px_28px_rgba(8,20,18,0.06)] !backdrop-blur-md [&>button]:!h-8 [&>button]:!w-8 [&>button]:!border-transparent [&>button]:!bg-transparent [&>button]:!fill-muted"
+          className="!m-4 !overflow-hidden !rounded-lg !border !border-line/50 !bg-white/95 !shadow-[0_2px_12px_rgba(8,20,18,0.05)] [&>button]:!h-7 [&>button]:!w-7 [&>button]:!border-0 [&>button]:!bg-transparent [&>button]:!fill-muted"
         />
       </ReactFlow>
 

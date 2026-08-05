@@ -17,13 +17,8 @@ function NetworkClusterHaloInner({ data }: NodeProps) {
       style={{ width: d.width, height: d.height }}
     >
       <div
-        className="h-full w-full rounded-[36px]"
-        style={{
-          background:
-            "radial-gradient(ellipse 72% 64% at 50% 48%, rgba(126,184,164,0.11), transparent 76%)",
-          boxShadow:
-            "inset 0 0 0 1px rgba(14,31,28,0.06), inset 0 1px 0 rgba(255,255,255,0.55)",
-        }}
+        className="h-full w-full rounded-[32px] border border-dashed border-line/70 bg-white/30"
+        style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7)" }}
       />
     </div>
   );

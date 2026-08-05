@@ -13,15 +13,13 @@ export function toFlowEdge(
   const isCoOwner = e.type === "co_owner";
   const isOwnership = isOwns || isCoOwner;
   const isStructure = isOwns || e.type === "member_of";
-  const isPartner = e.type === "partner";
+  const isPartner = e.type === "partner" || e.type === "client";
 
   const stroke = selected
     ? "#1a5c51"
     : isOwnership
       ? "#0e1f1c"
-      : isPartner
-        ? "#66706b"
-        : "#8a948e";
+      : "#b0b8b3";
 
   const handles =
     positions && nodesById
@@ -38,26 +36,26 @@ export function toFlowEdge(
     focusable: true,
     deletable: Boolean(e.detachable) && editable,
     reconnectable: isStructure,
-    interactionWidth: 28,
+    interactionWidth: 24,
     ...handles,
     style: {
       stroke,
-      strokeWidth: selected ? 2.25 : isOwnership ? 1.75 : isPartner ? 1.5 : 1.25,
+      strokeWidth: selected ? 1.75 : isOwnership ? 1.25 : 1,
       strokeDasharray: isCoOwner
-        ? "7 4"
-        : isPartner || e.type === "client"
-          ? "5 6"
+        ? "6 5"
+        : isPartner
+          ? "3 7"
           : undefined,
       strokeLinecap: "round" as const,
-      opacity: selected ? 1 : isPartner ? 0.82 : 0.9,
+      opacity: selected ? 1 : isPartner ? 0.9 : 0.95,
     },
     animated: false,
     markerEnd: isOwnership
       ? {
           type: MarkerType.ArrowClosed,
           color: stroke,
-          width: 10,
-          height: 10,
+          width: 8,
+          height: 8,
         }
       : undefined,
   };
