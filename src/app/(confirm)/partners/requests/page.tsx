@@ -17,6 +17,7 @@ type Props = {
     accepted?: string;
     declined?: string;
     needVerify?: string;
+    tm?: string;
   }>;
 };
 
@@ -61,6 +62,11 @@ export default async function PartnerRequestsPage({ searchParams }: Props) {
     getPartnershipInbox(company.id),
   ]);
 
+  const testimonialUrl =
+    params.accepted === "1" && params.tm?.startsWith("/testimonial/")
+      ? params.tm
+      : null;
+
   return (
     <ConfirmPage
       eyebrow="Hansala · Partnership"
@@ -71,6 +77,8 @@ export default async function PartnerRequestsPage({ searchParams }: Props) {
         incoming={inbox.incomingPending}
         verified={Boolean(full?.verified)}
         companySlug={company.slug}
+        requesterName={null}
+        testimonialUrl={testimonialUrl}
         error={params.error}
         accepted={params.accepted === "1"}
         declined={params.declined === "1"}

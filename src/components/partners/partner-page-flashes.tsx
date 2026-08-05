@@ -12,6 +12,8 @@ type Props = {
   accepted?: string;
   declined?: string;
   resent?: string;
+  /** Relative /testimonial/{token} path from accept redirect. */
+  tmPath?: string | null;
 };
 
 export function PartnerPageFlashes({
@@ -24,6 +26,7 @@ export function PartnerPageFlashes({
   accepted,
   declined,
   resent,
+  tmPath,
 }: Props) {
   return (
     <>
@@ -79,7 +82,20 @@ export function PartnerPageFlashes({
           >
             {PRODUCT.map.label}
           </Link>{" "}
-          to see the partner link.
+          to see the partner link
+          {tmPath ? (
+            <>
+              . Optional:{" "}
+              <Link
+                href={tmPath}
+                className="font-semibold underline-offset-2 hover:underline"
+              >
+                write a testimonial
+              </Link>
+            </>
+          ) : (
+            "."
+          )}
         </PartnerFlash>
       ) : null}
       {declined ? <PartnerFlash>Request declined.</PartnerFlash> : null}

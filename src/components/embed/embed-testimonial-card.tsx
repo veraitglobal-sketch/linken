@@ -83,16 +83,20 @@ export function EmbedTestimonialCard({
                   .join(" · ")}
               </p>
             )}
-            {!compact ? (
+            {(item.provenanceLine || item.publishedAt) && (
               <p
                 className="m-0 mt-1.5 text-[0.7em] leading-relaxed"
                 style={{ color: "var(--hs-tm-muted)" }}
               >
                 {item.provenanceLine}
-                <span className="mx-1 opacity-40">·</span>
-                <time dateTime={item.publishedAt}>{published}</time>
+                {item.provenanceLine && item.publishedAt ? (
+                  <span className="mx-1 opacity-40">·</span>
+                ) : null}
+                {item.publishedAt ? (
+                  <time dateTime={item.publishedAt}>{published}</time>
+                ) : null}
               </p>
-            ) : null}
+            )}
           </div>
           <span
             className="hs-tm-seal shrink-0 text-[9px] font-bold tracking-[0.14em] uppercase"

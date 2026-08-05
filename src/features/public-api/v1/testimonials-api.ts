@@ -84,7 +84,7 @@ export async function getPublicTestimonialsForSites(
     },
     embed: {
       iframe_url: `${siteUrl}/embed/${company.slug}?variant=testimonials`,
-      script_url: `${siteUrl}/hs-testimonials.js`,
+      script_url: `${siteUrl}/hs-testimonials.js?v=2`,
     },
   };
 }
@@ -133,7 +133,7 @@ function emptyBody(
     attribution: { label: "Verified on Hansala", url: profileUrl },
     embed: {
       iframe_url: `${siteUrl}/embed/${slug}?variant=testimonials`,
-      script_url: `${siteUrl}/hs-testimonials.js`,
+      script_url: `${siteUrl}/hs-testimonials.js?v=2`,
     },
   };
 }

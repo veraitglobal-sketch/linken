@@ -23,6 +23,7 @@ type Props = {
     declined?: string;
     resent?: string;
     verified?: string;
+    tm?: string;
   }>;
 };
 
@@ -91,6 +92,9 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
           accepted={params.accepted}
           declined={params.declined}
           resent={params.resent}
+          tmPath={
+            params.tm?.startsWith("/testimonial/") ? params.tm : null
+          }
         />
         <p className="text-[13px] text-muted">
           {PRODUCT.partners.job}{" "}

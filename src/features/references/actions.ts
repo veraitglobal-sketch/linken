@@ -138,6 +138,20 @@ async function respondServiceReference(
         `reference_${row.id}`,
       );
     }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.email) {
+      const { offerTestimonialAfterConfirm } = await import(
+        "@/features/testimonials/post-confirm-notify"
+      );
+      await offerTestimonialAfterConfirm({
+        token,
+        source: "reference",
+        toEmail: user.email,
+      });
+    }
   }
 
   revalidatePath(path);

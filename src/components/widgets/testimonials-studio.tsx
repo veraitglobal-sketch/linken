@@ -109,8 +109,8 @@ function TestimonialsStudioInner({ entries: initial, layout, limit, theme }: Pro
       </div>
       {rows.length === 0 ? (
         <p className="px-5 py-8 text-[13px] text-muted">
-          No published testimonials yet. Send an invite after a client confirms a
-          project or reference.
+          No published testimonials yet. Use the Invite form above, or collect one
+          after a client confirms a partnership, project, or reference.
         </p>
       ) : (
         <ul className={`divide-y divide-line ${pending ? "opacity-70" : ""}`}>

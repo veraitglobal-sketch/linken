@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
+import { TestimonialInviteForm } from "@/components/widgets/testimonial-invite-form";
+import { TestimonialPendingList } from "@/components/widgets/testimonial-pending-list";
 import { TestimonialsStudio } from "@/components/widgets/testimonials-studio";
+import { getPendingTestimonialInvites } from "@/features/testimonials/pending-queries";
 import {
   countPublishedTestimonials,
   getTestimonialsStudioEntries,
@@ -70,9 +73,10 @@ export default async function DashboardTestimonialsPage() {
 
   const settings = parseWidgetSettings(row?.widget_settings);
   const testimonialSettings = settings.testimonials;
-  const [entries, publishedCount] = await Promise.all([
+  const [entries, publishedCount, pending] = await Promise.all([
     getTestimonialsStudioEntries(company.id, row?.widget_settings),
     countPublishedTestimonials(company.id),
+    getPendingTestimonialInvites(company.id),
   ]);
 
   return (
@@ -100,23 +104,24 @@ export default async function DashboardTestimonialsPage() {
       <div className="space-y-6">
         <div className="rounded-2xl border border-line bg-surface px-5 py-4 text-[13px] leading-relaxed text-ink-soft">
           <p>
-            Testimonials are collected after a client confirms a project or reference.
-            They write and publish the text themselves — Hansala records provenance
-            (domain, confirmation source) on each quote.
+            Testimonials are written by the other side. Invite someone below, or
+            collect them after a confirmed partnership, case study, or reference —
+            attached confirms score higher than standalone invites.
           </p>
           {publishedCount === 0 ? (
             <p className="mt-2 text-muted">
-              None published yet. Send a confirmation invite from Case studies or
-              References; the client will see an optional testimonial step after they
-              confirm.
+              None published yet. Use Invite, or wait for a client to publish after
+              they confirm.
             </p>
           ) : (
             <p className="mt-2 text-muted">
-              {publishedCount} published on your profile. Reorder or hide entries below;
-              embed layout and theme also apply to the website widget.
+              {publishedCount} published. Reorder or hide below; layout and theme
+              apply to the website widget.
             </p>
           )}
         </div>
+        <TestimonialInviteForm />
+        <TestimonialPendingList rows={pending} />
         <TestimonialsStudio
           entries={entries}
           layout={testimonialSettings.layout}

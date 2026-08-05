@@ -175,6 +175,30 @@ export async function sendPostConfirmTestimonialEmail(input: {
   });
 }
 
+/** Standalone / cold-start invite — author writes about collaboration. */
+export async function sendTestimonialInviteEmail(input: {
+  to: string;
+  providerName: string;
+  testimonialUrl: string;
+}) {
+  return sendBrandedEmail({
+    to: input.to,
+    subject: `${input.providerName} invited you to share a testimonial on Hansala`,
+    content: {
+      eyebrow: "Testimonial invite",
+      headline: "Share your experience (optional)",
+      paragraphs: [
+        `${input.providerName} invited you to write a short testimonial about your collaboration.`,
+        "Only you control the text. You can edit or withdraw it anytime. Nothing is published until you submit.",
+      ],
+      cta: { label: "Write a testimonial", href: input.testimonialUrl },
+      finePrint: "This is optional. If you skip it, nothing is published.",
+    },
+    logLabel: "testimonial-invite",
+    linkForLog: input.testimonialUrl,
+  });
+}
+
 export async function sendPartnershipEndedEmail(input: {
   to: string;
   actorName: string;

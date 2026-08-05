@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { PostConfirmTestimonial } from "@/components/confirm/post-confirm-testimonial";
 import { respondPartnership } from "@/features/network/actions";
 import type { PartnershipRow } from "@/features/partners/inbox";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,8 @@ type Props = {
   incoming: PartnershipRow[];
   verified: boolean;
   companySlug: string;
+  requesterName?: string | null;
+  testimonialUrl?: string | null;
   error?: string;
   accepted?: boolean;
   declined?: boolean;
@@ -20,6 +23,8 @@ export function PartnerRequestsPanel({
   incoming,
   verified,
   companySlug,
+  requesterName,
+  testimonialUrl,
   error,
   accepted,
   declined,
@@ -27,12 +32,18 @@ export function PartnerRequestsPanel({
 }: Props) {
   if (accepted) {
     return (
-      <Status
-        title="Partnership confirmed"
-        body="You’re official partners. The link appears on both public profiles and the network map."
-        href="/dashboard"
-        cta="Open network map"
-      />
+      <div className="space-y-4">
+        <Status
+          title="Partnership confirmed"
+          body="You’re official partners. The link appears on both public profiles and the network map."
+          href="/dashboard"
+          cta="Open network map"
+        />
+        <PostConfirmTestimonial
+          requesterName={requesterName?.trim() || "Your partner"}
+          testimonialUrl={testimonialUrl ?? null}
+        />
+      </div>
     );
   }
 

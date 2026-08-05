@@ -244,6 +244,22 @@ async function respondClientRequest(
     redirect(withBackQuery(path, { error: error.message }));
   }
 
+  if (response === "confirmed") {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.email) {
+      const { offerTestimonialAfterConfirm } = await import(
+        "@/features/testimonials/post-confirm-notify"
+      );
+      await offerTestimonialAfterConfirm({
+        token,
+        source: "case_study",
+        toEmail: user.email,
+      });
+    }
+  }
+
   revalidatePath(path);
   revalidatePath(`/c/${company.slug}`);
   revalidatePath("/welcome");

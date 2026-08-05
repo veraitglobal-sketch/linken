@@ -49,7 +49,7 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     pro: true,
     height: testimonialHeight("grid", 3),
     requirementHint: "Requires at least one published client testimonial.",
-    unavailableCtaHref: "/dashboard/widgets",
+    unavailableCtaHref: "/dashboard/testimonials",
     unavailableCtaLabel: "Invite clients",
   },
   {

@@ -97,13 +97,27 @@ export async function respondPartnership(formData: FormData) {
       payload,
       `partnership_${partnershipId}`,
     );
+
+    const {
+      offerPartnershipTestimonial,
+      testimonialOfferQuery,
+    } = await import("@/features/testimonials/partnership-offer");
+    const tmUrl = await offerPartnershipTestimonial({
+      partnershipId,
+      toEmail: user.email,
+    });
+    revalidatePath(back);
+    revalidatePath(`/c/${mine.slug}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/partners");
+    redirect(
+      `${back}?accepted=1${testimonialOfferQuery(tmUrl)}`,
+    );
   }
 
   revalidatePath(back);
   revalidatePath(`/c/${mine.slug}`);
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/partners");
-  redirect(
-    decision === "accepted" ? `${back}?accepted=1` : `${back}?declined=1`,
-  );
+  redirect(`${back}?declined=1`);
 }

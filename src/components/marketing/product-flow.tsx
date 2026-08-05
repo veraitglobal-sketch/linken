@@ -110,114 +110,118 @@ export function HomeProductFlow() {
 
   return (
     <div ref={sectionRef}>
-      <HomeSection className="!py-10 sm:!py-12">
-        {/* A rounded dark card on paper — the same shape the hero and the
-            closing block use. A full-bleed band breaks that rhythm. */}
-        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-navy shadow-[0_28px_80px_rgba(8,20,18,0.22)] lg:rounded-[32px]">
-          {/* Two people over one drawing — the section's argument, not decor.
-              Pushed far back so it reads as texture behind the product. */}
-          <Image
-            src="/images/hero-network.jpg"
-            alt=""
-            aria-hidden
-            fill
-            quality={72}
-            sizes="(max-width: 1152px) 100vw, 1152px"
-            className="scale-105 object-cover object-[62%_34%] opacity-[0.5] blur-[1px]"
-          />
-          {/* Light falls from the upper right, so the text side stays solid and
-              the window has somewhere to catch a highlight. */}
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(108deg, rgba(8,20,18,0.97) 0%, rgba(9,22,20,0.92) 34%, rgba(13,29,26,0.74) 68%, rgba(18,40,35,0.6) 100%)",
-            }}
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -top-40 -right-24 h-[620px] w-[760px] rounded-full opacity-[0.18] blur-[120px]"
-            style={{
-              background:
-                "radial-gradient(circle, #b9dccd 0%, #7eb8a4 35%, transparent 72%)",
-            }}
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/12"
-          />
+      <HomeSection className="!py-8 sm:!py-10">
+        <div className="relative mx-auto max-w-6xl">
+          {/* The dark card is only the sky. It stops partway down the window,
+              which then lands on paper — so the section is never a dark wall. */}
+          <div className="relative overflow-hidden rounded-[28px] bg-navy px-8 pt-8 pb-[240px] shadow-[0_28px_80px_rgba(8,20,18,0.22)] sm:px-12 sm:pt-9 md:pb-[270px] lg:rounded-[32px] lg:pb-[330px]">
+            {/* Two people over one drawing — the section's argument, not decor.
+                Now it has a short bright band to live in instead of a wall. */}
+            <Image
+              src="/images/hero-network.jpg"
+              alt=""
+              aria-hidden
+              fill
+              quality={72}
+              sizes="(max-width: 1152px) 100vw, 1152px"
+              className="scale-105 object-cover object-[58%_40%] opacity-[0.55]"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(104deg, rgba(8,20,18,0.96) 0%, rgba(9,22,20,0.9) 30%, rgba(12,28,25,0.72) 62%, rgba(16,37,32,0.55) 100%)",
+              }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-40 -right-24 h-[560px] w-[720px] rounded-full opacity-[0.2] blur-[120px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #b9dccd 0%, #7eb8a4 35%, transparent 72%)",
+              }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/12"
+            />
 
-          <div className="relative px-8 py-8 sm:px-12 sm:py-9">
-            <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-3">
-              <div className="min-w-0">
-                <HomeEyebrow onDark>How a record is made</HomeEyebrow>
-                <h2 className="mt-2.5 font-display text-[clamp(1.75rem,3vw,2.3rem)] leading-[1.06] font-medium tracking-[-0.035em] text-white">
-                  Nobody writes their own record.
-                </h2>
-              </div>
-              <p className="max-w-sm text-[14px] leading-relaxed text-white/55">
+            <div className="relative max-w-2xl">
+              <HomeEyebrow onDark>How a record is made</HomeEyebrow>
+              <h2 className="mt-2.5 font-display text-[clamp(1.75rem,3.2vw,2.45rem)] leading-[1.06] font-medium tracking-[-0.035em] text-white">
+                Nobody writes their own record.
+              </h2>
+              <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-white/60">
                 One company adds the other. The other one decides whether it is
                 true. Nothing reaches a visitor in between.
               </p>
             </div>
-
-            {/* Held back from the card edges so the ground it sits on stays
-                visible — the window is an object in the section, not its wall. */}
-            <div className="relative mx-auto mt-8 hidden w-full max-w-[860px] md:block">
-              <Stage cropBottom={185}>
-                <AppWindow scene={scene} step={step} confirmed={confirmed} />
-              </Stage>
-
-              {/* The one sentence the whole section exists for, said out loud
-                  the moment the record becomes real. */}
-              <div
-                className={cn(
-                  "absolute -bottom-5 -left-14 flex items-center gap-2.5 rounded-2xl border border-white/12 bg-[#0b1a18]/85 py-2.5 pr-4 pl-3 backdrop-blur transition-[opacity,transform] duration-700 ease-out",
-                  confirmed
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-2 opacity-0",
-                )}
-              >
-                <CheckMark />
-                <span className="text-[12.5px] font-medium text-white/85">
-                  Confirmed by both companies
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-8 md:hidden">
-              <MobileFlow step={step} confirmed={confirmed} />
-            </div>
-
-            <ol className="mt-7 grid gap-x-10 gap-y-5 border-t border-white/10 pt-5 sm:grid-cols-3">
-              {STEPS.map((s, i) => {
-                const active = i === activeStep;
-                return (
-                  <li
-                    key={s.label}
-                    className="transition-opacity duration-500"
-                    style={{ opacity: active ? 1 : 0.4 }}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        className={cn(
-                          "h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-500",
-                          active ? "bg-[#7eb8a4]" : "bg-white/30",
-                        )}
-                      />
-                      <p className="text-[13px] font-semibold text-white">
-                        {s.label}
-                      </p>
-                    </div>
-                    <p className="mt-2 text-[13px] leading-relaxed text-white/55">
-                      {s.body}
-                    </p>
-                  </li>
-                );
-              })}
-            </ol>
           </div>
+
+          {/* Pulled up over the card's lower edge: the top of the window is in
+              the dark, the bottom stands on paper. No crop — the product is
+              shown whole. */}
+          <div className="relative z-10 mx-auto -mt-[200px] hidden w-full max-w-[820px] px-2 md:-mt-[225px] md:block lg:-mt-[280px]">
+            <Stage>
+              <AppWindow scene={scene} step={step} confirmed={confirmed} />
+            </Stage>
+
+            {/* The one sentence the whole section exists for, said out loud the
+                moment the record becomes real — now on paper, at full contrast. */}
+            <div
+              className={cn(
+                "absolute -bottom-4 -left-6 flex items-center gap-2.5 rounded-2xl border border-line bg-surface py-2.5 pr-4 pl-3 shadow-[0_10px_30px_rgba(8,20,18,0.12)] transition-[opacity,transform] duration-700 ease-out",
+                confirmed
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-2 opacity-0",
+              )}
+            >
+              <CheckMark />
+              <span className="text-[12.5px] font-medium text-ink">
+                Confirmed by both companies
+              </span>
+            </div>
+          </div>
+
+          <div className="-mt-[180px] px-2 pt-0 md:hidden">
+            <MobileFlow step={step} confirmed={confirmed} />
+          </div>
+
+          {/* On paper, in ink — three dim lines on near-black were unreadable. */}
+          <ol className="mt-10 grid gap-x-10 gap-y-5 border-t border-line pt-6 sm:grid-cols-3">
+            {STEPS.map((s, i) => {
+              const active = i === activeStep;
+              return (
+                <li key={s.label}>
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className={cn(
+                        "h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-500",
+                        active ? "bg-blue" : "bg-line",
+                      )}
+                    />
+                    <p
+                      className={cn(
+                        "text-[13px] font-semibold transition-colors duration-500",
+                        active ? "text-ink" : "text-muted",
+                      )}
+                    >
+                      {s.label}
+                    </p>
+                  </div>
+                  <p
+                    className={cn(
+                      "mt-2 text-[13px] leading-relaxed transition-colors duration-500",
+                      active ? "text-ink-soft" : "text-muted",
+                    )}
+                  >
+                    {s.body}
+                  </p>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </HomeSection>
     </div>

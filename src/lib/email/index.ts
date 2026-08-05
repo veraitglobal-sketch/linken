@@ -4,6 +4,7 @@ export {
   sendClientConfirmationEmail,
   sendReferenceConfirmEmail,
   sendPostConfirmTestimonialEmail,
+  sendTestimonialInviteEmail,
   sendClaimInviteEmail,
   sendTeamJoinInviteEmail,
   sendOwnershipTransferEmail,

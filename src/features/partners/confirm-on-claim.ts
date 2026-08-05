@@ -84,4 +84,15 @@ export async function confirmPartnershipsAfterClaim(
       `partnership_${p.id}`,
     );
   }
+
+  // Pending testimonial rows for each newly accepted partnership (email later via Studio/resend).
+  const { ensureTestimonialAfterConfirm } = await import(
+    "@/features/testimonials/post-confirm"
+  );
+  for (const p of accept) {
+    await ensureTestimonialAfterConfirm({
+      token: p.id as string,
+      source: "partnership",
+    });
+  }
 }
