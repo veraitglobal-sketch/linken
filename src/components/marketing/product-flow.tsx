@@ -110,43 +110,87 @@ export function HomeProductFlow() {
 
   return (
     <div ref={sectionRef}>
-      <HomeSection>
+      <HomeSection className="!py-10 sm:!py-12">
         {/* A rounded dark card on paper — the same shape the hero and the
             closing block use. A full-bleed band breaks that rhythm. */}
         <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-navy shadow-[0_28px_80px_rgba(8,20,18,0.22)] lg:rounded-[32px]">
+          {/* Two people over one drawing — the section's argument, not decor.
+              Pushed far back so it reads as texture behind the product. */}
+          <Image
+            src="/images/hero-network.jpg"
+            alt=""
+            aria-hidden
+            fill
+            quality={72}
+            sizes="(max-width: 1152px) 100vw, 1152px"
+            className="scale-105 object-cover object-[62%_34%] opacity-[0.5] blur-[1px]"
+          />
+          {/* Light falls from the upper right, so the text side stays solid and
+              the window has somewhere to catch a highlight. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute -top-32 right-[12%] h-[460px] w-[640px] rounded-full opacity-[0.16] blur-[110px]"
+            className="absolute inset-0"
             style={{
-              background: "radial-gradient(circle, #7eb8a4, transparent 70%)",
+              background:
+                "linear-gradient(108deg, rgba(8,20,18,0.97) 0%, rgba(9,22,20,0.92) 34%, rgba(13,29,26,0.74) 68%, rgba(18,40,35,0.6) 100%)",
             }}
           />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-40 -right-24 h-[620px] w-[760px] rounded-full opacity-[0.18] blur-[120px]"
+            style={{
+              background:
+                "radial-gradient(circle, #b9dccd 0%, #7eb8a4 35%, transparent 72%)",
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/12"
+          />
 
-          <div className="relative px-8 py-14 sm:px-12 sm:py-16">
-            <div className="max-w-2xl">
-              <HomeEyebrow onDark>How a record is made</HomeEyebrow>
-              <h2 className="mt-3 font-display text-[clamp(1.9rem,3.6vw,2.7rem)] leading-[1.08] font-medium tracking-[-0.035em] text-white">
-                Nobody writes their own record.
-              </h2>
-              <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-white/60">
+          <div className="relative px-8 py-8 sm:px-12 sm:py-9">
+            <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-3">
+              <div className="min-w-0">
+                <HomeEyebrow onDark>How a record is made</HomeEyebrow>
+                <h2 className="mt-2.5 font-display text-[clamp(1.75rem,3vw,2.3rem)] leading-[1.06] font-medium tracking-[-0.035em] text-white">
+                  Nobody writes their own record.
+                </h2>
+              </div>
+              <p className="max-w-sm text-[14px] leading-relaxed text-white/55">
                 One company adds the other. The other one decides whether it is
                 true. Nothing reaches a visitor in between.
               </p>
             </div>
 
-            {/* Full width: the app has a panel on either side, so a text column
-                beside it would starve the middle. */}
-            <div className="mt-10 hidden md:block">
-              <Stage>
+            {/* Held back from the card edges so the ground it sits on stays
+                visible — the window is an object in the section, not its wall. */}
+            <div className="relative mx-auto mt-8 hidden w-full max-w-[860px] md:block">
+              <Stage cropBottom={185}>
                 <AppWindow scene={scene} step={step} confirmed={confirmed} />
               </Stage>
+
+              {/* The one sentence the whole section exists for, said out loud
+                  the moment the record becomes real. */}
+              <div
+                className={cn(
+                  "absolute -bottom-5 -left-14 flex items-center gap-2.5 rounded-2xl border border-white/12 bg-[#0b1a18]/85 py-2.5 pr-4 pl-3 backdrop-blur transition-[opacity,transform] duration-700 ease-out",
+                  confirmed
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-2 opacity-0",
+                )}
+              >
+                <CheckMark />
+                <span className="text-[12.5px] font-medium text-white/85">
+                  Confirmed by both companies
+                </span>
+              </div>
             </div>
 
             <div className="mt-8 md:hidden">
               <MobileFlow step={step} confirmed={confirmed} />
             </div>
 
-            <ol className="mt-10 grid gap-x-10 gap-y-6 border-t border-white/10 pt-8 sm:grid-cols-3">
+            <ol className="mt-7 grid gap-x-10 gap-y-5 border-t border-white/10 pt-5 sm:grid-cols-3">
               {STEPS.map((s, i) => {
                 const active = i === activeStep;
                 return (
@@ -190,10 +234,14 @@ export function HomeProductFlow() {
 function Stage({
   children,
   bleedRight = 0,
+  cropBottom = 0,
 }: {
   children: ReactNode;
   /** Extra width past the slot, clipped by the card — keeps the scale up. */
   bleedRight?: number;
+  /** Design px trimmed off the bottom, so the window runs out of frame
+   *  instead of forcing the section past one screen. */
+  cropBottom?: number;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -218,8 +266,8 @@ function Stage({
       style={{ width: bleedRight ? `calc(100% + ${bleedRight}px)` : "100%" }}
     >
       <div
-        className="relative w-full overflow-hidden rounded-[20px] ring-1 ring-[#0e1f1c]/10 shadow-[0_2px_4px_rgba(8,20,18,0.04),0_18px_40px_-12px_rgba(8,20,18,0.35),0_48px_100px_-30px_rgba(0,0,0,0.5)]"
-        style={{ aspectRatio: `${DESIGN_W} / ${DESIGN_H}` }}
+        className="relative w-full overflow-hidden rounded-[18px] ring-1 ring-white/10 shadow-[0_1px_0_rgba(255,255,255,0.16)_inset,0_10px_24px_-6px_rgba(0,0,0,0.45),0_40px_70px_-20px_rgba(0,0,0,0.6),0_90px_140px_-50px_rgba(0,0,0,0.75)]"
+        style={{ aspectRatio: `${DESIGN_W} / ${DESIGN_H - cropBottom}` }}
       >
         <div
           className="absolute top-0 left-0 origin-top-left bg-surface"
@@ -248,10 +296,10 @@ function AppWindow({
   confirmed: boolean;
 }) {
   return (
-    <div className="relative h-full w-full">
-      <Pane show={scene === "workspace"}>
-        <WorkspaceScene step={step} confirmed={confirmed} />
-      </Pane>
+    <div className="relative h-full w-full overflow-hidden">
+      {/* The workspace is the floor of the section; the confirmation is the
+          other party's screen sliding over it and away again. */}
+      <WorkspaceScene step={step} confirmed={confirmed} />
       <Pane show={scene === "confirm"}>
         <ConfirmScene step={step} />
       </Pane>
@@ -259,15 +307,17 @@ function AppWindow({
   );
 }
 
+/**
+ * Both scenes are opaque full screens, so they must never cross-fade — at 50%
+ * you see one through the other. The incoming one slides over instead.
+ */
 function Pane({ show, children }: { show: boolean; children: ReactNode }) {
   return (
     <div
       aria-hidden={!show}
       className={cn(
-        "absolute inset-0 transition-[opacity,transform] duration-500 ease-out",
-        show
-          ? "opacity-100 translate-y-0"
-          : "pointer-events-none translate-y-2 opacity-0",
+        "absolute inset-0 transition-transform duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+        show ? "translate-x-0" : "pointer-events-none translate-x-full",
       )}
     >
       {children}
@@ -787,12 +837,14 @@ function ConfirmScene({ step }: { step: number }) {
         </span>
       </div>
 
-      <div className="flex min-h-0 flex-1 items-center justify-center px-8 py-6">
+      {/* Top-aligned: the frame is cropped at the bottom, so centring would
+          push the decision below the fold. */}
+      <div className="flex min-h-0 flex-1 justify-center px-8 pt-5">
         <div className="w-[620px]">
           <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
             Partner confirmation
           </p>
-          <h2 className="mt-2 font-display text-[30px] leading-[1.1] font-medium tracking-[-0.035em] text-ink">
+          <h2 className="mt-2 font-display text-[26px] leading-[1.1] font-medium tracking-[-0.035em] text-ink">
             {HUB.name} says they worked with you.
           </h2>
           <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
@@ -801,7 +853,7 @@ function ConfirmScene({ step }: { step: number }) {
             this partnership is real.
           </p>
 
-          <div className="mt-5 flex items-center gap-3 rounded-2xl border border-line/80 bg-surface px-4 py-3.5">
+          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-line/80 bg-surface px-4 py-3">
             <Mark name={HUB.name} initials={HUB.initials} logo={HUB.logo} />
             <div className="min-w-0 flex-1">
               <p className="truncate text-[14px] font-semibold tracking-[-0.02em] text-ink">
@@ -816,7 +868,7 @@ function ConfirmScene({ step }: { step: number }) {
             </div>
           </div>
 
-          <ul className="mt-5 border-t border-line/70">
+          <ul className="mt-4 border-t border-line/70">
             {[
               "Nothing about this partnership is public until you press confirm.",
               "Once confirmed, it appears on both company profiles at the same time.",
@@ -834,7 +886,7 @@ function ConfirmScene({ step }: { step: number }) {
             ))}
           </ul>
 
-          <div className="mt-6 flex gap-2.5">
+          <div className="mt-5 flex gap-2.5">
             <div
               className={cn(
                 "flex h-11 flex-1 items-center justify-center rounded-xl text-[14px] font-semibold transition-all duration-300",
@@ -857,7 +909,7 @@ function ConfirmScene({ step }: { step: number }) {
             </div>
           </div>
 
-          <p className="mt-4 text-[11.5px] leading-relaxed text-muted">
+          <p className="mt-3 text-[11.5px] leading-relaxed text-muted">
             You received this because {HUB.name} added {TARGET.name} on Hansala.
             Only your company can create this record.
           </p>
