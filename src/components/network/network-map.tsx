@@ -14,7 +14,6 @@ import {
   BackgroundVariant,
   ConnectionMode,
   Controls,
-  MarkerType,
   ReactFlow,
   addEdge,
   applyEdgeChanges,
@@ -39,6 +38,7 @@ import {
   toHaloNodes,
 } from "@/components/network/network-cluster-nodes";
 import { NetworkEdgeLine } from "@/components/network/network-edge";
+import { toFlowEdge } from "@/components/network/network-flow-edge";
 import { NetworkHint } from "@/components/network/network-hint";
 import { NetworkMapLegend } from "@/components/network/network-map-legend";
 import type { OwnershipSlice } from "@/components/network/network-ownership-chart";
@@ -67,6 +67,7 @@ import {
 import type {
   NetworkEdge,
   NetworkGraph,
+  NetworkNode,
   NetworkNodeData,
 } from "@/features/network/types";
 
@@ -89,54 +90,6 @@ type Props = {
   title?: string;
   companySlug?: string;
 };
-
-function toFlowEdge(e: NetworkEdge, selected: boolean, editable = false): Edge {
-  const isOwns = e.type === "subsidiary";
-  const isCoOwner = e.type === "co_owner";
-  const isOwnership = isOwns || isCoOwner;
-  const isStructure = isOwns || e.type === "member_of";
-  const isPartner = e.type === "partner";
-
-  const stroke = selected
-    ? "#1a5c51"
-    : isOwnership
-      ? "#0e1f1c"
-      : isPartner
-        ? "#8a948e"
-        : "#a3aba6";
-
-  return {
-    id: e.id,
-    source: e.source,
-    target: e.target,
-    type: "network",
-    data: e,
-    selectable: true,
-    focusable: true,
-    deletable: Boolean(e.detachable) && editable,
-    reconnectable: isStructure,
-    interactionWidth: 28,
-    style: {
-      stroke,
-      strokeWidth: selected ? 2 : isOwnership ? 1.75 : 1.15,
-      strokeDasharray: isCoOwner
-        ? "8 4"
-        : isPartner || e.type === "client"
-          ? "1.5 4.5"
-          : undefined,
-      opacity: selected ? 1 : isPartner ? 0.72 : 0.88,
-    },
-    animated: false,
-    markerEnd: isOwnership
-      ? {
-          type: MarkerType.ArrowClosed,
-          color: stroke,
-          width: 10,
-          height: 10,
-        }
-      : undefined,
-  };
-}
 
 function graphSignature(graph: NetworkGraph) {
   return [
@@ -227,6 +180,26 @@ export function NetworkMap({
   const signature = useMemo(() => graphSignature(graph), [graph]);
   const groupId = graph.context?.groupId ?? null;
   const layoutKey = useMemo(() => graphLayoutKey(graph), [graph]);
+  const nodesById = useMemo(
+    () => new Map(graph.nodes.map((n) => [n.id, n] as const)),
+    [graph.nodes],
+  );
+
+  const buildFlowEdges = useCallback(
+    (companyNodes: Node[], activeId: string | null) => {
+      const posMap = new Map(
+        companyNodes.map((n) => [n.id, n.position] as const),
+      );
+      return graph.edges.map((e) => {
+        const hot =
+          Boolean(activeId) &&
+          (e.source === activeId || e.target === activeId);
+        return toFlowEdge(e, hot, editable, posMap, nodesById);
+      });
+    },
+    [graph.edges, editable, nodesById],
+  );
+
   const clusterMembershipRef = useRef<
     { ownerId: string; nodeIds: string[] }[]
   >([]);
@@ -280,9 +253,9 @@ export function NetworkMap({
     );
 
     setNodes([...toHaloNodes(clusters), ...companyNodes]);
-    setEdges(graph.edges.map((e) => toFlowEdge(e, false, editable)));
+    setEdges(buildFlowEdges(companyNodes, null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signature, layoutKey, editable, onSelect, onAdd, setNodes, setEdges]);
+  }, [signature, layoutKey, editable, onSelect, onAdd, setNodes, setEdges, buildFlowEdges]);
 
   useEffect(() => {
     setNodes((prev) =>
@@ -301,25 +274,12 @@ export function NetworkMap({
         };
       }),
     );
-    setEdges((prev) =>
-      prev.map((e) => {
-        const raw = e.data as NetworkEdge | undefined;
-        const hot =
-          Boolean(selectedId) &&
-          (e.source === selectedId || e.target === selectedId);
-        return toFlowEdge(
-          raw ?? {
-            id: e.id,
-            source: e.source,
-            target: e.target,
-            type: "partner",
-          },
-          hot,
-          editable,
-        );
-      }),
-    );
-  }, [selectedId, onSelect, onAdd, editable, setNodes, setEdges]);
+    setEdges((prevEdges) => {
+      const company = nodes.filter((n) => !isClusterNodeId(n.id));
+      if (company.length === 0) return prevEdges;
+      return buildFlowEdges(company, selectedId);
+    });
+  }, [selectedId, onSelect, onAdd, editable, setNodes, setEdges, buildFlowEdges, nodes]);
 
   const flash = useCallback((msg: string, isError = false) => {
     if (!isError) return;
@@ -355,9 +315,10 @@ export function NetworkMap({
         clusterMembershipRef.current,
         posMap,
       );
+      setEdges(buildFlowEdges(company, selectedId));
       return [...toHaloNodes(clusters), ...company];
     });
-  }, [persistPositions, setNodes]);
+  }, [buildFlowEdges, persistPositions, selectedId, setEdges, setNodes]);
 
   const resetLayout = useCallback(() => {
     clearGraphPositions(layoutKey);
@@ -621,9 +582,9 @@ export function NetworkMap({
       >
         <Background
           variant={BackgroundVariant.Lines}
-          gap={28}
+          gap={24}
           lineWidth={0.5}
-          color="rgba(14, 31, 28, 0.045)"
+          color="rgba(14, 31, 28, 0.04)"
           bgColor="transparent"
         />
         <Controls

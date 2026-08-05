@@ -74,6 +74,25 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
         className={cn(HANDLE, wireClass(canWire))}
       />
 
+      <Handle
+        id="top-t"
+        type="target"
+        position={Position.Top}
+        isConnectable={canWire}
+        isConnectableStart={canWire}
+        isConnectableEnd={canWire}
+        className={cn(HANDLE, wireClass(canWire))}
+      />
+      <Handle
+        id="top-s"
+        type="source"
+        position={Position.Top}
+        isConnectable={canWire}
+        isConnectableStart={canWire}
+        isConnectableEnd={canWire}
+        className={cn(HANDLE, wireClass(canWire))}
+      />
+
       <div
         onClick={() => d.onSelect?.(id, d)}
         onKeyDown={(e) => {
@@ -90,7 +109,7 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
           expanded ? (isHub ? "rounded-2xl" : "rounded-xl") : "rounded-full",
           d.kind === "client" ? "border-dashed border-line" : "border-line/90",
           isPartner && !isSelected && "opacity-[0.9]",
-          isHub && !isSelected && "border-navy/20",
+          isHub && !isSelected && "border-navy/20 ring-1 ring-navy/[0.06]",
           isSelected
             ? "border-blue/40 shadow-[0_0_0_2px_rgba(26,92,81,0.1),0_10px_24px_rgba(8,20,18,0.07)]"
             : cn(
@@ -154,6 +173,25 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
         id="right-s"
         type="source"
         position={Position.Right}
+        isConnectable={canWire}
+        isConnectableStart={canWire}
+        isConnectableEnd={canWire}
+        className={cn(HANDLE, wireClass(canWire))}
+      />
+
+      <Handle
+        id="bottom-t"
+        type="target"
+        position={Position.Bottom}
+        isConnectable={canWire}
+        isConnectableStart={canWire}
+        isConnectableEnd={canWire}
+        className={cn(HANDLE, wireClass(canWire))}
+      />
+      <Handle
+        id="bottom-s"
+        type="source"
+        position={Position.Bottom}
         isConnectable={canWire}
         isConnectableStart={canWire}
         isConnectableEnd={canWire}

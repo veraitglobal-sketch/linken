@@ -365,6 +365,8 @@ a {
 
 .linken-flow .react-flow__edge-path {
   transition: stroke 0.18s ease, stroke-width 0.18s ease, opacity 0.18s ease;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .linken-flow .react-flow__edge.selected .react-flow__edge-path,

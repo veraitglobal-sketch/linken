@@ -6,7 +6,7 @@ import {
   type EdgeProps,
 } from "@xyflow/react";
 
-/** Smoothstep edge with a visible "×" to disconnect — click a selected line to remove it. */
+/** Smoothstep edge — rounded corners, detach control when selected. */
 export function NetworkEdgeLine(props: EdgeProps) {
   const {
     id,
@@ -30,9 +30,10 @@ export function NetworkEdgeLine(props: EdgeProps) {
     targetX,
     targetY,
     targetPosition,
+    borderRadius: 16,
+    offset: 6,
   });
 
-  // `deletable` already folds in both server "detachable" and viewer "editable".
   const showDetach = Boolean(selected && deletable);
 
   return (
