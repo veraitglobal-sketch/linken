@@ -46,19 +46,19 @@ const DONE_STEP = 8;
 const STEPS = [
   {
     label: "You add them",
-    body: "Open the company, press add, type a domain. They land on your map as pending — visible to you, to nobody else.",
+    body: "Type a domain. They land on your map as pending — visible only to you.",
     from: 0,
     to: 5,
   },
   {
     label: "They confirm",
-    body: "The other side gets one email and presses one button. There is no other way to create the record.",
+    body: "One email, one button. There is no other way to create the record.",
     from: 6,
     to: 7,
   },
   {
     label: "It becomes public",
-    body: "Only now does the partnership appear on your profile, your map, and every widget on your site.",
+    body: "It appears on the profile, the map, and every widget on your site.",
     from: 8,
     to: 8,
   },
@@ -110,118 +110,86 @@ export function HomeProductFlow() {
 
   return (
     <div ref={sectionRef}>
-      <HomeSection className="!py-8 sm:!py-10">
-        <div className="relative mx-auto max-w-6xl">
-          {/* The dark card is only the sky. It stops partway down the window,
-              which then lands on paper — so the section is never a dark wall. */}
-          <div className="relative overflow-hidden rounded-[28px] bg-navy px-8 pt-8 pb-[240px] shadow-[0_28px_80px_rgba(8,20,18,0.22)] sm:px-12 sm:pt-9 md:pb-[270px] lg:rounded-[32px] lg:pb-[330px]">
-            {/* Two people over one drawing — the section's argument, not decor.
-                Now it has a short bright band to live in instead of a wall. */}
-            <Image
-              src="/images/hero-network.jpg"
-              alt=""
-              aria-hidden
-              fill
-              quality={72}
-              sizes="(max-width: 1152px) 100vw, 1152px"
-              className="scale-105 object-cover object-[58%_40%] opacity-[0.55]"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(104deg, rgba(8,20,18,0.96) 0%, rgba(9,22,20,0.9) 30%, rgba(12,28,25,0.72) 62%, rgba(16,37,32,0.55) 100%)",
-              }}
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -top-40 -right-24 h-[560px] w-[720px] rounded-full opacity-[0.2] blur-[120px]"
-              style={{
-                background:
-                  "radial-gradient(circle, #b9dccd 0%, #7eb8a4 35%, transparent 72%)",
-              }}
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/12"
-            />
+      <HomeSection className="!py-7 sm:!py-8">
+        {/* Three elements, each lighter than the one above it: a statement,
+            an index, the evidence. No photograph, no bloom — the product is
+            the only bright thing in the section. */}
+        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-navy px-8 py-7 sm:px-11 sm:py-8 lg:rounded-[32px]">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+              backgroundSize: "64px 64px",
+              maskImage:
+                "linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 62%)",
+              WebkitMaskImage:
+                "linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 62%)",
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/12"
+          />
 
-            <div className="relative max-w-2xl">
+          {/* One column, and the space to its right left empty on purpose. */}
+          <div className="relative max-w-xl">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-7 bg-[#7eb8a4]" />
               <HomeEyebrow onDark>How a record is made</HomeEyebrow>
-              <h2 className="mt-2.5 font-display text-[clamp(1.75rem,3.2vw,2.45rem)] leading-[1.06] font-medium tracking-[-0.035em] text-white">
-                Nobody writes their own record.
-              </h2>
-              <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-white/60">
-                One company adds the other. The other one decides whether it is
-                true. Nothing reaches a visitor in between.
-              </p>
             </div>
+            <h2 className="mt-4 font-display text-[clamp(1.8rem,3.1vw,2.25rem)] leading-[1.02] font-medium tracking-[-0.042em] text-white">
+              Nobody writes
+              <br />
+              their own record.
+            </h2>
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/55">
+              One adds, the other decides. Nothing reaches a visitor in between.
+            </p>
           </div>
 
-          {/* Pulled up over the card's lower edge: the top of the window is in
-              the dark, the bottom stands on paper. No crop — the product is
-              shown whole. */}
-          <div className="relative z-10 mx-auto -mt-[200px] hidden w-full max-w-[820px] px-2 md:-mt-[225px] md:block lg:-mt-[280px]">
-            <Stage>
-              <AppWindow scene={scene} step={step} confirmed={confirmed} />
-            </Stage>
-
-            {/* The one sentence the whole section exists for, said out loud the
-                moment the record becomes real — now on paper, at full contrast. */}
-            <div
-              className={cn(
-                "absolute -bottom-4 -left-6 flex items-center gap-2.5 rounded-2xl border border-line bg-surface py-2.5 pr-4 pl-3 shadow-[0_10px_30px_rgba(8,20,18,0.12)] transition-[opacity,transform] duration-700 ease-out",
-                confirmed
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-2 opacity-0",
-              )}
-            >
-              <CheckMark />
-              <span className="text-[12.5px] font-medium text-ink">
-                Confirmed by both companies
-              </span>
-            </div>
-          </div>
-
-          <div className="-mt-[180px] px-2 pt-0 md:hidden">
-            <MobileFlow step={step} confirmed={confirmed} />
-          </div>
-
-          {/* On paper, in ink — three dim lines on near-black were unreadable. */}
-          <ol className="mt-10 grid gap-x-10 gap-y-5 border-t border-line pt-6 sm:grid-cols-3">
+          {/* An index of where the animation is, not three paragraphs. */}
+          <ol className="relative mt-7 grid border-y border-white/10 sm:grid-cols-3">
             {STEPS.map((s, i) => {
               const active = i === activeStep;
               return (
-                <li key={s.label}>
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className={cn(
-                        "h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-500",
-                        active ? "bg-blue" : "bg-line",
-                      )}
-                    />
-                    <p
-                      className={cn(
-                        "text-[13px] font-semibold transition-colors duration-500",
-                        active ? "text-ink" : "text-muted",
-                      )}
-                    >
-                      {s.label}
-                    </p>
-                  </div>
-                  <p
+                <li
+                  key={s.label}
+                  className="flex items-baseline gap-3 py-3 sm:border-l sm:border-white/10 sm:pl-6 sm:first:border-l-0 sm:first:pl-0"
+                >
+                  <span
                     className={cn(
-                      "mt-2 text-[13px] leading-relaxed transition-colors duration-500",
-                      active ? "text-ink-soft" : "text-muted",
+                      "text-[11px] font-semibold tabular-nums transition-colors duration-500",
+                      active ? "text-[#7eb8a4]" : "text-white/25",
                     )}
                   >
-                    {s.body}
-                  </p>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-[13px] font-medium transition-colors duration-500",
+                      active ? "text-white" : "text-white/40",
+                    )}
+                  >
+                    {s.label}
+                  </span>
                 </li>
               );
             })}
           </ol>
+
+          {/* Full content width — a wider window means a bigger scale and a
+              crisper UI. It runs off the card's bottom edge on purpose. */}
+          <div className="relative mx-auto mt-6 hidden w-full max-w-[760px] md:block">
+            <Stage>
+              <AppWindow scene={scene} step={step} confirmed={confirmed} />
+            </Stage>
+          </div>
+
+          <div className="mt-8 pb-10 md:hidden">
+            <MobileFlow step={step} confirmed={confirmed} />
+          </div>
         </div>
       </HomeSection>
     </div>
@@ -871,24 +839,6 @@ function ConfirmScene({ step }: { step: number }) {
               </p>
             </div>
           </div>
-
-          <ul className="mt-4 border-t border-line/70">
-            {[
-              "Nothing about this partnership is public until you press confirm.",
-              "Once confirmed, it appears on both company profiles at the same time.",
-              "You can withdraw it at any time, and it disappears from both.",
-            ].map((line) => (
-              <li
-                key={line}
-                className="flex items-start gap-2.5 border-b border-line/70 py-2.5"
-              >
-                <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#7eb8a4]" />
-                <span className="text-[12.5px] leading-relaxed text-ink-soft">
-                  {line}
-                </span>
-              </li>
-            ))}
-          </ul>
 
           <div className="mt-5 flex gap-2.5">
             <div

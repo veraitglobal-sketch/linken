@@ -45,19 +45,30 @@ const stories = [
   },
 ];
 
-/** Sticky stack: each card pins; the next slides over it. */
+/** Sticky stack: staggered top so closed cards keep a visible ridge. */
+const STACK_TOP = "6rem";
+const PEEK = 28;
+const LAST = stories.length - 1;
+
 export function HomeStories() {
   return (
     <HomeSection tone="tight" className="!pb-8 sm:!pb-10">
-      <div className="mx-auto max-w-6xl">
+      {/* Extra bottom pad keeps staggered sticky tops from collapsing flat. */}
+      <div
+        className="mx-auto max-w-6xl"
+        style={{ paddingBottom: `calc(32svh + ${LAST * PEEK}px)` }}
+      >
         {stories.map((story, index) => (
           <div
             key={story.person}
-            className="sticky top-24 mb-4 last:mb-0"
-            style={{ zIndex: index + 1 }}
+            className="sticky mb-5 last:mb-0"
+            style={{
+              zIndex: index + 1,
+              top: `calc(${STACK_TOP} + ${index * PEEK}px)`,
+            }}
           >
             <article
-              className={`group grid h-[min(70svh,500px)] w-full overflow-hidden rounded-[28px] shadow-[0_28px_70px_rgba(10,20,18,0.22)] ring-1 ring-white/5 ${story.tone} lg:grid-cols-[1.12fr_0.88fr]`}
+              className={`group grid h-[min(68svh,480px)] w-full overflow-hidden rounded-[28px] shadow-[0_28px_70px_rgba(10,20,18,0.22)] ring-1 ring-white/10 ${story.tone} lg:grid-cols-[1.12fr_0.88fr]`}
             >
               <div className="flex flex-col justify-between px-7 py-8 sm:px-10 sm:py-10">
                 <div>
