@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
+import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
+import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import { cn } from "@/lib/cn";
 
 /**
@@ -78,9 +80,9 @@ export function OverviewRecord() {
             title="Released"
             mono="Public"
             active={open}
-            body="Same confirmation on both profiles. Case study credit uses the same gate."
+            body="The same confirmation lands on both profiles — and on the widget already pasted into your site."
           >
-            <ReleasedMarks on={open} />
+            <ReleasedSite on={open} />
           </StatePane>
         </div>
       </div>
@@ -121,7 +123,8 @@ function StatePane({
           {mono}
         </p>
       </div>
-      <div className="mt-8 min-h-[5.5rem]">{children}</div>
+      {/* Both panes reserve the same block so the captions stay on one line. */}
+      <div className="mt-8 min-h-[13rem]">{children}</div>
       <p className="mt-6 max-w-[34ch] text-[14px] leading-relaxed text-muted">
         {body}
       </p>
@@ -139,21 +142,51 @@ function RedactionBars() {
   );
 }
 
-function ReleasedMarks({ on }: { on: boolean }) {
+/**
+ * Not an illustration of the result — the result itself. `EmbedBareLogo` and
+ * `EmbedVerifiedLockup` are the components a host site actually renders, so
+ * what a visitor sees here cannot drift from what a customer gets.
+ *
+ * Framed as a magnified crop of a live page rather than a whole mock screen.
+ */
+function ReleasedSite({ on }: { on: boolean }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-3 transition-opacity duration-500",
-        on ? "opacity-100" : "opacity-0",
+        "transition-[opacity,transform] duration-700 ease-out",
+        on ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0",
       )}
-      aria-hidden
     >
-      <span className="size-2.5 rounded-full bg-navy" />
-      <span className="h-px w-16 bg-navy" />
-      <span className="size-2.5 rounded-full bg-navy" />
-      <span className="ml-2 font-mono text-[11px] tracking-[0.12em] text-blue uppercase">
-        Confirmed
-      </span>
+      <div className="relative overflow-hidden rounded-2xl border border-ink/[0.08] bg-white shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_14px_36px_rgba(8,20,18,0.1)]">
+        <div className="flex items-center gap-2 border-b border-ink/[0.06] px-3.5 py-2.5">
+          <span className="size-[7px] rounded-full bg-ink/10" />
+          <span className="size-[7px] rounded-full bg-ink/10" />
+          <span className="size-[7px] rounded-full bg-ink/10" />
+          <span className="ml-2 text-[10.5px] text-muted">verait.de</span>
+        </div>
+
+        {/* Scaled past the frame so it reads as a close crop of a bigger page. */}
+        <div className="origin-top-left scale-[1.06] px-5 pt-5 pb-6">
+          <p className="text-[9.5px] font-semibold tracking-[0.18em] text-plus uppercase">
+            Partners
+          </p>
+          <div className="mt-3.5 flex items-center gap-5">
+            <EmbedBareLogo name="Vera IT" initials="VI" logoUrl={VERA_LOGO} />
+            <span className="h-4 w-px bg-ink/10" />
+            <EmbedBareLogo
+              name="Dienstemarkt"
+              initials="DM"
+              logoUrl={DIENSTEMARKT_LOGO}
+            />
+          </div>
+          <div className="mt-4 border-t border-ink/[0.07] pt-3.5">
+            <EmbedVerifiedLockup size="sm" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
+
+const VERA_LOGO = "/logos/showcase/vera.png";
+const DIENSTEMARKT_LOGO = "/logos/showcase/dienstemarkt-mark.png";

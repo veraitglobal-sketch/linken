@@ -4,7 +4,6 @@ import { HomeContrast } from "@/components/marketing/home-contrast";
 import { FAQ_ITEMS, HomeFaq } from "@/components/marketing/home-faq";
 import { HomeHero } from "@/components/marketing/home-hero";
 import { HomeHighlights } from "@/components/marketing/home-highlights";
-import { HomeIconLine } from "@/components/marketing/home-icon-line";
 import { HomeOverview } from "@/components/marketing/home-overview";
 import { HomeStories } from "@/components/marketing/home-stories";
 import { HomeProductFlow } from "@/components/marketing/product-flow";
@@ -35,7 +34,6 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <HomeHero />
-      <HomeIconLine />
       <HomeOverview />
       <HomeProductFlow />
       <HomeContrast />
