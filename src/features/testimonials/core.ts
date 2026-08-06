@@ -12,13 +12,20 @@ export type CreateTestimonialInviteInput = {
   sourceId?: string | null;
   authorEmail?: string | null;
   authorCompanyId?: string | null;
+  /** Agent API uses service_role RPC (no auth.uid()). Dashboard uses owner RPC. */
+  mode?: "owner" | "agent";
 };
 
 export async function createTestimonialInviteCore(
   supabase: SupabaseClient,
   input: CreateTestimonialInviteInput,
 ): Promise<CoreResult<{ token: string; url: string }>> {
-  const { data: token, error } = await supabase.rpc("create_testimonial_invite", {
+  const rpc =
+    input.mode === "agent"
+      ? "agent_create_testimonial_invite"
+      : "create_testimonial_invite";
+
+  const { data: token, error } = await supabase.rpc(rpc, {
     p_company_id: input.companyId,
     p_source: input.source ?? "standalone",
     p_source_id: input.sourceId ?? null,

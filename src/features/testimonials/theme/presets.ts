@@ -9,6 +9,11 @@ export type TestimonialPreset =
 export type TestimonialShadow = "none" | "soft" | "lifted";
 export type TestimonialAlign = "left" | "center";
 
+/** Upper bound only. The real count is resolved from the container width, so
+ *  a choice made on a wide screen can never break a narrow host column. */
+export type TestimonialColumns = 2 | 3 | 4;
+export const TESTIMONIAL_COLUMNS: TestimonialColumns[] = [2, 3, 4];
+
 export type TestimonialThemeTokens = {
   preset: TestimonialPreset;
   fontFamily: string;
@@ -25,6 +30,7 @@ export type TestimonialThemeTokens = {
   shadow: TestimonialShadow;
   spacing: number;
   align: TestimonialAlign;
+  maxColumns: TestimonialColumns;
   customCss: string;
 };
 
@@ -64,6 +70,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
     shadow: "none",
     spacing: 4,
     align: "left",
+    maxColumns: 2,
     customCss: "",
   },
   editorial: {
@@ -82,6 +89,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
     shadow: "none",
     spacing: 8,
     align: "left",
+    maxColumns: 2,
     customCss: "",
   },
   card: {
@@ -100,6 +108,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
     shadow: "soft",
     spacing: 18,
     align: "left",
+    maxColumns: 2,
     customCss: "",
   },
   bordered: {
@@ -118,6 +127,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
     shadow: "none",
     spacing: 18,
     align: "left",
+    maxColumns: 2,
     customCss: "",
   },
   glass: {
@@ -136,6 +146,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
     shadow: "soft",
     spacing: 18,
     align: "left",
+    maxColumns: 2,
     customCss: "",
   },
   dark: {
@@ -154,6 +165,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
     shadow: "none",
     spacing: 18,
     align: "left",
+    maxColumns: 2,
     customCss: "",
   },
 };

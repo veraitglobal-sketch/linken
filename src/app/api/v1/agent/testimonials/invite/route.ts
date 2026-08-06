@@ -1,12 +1,23 @@
 /**
  * Agent API — create testimonial invite (author writes via token link).
+ * Invite only — author text stays immutable; humans publish via /testimonial/{token}.
  */
 import type { NextRequest } from "next/server";
 import { maskEmail } from "@/features/agent-api/audit";
 import { parseJsonBody, withAgentAuth } from "@/features/agent-api/handler";
 import { agentOptions } from "@/features/agent-api/http";
+import { getCompanyMetaForAgent } from "@/features/agent-api/queries";
+import {
+  canSendInvite,
+  recordInviteSent,
+} from "@/features/agent-api/rate-limit";
 import { createTestimonialInviteCore } from "@/features/testimonials/core";
+import { sendTestimonialInviteEmail } from "@/lib/email";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  inviteLimitBody,
+  parseInviteBody,
+} from "@/features/testimonials/agent-invite-parse";
 
 export function OPTIONS() {
   return agentOptions();
@@ -14,6 +25,16 @@ export function OPTIONS() {
 
 export async function POST(request: NextRequest) {
   return withAgentAuth(request, "invites:send", async (req, ctx) => {
+    if (!canSendInvite(ctx.keyId)) {
+      return {
+        status: 429,
+        body: inviteLimitBody(),
+        headers: { "Retry-After": "86400" },
+        auditAction: "testimonial.invite",
+        auditSummary: "Invite daily limit exceeded",
+      };
+    }
+
     const admin = createAdminClient();
     if (!admin) {
       return {
@@ -27,13 +48,17 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    const parsed = await parseJsonBody<{
-      source?: string;
-      source_id?: string;
-      author_email?: string;
-      author_company_id?: string;
-    }>(req);
+    const meta = await getCompanyMetaForAgent(admin, ctx.companyId);
+    if (!meta) {
+      return {
+        status: 404,
+        body: {
+          error: { code: "not_found", message: "Company not found." },
+        },
+      };
+    }
 
+    const parsed = await parseJsonBody<Record<string, unknown>>(req);
     if (!parsed.ok) {
       return {
         status: 422,
@@ -45,26 +70,23 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    const source = parsed.data.source ?? "standalone";
-    if (
-      !["standalone", "reference", "case_study", "partnership"].includes(source)
-    ) {
+    const body = parseInviteBody(parsed.data);
+    if (!body.ok) {
       return {
         status: 422,
-        body: {
-          error: { code: "invalid_request", message: "Invalid source." },
-        },
+        body: { error: { code: "invalid_request", message: body.error } },
         auditAction: "testimonial.invite",
-        auditSummary: "Invalid source",
+        auditSummary: body.error,
       };
     }
 
     const result = await createTestimonialInviteCore(admin, {
       companyId: ctx.companyId,
-      source: source as "standalone" | "reference" | "case_study" | "partnership",
-      sourceId: parsed.data.source_id ?? null,
-      authorEmail: parsed.data.author_email ?? null,
-      authorCompanyId: parsed.data.author_company_id ?? null,
+      source: body.source,
+      sourceId: body.sourceId,
+      authorEmail: body.email,
+      authorCompanyId: body.authorCompanyId,
+      mode: "agent",
     });
 
     if (!result.ok) {
@@ -78,14 +100,28 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    const email = String(parsed.data.author_email ?? "");
+    let email_sent = false;
+    if (body.sendEmail) {
+      const sent = await sendTestimonialInviteEmail({
+        to: body.email,
+        providerName: meta.name,
+        testimonialUrl: result.data.url,
+      });
+      email_sent = sent.ok;
+    }
+
+    recordInviteSent(ctx.keyId);
     return {
       status: 201,
-      body: { data: result.data },
+      body: {
+        data: {
+          token: result.data.token,
+          url: result.data.url,
+          email_sent,
+        },
+      },
       auditAction: "testimonial.invite",
-      auditSummary: email
-        ? `Created testimonial invite for ${maskEmail(email)}`
-        : "Created testimonial invite",
+      auditSummary: `Created testimonial invite for ${maskEmail(body.email)}`,
     };
   });
 }

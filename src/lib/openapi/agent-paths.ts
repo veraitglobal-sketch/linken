@@ -130,7 +130,10 @@ export const AGENT_OPENAPI_PATHS = {
     get: op("List published testimonials for this company", "listTestimonials"),
   },
   "/testimonials/invite": {
-    post: op("Create testimonial invite (author submits via token link)", "createTestimonialInvite"),
+    post: op(
+      "Create testimonial invite + optional email (author submits via token; invites:send, 20/day)",
+      "createTestimonialInvite",
+    ),
   },
   "/scheduling": {
     get: op("Read Calendly/Cal.com booking link (Book a call)", "getScheduling"),

@@ -437,7 +437,7 @@ export default function DevelopersPage() {
                   </thead>
                   <tbody className="divide-y divide-line text-ink-soft">
                     {[
-                      ["read", "Company, refs, cases, partnerships, inquiries, analytics, audit"],
+                      ["read", "Company, refs, cases, partnerships, testimonials, inquiries, analytics, audit"],
                       ["content:write", "Content, logo, profile fields, case-study partner tags"],
                       ["invites:send", "Send confirmation / claim invites (never confirm)"],
                       ["team:manage", "Team list, invites, remove members (accept via /join)"],
@@ -490,6 +490,7 @@ export default function DevelopersPage() {
                       ["Case study cover + gallery", "PUT|DELETE …/case-studies/{id}/cover · …/gallery", "content:write"],
                       ["Client confirmation request", "POST /client-confirmations", "invites:send"],
                       ["Invite partner (ghost)", "POST /partner-invites", "invites:send"],
+                      ["List / invite testimonials", "GET /testimonials · POST /testimonials/invite", "read · invites:send"],
                       ["Verify domain / backlink", "GET|POST /verification…", "verification:run"],
                       ["Team invite / remove", "…/team…", "team:manage"],
                       ["Team profile + photo + permissions", "PATCH …/team/members/{id} · PUT …/photo", "team:manage"],

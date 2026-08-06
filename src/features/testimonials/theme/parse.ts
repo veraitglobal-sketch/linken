@@ -36,6 +36,13 @@ function parseAlign(raw: unknown, fallback: TestimonialAlign): TestimonialAlign 
   return raw === "center" ? "center" : fallback;
 }
 
+function parseColumns(
+  raw: unknown,
+  fallback: TestimonialColumns,
+): TestimonialColumns {
+  return raw === 2 || raw === 3 || raw === 4 ? raw : fallback;
+}
+
 function parseFontFamily(raw: unknown, fallback: string): string {
   if (typeof raw !== "string") return fallback;
   const v = raw.trim().slice(0, 200);
@@ -106,6 +113,7 @@ export function parseTestimonialTheme(raw: unknown): TestimonialThemeTokens {
     shadow: parseShadow(o.shadow, base.shadow),
     spacing: clamp(typeof o.spacing === "number" ? o.spacing : base.spacing, 4, 32),
     align: parseAlign(o.align, base.align),
+    maxColumns: parseColumns(o.maxColumns ?? o.max_columns, base.maxColumns),
     customCss: parseCustomCss(o.customCss ?? o.custom_css),
   };
 }

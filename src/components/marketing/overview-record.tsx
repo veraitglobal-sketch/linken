@@ -2,9 +2,24 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
-import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
+import { EmbedProofRow } from "@/components/embed/embed-brand";
+import type { EmbedProofCompany } from "@/components/embed/embed-brand";
 import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import { cn } from "@/lib/cn";
+
+/**
+ * The widgets are the product's own components, given data directly — not an
+ * iframe to /embed/[slug]. The route needs a live company record; on a
+ * marketing page that would mean the section renders a "not found" document
+ * whenever the database is unreachable. Same code, no runtime dependency.
+ */
+const PARTNERS: EmbedProofCompany[] = [
+  {
+    name: "Dienstemarkt",
+    initials: "DM",
+    logoUrl: "/logos/showcase/dienstemarkt-mark.png",
+  },
+];
 
 /**
  * Retell-grade product stage — privacy state, no fake company cast.
@@ -80,7 +95,7 @@ export function OverviewRecord() {
             title="Released"
             mono="Public"
             active={open}
-            body="The same confirmation lands on both profiles — and on the widget already pasted into your site."
+            body="Paste the line once, or read the same records from the API. Every partner who confirms on Hansala appears here — nobody edits the page again."
           >
             <ReleasedSite on={open} />
           </StatePane>
@@ -100,7 +115,7 @@ function StatePane({
   title: string;
   mono: string;
   active: boolean;
-  body: string;
+  body: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -143,13 +158,25 @@ function RedactionBars() {
 }
 
 /**
- * Not an illustration of the result — the result itself. `EmbedBareLogo` and
+ * Not an illustration of the result — the result itself. `EmbedProofRow` and
  * `EmbedVerifiedLockup` are the components a host site actually renders, so
  * what a visitor sees here cannot drift from what a customer gets.
  *
- * Framed as a magnified crop of a live page rather than a whole mock screen.
+ * Data is passed in rather than fetched: a marketing page must never be able
+ * to answer 404 because a record or a database is missing.
  */
 function ReleasedSite({ on }: { on: boolean }) {
+  const [zoomed, setZoomed] = useState(false);
+
+  useEffect(() => {
+    if (!zoomed) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setZoomed(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [zoomed]);
+
   return (
     <div
       className={cn(
@@ -157,36 +184,93 @@ function ReleasedSite({ on }: { on: boolean }) {
         on ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0",
       )}
     >
-      <div className="relative overflow-hidden rounded-2xl border border-ink/[0.08] bg-white shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_14px_36px_rgba(8,20,18,0.1)]">
-        <div className="flex items-center gap-2 border-b border-ink/[0.06] px-3.5 py-2.5">
-          <span className="size-[7px] rounded-full bg-ink/10" />
-          <span className="size-[7px] rounded-full bg-ink/10" />
-          <span className="size-[7px] rounded-full bg-ink/10" />
-          <span className="ml-2 text-[10.5px] text-muted">verait.de</span>
-        </div>
+      <div className="overflow-hidden rounded-xl bg-navy px-3.5 py-3">
+        <code className="block truncate font-mono text-[10.5px] leading-5 text-white/75">
+          <span className="text-[#8fc9b3]">&lt;iframe</span> src=
+          &quot;hansala.com/embed/verait&quot;&gt;
+        </code>
+        <code className="block truncate font-mono text-[10.5px] leading-5 text-white/45">
+          <span className="text-[#8fc9b3]">GET</span>{" "}
+          /api/v1/companies/verait/partners
+        </code>
+      </div>
 
-        {/* Scaled past the frame so it reads as a close crop of a bigger page. */}
-        <div className="origin-top-left scale-[1.06] px-5 pt-5 pb-6">
-          <p className="text-[9.5px] font-semibold tracking-[0.18em] text-plus uppercase">
-            Partners
-          </p>
-          <div className="mt-3.5 flex items-center gap-5">
-            <EmbedBareLogo name="Vera IT" initials="VI" logoUrl={VERA_LOGO} />
-            <span className="h-4 w-px bg-ink/10" />
-            <EmbedBareLogo
-              name="Dienstemarkt"
-              initials="DM"
-              logoUrl={DIENSTEMARKT_LOGO}
-            />
-          </div>
-          <div className="mt-4 border-t border-ink/[0.07] pt-3.5">
-            <EmbedVerifiedLockup size="sm" />
-          </div>
-        </div>
+      <Arrow />
+
+      {zoomed ? (
+        <button
+          type="button"
+          aria-label="Close enlarged widget"
+          onClick={() => setZoomed(false)}
+          className="fixed inset-0 z-40 cursor-zoom-out bg-navy/45 backdrop-blur-[2px]"
+        />
+      ) : null}
+
+      {/* One surface, two real widgets. Rendered from the product's own
+          components with data passed in, so the frame is never empty and can
+          never answer 404 — no route, no database, no network. */}
+      <div
+        className={cn(
+          zoomed
+            ? "fixed top-1/2 left-1/2 z-50 w-[min(760px,92vw)] -translate-x-1/2 -translate-y-1/2"
+            : "relative",
+        )}
+      >
+        <button
+          type="button"
+          aria-expanded={zoomed}
+          aria-label={zoomed ? "Close enlarged widget" : "Enlarge the widget"}
+          onClick={() => setZoomed((v) => !v)}
+          className={cn(
+            "block w-full overflow-hidden rounded-xl border border-ink/[0.08] bg-white text-left",
+            zoomed
+              ? "cursor-zoom-out shadow-[0_40px_90px_-20px_rgba(8,20,18,0.45)]"
+              : "cursor-zoom-in shadow-[0_10px_28px_rgba(8,20,18,0.08)]",
+          )}
+        >
+          <span className="flex items-center gap-2 border-b border-ink/[0.06] px-3.5 py-2">
+            <span className="size-[6px] rounded-full bg-ink/10" />
+            <span className="size-[6px] rounded-full bg-ink/10" />
+            <span className="ml-1.5 text-[10px] text-muted">verait.de</span>
+            <span className="ml-auto text-[9.5px] font-semibold tracking-[0.14em] text-plus uppercase">
+              {zoomed ? "Close" : "Enlarge"}
+            </span>
+          </span>
+
+          <span className="block px-4 pt-3.5 pb-4">
+            <span className="block text-[9px] font-semibold tracking-[0.18em] text-plus uppercase">
+              Partners
+            </span>
+            <span className="mt-2.5 block">
+              <EmbedProofRow
+                companies={PARTNERS}
+                total={PARTNERS.length}
+                theme="light"
+              />
+            </span>
+            <span className="mt-3.5 block border-t border-ink/[0.07] pt-3">
+              <EmbedVerifiedLockup size="sm" />
+            </span>
+          </span>
+        </button>
       </div>
     </div>
   );
 }
 
-const VERA_LOGO = "/logos/showcase/vera.png";
-const DIENSTEMARKT_LOGO = "/logos/showcase/dienstemarkt-mark.png";
+function Arrow() {
+  return (
+    <div className="my-2.5 flex justify-center" aria-hidden>
+      <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
+        <path
+          d="M7 1v17m0 0 5-5m-5 5-5-5"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-ink/25"
+        />
+      </svg>
+    </div>
+  );
+}

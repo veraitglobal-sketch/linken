@@ -111,7 +111,7 @@ export function testimonialsExample(siteUrl: string) {
   },
   "embed": {
     "iframe_url": "${siteUrl}/embed/example-architecture?variant=testimonials",
-    "script_url": "${siteUrl}/hs-testimonials.js"
+    "script_url": "${siteUrl}/hs-testimonials.js?v=2"
   },
   "testimonials": [
     {

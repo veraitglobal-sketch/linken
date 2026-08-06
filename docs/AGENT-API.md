@@ -12,9 +12,9 @@ OpenAPI: `GET /api/v1/openapi` (index) · `GET /api/v1/openapi/agent` (full agen
 
 | Scope | Use |
 |-------|-----|
-| `read` | GET company, case studies, references, partnerships, inquiries, analytics, audit-log |
+| `read` | GET company, case studies, references, partnerships, testimonials, inquiries, analytics, audit-log |
 | `content:write` | PATCH profile, case studies, image uploads, references content |
-| `invites:send` | Reference / partner / client confirmation emails (20/day) |
+| `invites:send` | Reference / partner / client confirmation / testimonial invites (20/day) |
 | `verification:run` | Domain verification status, instructions, check |
 | `webhooks:manage` | Outbound webhook endpoints (create/list/update/delete/test) |
 | `team:manage` | Team list, invitations, members, photos (**including GET /team**) |
@@ -133,6 +133,27 @@ curl -X POST "$BASE/partner-invites" -d '{"name":"…","invite_email":"…"}'
 ```
 
 No accept/decline via Agent API.
+
+## Testimonials
+
+```bash
+# Published only (author text immutable for the receiving company)
+curl "$BASE/testimonials" -H "Authorization: Bearer $KEY"
+
+# Invite a client to write (author publishes via token link)
+curl -X POST "$BASE/testimonials/invite" -H "Authorization: Bearer $KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "author_email": "client@example.com",
+    "source": "standalone",
+    "send_email": true
+  }'
+```
+
+Optional: `source` + `source_id` for `reference` | `case_study` | `partnership` (must already be confirmed).  
+`send_email: false` returns `url` only. Counts toward the 20 invites/day limit.
+
+Public embed (no key): `GET /api/v1/companies/{slug}/testimonials` · script `/hs-testimonials.js?v=2`.
 
 ## Verification
 

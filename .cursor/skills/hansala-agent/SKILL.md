@@ -31,7 +31,8 @@ Base: /api/v1/agent
 2. `PUT /case-studies/{id}/cover` — JSON `{ image_base64, content_type }` or multipart `file`
 3. `PUT /case-studies/{id}/gallery` — same (max 8 images)
 4. `POST /client-confirmations` — `{ case_study_slug, email }` (human confirms)
-5. Public URL returned in `case_study.public_url`
+5. Optional: `POST /testimonials/invite` — `{ author_email, source? }` (client writes quote)
+6. Public URL returned in `case_study.public_url`
 
 ## Team workflow (AI)
 
