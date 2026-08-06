@@ -1,6 +1,7 @@
 import {
   apiError,
   apiJson,
+  apiMethodNotAllowed,
   apiOptions,
 } from "@/features/public-api/v1/http";
 import { getPublicTestimonialsForSites } from "@/features/public-api/v1/testimonials-api";
@@ -41,4 +42,17 @@ export async function GET(request: Request, { params }: Props) {
     console.error("[api/v1/companies/testimonials] GET failed:", error);
     return apiError("internal", "Internal server error.", 500);
   }
+}
+
+export function POST() {
+  return apiMethodNotAllowed();
+}
+export function PUT() {
+  return apiMethodNotAllowed();
+}
+export function PATCH() {
+  return apiMethodNotAllowed();
+}
+export function DELETE() {
+  return apiMethodNotAllowed();
 }

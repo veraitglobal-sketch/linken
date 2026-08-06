@@ -19,30 +19,36 @@ export function HomeHero() {
               Hansala
             </p>
             <h1 className="animate-rise-delay mt-6 font-display text-[clamp(1.7rem,3.5vw,2.7rem)] leading-[1.14] font-medium tracking-[-0.032em] text-white/[0.92]">
-              The company page that shows who you build with — only after
-              they confirm.
+              Turn your past work into verified proof.
             </h1>
             <p className="animate-rise-delay mt-5 max-w-md text-[15px] leading-relaxed text-white/58">
-              Profiles, case studies, and partners. Public only with two
-              yeses.
+              Invite clients and partners to confirm your projects. Use
+              verified references on your company profile, website, and
+              proposals.
             </p>
           </div>
 
-          <div className="animate-rise-late flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Button
-              href="/onboarding"
-              variant="light"
-              className="h-12 min-w-[180px] px-6"
-            >
-              Create company
-            </Button>
-            <Button
-              href="/demo"
-              variant="onDark"
-              className="h-12 min-w-[180px] px-6"
-            >
-              See an example
-            </Button>
+          <div className="animate-rise-late">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button
+                href="/onboarding"
+                variant="light"
+                className="h-12 min-w-[200px] px-6"
+              >
+                Create your free profile
+              </Button>
+              <Button
+                href="#how-it-works"
+                variant="onDark"
+                className="h-12 min-w-[200px] px-6"
+              >
+                See how it works
+              </Button>
+            </div>
+            <p className="mt-5 max-w-md text-[12.5px] leading-relaxed text-white/45">
+              For architecture, engineering, construction, specialist
+              contractors, agencies, and consulting firms.
+            </p>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { signalsFromRows } from "@/features/activation/derive";
 
 export type RegistrationProgress = {
   doneCount: number;
@@ -8,16 +9,16 @@ export type RegistrationProgress = {
   nextStep: string | null;
 };
 
-const STEPS = [
-  { key: "verified", label: "Verify domain" },
-  { key: "partner", label: "Invite partner" },
-  { key: "evidence", label: "Add evidence" },
-  { key: "sent", label: "Send confirmation" },
-  { key: "confirmed", label: "Get confirmation" },
-  { key: "badge", label: "Embed badge" },
+const STEP_LABELS = [
+  "Company profile created",
+  "Domain verified",
+  "First project or relationship added",
+  "First invitation sent",
+  "First reference confirmed",
+  "Verified proof shared",
 ] as const;
 
-type CompanySeed = { id: string; verified: boolean };
+type CompanySeed = { id: string; verified: boolean; slug?: string };
 
 export async function batchRegistrationProgress(
   admin: SupabaseClient,
@@ -85,104 +86,69 @@ export async function batchRegistrationProgress(
     caseByCompany.set(cid, list);
   }
 
-  const partnerships = [...(reqPartnerships.data ?? []), ...(recPartnerships.data ?? [])];
-  const signals = buildSignals(ids, {
-    partnerships,
-    refs: refs.data ?? [],
-    caseByCompany,
-    confirmedCases,
-    confReqs: confReqs.data ?? [],
-    verifications: verifications.data ?? [],
-    embeds: embeds.data ?? [],
-  });
+  const partnerships = [
+    ...(reqPartnerships.data ?? []),
+    ...(recPartnerships.data ?? []),
+  ];
+  const websiteByCompany = new Map(
+    (verifications.data ?? []).map((v) => [
+      v.company_id as string,
+      Boolean(v.website_linked),
+    ]),
+  );
+  const embedCompanies = new Set(
+    (embeds.data ?? []).map((e) => e.company_id as string),
+  );
 
   for (const company of companies) {
-    const s = signals.get(company.id)!;
-    const flags = {
+    const cid = company.id;
+    const companyCases = caseByCompany.get(cid) ?? [];
+    const companyPartnerships = partnerships
+      .filter((p) => p.requester_id === cid || p.recipient_id === cid)
+      .map((p) => ({ status: p.status as string }));
+    const companyRefs = (refs.data ?? [])
+      .filter((r) => r.provider_company_id === cid)
+      .map((r) => ({
+        status: r.status as string,
+        invite_email: (r.invite_email as string | null) ?? null,
+      }));
+    const companyConfs = (confReqs.data ?? [])
+      .filter((r) => r.requested_by_company_id === cid)
+      .map((r) => ({
+        status: r.status as string,
+        email: (r.email as string | null) ?? null,
+      }));
+
+    const signals = signalsFromRows({
+      companySlug: company.slug ?? cid,
       verified: company.verified,
-      partner: s.hasPartnership,
-      evidence: s.hasEvidence,
-      sent: s.hasSentConfirmation,
-      confirmed: s.hasConfirmation,
-      badge: s.hasBadge,
-    };
-    const done = STEPS.filter((step) => flags[step.key]).length;
-    const next = STEPS.find((step) => !flags[step.key])?.label ?? null;
-    out.set(company.id, { doneCount: done, total: STEPS.length, nextStep: next });
+      refs: companyRefs,
+      caseCount: companyCases.length,
+      confReqs: companyConfs,
+      partnerships: companyPartnerships,
+      hasConfirmedCasePartner: companyCases.some((id) =>
+        confirmedCases.has(id),
+      ),
+      websiteLinked: websiteByCompany.get(cid) ?? false,
+      hasEmbedView: embedCompanies.has(cid),
+    });
+
+    const flags = [
+      true,
+      signals.verified,
+      signals.hasRelationship,
+      signals.hasInvitationSent,
+      signals.hasConfirmation,
+      signals.hasProofShared,
+    ];
+    const doneCount = flags.filter(Boolean).length;
+    const nextIdx = flags.findIndex((f) => !f);
+    out.set(company.id, {
+      doneCount,
+      total: STEP_LABELS.length,
+      nextStep: nextIdx >= 0 ? STEP_LABELS[nextIdx]! : null,
+    });
   }
 
   return out;
-}
-
-function buildSignals(
-  ids: string[],
-  data: {
-    partnerships: { requester_id: string; recipient_id: string; status: string }[];
-    refs: { provider_company_id: string; status: string; invite_email: string | null }[];
-    caseByCompany: Map<string, string[]>;
-    confirmedCases: Set<string>;
-    confReqs: { requested_by_company_id: string; status: string; email: string | null }[];
-    verifications: { company_id: string; website_linked: boolean | null }[];
-    embeds: { company_id: string }[];
-  },
-) {
-  const map = new Map(
-    ids.map((id) => [
-      id,
-      {
-        hasPartnership: false,
-        hasEvidence: false,
-        hasSentConfirmation: false,
-        hasConfirmation: false,
-        hasBadge: false,
-      },
-    ]),
-  );
-
-  for (const p of data.partnerships) {
-    for (const cid of [p.requester_id, p.recipient_id]) {
-      const s = map.get(cid);
-      if (!s) continue;
-      s.hasPartnership = true;
-      if (p.status === "accepted") s.hasConfirmation = true;
-    }
-  }
-
-  for (const r of data.refs) {
-    const s = map.get(r.provider_company_id);
-    if (!s) continue;
-    s.hasEvidence = true;
-    if (r.invite_email?.trim()) s.hasSentConfirmation = true;
-    if (r.status === "confirmed") s.hasConfirmation = true;
-  }
-
-  for (const [cid, caseList] of data.caseByCompany) {
-    const s = map.get(cid);
-    if (!s) continue;
-    s.hasEvidence = true;
-    if (caseList.some((id) => data.confirmedCases.has(id))) {
-      s.hasConfirmation = true;
-    }
-  }
-
-  for (const c of data.confReqs) {
-    const s = map.get(c.requested_by_company_id);
-    if (!s) continue;
-    if (c.email?.trim()) s.hasSentConfirmation = true;
-    if (c.status === "confirmed") s.hasConfirmation = true;
-  }
-
-  for (const v of data.verifications) {
-    if (v.website_linked) {
-      const s = map.get(v.company_id);
-      if (s) s.hasBadge = true;
-    }
-  }
-
-  for (const e of data.embeds) {
-    const s = map.get(e.company_id);
-    if (s) s.hasBadge = true;
-  }
-
-  return map;
 }

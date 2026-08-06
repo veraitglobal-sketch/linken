@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalDoc } from "@/components/legal/legal-doc";
+import { getLegalCompany } from "@/lib/legal/company";
+import { mailto } from "@/lib/legal/emails";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
@@ -8,8 +10,15 @@ export const metadata: Metadata = {
 };
 
 export default function CookiesPage() {
+  const privacy = getLegalCompany().privacyEmail;
+
   return (
-    <LegalDoc eyebrow="Legal" title="Cookie Policy" updated="27 July 2026">
+    <LegalDoc
+      eyebrow="Legal"
+      title="Cookie Policy"
+      updated="6 August 2026"
+      currentPath="/cookies"
+    >
       <p>
         This policy explains how Hansala uses cookies and similar technologies on
         hansala.com. It complements our{" "}
@@ -44,7 +53,8 @@ export default function CookiesPage() {
       <p>
         You can block or delete cookies in your browser. Essential cookies are
         required to stay signed in. For privacy requests, email{" "}
-        <a href="mailto:developers@hansala.com">developers@hansala.com</a>.
+        <a href={mailto(privacy)}>{privacy}</a> or see{" "}
+        <Link href="/data-deletion">data deletion</Link>.
       </p>
 
       <h2>More</h2>

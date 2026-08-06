@@ -1,42 +1,27 @@
 import Link from "next/link";
 import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
+import {
+  FOOTER_ACCOUNT,
+  FOOTER_DEVELOPERS,
+  FOOTER_PRODUCT,
+  FOOTER_TRUST,
+} from "@/components/layout/footer-links";
 import { Button } from "@/components/ui/button";
-
-const product = [
-  { label: "Developers", href: "/developers" },
-  { label: "Changelog", href: "/changelog" },
-  { label: "Status", href: "/status" },
-  { label: "Demo", href: "/demo" },
-];
-
-const developers = [
-  { label: "API docs", href: "/developers" },
-  { label: "OpenAPI", href: "/api/v1/openapi" },
-  { label: "Webhooks", href: "/developers/webhooks" },
-  { label: "API Terms", href: "/developers/api-terms" },
-];
-
-const legal = [
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" },
-  { label: "Cookies", href: "/cookies" },
-  { label: "Security", href: "/security" },
-  { label: "Contact", href: "mailto:developers@hansala.com" },
-];
-
-const account = [
-  { label: "Sign in", href: "/login" },
-  { label: "Create company", href: "/onboarding" },
-];
+import {
+  getLegalCompany,
+  legalCopyrightName,
+} from "@/lib/legal/company";
 
 /** Static footer — no auth/DB so marketing pages can stay cached. */
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const company = getLegalCompany();
+  const copyright = legalCopyrightName(company);
 
   return (
     <footer className="mt-8 border-t border-line bg-navy text-white">
       <div className="mx-auto max-w-6xl px-6 py-14 sm:px-8 lg:px-10">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.7fr_0.7fr_0.7fr] lg:gap-10">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.7fr_0.7fr_0.7fr_0.7fr] lg:gap-8">
           <div>
             <Link href="/" className="inline-flex no-underline">
               <EmbedVerifiedLockup theme="dark" size="lg" />
@@ -50,22 +35,25 @@ export function SiteFooter() {
             </Button>
           </div>
 
-          <FooterNav title="Product" links={product} />
-          <FooterNav title="Developers" links={developers} />
-          <FooterNav title="Legal" links={[...legal, ...account]} />
+          <FooterNav title="Product" links={[...FOOTER_PRODUCT]} />
+          <FooterNav title="Trust" links={[...FOOTER_TRUST]} />
+          <FooterNav title="Developers" links={[...FOOTER_DEVELOPERS]} />
+          <FooterNav title="Account" links={[...FOOTER_ACCOUNT]} />
         </div>
       </div>
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-5 text-[12px] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <p>© {year} Hansala. All rights reserved.</p>
           <p>
-            <a
-              href="mailto:developers@hansala.com"
+            © {year} {copyright}. All rights reserved.
+          </p>
+          <p>
+            <Link
+              href="/contact"
               className="text-white/45 transition-colors hover:text-white"
             >
-              developers@hansala.com
-            </a>
+              {company.contactEmail}
+            </Link>
           </p>
         </div>
       </div>
@@ -88,21 +76,12 @@ function FooterNav({
       <ul className="mt-4 space-y-3">
         {links.map((link) => (
           <li key={link.href + link.label}>
-            {link.href.startsWith("mailto:") ? (
-              <a
-                href={link.href}
-                className="text-[14px] text-white/58 transition-colors hover:text-white"
-              >
-                {link.label}
-              </a>
-            ) : (
-              <Link
-                href={link.href}
-                className="text-[14px] text-white/58 transition-colors hover:text-white"
-              >
-                {link.label}
-              </Link>
-            )}
+            <Link
+              href={link.href}
+              className="text-[14px] text-white/58 transition-colors hover:text-white"
+            >
+              {link.label}
+            </Link>
           </li>
         ))}
       </ul>

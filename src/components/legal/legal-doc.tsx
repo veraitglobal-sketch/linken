@@ -1,14 +1,25 @@
 import type { ReactNode } from "react";
+import { TrustNav } from "@/components/legal/trust-nav";
 
 type Props = {
   eyebrow: string;
   title: string;
   updated: string;
   children: ReactNode;
+  /** Hide trust cross-links (e.g. status). */
+  hideTrustNav?: boolean;
+  currentPath?: string;
 };
 
 /** Lean legal / policy document shell. */
-export function LegalDoc({ eyebrow, title, updated, children }: Props) {
+export function LegalDoc({
+  eyebrow,
+  title,
+  updated,
+  children,
+  hideTrustNav,
+  currentPath,
+}: Props) {
   return (
     <article className="mx-auto max-w-2xl px-4 py-14 sm:px-6 sm:py-20">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
@@ -21,6 +32,7 @@ export function LegalDoc({ eyebrow, title, updated, children }: Props) {
       <div className="prose-legal mt-10 space-y-6 text-[15px] leading-relaxed text-ink [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-medium [&_h2]:tracking-[-0.03em] [&_h2]:text-ink [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5 [&_a]:font-semibold [&_a]:text-ink [&_a]:underline-offset-2 hover:[&_a]:underline [&_table]:my-0 [&_table]:w-full">
         {children}
       </div>
+      {hideTrustNav ? null : <TrustNav current={currentPath} />}
     </article>
   );
 }

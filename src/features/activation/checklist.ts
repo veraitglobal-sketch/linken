@@ -1,19 +1,12 @@
+import {
+  deriveActivationSteps,
+  signalsFromRows,
+  type ActivationStep,
+  type ActivationStepId,
+} from "@/features/activation/derive";
 import { createClient } from "@/lib/supabase/server";
 
-export type ActivationStepId =
-  | "verify_domain"
-  | "invite_partner"
-  | "add_evidence"
-  | "send_confirmation"
-  | "get_confirmation"
-  | "embed_badge";
-
-export type ActivationStep = {
-  id: ActivationStepId;
-  label: string;
-  href: string;
-  done: boolean;
-};
+export type { ActivationStep, ActivationStepId };
 
 export type ActivationChecklist = {
   companyId: string;
@@ -24,11 +17,13 @@ export type ActivationChecklist = {
   complete: boolean;
   /** First incomplete step — for “Next step” strips. */
   next: ActivationStep | null;
+  /** True once the first mutual confirmation exists. */
+  activated: boolean;
 };
 
 /**
  * Derive activation progress from live data — never stored separately.
- * Order: verify → partner (network) → evidence → confirmations → badge.
+ * Win condition: first confirmed reference / partnership / case.
  */
 export async function getActivationChecklist(
   companyId: string,
@@ -84,87 +79,45 @@ export async function getActivationChecklist(
     const company = companyRes.data;
     if (!company) return null;
 
-    const slug = company.slug as string;
-    const profileHref = `/c/${slug}`;
-    const refs = refsRes.data ?? [];
     const cases = casesRes.data ?? [];
-    const confReqs = confReqsRes.data ?? [];
-    const partnerships = partnershipsRes.data ?? [];
-
-    const hasEvidence = refs.length > 0 || cases.length > 0;
-
-    const hasSentConfirmation =
-      refs.some((r) => Boolean((r.invite_email as string | null)?.trim())) ||
-      confReqs.some((r) => Boolean((r.email as string | null)?.trim()));
-
-    const hasConfirmedRef = refs.some((r) => r.status === "confirmed");
-    const hasAcceptedPartner = partnerships.some(
-      (r) => r.status === "accepted",
+    const hasConfirmedCasePartner = await hasConfirmedCaseStudyPartner(
+      supabase,
+      cases.map((c) => c.id as string),
     );
-    const hasConfirmedCase =
-      confReqs.some((r) => r.status === "confirmed") ||
-      (await hasConfirmedCaseStudyPartner(
-        supabase,
-        cases.map((c) => c.id as string),
-      ));
 
-    const hasAnyConfirmation =
-      hasConfirmedRef || hasAcceptedPartner || hasConfirmedCase;
+    const signals = signalsFromRows({
+      companySlug: company.slug as string,
+      verified: Boolean(company.verified),
+      refs: (refsRes.data ?? []).map((r) => ({
+        status: r.status as string,
+        invite_email: (r.invite_email as string | null) ?? null,
+      })),
+      caseCount: cases.length,
+      confReqs: (confReqsRes.data ?? []).map((r) => ({
+        status: r.status as string,
+        email: (r.email as string | null) ?? null,
+      })),
+      partnerships: (partnershipsRes.data ?? []).map((r) => ({
+        status: r.status as string,
+      })),
+      hasConfirmedCasePartner,
+      websiteLinked: Boolean(verRes.data?.website_linked),
+      hasEmbedView: (embedRes.data ?? []).length > 0,
+    });
 
-    const hasPartnership = partnerships.length > 0;
-    const websiteLinked = Boolean(verRes.data?.website_linked);
-    const hasEmbedView = (embedRes.data ?? []).length > 0;
-
-    const steps: ActivationStep[] = [
-      {
-        id: "verify_domain",
-        label: "Verify your domain",
-        href: "/dashboard/verification",
-        done: Boolean(company.verified),
-      },
-      {
-        id: "invite_partner",
-        label: "Invite your first partner",
-        href: `${profileHref}?add=1#add-partner`,
-        done: hasPartnership,
-      },
-      {
-        id: "add_evidence",
-        label: "Add a reference or case study",
-        href: "/dashboard/cases",
-        done: hasEvidence,
-      },
-      {
-        id: "send_confirmation",
-        label: "Send it for confirmation",
-        href: `${profileHref}#references`,
-        done: hasSentConfirmation,
-      },
-      {
-        id: "get_confirmation",
-        label: "Get your first confirmation",
-        href: profileHref,
-        done: hasAnyConfirmation,
-      },
-      {
-        id: "embed_badge",
-        label: "Put your badge on your website",
-        href: "/dashboard/widgets",
-        done: websiteLinked || hasEmbedView,
-      },
-    ];
-
+    const steps = deriveActivationSteps(signals);
     const doneCount = steps.filter((s) => s.done).length;
     const next = steps.find((s) => !s.done) ?? null;
 
     return {
       companyId,
-      companySlug: slug,
+      companySlug: company.slug as string,
       steps,
       doneCount,
       total: steps.length,
       complete: doneCount === steps.length,
       next,
+      activated: signals.hasConfirmation,
     };
   } catch (err) {
     console.error("[getActivationChecklist]", err);

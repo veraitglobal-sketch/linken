@@ -51,7 +51,10 @@ export async function addReference(formData: FormData) {
     redirect(`${back}?error=${encodeURIComponent(result.error)}`);
   }
 
+  const { logActivationEvent } = await import("@/features/activation/events");
+  void logActivationEvent(company.id, "first_project_created");
   if (inviteEmail) {
+    void logActivationEvent(company.id, "first_invitation_started");
     const sent = await sendReferenceConfirmEmail({
       to: inviteEmail,
       providerName: company.name,
@@ -65,6 +68,7 @@ export async function addReference(formData: FormData) {
         `${back}?error=${encodeURIComponent(sent.error ?? "Could not send confirmation email.")}`,
       );
     }
+    void logActivationEvent(company.id, "first_invitation_sent");
   }
 
   await setWorkspacePreference("company", company.id);
@@ -125,6 +129,13 @@ async function respondServiceReference(
       service?: string;
     } | null;
     if (row?.provider_company_id && row.id) {
+      const { logActivationEvent } = await import(
+        "@/features/activation/events"
+      );
+      void logActivationEvent(
+        row.provider_company_id,
+        "first_reference_confirmed",
+      );
       const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
       emitWebhookEvent(
         row.provider_company_id,

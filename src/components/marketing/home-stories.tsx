@@ -1,30 +1,33 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { HomeSection } from "@/components/marketing/home-section";
+import {
+  HomeEyebrow,
+  HomeSection,
+} from "@/components/marketing/home-section";
 
-const stories = [
+/** Sector scenarios — no invented customers, names, or quotes. */
+const scenarios = [
   {
     tone: "bg-[#0e1f1c]",
-    quote:
-      "Clients finally see our full delivery network — architecture, build, electrical — confirmed, not claimed.",
-    person: "Elena Vogt",
-    role: "Managing Director, architecture firm",
-    with: "Partners confirmed on shared case studies",
+    sector: "Architecture & engineering",
+    headline:
+      "Show the delivery network behind every project — design, build, and specialist trades, each confirmed by the other side.",
+    detail: "Shared case studies appear on both firms' profiles.",
     href: "/onboarding",
-    cta: "Create company",
+    cta: "Create your free profile",
     image: "/images/story-projects.jpg",
     imageAlt: "Architectural plans, hard hat, and tools on a project desk",
     focus: "object-[center_42%]",
   },
   {
     tone: "bg-[#142a25]",
-    quote:
-      "Being confirmed on a lead firm’s page put us in front of clients who already trusted the network.",
-    person: "Markus Stein",
-    role: "Owner, general contracting",
-    with: "Shared case study on both profiles",
+    sector: "Construction & contracting",
+    headline:
+      "Subcontractors appear confirmed on the lead firm's page — visible to clients who already trust that network.",
+    detail: "One record, published on both sides.",
     href: "/demo",
-    cta: "See an example",
+    cta: "See a live example",
     image: "/images/story-collaboration-v2.jpg",
     imageAlt:
       "Contractor on a construction site in front of a modern concrete building",
@@ -32,13 +35,12 @@ const stories = [
   },
   {
     tone: "bg-[#1a3530]",
-    quote:
-      "One link in the proposal. They scan, they verify, they trust the network — before the first meeting.",
-    person: "Sofia Keller",
-    role: "Head of Sales, specialist trade",
-    with: "Verified one-pager attached to every bid",
+    sector: "Agencies & consultancies",
+    headline:
+      "One link in the proposal. The buyer opens it, sees confirmed clients and partners, and verifies before the first meeting.",
+    detail: "A one-pager with the same confirmed records, for every bid.",
     href: "/onboarding",
-    cta: "Create company",
+    cta: "Create your free profile",
     image: "/images/story-team.jpg",
     imageAlt: "Delivery team reviewing a shared project brief",
     focus: "object-center",
@@ -48,19 +50,37 @@ const stories = [
 /** Sticky stack: staggered top so closed cards keep a visible ridge. */
 const STACK_TOP = "6rem";
 const PEEK = 28;
-const LAST = stories.length - 1;
+const LAST = scenarios.length - 1;
 
 export function HomeStories() {
   return (
     <HomeSection tone="tight" className="!pb-8 sm:!pb-10">
+      <div className="mx-auto mb-12 max-w-6xl">
+        <HomeEyebrow>Proof, not promises</HomeEyebrow>
+        <h2 className="mt-5 max-w-2xl font-display text-[clamp(2rem,4vw,3rem)] font-medium leading-[1.08] tracking-[-0.042em] text-ink">
+          We don&rsquo;t print logos we don&rsquo;t have.
+        </h2>
+        <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-ink-soft">
+          Every record on Hansala is confirmed by both companies — including
+          ours. Browse the{" "}
+          <Link
+            href="/demo"
+            className="font-medium text-ink underline decoration-line underline-offset-4 hover:decoration-ink"
+          >
+            demo profile
+          </Link>{" "}
+          (sample data, clearly labelled) to see exactly what a buyer sees.
+        </p>
+      </div>
+
       {/* Extra bottom pad keeps staggered sticky tops from collapsing flat. */}
       <div
         className="mx-auto max-w-6xl"
         style={{ paddingBottom: `calc(32svh + ${LAST * PEEK}px)` }}
       >
-        {stories.map((story, index) => (
+        {scenarios.map((story, index) => (
           <div
-            key={story.person}
+            key={story.sector}
             className="sticky mb-5 last:mb-0"
             style={{
               zIndex: index + 1,
@@ -81,16 +101,17 @@ export function HomeStories() {
                     </span>
                   </div>
                   <p className="mt-6 font-display text-[clamp(1.35rem,2.5vw,2.05rem)] leading-[1.28] tracking-[-0.032em] text-white/[0.96]">
-                    “{story.quote}”
+                    {story.headline}
                   </p>
                 </div>
                 <div className="mt-8 flex flex-wrap items-end justify-between gap-5 border-t border-white/10 pt-6">
                   <div>
                     <p className="text-[14px] font-semibold text-white">
-                      {story.person}
+                      {story.sector}
                     </p>
-                    <p className="mt-0.5 text-[13px] text-white/60">{story.role}</p>
-                    <p className="mt-2 text-[12px] text-white/40">{story.with}</p>
+                    <p className="mt-2 text-[12px] text-white/50">
+                      {story.detail}
+                    </p>
                   </div>
                   <Button
                     href={story.href}

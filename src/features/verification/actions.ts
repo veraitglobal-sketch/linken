@@ -49,6 +49,8 @@ async function markVerified(
   });
   if (error) throw new Error(error.message);
   void matchCompanyToSearches(companyId, "became_verified");
+  const { logActivationEvent } = await import("@/features/activation/events");
+  void logActivationEvent(companyId, "domain_verified");
 }
 
 async function markWebsiteLinked(companyId: string, linked: boolean) {
@@ -61,6 +63,10 @@ async function markWebsiteLinked(companyId: string, linked: boolean) {
     p_linked: linked,
   });
   if (error) throw new Error(error.message);
+  if (linked) {
+    const { logActivationEvent } = await import("@/features/activation/events");
+    void logActivationEvent(companyId, "first_reference_published");
+  }
 }
 
 function dash(msg?: string) {

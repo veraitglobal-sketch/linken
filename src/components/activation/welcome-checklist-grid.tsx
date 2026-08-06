@@ -10,10 +10,11 @@ export function WelcomeChecklistGrid({ steps }: Props) {
     <section className="mt-8">
       <header className="mb-4 px-0.5">
         <h2 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
-          What to do next
+          Path to your first verified reference
         </h2>
         <p className="mt-1 text-[14px] text-muted">
-          Tap any step — each one makes your profile more credible.
+          You can skip ahead or continue later. The next incomplete step is your
+          best action.
         </p>
       </header>
       <ol className="grid gap-3 sm:grid-cols-2">

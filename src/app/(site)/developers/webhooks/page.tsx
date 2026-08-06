@@ -81,7 +81,7 @@ export default function WebhooksPage() {
 
       <p>
         OpenAPI: <Link href="/api/v1/openapi/agent">Agent spec</Link> ·{" "}
-        <a href="mailto:developers@hansala.com">developers@hansala.com</a>
+        <a href="mailto:info@hansala.com">info@hansala.com</a>
       </p>
     </LegalDoc>
   );

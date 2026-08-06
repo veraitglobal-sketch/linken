@@ -54,7 +54,7 @@ export default function ApiTermsPage() {
       <h2>Contact</h2>
       <p>
         API support:{" "}
-        <a href="mailto:developers@hansala.com">developers@hansala.com</a> ·{" "}
+        <a href="mailto:info@hansala.com">info@hansala.com</a> ·{" "}
         <Link href="/developers">Developer docs</Link> ·{" "}
         <Link href="/api/v1/openapi">OpenAPI</Link>
       </p>

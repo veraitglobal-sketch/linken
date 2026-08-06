@@ -35,6 +35,8 @@ async function markVerified(
   });
   if (error) throw new Error(error.message);
   void matchCompanyToSearches(companyId, "became_verified");
+  const { logActivationEvent } = await import("@/features/activation/events");
+  void logActivationEvent(companyId, "domain_verified");
 }
 
 async function markWebsiteLinked(companyId: string, linked: boolean) {

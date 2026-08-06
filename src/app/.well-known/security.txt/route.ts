@@ -1,3 +1,4 @@
+import { getLegalCompany } from "@/lib/legal/company";
 import { getSiteUrl } from "@/lib/site";
 
 /**
@@ -6,14 +7,15 @@ import { getSiteUrl } from "@/lib/site";
  */
 export function GET() {
   const site = getSiteUrl().replace(/\/$/, "");
-  const expires = "2027-07-26T00:00:00.000Z";
+  const security = getLegalCompany().securityEmail;
+  const expires = "2027-08-06T00:00:00.000Z";
   const body = [
-    "Contact: mailto:security@hansala.com",
+    `Contact: mailto:${security}`,
     `Contact: ${site}/security`,
     `Expires: ${expires}`,
     "Preferred-Languages: en",
     `Canonical: ${site}/.well-known/security.txt`,
-    `Policy: ${site}/security`,
+    `Policy: ${site}/disclosure`,
     `Acknowledgments: ${site}/security`,
     "",
   ].join("\n");

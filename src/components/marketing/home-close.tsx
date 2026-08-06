@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { NetworkMark } from "@/components/marketing/network-mark";
 import { HomeSection } from "@/components/marketing/home-section";
@@ -39,17 +40,28 @@ export function HomeClose() {
               variant="light"
               className="h-12 min-w-[168px] px-6"
             >
-              Create company
+              Create your free profile
             </Button>
             <Button
               href="/demo"
               variant="onDark"
               className="h-12 min-w-[168px] px-6"
             >
-              See an example
+              See a live example
             </Button>
           </div>
         </div>
+
+        <p className="relative mt-10 border-t border-white/10 pt-6 text-[13px] text-white/45">
+          Building on top of Hansala? The Agent API and embeds are documented
+          for{" "}
+          <Link
+            href="/developers"
+            className="font-medium text-white/75 underline decoration-white/25 underline-offset-4 hover:text-white"
+          >
+            developers
+          </Link>.
+        </p>
       </div>
     </HomeSection>
   );

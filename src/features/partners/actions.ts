@@ -147,5 +147,13 @@ export async function requestClaimInviteResend(formData: FormData) {
     );
   }
 
+  if (company?.created_by_company_id) {
+    const { logActivationEvent } = await import("@/features/activation/events");
+    void logActivationEvent(
+      company.created_by_company_id as string,
+      "first_invitation_sent",
+    );
+  }
+
   redirect(`${back}?claimSent=1`);
 }

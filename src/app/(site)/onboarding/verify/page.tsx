@@ -35,7 +35,9 @@ export default async function OnboardingVerifyPage() {
       <p className="mt-3 text-[15px] leading-relaxed text-muted">
         Your work email didn&apos;t match your website domain automatically.
         Verify by email to a mailbox on your site, or use DNS / meta tag.
-        Verification unlocks official partnerships and the Verified badge.
+        Verification unlocks official partnerships and the Verified badge. You
+        can do this later — your next goal is still the first mutual
+        confirmation.
       </p>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">

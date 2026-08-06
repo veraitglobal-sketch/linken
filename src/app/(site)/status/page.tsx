@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalDoc } from "@/components/legal/legal-doc";
+import { getLegalCompany } from "@/lib/legal/company";
+import { mailto } from "@/lib/legal/emails";
 
 export const metadata: Metadata = {
   title: "Status",
@@ -18,14 +20,20 @@ const COMPONENTS = [
 
 export default function StatusPage() {
   const checked = new Date().toISOString().slice(0, 16).replace("T", " ");
+  const contact = getLegalCompany().contactEmail;
 
   return (
-    <LegalDoc eyebrow="Operations" title="Status" updated="26 July 2026">
+    <LegalDoc
+      eyebrow="Operations"
+      title="Status"
+      updated="6 August 2026"
+      hideTrustNav
+    >
       <div className="rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-4">
         <p className="text-[13px] font-semibold text-ink">All systems operational</p>
         <p className="mt-1 text-[12px] text-muted">
           Manual status · last reviewed {checked} UTC · health{" "}
-          <a href="/api/health">/api/health</a>
+          <Link href="/api/health">/api/health</Link>
         </p>
       </div>
 
@@ -62,9 +70,8 @@ export default function StatusPage() {
 
       <h2>Subscribe</h2>
       <p>
-        Outages:{" "}
-        <a href="mailto:developers@hansala.com">developers@hansala.com</a>.
-        Changes: <Link href="/changelog">Changelog</Link>.
+        Outages: <a href={mailto(contact)}>{contact}</a>. Changes:{" "}
+        <Link href="/changelog">Changelog</Link>.
       </p>
     </LegalDoc>
   );

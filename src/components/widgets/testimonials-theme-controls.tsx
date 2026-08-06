@@ -3,7 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { TestimonialThemeTokens } from "@/features/testimonials/theme/presets";
-import { PRESET_LABELS, TESTIMONIAL_PRESETS } from "@/features/testimonials/theme/presets";
+import {
+  PRESET_LABELS,
+  TESTIMONIAL_COLUMNS,
+  TESTIMONIAL_PRESETS,
+} from "@/features/testimonials/theme/presets";
 import {
   applyMatchedTestimonialTheme,
   matchTestimonialSiteTheme,
@@ -32,6 +36,13 @@ export function TestimonialsThemeControls({ theme }: Props) {
   function saveFont(fontFamily: string) {
     startTransition(async () => {
       await saveTestimonialThemeTokens({ fontFamily });
+      router.refresh();
+    });
+  }
+
+  function saveColumns(maxColumns: TestimonialThemeTokens["maxColumns"]) {
+    startTransition(async () => {
+      await saveTestimonialThemeTokens({ maxColumns });
       router.refresh();
     });
   }
@@ -84,6 +95,32 @@ export function TestimonialsThemeControls({ theme }: Props) {
             {PRESET_LABELS[id]}
           </button>
         ))}
+      </div>
+
+      <div>
+        <p className="text-[12px] font-medium text-ink">Columns at most</p>
+        <p className="mt-0.5 text-[11px] leading-relaxed text-muted">
+          An upper bound, not a fixed count. The widget drops to fewer columns
+          on its own when the space it is given is narrow, so this can never
+          break a host&rsquo;s sidebar.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {TESTIMONIAL_COLUMNS.map((n) => (
+            <button
+              key={n}
+              type="button"
+              onClick={() => saveColumns(n)}
+              className={cn(
+                "rounded-full border px-3 py-1.5 text-[11px] font-semibold tabular-nums",
+                theme.maxColumns === n
+                  ? "border-ink bg-ink text-paper"
+                  : "border-line bg-surface text-ink",
+              )}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
       </div>
 
       <label className="block">

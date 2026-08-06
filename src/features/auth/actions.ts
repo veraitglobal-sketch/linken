@@ -30,6 +30,9 @@ export async function signUp(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
+  const { logActivationEvent } = await import("@/features/activation/events");
+  void logActivationEvent(null, "signup_completed");
+
   redirect(
     `/login?verify=1&email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`,
   );

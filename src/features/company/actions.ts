@@ -159,6 +159,14 @@ export async function createCompany(formData: FormData) {
   revalidatePath(`/c/${created.slug}`);
   revalidatePath("/dashboard");
 
+  const { logActivationEvent } = await import("@/features/activation/events");
+  void logActivationEvent(created.id, "company_created");
+  if (autoVerified) {
+    void logActivationEvent(created.id, "domain_verified");
+  } else {
+    void logActivationEvent(created.id, "domain_verification_started");
+  }
+
   // Mid-step when auto-verify did not pass — non-blocking “Do it later”
   if (!autoVerified) {
     redirect("/onboarding/verify");

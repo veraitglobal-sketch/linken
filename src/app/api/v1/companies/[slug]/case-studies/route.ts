@@ -1,6 +1,7 @@
 import {
   apiError,
   apiJson,
+  apiMethodNotAllowed,
   apiOptions,
 } from "@/features/public-api/v1/http";
 import { getPublicCaseStudiesApi } from "@/features/public-api/v1/queries";
@@ -28,4 +29,17 @@ export async function GET(_request: Request, { params }: Props) {
     console.error("[api/v1/companies/case-studies] GET failed:", error);
     return apiError("internal", "Internal server error.", 500);
   }
+}
+
+export function POST() {
+  return apiMethodNotAllowed();
+}
+export function PUT() {
+  return apiMethodNotAllowed();
+}
+export function PATCH() {
+  return apiMethodNotAllowed();
+}
+export function DELETE() {
+  return apiMethodNotAllowed();
 }

@@ -79,6 +79,9 @@ export async function createCaseStudyWithConfirm(formData: FormData) {
     redirect(withBackQuery(back, { error: created.error }));
   }
 
+  const { logActivationEvent } = await import("@/features/activation/events");
+  void logActivationEvent(company.id, "first_project_created");
+
   if (partnerSlug) {
     await tagCaseStudyPartnerCore(supabase, {
       companyId: company.id,
@@ -88,6 +91,7 @@ export async function createCaseStudyWithConfirm(formData: FormData) {
     });
   }
 
+  void logActivationEvent(company.id, "first_invitation_started");
   const confirm = await requestClientConfirmationCore(supabase, {
     companyId: company.id,
     companyName: company.name,
@@ -95,6 +99,9 @@ export async function createCaseStudyWithConfirm(formData: FormData) {
     caseStudySlug: created.data.slug,
     email,
   });
+  if (confirm.ok) {
+    void logActivationEvent(company.id, "first_invitation_sent");
+  }
 
   revalidatePath("/dashboard/cases");
   revalidatePath(`/c/${company.slug}`);
@@ -192,6 +199,8 @@ export async function requestClientConfirmation(formData: FormData) {
   });
   await setWorkspacePreference("company", company.id);
 
+  const { logActivationEvent } = await import("@/features/activation/events");
+  void logActivationEvent(company.id, "first_invitation_started");
   const result = await requestClientConfirmationCore(supabase, {
     companyId: company.id,
     companyName: company.name,
@@ -203,6 +212,7 @@ export async function requestClientConfirmation(formData: FormData) {
   if (!result.ok) {
     redirect(withBackQuery(back, { error: result.error }));
   }
+  void logActivationEvent(company.id, "first_invitation_sent");
 
   revalidatePath(back.split("?")[0]?.split("#")[0] || back);
   revalidatePath(`/c/${company.slug}`);
@@ -245,6 +255,25 @@ async function respondClientRequest(
   }
 
   if (response === "confirmed") {
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const admin = createAdminClient();
+    if (admin) {
+      const { data: req } = await admin
+        .from("case_study_client_confirmation_requests")
+        .select("requested_by_company_id")
+        .eq("token", token)
+        .maybeSingle();
+      if (req?.requested_by_company_id) {
+        const { logActivationEvent } = await import(
+          "@/features/activation/events"
+        );
+        void logActivationEvent(
+          req.requested_by_company_id as string,
+          "first_reference_confirmed",
+        );
+      }
+    }
+
     const {
       data: { user },
     } = await supabase.auth.getUser();

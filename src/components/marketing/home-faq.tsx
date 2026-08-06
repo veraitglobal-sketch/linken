@@ -17,7 +17,7 @@ export const FAQ_ITEMS = [
   {
     question: "What does “Verified” mean?",
     answer:
-      "Verified means your company's domain is confirmed as yours — via email domain, DNS, or a meta tag. It's proof of identity, not a paid tier, and it's never for sale.",
+      "Verified means the company controls its business domain or approved identity — via email domain, DNS, or a meta tag. It does not mean Hansala guarantees the quality of its services. The badge is not a paid tier and is never for sale.",
   },
   {
     question: "Is it free?",

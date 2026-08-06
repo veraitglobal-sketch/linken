@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { ActivationChecklist } from "@/features/activation/checklist";
-import { getSiteUrl, companyShareLabel } from "@/lib/site";
+import { companyShareLabel } from "@/lib/site";
 
 type Props = {
   companyName: string;
@@ -12,21 +12,20 @@ type Props = {
 
 export function WelcomeHero({ companyName, companySlug, checklist, from }: Props) {
   const profileUrl = `/c/${companySlug}`;
-  const siteUrl = getSiteUrl();
-  const publicUrl = `${siteUrl}${profileUrl}`;
   const publicLabel = companyShareLabel(companySlug);
 
   const heading =
     from === "confirm"
       ? `You’re on Hansala, ${companyName.split(" ")[0]}`
       : from === "onboarding"
-        ? "Your company link is live"
+        ? "Next: your first verified reference"
         : `Welcome, ${companyName.split(" ")[0]}`;
 
-  const sub =
-    from === "confirm"
+  const sub = checklist.activated
+    ? "You have a confirmed record. Share it on your site or keep building your network."
+    : from === "confirm"
       ? "You confirmed a relationship. Finish setup so your network shows real proof."
-      : "Three minutes of setup — then clients see a verified page worth trusting.";
+      : "Activation is one mutual confirmation — a client or partner who says yes. Pending invites stay private until then.";
 
   const pct = Math.round((checklist.doneCount / checklist.total) * 100);
 

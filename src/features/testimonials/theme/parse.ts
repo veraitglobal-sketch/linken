@@ -2,6 +2,7 @@ import {
   PRESET_TOKENS,
   TESTIMONIAL_PRESETS,
   type TestimonialAlign,
+  type TestimonialColumns,
   type TestimonialPreset,
   type TestimonialShadow,
   type TestimonialThemeTokens,

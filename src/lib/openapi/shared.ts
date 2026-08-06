@@ -1,8 +1,8 @@
 /** Shared OpenAPI contact / legal metadata. */
 export const OPENAPI_CONTACT = {
-  name: "Hansala Developers",
+  name: "Hansala",
   url: "https://www.hansala.com/developers",
-  email: "developers@hansala.com",
+  email: "info@hansala.com",
 } as const;
 
 export const OPENAPI_LICENSE = {

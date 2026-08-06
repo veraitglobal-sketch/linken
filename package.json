@@ -9,6 +9,8 @@
     "lint": "eslint",
     "test:resend": "node scripts/test-resend.mjs",
     "test:domain": "node --test scripts/test-domain-allowed.mjs",
+    "test:activation": "node --test scripts/test-activation-derive.mjs",
+    "test:plan": "node --test scripts/test-plan-access.mjs",
     "prepublishOnly": "echo 'Do not publish the Hansala app. Publish only mcp/hansala-public.' && exit 1"
   },
   "dependencies": {

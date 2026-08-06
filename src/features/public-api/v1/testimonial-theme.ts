@@ -26,6 +26,9 @@ export type PublicThemePayload = {
   shadow: TestimonialThemeTokens["shadow"];
   spacing: number;
   align: TestimonialThemeTokens["align"];
+  /** Upper bound only — a consumer still resolves the real count from its
+   *  own container width, exactly as the iframe embed does. */
+  max_columns: TestimonialThemeTokens["maxColumns"];
   css_vars: Record<string, string>;
 };
 
@@ -47,6 +50,7 @@ export function toPublicTheme(tokens: TestimonialThemeTokens): PublicThemePayloa
     shadow: tokens.shadow,
     spacing: tokens.spacing,
     align: tokens.align,
+    max_columns: tokens.maxColumns,
     css_vars: {
       "--hs-tm-text": tokens.textColor,
       "--hs-tm-muted": tokens.mutedColor,
@@ -57,6 +61,7 @@ export function toPublicTheme(tokens: TestimonialThemeTokens): PublicThemePayloa
       "--hs-tm-radius": `${tokens.radius}px`,
       "--hs-tm-spacing": `${tokens.spacing}px`,
       "--hs-tm-shadow": SHADOW[tokens.shadow],
+      "--hs-tm-max-cols": String(tokens.maxColumns),
     },
   };
 }

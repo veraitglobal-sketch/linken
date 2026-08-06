@@ -1,5 +1,6 @@
 import { WelcomeChecklistGrid } from "@/components/activation/welcome-checklist-grid";
 import { WelcomeHero } from "@/components/activation/welcome-hero";
+import { WelcomePrivacyNote } from "@/components/activation/welcome-privacy-note";
 import { WelcomeQuickLinks } from "@/components/activation/welcome-quick-links";
 import type { ActivationChecklist } from "@/features/activation/checklist";
 
@@ -25,6 +26,7 @@ export function WelcomeSetup({
         from={from}
       />
       <WelcomeChecklistGrid steps={checklist.steps} />
+      <WelcomePrivacyNote />
       <WelcomeQuickLinks companySlug={companySlug} />
     </div>
   );

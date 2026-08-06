@@ -19,6 +19,32 @@ type Props = {
   companyName: string;
 };
 
+/**
+ * Columns resolve from the container, never the viewport.
+ *
+ * `maxColumns` is an upper bound: the `max(MIN, (100% - gaps) / n)` term makes a
+ * column at least as wide as one nth of the row, so auto-fit can never place
+ * more than n — and MIN forces fewer as the container narrows. Viewport
+ * breakpoints would lie the moment the widget sits in a narrow host column on a
+ * wide screen, or renders inline instead of in an iframe.
+ */
+const COL_MIN = 240;
+const COL_GAP = 12;
+
+function autoColumns(max: number) {
+  const gaps = `${(max - 1) * COL_GAP}px`;
+  return {
+    display: "grid",
+    gap: `${COL_GAP}px`,
+    gridTemplateColumns: `repeat(auto-fit, minmax(min(100%, max(${COL_MIN}px, calc((100% - ${gaps}) / ${max}))), 1fr))`,
+  };
+}
+
+function autoMasonry(max: number) {
+  // `columns: <width> <count>` is the same contract in one declaration.
+  return { columns: `${COL_MIN}px ${max}`, gap: `${COL_GAP}px` };
+}
+
 export function EmbedTestimonials({
   items,
   layout,
@@ -47,7 +73,9 @@ export function EmbedTestimonials({
           linkLabel={companyName}
           theme={themeParam}
         />
-        <div className="mt-2">{renderLayout(fitting, layout, profileUrl)}</div>
+        <div className="mt-2">
+          {renderLayout(fitting, layout, profileUrl, theme.maxColumns)}
+        </div>
       </div>
     </EmbedTestimonialThemeShell>
   );
@@ -57,6 +85,7 @@ function renderLayout(
   items: PublicTestimonial[],
   layout: TestimonialLayout,
   profileUrl: string,
+  maxColumns: number,
 ) {
   if (layout === "single" || layout === "featured") {
     return (
@@ -92,7 +121,7 @@ function renderLayout(
       <div className="space-y-3">
         <EmbedTestimonialCard item={lead!} profileUrl={profileUrl} featured />
         {rest.length ? (
-          <ul className="grid gap-2 sm:grid-cols-2">
+          <ul style={autoColumns(maxColumns)}>
             {rest.map((item) => (
               <li key={item.id}>
                 <EmbedTestimonialCard item={item} profileUrl={profileUrl} />
@@ -104,13 +133,13 @@ function renderLayout(
     );
   }
 
-  const gridClass =
+  const gridStyle =
     layout === "masonry"
-      ? "columns-1 gap-3 sm:columns-2"
-      : "grid gap-3 sm:grid-cols-2";
+      ? autoMasonry(maxColumns)
+      : autoColumns(maxColumns);
 
   return (
-    <ul className={gridClass}>
+    <ul style={gridStyle}>
       {items.map((item) => (
         <li key={item.id} className={layout === "masonry" ? "mb-3 break-inside-avoid" : ""}>
           <EmbedTestimonialCard item={item} profileUrl={profileUrl} />

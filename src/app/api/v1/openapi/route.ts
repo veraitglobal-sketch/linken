@@ -8,7 +8,7 @@ export async function GET() {
       name: "Hansala APIs",
       version: "1",
       docs: `${site}/developers`,
-      contact: "developers@hansala.com",
+      contact: "info@hansala.com",
       specs: [
         {
           name: "Public API",
