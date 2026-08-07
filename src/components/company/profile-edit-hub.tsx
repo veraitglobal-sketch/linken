@@ -3,6 +3,7 @@ import { CompanySettingsCover } from "@/components/company/company-settings-cove
 import { CompanySettingsForm } from "@/components/company/company-settings-form";
 import { CompanySettingsLogo } from "@/components/company/company-settings-logo";
 import { CompanySlugEditor } from "@/components/company/company-slug-editor";
+import { OutreachControls } from "@/components/company/outreach-controls";
 import { ProfileEditLinks } from "@/components/company/profile-edit-links";
 import { SettingsFlash } from "@/components/company/settings-flash";
 import { SettingsStatusStrip } from "@/components/company/settings-status-strip";
@@ -88,6 +89,10 @@ export function ProfileEditHub({
           companySlug={slug}
         />
         <CompanySettingsForm company={company} backPath={backPath} />
+        <OutreachControls
+          companySlug={slug}
+          inviteRemindersEnabled={company.inviteRemindersEnabled}
+        />
       </div>
     </div>
   );

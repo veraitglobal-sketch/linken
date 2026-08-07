@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { lookupAddWorkspace } from "@/features/workspace/add-workspace-lookup";
+import {
+  lookupAddWorkspace,
+  resolveClaimTokenForSession,
+} from "@/features/workspace/add-workspace-lookup";
 import { setWorkspacePreference } from "@/features/workspace/set-preference";
 import { createClient } from "@/lib/supabase/server";
 
@@ -11,9 +14,9 @@ export type LookupState =
   | { status: "error"; message: string }
   | {
       status: "claim";
+      companyId: string;
       companyName: string;
       companySlug: string;
-      claimToken: string;
       email: string;
     }
   | {
@@ -36,9 +39,9 @@ export async function lookupWorkspaceForAdd(
   if (result.kind === "claim") {
     return {
       status: "claim",
+      companyId: result.companyId,
       companyName: result.companyName,
       companySlug: result.companySlug,
-      claimToken: result.claimToken,
       email: result.inviteEmail,
     };
   }
@@ -53,20 +56,30 @@ export async function lookupWorkspaceForAdd(
   return { status: "missing", email: result.email };
 }
 
+/** Claim without exposing claim_token to the browser. */
 export async function claimWorkspaceFromLookup(formData: FormData) {
-  const token = String(formData.get("token") ?? "").trim();
-  if (!token) redirect("/dashboard/workspaces/new?error=Missing%20token");
+  const companyId = String(formData.get("company_id") ?? "").trim();
+  if (!companyId) {
+    redirect("/dashboard/workspaces/new?error=Missing%20company");
+  }
+
+  const resolved = await resolveClaimTokenForSession(companyId);
+  if (!resolved.ok) {
+    redirect(
+      `/dashboard/workspaces/new?error=${encodeURIComponent(resolved.error)}`,
+    );
+  }
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/login?next=${encodeURIComponent(`/claim/${token}`)}`);
+    redirect(`/login?next=${encodeURIComponent("/dashboard/workspaces/new")}`);
   }
 
   const { data, error } = await supabase.rpc("claim_company", {
-    p_token: token,
+    p_token: resolved.token,
   });
 
   if (error || !data) {

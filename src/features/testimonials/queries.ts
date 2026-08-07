@@ -221,7 +221,7 @@ export async function getTestimonialsStudioEntries(
   ] as string[];
   const authors = await loadAuthorCompanies(authorIds);
 
-  let ordered = [...rows];
+  const ordered = [...rows];
   if (cfg.order.length) {
     const rank = new Map(cfg.order.map((id, i) => [id, i]));
     ordered.sort((a, b) => {

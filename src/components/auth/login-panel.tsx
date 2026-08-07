@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { signIn, signUp, resendSignupConfirmation } from "@/features/auth/actions";
+import { StatusMessage } from "@/components/a11y/status-message";
+import { LoginModeTab } from "@/components/auth/login-mode-tab";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LegalConsent } from "@/components/legal/legal-consent";
-import { cn } from "@/lib/cn";
+import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
 
 type Mode = "sign-in" | "create";
 
@@ -27,14 +29,22 @@ export function LoginPanel({
   const [mode, setMode] = useState<Mode>("sign-in");
   const isCreate = mode === "create";
   const showVerify = verify === "1";
-  const nextPath = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  const nextPath =
+    next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  const errorId = useId();
+  const tabId = useId();
 
   return (
     <div className="relative flex flex-col justify-center border-t border-line bg-[#fbfbfc] px-6 py-8 sm:px-9 sm:py-10 lg:border-t-0 lg:border-l lg:border-white/10">
+      {isCreate ? (
+        <PageViewBeacon event="signup_started" page="/login" />
+      ) : null}
       {showVerify ? (
-        <div className="animate-rise mb-6 rounded-2xl border border-[#1a5c51]/25 bg-[#1a5c51]/8 px-4 py-4">
+        <StatusMessage className="animate-rise mb-6 border-[#1a5c51]/25 bg-[#1a5c51]/8">
           <p className="text-[13px] font-semibold text-ink">
-            {resent === "1" ? "Confirmation email sent again" : "Check your email"}
+            {resent === "1"
+              ? "Confirmation email sent again"
+              : "Check your email"}
           </p>
           <p className="mt-1.5 text-[13px] leading-relaxed text-ink-soft">
             We sent a confirmation link to{" "}
@@ -47,13 +57,34 @@ export function LoginPanel({
               <input type="hidden" name="next" value={nextPath} />
               <button
                 type="submit"
-                className="text-[13px] font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
+                className="min-h-11 text-[13px] font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
               >
                 Resend confirmation email
               </button>
             </form>
-          ) : null}
-        </div>
+          ) : (
+            <form action={resendSignupConfirmation} className="mt-3 space-y-2">
+              <input type="hidden" name="next" value={nextPath} />
+              <label className="block">
+                <span className="sr-only">Email for resend</span>
+                <Input
+                  type="email"
+                  name="email"
+                  required
+                  autoComplete="email"
+                  placeholder="Email used to sign up"
+                  className="h-11"
+                />
+              </label>
+              <button
+                type="submit"
+                className="min-h-11 text-[13px] font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
+              >
+                Resend confirmation email
+              </button>
+            </form>
+          )}
+        </StatusMessage>
       ) : null}
       <div className="animate-rise">
         <p className="text-[11px] font-semibold tracking-[0.16em] text-[#1a5c51] uppercase">
@@ -69,13 +100,19 @@ export function LoginPanel({
         </p>
       </div>
 
-      <div className="animate-rise-delay mt-5 grid grid-cols-2 gap-1 rounded-2xl border border-line bg-white p-1">
-        <ModeButton
+      <div
+        className="animate-rise-delay mt-5 grid grid-cols-2 gap-1 rounded-2xl border border-line bg-white p-1"
+        role="tablist"
+        aria-label="Account mode"
+      >
+        <LoginModeTab
+          id={`${tabId}-signin`}
           active={!isCreate}
           onClick={() => setMode("sign-in")}
           label="Sign in"
         />
-        <ModeButton
+        <LoginModeTab
+          id={`${tabId}-create`}
           active={isCreate}
           onClick={() => setMode("create")}
           label="Create account"
@@ -83,15 +120,16 @@ export function LoginPanel({
       </div>
 
       {error ? (
-        <p className="mt-4 rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+        <StatusMessage id={errorId} tone="alert" className="mt-4">
           {error}
-        </p>
+        </StatusMessage>
       ) : null}
 
       <div className="animate-rise-late mt-6 space-y-4">
         <form
           action={isCreate ? signUp : signIn}
           className="flex flex-col gap-4"
+          aria-describedby={error ? errorId : undefined}
         >
           <input type="hidden" name="next" value={nextPath} />
           <label className="block">
@@ -101,8 +139,10 @@ export function LoginPanel({
             <Input
               type="email"
               name="email"
+              autoComplete="email"
               placeholder="you@company.com"
               required
+              aria-invalid={error ? true : undefined}
             />
           </label>
           <label className="block">
@@ -112,9 +152,11 @@ export function LoginPanel({
             <Input
               type="password"
               name="password"
+              autoComplete={isCreate ? "new-password" : "current-password"}
               placeholder="At least 6 characters"
               required
               minLength={6}
+              aria-invalid={error ? true : undefined}
             />
           </label>
           <Button type="submit" className="mt-1 h-12 w-full">
@@ -130,7 +172,7 @@ export function LoginPanel({
               <button
                 type="button"
                 onClick={() => setMode("sign-in")}
-                className="font-semibold text-ink underline-offset-2 hover:underline"
+                className="min-h-11 font-semibold text-ink underline-offset-2 hover:underline"
               >
                 Sign in
               </button>
@@ -141,7 +183,7 @@ export function LoginPanel({
               <button
                 type="button"
                 onClick={() => setMode("create")}
-                className="font-semibold text-ink underline-offset-2 hover:underline"
+                className="min-h-11 font-semibold text-ink underline-offset-2 hover:underline"
               >
                 Create an account
               </button>
@@ -150,30 +192,5 @@ export function LoginPanel({
         </p>
       </div>
     </div>
-  );
-}
-
-function ModeButton({
-  active,
-  onClick,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "h-10 rounded-xl text-[13px] font-semibold transition-colors",
-        active
-          ? "bg-[#0e1f1c] text-white"
-          : "bg-transparent text-ink-soft hover:text-ink",
-      )}
-    >
-      {label}
-    </button>
   );
 }

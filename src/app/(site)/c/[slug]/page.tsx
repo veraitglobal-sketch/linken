@@ -1,35 +1,19 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import { CompanyProfile } from "@/components/company/company-profile";
 import { RelationshipConfirmBanner } from "@/components/company/relationship-confirm-banner";
 import { NetworkMapSection } from "@/components/network/network-map-section";
 import { CompanyMapTeaser } from "@/components/product/company-map-teaser";
+import { JsonLd } from "@/components/seo/json-ld";
 import { trackProfileArrival } from "@/features/analytics/track-arrival";
-import { getClientAssessmentSummary } from "@/features/assessments/queries";
+import { loadPublicCompanyProfile } from "@/features/companies/load-public-profile";
+import { getCompanyForPage } from "@/features/companies/queries";
+import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import {
-  getCaseStudiesForCompany,
-  isCompanyOwnerSlug,
-} from "@/features/case-studies/queries";
-import { getActivationChecklist } from "@/features/activation/checklist";
-import {
-  getCompanyForPage,
-  searchCompanies,
-} from "@/features/companies/queries";
-import { getConfirmedGroupForCompany } from "@/features/groups/queries";
-import { getPartnershipInbox } from "@/features/partners/inbox";
-import {
-  getPartnerRailSettings,
-  getPartnersForCompany,
-} from "@/features/partners/public-queries";
-import { getReferencesForCompany } from "@/features/references/queries";
-import { getPublicTeam } from "@/features/team/queries";
-import { resolveConfirmedRelationship } from "@/features/trust/relationship-banner";
-import { getTrustProfile } from "@/features/trust/queries";
-import {
-  getPublishedTestimonials,
-  toPublicTestimonials,
-} from "@/features/testimonials/queries";
+  buildCompanyBreadcrumbLd,
+  buildCompanyOrganizationLd,
+} from "@/features/seo/company-json-ld";
+import { buildCompanyMetadata } from "@/features/seo/company-metadata";
 import { PRODUCT } from "@/lib/product-model";
 import { getSiteUrl } from "@/lib/site";
 
@@ -56,91 +40,59 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const company = await getCompanyForPage(slug);
-  if (!company) return { title: "Company not found" };
-  const url = `${getSiteUrl()}/c/${company.slug}`;
-  return {
-    title: company.name,
-    description: company.tagline,
-    alternates: {
-      canonical: url,
-      types: {
-        "text/markdown": `${url}/llm.md`,
-      },
-    },
-    openGraph: {
-      type: "profile",
-      title: `${company.name} · Hansala`,
-      description: company.tagline,
-      url,
-    },
-  };
+  if (!company) {
+    return {
+      title: "Company not found",
+      robots: { index: false, follow: false },
+    };
+  }
+  return buildCompanyMetadata({
+    name: company.name,
+    slug: company.slug,
+    tagline: company.tagline,
+    description: company.description,
+    city: company.city,
+    country: company.country,
+    category: company.category,
+    claimed: company.claimed,
+    verified: company.verified,
+    siteUrl: getSiteUrl(),
+  });
 }
 
 export default async function CompanyPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const sp = await searchParams;
-  const company = await getCompanyForPage(slug);
-  if (!company) {
+  const data = await loadPublicCompanyProfile(slug, sp);
+  if (!data) {
     const redirectSlug = await resolveCompanySlugRedirect(slug);
     if (redirectSlug) permanentRedirect(`/c/${redirectSlug}`);
     notFound();
   }
 
-  const [
+  const {
+    company,
+    isOwner,
+    editable,
+    showAdd,
+    addMode,
+    q,
     partners,
     partnerRail,
     caseStudies,
     references,
+    providers,
     trust,
     assessmentSummary,
-    isOwner,
     groupBadge,
     teamMembers,
     relationship,
     testimonials,
-  ] = await Promise.all([
-    getPartnersForCompany(company.id),
-    getPartnerRailSettings(company.id),
-    getCaseStudiesForCompany(company.id),
-    getReferencesForCompany(company.id),
-    getTrustProfile(company.id, company.slug),
-    getClientAssessmentSummary(company.id),
-    company.claimed !== false
-      ? isCompanyOwnerSlug(slug)
-      : Promise.resolve(false),
-    getConfirmedGroupForCompany(company.id),
-    getPublicTeam(company.id),
-    resolveConfirmedRelationship(company.id, sp.rel),
-    getPublishedTestimonials(company.id).then((rows) =>
-      toPublicTestimonials(rows, company.slug),
-    ),
-  ]);
+    checklist,
+    addResults,
+    statusBySlug,
+  } = data;
 
-  const editable = isOwner;
-  const showAdd = editable && sp.add === "1";
-  const addMode = sp.mode === "draft" ? "draft" : "search";
-  const q = showAdd && addMode === "search" ? (sp.q ?? "").trim() : "";
-
-  const [checklist, inbox, searchHits] = await Promise.all([
-    editable ? getActivationChecklist(company.id) : Promise.resolve(null),
-    showAdd ? getPartnershipInbox(company.id) : Promise.resolve(null),
-    showAdd && q ? searchCompanies(q) : Promise.resolve([]),
-  ]);
-
-  const statusBySlug = new Map<string, string>();
-  if (inbox) {
-    for (const row of inbox.outgoingPending) {
-      statusBySlug.set(row.other.slug, "Pending");
-    }
-    for (const row of inbox.incomingPending) {
-      statusBySlug.set(row.other.slug, "Incoming");
-    }
-    for (const row of inbox.accepted) {
-      statusBySlug.set(row.other.slug, "Official");
-    }
-  }
-
-  const addResults = searchHits.filter((c) => c.slug !== company.slug);
   const siteUrl = getSiteUrl();
   const confirmedLinks =
     trust.breakdown.confirmedPartners +
@@ -170,6 +122,29 @@ export default async function CompanyPage({ params, searchParams }: Props) {
 
   return (
     <>
+      <JsonLd
+        data={[
+          buildCompanyOrganizationLd({
+            name: company.name,
+            slug: company.slug,
+            description: company.description,
+            tagline: company.tagline,
+            website: company.website,
+            logoUrl: company.logoUrl,
+            city: company.city,
+            country: company.country,
+            category: company.category,
+            services: company.services,
+            verified: company.verified,
+            siteUrl,
+          }),
+          buildCompanyBreadcrumbLd({
+            name: company.name,
+            slug: company.slug,
+            siteUrl,
+          }),
+        ]}
+      />
       {relationship ? (
         <RelationshipConfirmBanner
           profileName={company.name}
@@ -183,6 +158,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         partnerRail={partnerRail}
         caseStudies={caseStudies}
         references={references}
+        providers={providers}
         testimonials={testimonials}
         trust={trust}
         assessmentSummary={assessmentSummary}

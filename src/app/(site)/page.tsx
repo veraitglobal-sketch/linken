@@ -11,6 +11,7 @@ import { HomePlans } from "@/components/marketing/home-plans";
 import { HomeStories } from "@/components/marketing/home-stories";
 import { HomeProductFlow } from "@/components/marketing/product-flow";
 import { HomeTalks } from "@/components/marketing/home-talks";
+import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
 
 export const revalidate = 3600;
 
@@ -47,6 +48,7 @@ const faqJsonLd = {
 export default function HomePage() {
   return (
     <>
+      <PageViewBeacon event="landing_page_viewed" page="/" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}

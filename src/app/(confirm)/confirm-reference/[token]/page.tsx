@@ -57,6 +57,13 @@ export default async function ConfirmReferencePage({
     ? await hasAssessmentForSource("reference", preview.id)
     : false;
 
+  if (preview.status === "pending" && preview.providerId) {
+    const { logActivationEvent } = await import(
+      "@/features/activation/events"
+    );
+    void logActivationEvent(preview.providerId, "first_invitation_opened");
+  }
+
   const listings = confirmed
     ? await getCompaniesListingClient({
         clientCompanyId: company?.id ?? null,

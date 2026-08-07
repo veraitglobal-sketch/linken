@@ -11,6 +11,7 @@ import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { tryEmailDomainVerificationAfterOnboarding } from "@/features/verification/actions";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { setWorkspacePreference } from "@/features/workspace/set-preference";
+import { applyReferralAttribution } from "@/features/growth/apply-referral";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { createClient } from "@/lib/supabase/server";
 import { toSlug } from "@/lib/slug";
@@ -166,6 +167,8 @@ export async function createCompany(formData: FormData) {
   } else {
     void logActivationEvent(created.id, "domain_verification_started");
   }
+
+  await applyReferralAttribution(created.id);
 
   // Mid-step when auto-verify did not pass — non-blocking “Do it later”
   if (!autoVerified) {

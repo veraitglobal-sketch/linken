@@ -1,6 +1,7 @@
 import type { AnalyticsSummary } from "@/features/analytics/queries";
 import type { CompanyPlan } from "@/features/plan/entitlements";
 import { getEntitlements } from "@/features/plan/entitlements";
+import Link from "next/link";
 
 type Props = {
   analytics: AnalyticsSummary;
@@ -106,12 +107,12 @@ export function AnalyticsCard({ analytics, plan }: Props) {
           <div className="absolute inset-0 flex items-center justify-center bg-white/55 px-4 text-center">
             <p className="text-[13px] font-medium text-ink">
               Detailed sources and trends —{" "}
-              <a
+              <Link
                 href="/dashboard/billing"
                 className="font-semibold underline-offset-2 hover:underline"
               >
                 upgrade to Pro
-              </a>
+              </Link>
             </p>
           </div>
         </div>

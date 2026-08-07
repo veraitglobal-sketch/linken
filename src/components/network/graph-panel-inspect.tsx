@@ -13,6 +13,7 @@ import {
   NetworkOwnershipChart,
   type OwnershipSlice,
 } from "@/components/network/network-ownership-chart";
+import Link from "next/link";
 import type { TeamManageAccess } from "@/features/team/panel-actions";
 import type {
   NetworkGraphContext,
@@ -101,12 +102,12 @@ export function GraphPanelInspect({
       !teamAccess.canInviteMore ? (
         <p className="mx-3 mt-2 rounded-2xl border border-line bg-paper px-3 py-2 text-[12px] text-muted">
           Team seats require Pro.{" "}
-          <a
+          <Link
             href="/dashboard/billing"
             className="font-semibold text-ink underline-offset-2 hover:underline"
           >
             Upgrade on Billing
-          </a>
+          </Link>
         </p>
       ) : null}
 

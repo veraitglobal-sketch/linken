@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { LoginPanel } from "@/components/auth/login-panel";
 import { LoginStage } from "@/components/auth/login-stage";
 import { signOutTo } from "@/features/auth/actions";
+import { VERIFY_EMAIL_COOKIE } from "@/features/auth/verify-email-cookie";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 
@@ -15,16 +17,19 @@ type Props = {
   searchParams: Promise<{
     error?: string;
     verify?: string;
-    email?: string;
     resent?: string;
     next?: string;
   }>;
 };
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { error, verify, email, resent, next } = await searchParams;
+  const { error, verify, resent, next } = await searchParams;
   const nextPath =
     next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+
+  // Prefer httpOnly cookie over ?email= (avoid history/referrer leak).
+  const jar = await cookies();
+  const email = jar.get(VERIFY_EMAIL_COOKIE)?.value?.trim() || undefined;
 
   const supabase = await createClient();
   const {

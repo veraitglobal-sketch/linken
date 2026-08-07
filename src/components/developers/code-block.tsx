@@ -12,6 +12,9 @@ type Props = {
 export function CodeBlock({ tokens, className }: Props) {
   return (
     <pre
+      tabIndex={0}
+      role="region"
+      aria-label="Code sample"
       className={
         className ??
         "overflow-x-auto px-4 py-4 font-mono text-[12px] leading-relaxed"

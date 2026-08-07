@@ -64,7 +64,7 @@ export function AddWorkspaceForm({ error }: { error?: string }) {
             workspace you own.
           </p>
           <form action={claimWorkspaceFromLookup} className="mt-4">
-            <input type="hidden" name="token" value={state.claimToken} />
+            <input type="hidden" name="company_id" value={state.companyId} />
             <Button type="submit" className="h-10 w-full">
               Claim the business
             </Button>

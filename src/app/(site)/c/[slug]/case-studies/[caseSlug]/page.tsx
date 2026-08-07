@@ -1,37 +1,82 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { CaseStudyDetail } from "@/components/case-studies/case-study-detail";
+import { JsonLd } from "@/components/seo/json-ld";
 import {
   getCaseStudyForPage,
   isCompanyOwnerSlug,
 } from "@/features/case-studies/queries";
+import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { hasPublishedTestimonialForCase } from "@/features/testimonials/queries";
 import { logProfileEvent } from "@/features/analytics/log";
 import { parseProfileSource } from "@/features/analytics/sources";
+import {
+  buildCaseStudyArticleLd,
+  buildCaseStudyBreadcrumbLd,
+} from "@/features/seo/case-study-json-ld";
+import { companyIndexability } from "@/features/seo/indexability";
+import { absoluteUrl, companyCaseStudyPath } from "@/features/seo/paths";
 import { getSiteUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string; caseSlug: string }>;
-  searchParams: Promise<{ error?: string; requested?: string; src?: string; via?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    requested?: string;
+    src?: string;
+    via?: string;
+  }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, caseSlug } = await params;
-  const caseStudy = await getCaseStudyForPage(slug, caseSlug);
-  if (!caseStudy) return { title: "Case study not found" };
+  const [company, caseStudy] = await Promise.all([
+    getCompanyForPage(slug),
+    getCaseStudyForPage(slug, caseSlug),
+  ]);
+  if (!company || !caseStudy) {
+    return {
+      title: "Case study not found",
+      robots: { index: false, follow: false },
+    };
+  }
 
-  const url = `${getSiteUrl()}/c/${slug}/case-studies/${caseStudy.slug}`;
+  const clientConfirmed =
+    caseStudy.clientConfirmation?.status === "confirmed";
+  // Unconfirmed work is owner-only — never indexable.
+  if (!clientConfirmed) {
+    return {
+      title: caseStudy.title,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const siteUrl = getSiteUrl();
+  const url = absoluteUrl(
+    siteUrl,
+    companyCaseStudyPath(company.slug, caseStudy.slug),
+  );
+  const { index, follow } = companyIndexability(company);
 
   return {
     title: caseStudy.title,
     description: caseStudy.summary,
+    robots: { index, follow },
     alternates: { canonical: url },
     openGraph: {
       type: "article",
       title: caseStudy.title,
       description: caseStudy.summary,
       url,
+      ...(caseStudy.coverImageUrl
+        ? { images: [caseStudy.coverImageUrl] }
+        : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: caseStudy.title,
+      description: caseStudy.summary,
     },
   };
 }
@@ -39,12 +84,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CaseStudyPage({ params, searchParams }: Props) {
   const { slug, caseSlug } = await params;
   const { error, requested, src } = await searchParams;
-  const [company, caseStudy, editable] = await Promise.all([
-    getCompanyForPage(slug),
-    getCaseStudyForPage(slug, caseSlug),
-    isCompanyOwnerSlug(slug),
+
+  const company = await getCompanyForPage(slug);
+  if (!company) {
+    const redirectSlug = await resolveCompanySlugRedirect(slug);
+    if (redirectSlug) {
+      permanentRedirect(`/c/${redirectSlug}/case-studies/${caseSlug}`);
+    }
+    notFound();
+  }
+
+  const [caseStudy, editable] = await Promise.all([
+    getCaseStudyForPage(company.slug, caseSlug),
+    isCompanyOwnerSlug(company.slug),
   ]);
-  if (!company || !caseStudy) notFound();
+  if (!caseStudy) notFound();
+
+  const clientConfirmed =
+    caseStudy.clientConfirmation?.status === "confirmed";
+  // Product rule: visitors only see mutually confirmed case studies.
+  if (!clientConfirmed && !editable) notFound();
 
   const hideCompanyQuote = await hasPublishedTestimonialForCase(caseStudy.id);
   const siteUrl = getSiteUrl();
@@ -57,51 +116,36 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
     );
   }
 
-  const clientConfirmed = caseStudy.clientConfirmation?.status === "confirmed";
   const confirmer = caseStudy.clientConfirmation?.confirmedBy;
   const undisclosed =
     caseStudy.clientConfirmation?.disclosure === "undisclosed";
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: caseStudy.title,
-    description: caseStudy.summary,
-    locationCreated: caseStudy.location,
-    datePublished: caseStudy.year,
-    author: {
-      "@type": "Organization",
-      name: company.name,
-      url: `${siteUrl}/c/${company.slug}`,
-    },
-    client_confirmed: clientConfirmed,
-    ...(clientConfirmed
-      ? {
-          additionalProperty: {
-            "@type": "PropertyValue",
-            name: "client_confirmed",
-            value: true,
-          },
-          ...(!undisclosed && confirmer?.name
-            ? {
-                about: {
-                  "@type": "Organization",
-                  name: confirmer.name,
-                  ...(confirmer.slug
-                    ? { url: `${siteUrl}/c/${confirmer.slug}` }
-                    : {}),
-                },
-              }
-            : {}),
-        }
-      : {}),
-  };
+
+  const articleLd = buildCaseStudyArticleLd({
+    title: caseStudy.title,
+    summary: caseStudy.summary,
+    year: caseStudy.year,
+    location: caseStudy.location,
+    coverImageUrl: caseStudy.coverImageUrl,
+    companyName: company.name,
+    companySlug: company.slug,
+    caseSlug: caseStudy.slug,
+    siteUrl,
+    clientConfirmed,
+    clientName: confirmer?.name,
+    clientSlug: confirmer?.slug,
+    undisclosed,
+  });
+  const crumbLd = buildCaseStudyBreadcrumbLd({
+    companyName: company.name,
+    companySlug: company.slug,
+    caseTitle: caseStudy.title,
+    caseSlug: caseStudy.slug,
+    siteUrl,
+  });
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={[articleLd, crumbLd]} />
       <CaseStudyDetail
         company={company}
         caseStudy={caseStudy}

@@ -2,24 +2,42 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import {
+  REMINDER_COOLDOWN_HOURS,
+  reminderCooldownActive,
+  reminderCooldownMessage,
+} from "@/features/growth/invite-limits";
+import { assertInviteEmailDailyQuota } from "@/features/growth/invite-quota";
 import { sendClaimInviteEmail } from "@/lib/email";
+import { trackEngagement } from "@/features/product-analytics/helpers";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
- * Resend claim invite for a ghost partner the active company invited.
- * Active workspace must be the creator firm (not the draft itself).
+ * Resend claim invite — respects outreach opt-out, cooldown, and daily caps.
  */
 export async function resendPendingPartnerInvite(formData: FormData) {
   const companyId = String(formData.get("company_id") ?? "").trim();
   const back = String(formData.get("back") ?? "/dashboard/partners").trim();
   const safeBack = back.startsWith("/") ? back : "/dashboard/partners";
 
-  const { user, company } = await getOperatorActiveCompany();
+  const { user, company, supabase } = await getOperatorActiveCompany();
   if (!user) redirect(`/login?next=${encodeURIComponent(safeBack)}`);
   if (!company) {
     redirect(
       `${safeBack}?error=${encodeURIComponent("Create your company profile first.")}`,
+    );
+  }
+
+  const { data: prefs } = await supabase
+    .from("companies")
+    .select("invite_reminders_enabled")
+    .eq("id", company.id)
+    .maybeSingle();
+
+  if (prefs && prefs.invite_reminders_enabled === false) {
+    redirect(
+      `${safeBack}?error=${encodeURIComponent("Invite reminders are turned off in outreach settings.")}`,
     );
   }
 
@@ -30,9 +48,14 @@ export async function resendPendingPartnerInvite(formData: FormData) {
     );
   }
 
+  const emailQuota = await assertInviteEmailDailyQuota(admin, company.id);
+  if (!emailQuota.ok) {
+    redirect(`${safeBack}?error=${encodeURIComponent(emailQuota.error)}`);
+  }
+
   const { data: partnership } = await admin
     .from("partnerships")
-    .select("id")
+    .select("id, created_at, updated_at")
     .eq("requester_id", company.id)
     .eq("recipient_id", companyId)
     .eq("status", "pending")
@@ -41,6 +64,14 @@ export async function resendPendingPartnerInvite(formData: FormData) {
   if (!partnership) {
     redirect(
       `${safeBack}?error=${encodeURIComponent("Pending invite not found.")}`,
+    );
+  }
+
+  const lastTouch = (partnership.updated_at as string | null) ??
+    (partnership.created_at as string | null);
+  if (reminderCooldownActive(lastTouch)) {
+    redirect(
+      `${safeBack}?error=${encodeURIComponent(reminderCooldownMessage(REMINDER_COOLDOWN_HOURS))}`,
     );
   }
 
@@ -77,6 +108,17 @@ export async function resendPendingPartnerInvite(formData: FormData) {
       `${safeBack}?error=${encodeURIComponent(sent.error ?? "Could not send invite email.")}`,
     );
   }
+
+  await admin
+    .from("partnerships")
+    .update({ updated_at: new Date().toISOString() })
+    .eq("id", partnership.id);
+
+  void trackEngagement("reminder_sent", company.id, {
+    invite_kind: "partnership",
+    surface: "email",
+    source: "resend",
+  });
 
   revalidatePath(safeBack);
   redirect(`${safeBack}?resent=1`);

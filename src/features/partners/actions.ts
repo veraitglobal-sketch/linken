@@ -18,6 +18,8 @@ export async function createUnclaimedPartner(formData: FormData) {
   const inviteEmail = String(formData.get("invite_email") ?? "")
     .trim()
     .toLowerCase();
+  const sendInvite = String(formData.get("send_invite") ?? "") === "1";
+  const inviteSource = String(formData.get("invite_source") ?? "dashboard");
   const back = safeAppBack(
     String(formData.get("back") ?? "/dashboard/partners"),
     "/dashboard/partners",
@@ -40,6 +42,8 @@ export async function createUnclaimedPartner(formData: FormData) {
     city,
     website,
     email: inviteEmail || null,
+    sendInvite,
+    inviteSource,
   });
 
   if (!result.ok) {
@@ -76,6 +80,13 @@ export async function claimCompanyProfile(formData: FormData) {
 
   if (companyId) {
     await confirmPartnershipsAfterClaim(supabase, companyId, user.id);
+    const { trackLifecycle } = await import(
+      "@/features/product-analytics/helpers"
+    );
+    void trackLifecycle("invited_company_created_profile", companyId, {
+      invite_kind: "claim",
+      surface: "web",
+    });
   }
 
   revalidatePath("/dashboard");
@@ -95,6 +106,21 @@ export async function requestClaimInviteResend(formData: FormData) {
 
   if (!slug || !email.includes("@")) {
     redirect(`${back}?claimError=${encodeURIComponent("Enter the invite email.")}`);
+  }
+
+  const { headers } = await import("next/headers");
+  const { clientIpFromHeaders, takeRateLimit } = await import(
+    "@/features/security/rate-limit"
+  );
+  const hdrs = await headers();
+  const ip = clientIpFromHeaders(hdrs);
+  const limited = takeRateLimit({
+    key: `claim-resend:${ip}:${slug}:${email}`,
+    limit: 3,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!limited.ok) {
+    redirect(`${back}?claimSent=1`);
   }
 
   // resolve_claim_token is service-role only: if any browser-facing client

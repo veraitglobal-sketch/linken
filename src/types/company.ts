@@ -22,6 +22,8 @@ export type Company = {
   coverImageUrl?: string | null;
   /** false = ghost / unclaimed draft profile. Never includes claim_token. */
   claimed?: boolean;
+  /** Profile last update — public, for provenance / freshness. */
+  updatedAt?: string | null;
   /** Public availability — default true when unset. */
   acceptingClients?: boolean;
   /** Billing plan — free | pro | founding. Not user-editable in-app. */

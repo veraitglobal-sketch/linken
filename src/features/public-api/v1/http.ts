@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { ApiErrorBody, ApiErrorCode } from "@/features/public-api/v1/types";
+import { takeRateLimit } from "@/features/security/rate-limit";
 
 export const API_CACHE =
   "public, s-maxage=300, stale-while-revalidate=3600";
@@ -9,6 +10,7 @@ const CORS: Record<string, string> = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
   "Cache-Control": API_CACHE,
+  "X-Content-Type-Options": "nosniff",
 };
 
 /** A route that accepts more than GET must say so, or the browser preflight
@@ -55,4 +57,21 @@ export function apiError(
     status,
     headers: { ...CORS, "Cache-Control": "no-store" },
   });
+}
+
+/** Soft per-IP throttle for public GET endpoints (per instance). */
+export function assertPublicApiRateLimit(
+  ip: string,
+): NextResponse | null {
+  const hit = takeRateLimit({
+    key: `public-api:${ip}`,
+    limit: 120,
+    windowMs: 60_000,
+  });
+  if (hit.ok) return null;
+  return apiError(
+    "rate_limited",
+    "Too many requests. Try again shortly.",
+    429,
+  );
 }

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { parsePlan } from "@/features/plan/entitlements";
 import { createClient } from "@/lib/supabase/server";
 import { createPublicClient } from "@/lib/supabase/public";
@@ -31,6 +32,7 @@ function mapRow(row: {
   claimed: boolean | null;
   accepting_clients?: boolean | null;
   plan?: string | null;
+  updated_at?: string | null;
   invite_email?: string | null;
   created_by?: { slug: string; name: string } | { slug: string; name: string }[] | null;
 }): Company {
@@ -58,6 +60,7 @@ function mapRow(row: {
     logoUrl: row.logo_url ?? null,
     coverImageUrl: row.cover_image_url ?? null,
     claimed: row.claimed !== false,
+    updatedAt: row.updated_at ?? null,
     acceptingClients: row.accepting_clients !== false,
     plan: parsePlan(row.plan),
     inviteEmail: row.invite_email ?? null,
@@ -66,15 +69,17 @@ function mapRow(row: {
   };
 }
 
-/** Public company fetch — never selects claim_token. DB only; never mock. */
-export async function getCompanyForPage(slug: string): Promise<Company | null> {
+/** Public company fetch — never selects claim_token. Deduped per request. */
+export const getCompanyForPage = cache(async function getCompanyForPage(
+  slug: string,
+): Promise<Company | null> {
   if (!slug) return null;
   try {
     const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("companies")
       .select(
-        "id, slug, name, tagline, description, category, city, country, website, logo_url, cover_image_url, linkedin_url, facebook_url, services, verified, claimed, accepting_clients, plan, created_by:companies!created_by_company_id(slug, name)",
+        "id, slug, name, tagline, description, category, city, country, website, logo_url, cover_image_url, linkedin_url, facebook_url, services, verified, claimed, accepting_clients, plan, updated_at, created_by:companies!created_by_company_id(slug, name)",
       )
       .eq("slug", slug)
       .maybeSingle();
@@ -100,7 +105,7 @@ export async function getCompanyForPage(slug: string): Promise<Company | null> {
     console.error("[getCompanyForPage]", err);
     return null;
   }
-}
+});
 
 export type SearchFilters = {
   verifiedOnly?: boolean;

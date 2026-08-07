@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useCallback, useId, useRef } from "react";
+import { useFocusTrap } from "@/components/a11y/use-focus-trap";
 import { detachGraphLink } from "@/features/network/actions";
 import type { NetworkEdge } from "@/features/network/types";
 import { Button } from "@/components/ui/button";
@@ -11,13 +13,30 @@ type Props = {
 };
 
 export function GraphDetachDialog({ edge, onCancel }: Props) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const close = useCallback(() => onCancel(), [onCancel]);
+  useFocusTrap(true, close, panelRef);
+
   if (!edge.detachable) {
     return (
-      <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]">
-        <div className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]">
-          <p className="font-display text-lg font-medium text-ink">
+      <div
+        className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]"
+        role="presentation"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onCancel();
+        }}
+      >
+        <div
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]"
+        >
+          <h2 id={titleId} className="font-display text-lg font-medium text-ink">
             Can’t detach here
-          </p>
+          </h2>
           <p className="mt-2 text-[13px] text-muted">
             Client links come from confirmed service references. Manage them on
             the company profile.
@@ -25,7 +44,7 @@ export function GraphDetachDialog({ edge, onCancel }: Props) {
           <Button
             type="button"
             variant="secondary"
-            className="mt-4 h-9"
+            className="mt-4 h-11"
             onClick={onCancel}
           >
             Back
@@ -36,14 +55,29 @@ export function GraphDetachDialog({ edge, onCancel }: Props) {
   }
 
   return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]">
-      <div className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]">
+    <div
+      className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]"
+      role="presentation"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onCancel();
+      }}
+    >
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]"
+      >
         <p className="text-[10px] font-semibold tracking-[0.12em] text-ember uppercase">
           Detach link
         </p>
-        <p className="mt-2 font-display text-lg font-medium tracking-[-0.03em] text-ink">
+        <h2
+          id={titleId}
+          className="mt-2 font-display text-lg font-medium tracking-[-0.03em] text-ink"
+        >
           Remove this connection?
-        </p>
+        </h2>
         <p className="mt-2 text-[13px] leading-relaxed text-muted">
           {edge.type === "partner"
             ? "This removes the partnership from both profiles. Case study collaborations remain."
@@ -69,13 +103,13 @@ export function GraphDetachDialog({ edge, onCancel }: Props) {
               value={edge.meta.memberCompanyId}
             />
           ) : null}
-          <Button type="submit" className="h-9 bg-ember hover:bg-[#a8642e]">
+          <Button type="submit" className="h-11 bg-ember hover:bg-[#a8642e]">
             Detach
           </Button>
           <Button
             type="button"
             variant="secondary"
-            className="h-9"
+            className="h-11"
             onClick={onCancel}
           >
             Cancel

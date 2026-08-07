@@ -12,6 +12,7 @@ export type SettingsCompany = {
   services: string[];
   acceptingClients: boolean;
   verified: boolean;
+  inviteRemindersEnabled: boolean;
   publicHost: string;
 };
 
@@ -29,6 +30,7 @@ type Row = {
   services: unknown;
   accepting_clients: boolean | null;
   verified: boolean | null;
+  invite_reminders_enabled?: boolean | null;
 };
 
 function asServices(value: unknown): string[] {
@@ -63,6 +65,7 @@ export function toSettingsCompany(row: Row, publicHost: string): SettingsCompany
     services: asServices(row.services),
     acceptingClients: row.accepting_clients !== false,
     verified: Boolean(row.verified),
+    inviteRemindersEnabled: row.invite_reminders_enabled !== false,
     publicHost,
   };
 }

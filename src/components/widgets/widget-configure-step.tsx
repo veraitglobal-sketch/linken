@@ -4,6 +4,7 @@ import { LazyEmbedPreview } from "@/components/widgets/lazy-embed-preview";
 import { PreviewStage } from "@/components/widgets/preview-stage";
 import { WidgetConfigAside } from "@/components/widgets/widget-config-aside";
 import { WidgetSegmented } from "@/components/widgets/widget-segmented";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { WidgetDefinition, WidgetTheme } from "@/features/widgets/catalog";
 import { cn } from "@/lib/cn";
@@ -101,9 +102,9 @@ export function WidgetConfigureStep(props: Props) {
           {proLocked ? (
             <p className="mt-4 rounded-xl border border-line bg-paper px-4 py-3 text-[13px] text-muted">
               Pro widget —{" "}
-              <a href="/dashboard/billing" className="font-semibold text-ink underline-offset-2 hover:underline">
+              <Link href="/dashboard/billing" className="font-semibold text-ink underline-offset-2 hover:underline">
                 upgrade on Billing
-              </a>{" "}
+              </Link>{" "}
               to copy embed code. Preview uses your live profile data.
             </p>
           ) : null}

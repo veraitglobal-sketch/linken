@@ -2,10 +2,15 @@ import {
   WEBHOOK_EVENTS,
   type WebhookEventType,
 } from "@/features/webhooks/types";
+import {
+  isBlockedHostname,
+  isPrivateOrSpecialIp,
+} from "@/features/security/private-ip";
+import net from "node:net";
 
 const MAX_URL = 2048;
 
-/** Validate HTTPS webhook URL (localhost HTTP allowed for local tests). */
+/** Validate HTTPS webhook URL — block private hosts and credentials. */
 export function normalizeWebhookUrl(
   raw: unknown,
 ): { ok: true; url: string } | { ok: false; error: string } {
@@ -23,17 +28,17 @@ export function normalizeWebhookUrl(
     return { ok: false, error: "url must be a valid absolute URL." };
   }
   const host = parsed.hostname.toLowerCase();
-  const local =
-    host === "localhost" || host === "127.0.0.1" || host === "[::1]";
-  if (parsed.protocol === "http:") {
-    if (!local) {
-      return { ok: false, error: "url must use https:// (except localhost)." };
-    }
-  } else if (parsed.protocol !== "https:") {
+  if (parsed.protocol !== "https:") {
     return { ok: false, error: "url must use https://" };
   }
   if (parsed.username || parsed.password) {
     return { ok: false, error: "url must not include credentials." };
+  }
+  if (isBlockedHostname(host)) {
+    return { ok: false, error: "url host is not allowed." };
+  }
+  if (net.isIP(host) && isPrivateOrSpecialIp(host)) {
+    return { ok: false, error: "url must not target a private address." };
   }
   return { ok: true, url: parsed.toString() };
 }
@@ -46,7 +51,10 @@ export function normalizeWebhookEvents(
   }
   const events: WebhookEventType[] = [];
   for (const item of raw) {
-    if (typeof item !== "string" || !(WEBHOOK_EVENTS as readonly string[]).includes(item)) {
+    if (
+      typeof item !== "string" ||
+      !(WEBHOOK_EVENTS as readonly string[]).includes(item)
+    ) {
       return {
         ok: false,
         error: `Invalid event. Allowed: ${WEBHOOK_EVENTS.join(", ")}`,

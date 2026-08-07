@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ClaimPanel } from "@/components/claim/claim-panel";
+import { getCompanyForPage } from "@/features/companies/queries";
 import {
   getClaimPreview,
   viewerOwnsClaimedCompany,
 } from "@/features/partners/queries";
 
 export const metadata: Metadata = {
-  title: "Confirm partnership",
+  title: "Claim company profile",
   robots: { index: false, follow: false },
 };
 
@@ -33,7 +34,8 @@ export default async function ClaimTokenPage({ params, searchParams }: Props) {
           Invalid or already claimed
         </h1>
         <p className="mt-3 text-[15px] text-ink-soft">
-          This link is invalid or the profile was already taken.
+          This link is invalid or the profile was already taken. Without a valid
+          claim token, a company cannot be claimed.
         </p>
         <Link href="/" className="mt-6 inline-block text-sm font-semibold underline">
           Back to Hansala
@@ -42,10 +44,12 @@ export default async function ClaimTokenPage({ params, searchParams }: Props) {
     );
   }
 
+  const draft = await getCompanyForPage(preview.companySlug);
+
   return (
     <section className="mx-auto max-w-xl px-4 py-10 sm:py-14">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-        Hansala · Partnership
+        Hansala · Claim profile
       </p>
       <h1 className="mt-3 font-display text-[clamp(1.8rem,4vw,2.4rem)] font-medium tracking-[-0.04em] text-ink">
         {preview.companyName}
@@ -58,7 +62,7 @@ export default async function ClaimTokenPage({ params, searchParams }: Props) {
             {preview.pendingPartnerships > 0 ? " · confirmation waiting" : null}.
           </>
         ) : (
-          <>A draft company profile is ready for you.</>
+          <>A draft company profile is ready for you to claim.</>
         )}
       </p>
       <p className="mt-2 text-[13px] text-muted">
@@ -74,6 +78,7 @@ export default async function ClaimTokenPage({ params, searchParams }: Props) {
           error={sp.error}
           checkEmail={sp.checkEmail === "1"}
           checkEmailAddress={sp.email}
+          companyWebsite={draft?.website ?? null}
         />
       </div>
     </section>

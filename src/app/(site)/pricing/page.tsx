@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
 import { PricingCards } from "@/components/pricing/pricing-cards";
 import { PricingCompare } from "@/components/pricing/pricing-compare";
 import { PricingFaq } from "@/components/pricing/pricing-faq";
@@ -8,6 +9,7 @@ import {
   PRICING_COMPARE,
   PRO_PLAN_PRICE,
 } from "@/features/plan/pricing";
+import { pricingFaq } from "@/features/plan/pricing-faq";
 import { isStripeConfigured } from "@/lib/stripe";
 
 export const metadata: Metadata = {
@@ -22,6 +24,7 @@ export default function PricingPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <PageViewBeacon event="pricing_viewed" page="/pricing" />
       <p className="text-[11px] font-semibold tracking-[0.16em] text-blue uppercase">
         Pricing
       </p>
@@ -47,7 +50,7 @@ export default function PricingPage() {
         <PricingCompare rows={PRICING_COMPARE} />
       </section>
 
-      <PricingFaq />
+      <PricingFaq items={pricingFaq(stripeReady)} />
 
       <p className="mt-12 text-[13px] text-muted">
         Legal entity and terms:{" "}

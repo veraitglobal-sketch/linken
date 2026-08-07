@@ -3,6 +3,7 @@
 export const FOOTER_PRODUCT = [
   { label: "About", href: "/about" },
   { label: "Pricing", href: "/pricing" },
+  { label: "Use cases", href: "/use-cases" },
   { label: "Developers", href: "/developers" },
   { label: "Changelog", href: "/changelog" },
   { label: "Status", href: "/status" },

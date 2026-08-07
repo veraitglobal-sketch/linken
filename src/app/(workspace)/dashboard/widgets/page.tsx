@@ -64,7 +64,7 @@ export default async function DashboardWidgetsPage() {
   const [assessment, references, wallCandidates, settingsRes, confirmedCases, publishedTestimonials] =
     await Promise.all([
       getClientAssessmentSummary(company.id),
-      getReferencesForCompany(company.id),
+      getReferencesForCompany(company.id, { includePending: true }),
       getLogoWallConfirmedCandidates(company.id),
       (async () => {
         const { createClient } = await import("@/lib/supabase/server");

@@ -3,6 +3,7 @@ import { NextStepStrip } from "@/components/activation/next-step-strip";
 import { CompanyHeroBand } from "@/components/company/company-hero-band";
 import { CompanyProfileBody } from "@/components/company/company-profile-body";
 import { CompanySignal } from "@/components/company/company-signal";
+import { ProfileProvenance } from "@/components/company/profile-provenance";
 import { UnclaimedBanner } from "@/components/company/unclaimed-banner";
 import type { PublicTeamMember } from "@/features/team/types";
 import { InquirySentBanner } from "@/components/inquiries/inquiry-sent-banner";
@@ -25,6 +26,7 @@ type Props = {
   partnerRail?: PartnerRailSettings;
   caseStudies: CaseStudy[];
   references: ServiceReference[];
+  providers?: ServiceReference[];
   testimonials: PublicTestimonial[];
   trust: TrustProfile;
   assessmentSummary: ClientAssessmentSummary;
@@ -57,6 +59,7 @@ export function CompanyProfile({
   partnerRail,
   caseStudies,
   references,
+  providers = [],
   testimonials,
   trust,
   assessmentSummary,
@@ -156,6 +159,7 @@ export function CompanyProfile({
         partnerRail={partnerRail}
         caseStudies={caseStudies}
         references={references}
+        providers={providers}
         testimonials={testimonials}
         trust={trust}
         assessmentSummary={assessmentSummary}
@@ -164,6 +168,7 @@ export function CompanyProfile({
         isUnclaimed={isUnclaimed}
         showTeam={teamMembers.length > 0 || (editable && !isUnclaimed)}
         showRefs={references.length > 0 || editable}
+        showProviders={providers.length > 0}
         showCases={caseStudies.length > 0 || editable}
         showPartners={partners.length > 0 || editable}
         showTestimonials={testimonials.length > 0 || (editable && !isUnclaimed)}
@@ -177,6 +182,8 @@ export function CompanyProfile({
         addPartnerMode={addPartnerMode}
         caseStudyBase={caseStudyBase}
       />
+
+      <ProfileProvenance company={company} editable={editable} />
 
       {networkMap}
     </div>

@@ -17,7 +17,8 @@
   --accent-soft: rgba(14, 31, 28, 0.07);
   --success: #1f7a56;
   --ember: #b8895a;
-  --plus: #8a948e;
+  /* Body/UI text must use --muted or darker; --plus meets AA on paper/surface */
+  --plus: #5f6964;
   --font-sans: var(--font-ui);
   --font-display: var(--font-display);
   --shadow: 0 22px 64px rgba(8, 20, 18, 0.1);
@@ -52,6 +53,12 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   margin: 0;
   min-height: 100%;
@@ -64,6 +71,16 @@ body {
 
 a {
   text-decoration: none;
+}
+
+/* Global keyboard focus — components may refine; never remove without replacement */
+:focus-visible {
+  outline: 2px solid var(--blue-soft);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 ::selection {
@@ -86,6 +103,17 @@ a {
 
 .group:hover .media-zoom {
   transform: scale(1.035);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-zoom {
+    transition: none;
+    will-change: auto;
+  }
+
+  .group:hover .media-zoom {
+    transform: none;
+  }
 }
 
 @keyframes fade-up {
@@ -198,7 +226,7 @@ a {
 .case-file {
   --cf-paper: #f6f4ef;
   --cf-ink: #0d1210;
-  --cf-muted: #6b736e;
+  --cf-muted: #5c6560;
   --cf-line: rgba(13, 18, 16, 0.1);
   --cf-accent: #1a5c51;
   background: var(--cf-paper);
@@ -243,10 +271,16 @@ a {
 .case-file-input:focus {
   outline: none;
   border-bottom-color: var(--cf-accent);
+  box-shadow: 0 2px 0 0 var(--cf-accent);
+}
+
+.case-file-input:focus-visible {
+  outline: 2px solid var(--cf-accent);
+  outline-offset: 4px;
 }
 
 .case-file-input::placeholder {
-  color: rgba(13, 18, 16, 0.28);
+  color: rgba(13, 18, 16, 0.45);
 }
 
 .case-file-body-input {
@@ -264,6 +298,12 @@ a {
 .case-file-body-input:focus {
   outline: none;
   border-bottom-color: var(--cf-accent);
+  box-shadow: 0 2px 0 0 var(--cf-accent);
+}
+
+.case-file-body-input:focus-visible {
+  outline: 2px solid var(--cf-accent);
+  outline-offset: 4px;
 }
 
 .case-file-prose {
@@ -459,8 +499,16 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .linken-widget-enter {
-    animation: none;
+  .linken-widget-enter,
+  .linken-node-enter,
+  .linken-panel-enter,
+  .workspace-fade,
+  .animate-rise,
+  .animate-rise-delay,
+  .animate-rise-late,
+  .link-pulse {
+    animation: none !important;
+    transition: none !important;
   }
 }
 

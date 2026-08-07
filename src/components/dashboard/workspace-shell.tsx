@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { GettingStartedPill } from "@/components/activation/getting-started-pill";
+import { SkipLink } from "@/components/a11y/skip-link";
 import { WorkspaceDesktopAside } from "@/components/dashboard/workspace-desktop-aside";
 import { WorkspaceMobileMenu } from "@/components/dashboard/workspace-mobile-menu";
 import { WorkspaceMobileNav } from "@/components/dashboard/workspace-mobile-nav";
@@ -34,11 +35,14 @@ export function WorkspaceShell({
   signedIn = true,
 }: Props) {
   const pathname = usePathname();
-  const isGraph = pathname === "/dashboard" && active?.type !== "group";
+  const isGraph = pathname === "/dashboard/map" && active?.type !== "group";
   const meta =
     WORKSPACE_PAGE_META[pathname] ??
     Object.entries(WORKSPACE_PAGE_META).find(
-      ([href]) => href !== "/dashboard" && pathname.startsWith(href),
+      ([href]) =>
+        href !== "/dashboard" &&
+        href !== "/dashboard/map" &&
+        pathname.startsWith(href),
     )?.[1] ??
     { title: "Workspace" };
 
@@ -51,6 +55,7 @@ export function WorkspaceShell({
 
   return (
     <div className="flex min-h-0 flex-1">
+      <SkipLink />
       <WorkspaceDesktopAside
         active={active}
         contexts={contexts}
@@ -101,7 +106,13 @@ export function WorkspaceShell({
                 companySlug={active?.type === "company" ? active.slug : null}
               />
             ) : null}
-            <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
+            <main
+              id="main-content"
+              tabIndex={-1}
+              className="min-h-0 flex-1 overflow-hidden"
+            >
+              {children}
+            </main>
           </>
         ) : (
           <>
@@ -159,7 +170,13 @@ export function WorkspaceShell({
                 companySlug={active?.type === "company" ? active.slug : null}
               />
             ) : null}
-            <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+            <main
+              id="main-content"
+              tabIndex={-1}
+              className="min-h-0 flex-1 overflow-y-auto"
+            >
+              {children}
+            </main>
           </>
         )}
       </div>

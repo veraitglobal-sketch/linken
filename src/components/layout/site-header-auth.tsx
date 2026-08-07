@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { focusableLinkClass } from "@/components/a11y/focus";
 import { signOut } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { PRODUCT } from "@/lib/product-model";
@@ -50,44 +51,53 @@ export function SiteHeaderAuth() {
   }, []);
 
   if (auth.status === "loading") {
-    return <div className="h-9 w-[7.5rem]" aria-hidden />;
+    return (
+      <div
+        className="h-11 w-[7.5rem]"
+        role="status"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <span className="sr-only">Loading account</span>
+      </div>
+    );
   }
 
   if (auth.status === "user") {
     const slug = auth.companySlug;
     return (
-      <div className="flex items-center gap-2">
-        <nav className="mr-2 hidden items-center gap-5 md:flex">
+      <div className="flex items-center gap-1 sm:gap-2">
+        <nav
+          className="mr-1 hidden items-center gap-4 md:flex"
+          aria-label="Account"
+        >
           {slug ? (
             <>
-              <Link
-                href={`/c/${slug}`}
-                className="text-[13px] font-medium text-ink-soft hover:text-ink"
-              >
+              <Link href={`/c/${slug}`} className={focusableLinkClass()}>
                 {PRODUCT.company.label}
               </Link>
-              <Link
-                href="/dashboard"
-                className="text-[13px] font-medium text-ink-soft hover:text-ink"
-              >
+              <Link href="/dashboard" className={focusableLinkClass()}>
                 Dashboard
               </Link>
-              <Link
-                href="/dashboard/inbox"
-                className="text-[13px] font-medium text-ink-soft hover:text-ink"
-              >
+              <Link href="/dashboard/inbox" className={focusableLinkClass()}>
                 {PRODUCT.inbox.label}
               </Link>
             </>
           ) : (
-            <Link
-              href="/dashboard"
-              className="text-[13px] font-medium text-ink-soft hover:text-ink"
-            >
+            <Link href="/dashboard" className={focusableLinkClass()}>
               Dashboard
             </Link>
           )}
+          <Link href="/pricing" className={focusableLinkClass()}>
+            Pricing
+          </Link>
         </nav>
+        <Link
+          href="/dashboard"
+          className="inline-flex min-h-11 items-center px-2 text-[12px] font-semibold text-ink md:hidden"
+        >
+          Workspace
+        </Link>
         <span
           className="hidden max-w-[11rem] truncate text-[11px] text-muted lg:inline"
           title={auth.email}
@@ -98,7 +108,7 @@ export function SiteHeaderAuth() {
           <Button
             type="submit"
             variant="secondary"
-            className="h-9 px-4 text-[12px]"
+            className="h-11 px-4 text-[12px]"
           >
             Sign out
           </Button>
@@ -108,19 +118,19 @@ export function SiteHeaderAuth() {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <nav className="mr-2 hidden items-center gap-5 md:flex">
-        <Link
-          href="/dashboard"
-          className="text-[13px] font-medium text-ink-soft hover:text-ink"
-        >
+    <div className="flex items-center gap-1 sm:gap-2">
+      <nav className="mr-1 hidden items-center gap-4 md:flex" aria-label="Site">
+        <Link href="/pricing" className={focusableLinkClass()}>
+          Pricing
+        </Link>
+        <Link href="/dashboard" className={focusableLinkClass()}>
           Workspace
         </Link>
       </nav>
-      <Button variant="ghost" href="/login" className="h-9 px-3 text-[12px]">
+      <Button variant="ghost" href="/login" className="h-11 px-3 text-[12px]">
         Sign in
       </Button>
-      <Button href="/onboarding" className="h-9 px-4 text-[12px]">
+      <Button href="/onboarding" className="h-11 px-4 text-[12px]">
         Create company
       </Button>
     </div>

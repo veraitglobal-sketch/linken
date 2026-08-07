@@ -77,6 +77,7 @@ export function CompanyAddPartner({
           className="mt-3 grid gap-2.5"
         >
           <input type="hidden" name="back" value={back} />
+          <input type="hidden" name="invite_source" value="profile" />
           <Input name="name" required placeholder="Company name" />
           <div className="grid grid-cols-2 gap-2">
             <Input name="category" required placeholder="Category" />
@@ -85,12 +86,20 @@ export function CompanyAddPartner({
           <Input
             type="email"
             name="invite_email"
-            required
-            placeholder="Email — send invite now"
+            placeholder="Email (optional)"
           />
           <Input name="website" placeholder="Website (optional)" />
+          <label className="flex items-start gap-2 text-[12px] text-ink-soft">
+            <input
+              type="checkbox"
+              name="send_invite"
+              value="1"
+              className="mt-0.5"
+            />
+            <span>Send invite email now (optional — draft without it)</span>
+          </label>
           <Button type="submit" className="h-9 w-fit px-3.5 text-[12px]">
-            Create &amp; send invite
+            Save partner draft
           </Button>
         </form>
       ) : (

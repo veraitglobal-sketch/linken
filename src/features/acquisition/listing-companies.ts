@@ -59,6 +59,7 @@ export async function getCompaniesListingClient(input: {
       .limit(40);
     for (const row of bySite ?? []) {
       const site = extractDomain((row.website as string) ?? "");
+      // Exact registrable domain only — reject subdomain / partial matches.
       if (site === domain) clientIds.add(row.id as string);
     }
   }

@@ -42,7 +42,7 @@ export function InsightsOverview({
       <WorkspaceCard padded={false} className="overflow-hidden">
         <div className="grid gap-0 lg:grid-cols-[1.1fr_1.4fr]">
           <div className="border-b border-line p-5 lg:border-r lg:border-b-0">
-            <p className="text-[10px] font-semibold tracking-[0.12em] text-plus uppercase">
+            <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
               Profile visits
             </p>
             <p className="mt-2 font-display text-[28px] font-semibold tracking-[-0.03em] text-ink">

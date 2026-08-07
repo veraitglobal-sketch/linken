@@ -5,6 +5,10 @@ export const WORKSPACE_PAGE_META: Record<
   { title: string; description?: string; actionHref?: string; actionLabel?: string }
 > = {
   "/dashboard": {
+    title: PRODUCT.home.label,
+    description: PRODUCT.home.job,
+  },
+  "/dashboard/map": {
     title: PRODUCT.map.label,
     description: PRODUCT.map.job,
   },

@@ -1,9 +1,12 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import { assertInviteEmailDailyQuota } from "@/features/growth/invite-quota";
+import { parseInviteSource } from "@/features/growth/referral";
 import { assertGhostDailyQuota } from "@/features/partners/ghost-quota";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { sendClaimInviteEmail } from "@/lib/email";
+import { trackEngagement } from "@/features/product-analytics/helpers";
 
 export type CoreFail = { ok: false; error: string };
 export type CoreOk<T> = { ok: true; data: T };
@@ -19,6 +22,13 @@ export type CreateUnclaimedPartnerInput = {
   city: string;
   website?: string | null;
   email?: string | null;
+  /**
+   * When true and email is set, send the claim invite.
+   * Default false — never auto-email without an explicit action.
+   */
+  sendInvite?: boolean;
+  /** Analytics source — never PII. */
+  inviteSource?: string;
 };
 
 /**
@@ -50,6 +60,15 @@ export async function createUnclaimedPartnerCore(
 
   const quota = await assertGhostDailyQuota(supabase, input.companyId);
   if (!quota.ok) return { ok: false, error: quota.error };
+
+  const shouldSend = Boolean(input.sendInvite && inviteEmail);
+  if (shouldSend) {
+    const emailQuota = await assertInviteEmailDailyQuota(
+      supabase,
+      input.companyId,
+    );
+    if (!emailQuota.ok) return { ok: false, error: emailQuota.error };
+  }
 
   const slug = await uniqueCompanySlug(supabase, name);
   const claimToken = crypto.randomUUID();
@@ -92,7 +111,7 @@ export async function createUnclaimedPartnerCore(
     return { ok: false, error: partnershipError.message };
   }
 
-  if (inviteEmail) {
+  if (shouldSend && inviteEmail) {
     const sent = await sendClaimInviteEmail({
       to: inviteEmail,
       inviterName: input.companyName,
@@ -105,6 +124,11 @@ export async function createUnclaimedPartnerCore(
         error: sent.error ?? "Partner created, but invite email failed.",
       };
     }
+    void trackEngagement("invitation_sent", input.companyId, {
+      invite_kind: "partnership",
+      surface: "email",
+      source: parseInviteSource(input.inviteSource),
+    });
   }
 
   if (website) {

@@ -1,10 +1,11 @@
 import "server-only";
 
-import { createAdminClient } from "@/lib/supabase/admin";
+import { trackServer } from "@/features/product-analytics/track";
+import type { ProductEventName } from "@/features/product-analytics/taxonomy";
 
 /**
- * Product activation funnel — company_id + event only.
- * Never send emails, names, or other PII.
+ * Legacy activation funnel names — bridge into the typed product-analytics layer.
+ * Prefer `track` / `trackServer` for new call sites.
  */
 export const ACTIVATION_EVENTS = [
   "signup_completed",
@@ -17,6 +18,7 @@ export const ACTIVATION_EVENTS = [
   "first_invitation_opened",
   "first_reference_confirmed",
   "first_reference_published",
+  "dashboard_cta_clicked",
 ] as const;
 
 export type ActivationEventType = (typeof ACTIVATION_EVENTS)[number];
@@ -25,16 +27,14 @@ export type ActivationEventType = (typeof ACTIVATION_EVENTS)[number];
 export async function logActivationEvent(
   companyId: string | null | undefined,
   eventType: ActivationEventType,
+  detail?: string | null,
 ): Promise<void> {
   if (eventType !== "signup_completed" && !companyId) return;
-  try {
-    const admin = createAdminClient();
-    if (!admin) return;
-    await admin.from("activation_events").insert({
-      company_id: companyId ?? null,
-      event_type: eventType,
-    });
-  } catch (err) {
-    console.error("[logActivationEvent]", eventType, err);
-  }
+  await trackServer({
+    name: eventType as ProductEventName,
+    companyId: companyId ?? null,
+    props: detail
+      ? { cta: detail.slice(0, 64), surface: "web" }
+      : { surface: "web" },
+  });
 }

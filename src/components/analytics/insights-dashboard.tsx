@@ -1,15 +1,16 @@
 "use client";
 
 import {
-  IntertwinedActivityChart,
-  type ChartPoint,
-} from "@/components/analytics/charts";
+  LazyIntertwinedChart,
+} from "@/components/analytics/lazy-intertwined-chart";
 import { InsightsFull } from "@/components/analytics/insights-full";
 import { InsightsOverview } from "@/components/analytics/insights-overview";
 import { WorkspaceCard, WorkspacePage } from "@/components/dashboard/workspace-page";
+import type { ChartPoint } from "@/components/analytics/chart-types";
 import type { AnalyticsSummary } from "@/features/analytics/queries";
 import type { CompanyPlan } from "@/features/plan/entitlements";
 import { getEntitlements } from "@/features/plan/entitlements";
+import Link from "next/link";
 
 const SOURCE_META: { key: string; label: string; color: string }[] = [
   { key: "direct", label: "Direct", color: "#0e1f1c" },
@@ -107,7 +108,7 @@ export function InsightsDashboard({ analytics, plan }: Props) {
               aria-hidden
             >
               <div className="h-[200px]">
-                <IntertwinedActivityChart data={points} />
+                <LazyIntertwinedChart data={points} />
               </div>
             </div>
             <div className="absolute inset-0 flex items-center justify-center bg-surface/80 px-6 text-center">
@@ -117,12 +118,12 @@ export function InsightsDashboard({ analytics, plan }: Props) {
                 </p>
                 <p className="mt-1 text-[13px] text-muted">
                   Intertwined activity and breakdown —{" "}
-                  <a
+                  <Link
                     href="/dashboard/billing"
                     className="font-semibold text-ink underline-offset-2 hover:underline"
                   >
                     upgrade to Pro
-                  </a>
+                  </Link>
                 </p>
               </div>
             </div>

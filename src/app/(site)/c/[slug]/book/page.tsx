@@ -14,10 +14,14 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const company = await getCompanyForPage(slug);
-  if (!company) return { title: "Book a call" };
+  if (!company) {
+    return { title: "Book a call", robots: { index: false, follow: false } };
+  }
+  const index = company.claimed !== false;
   return {
     title: `Book a call · ${company.name}`,
     description: `Schedule time with ${company.name} on Hansala.`,
+    robots: { index, follow: true },
     alternates: { canonical: `${getSiteUrl()}/c/${company.slug}/book` },
   };
 }

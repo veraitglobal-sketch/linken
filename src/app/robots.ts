@@ -21,6 +21,9 @@ const PRIVATE = [
   "/testimonial/",
   "/requests/",
   "/logo-wall/",
+  "/*/report",
+  "/*/edit",
+  "/*/one-pager",
 ];
 
 /** Explicit allow for AI crawlers so llm.md / llms.txt stay discoverable. */

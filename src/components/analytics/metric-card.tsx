@@ -26,7 +26,7 @@ export function MetricCard({
       <p className="mt-1 font-display text-[1.75rem] font-semibold tracking-[-0.03em] text-ink">
         {value}
         {suffix ? (
-          <span className="ml-1 text-[16px] font-semibold text-[#8a948e]">
+          <span className="ml-1 text-[16px] font-semibold text-muted">
             {suffix}
           </span>
         ) : null}

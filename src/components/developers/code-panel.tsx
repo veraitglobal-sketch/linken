@@ -32,7 +32,7 @@ export function CodePanel({ tabs, caption }: Props) {
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-3 py-2.5">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {caption ? (
-            <span className="hidden shrink-0 text-[10px] font-semibold tracking-[0.12em] text-white/35 uppercase sm:inline">
+            <span className="hidden shrink-0 text-[10px] font-semibold tracking-[0.12em] text-[#a8b2ad] uppercase sm:inline">
               {caption}
             </span>
           ) : null}

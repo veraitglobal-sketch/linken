@@ -5,6 +5,7 @@ import { WidgetCodeStep } from "@/components/widgets/widget-code-step";
 import { WidgetConfigureStep } from "@/components/widgets/widget-configure-step";
 import { useWidgetStudio } from "@/components/widgets/use-widget-studio";
 import type { WidgetDefinition } from "@/features/widgets/catalog";
+import { trackEmbedCreated } from "@/features/product-analytics/embed-actions";
 import { cn } from "@/lib/cn";
 
 type Props = {
@@ -79,6 +80,7 @@ export function WidgetConfigurator({
   async function copy() {
     if (proLocked) return;
     await navigator.clipboard.writeText(studio.snippet);
+    void trackEmbedCreated(widget.id);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 2000);
   }

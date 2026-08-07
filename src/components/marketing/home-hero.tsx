@@ -7,7 +7,7 @@ export function HomeHero() {
     <section className="flex min-h-[calc(100svh-4.75rem)] items-center px-4 pt-1">
       <div className="hero-live relative mx-auto grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-[32px] shadow-[0_28px_90px_rgba(8,20,18,0.28)] lg:min-h-[82vh] lg:grid-cols-[1.15fr_0.85fr]">
         <div className="relative z-10 flex flex-col justify-between px-7 py-9 sm:px-11 sm:py-12">
-          <div className="animate-rise flex items-center gap-2.5 text-white/50">
+          <div className="animate-rise flex items-center gap-2.5 text-[#a8b2ad]">
             <NetworkMark size={17} animate={false} />
             <p className="text-[13px] font-medium tracking-[-0.01em]">
               Mutually confirmed project networks
@@ -21,7 +21,7 @@ export function HomeHero() {
             <h1 className="animate-rise-delay mt-6 font-display text-[clamp(1.7rem,3.5vw,2.7rem)] leading-[1.14] font-medium tracking-[-0.032em] text-white/[0.92]">
               Turn your past work into verified proof.
             </h1>
-            <p className="animate-rise-delay mt-5 max-w-md text-[15px] leading-relaxed text-white/58">
+            <p className="animate-rise-delay mt-5 max-w-md text-[15px] leading-relaxed text-[#c5cdc8]">
               Invite clients and partners to confirm your projects. Use
               verified references on your company profile, website, and
               proposals.
@@ -45,7 +45,7 @@ export function HomeHero() {
                 See how it works
               </Button>
             </div>
-            <p className="mt-5 max-w-md text-[12.5px] leading-relaxed text-white/45">
+            <p className="mt-5 max-w-md text-[12.5px] leading-relaxed text-[#a8b2ad]">
               For architecture, engineering, construction, specialist
               contractors, agencies, and consulting firms.
             </p>

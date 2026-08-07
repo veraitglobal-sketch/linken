@@ -7,6 +7,7 @@ import {
   buildEmbedSnippet,
   buildEmbedSrc,
 } from "@/features/widgets/catalog";
+import { trackEmbedCreated } from "@/features/product-analytics/embed-actions";
 
 type Props = {
   companySlug: string;
@@ -35,6 +36,7 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
 
   async function copy() {
     await navigator.clipboard.writeText(snippet);
+    void trackEmbedCreated("micro");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }

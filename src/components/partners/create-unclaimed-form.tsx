@@ -2,6 +2,7 @@ import { createUnclaimedPartner } from "@/features/partners/actions";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DRAFT_WITHOUT_SEND } from "@/features/growth/copy";
 
 type Props = {
   defaultName?: string;
@@ -19,8 +20,7 @@ export function CreateUnclaimedForm({
           Draft invite
         </h2>
         <p className="mt-1 max-w-xl text-[12px] leading-relaxed text-muted">
-          Can&apos;t find them? Create an unclaimed profile and email a claim
-          link. Official only after they claim and accept.
+          {DRAFT_WITHOUT_SEND} Official only after they claim and accept.
         </p>
       </header>
       <WorkspaceCard>
@@ -29,6 +29,7 @@ export function CreateUnclaimedForm({
           className="grid gap-3 sm:grid-cols-2"
         >
           <input type="hidden" name="back" value={backPath} />
+          <input type="hidden" name="invite_source" value="dashboard" />
           <label className="block sm:col-span-2">
             <span className="mb-1.5 block text-[12px] font-medium text-ink">
               Company name
@@ -50,11 +51,11 @@ export function CreateUnclaimedForm({
             <span className="mb-1.5 block text-[12px] font-medium text-ink">
               City
             </span>
-            <Input name="city" required placeholder="Berlin" />
+            <Input name="city" required placeholder="City" />
           </label>
           <label className="block sm:col-span-2">
             <span className="mb-1.5 block text-[12px] font-medium text-ink">
-              Invite email
+              Invite email (optional)
             </span>
             <Input
               type="email"
@@ -68,9 +69,21 @@ export function CreateUnclaimedForm({
             </span>
             <Input name="website" placeholder="https://" />
           </label>
+          <label className="flex items-start gap-2 text-[13px] text-ink sm:col-span-2">
+            <input
+              type="checkbox"
+              name="send_invite"
+              value="1"
+              className="mt-1"
+            />
+            <span>
+              Send claim invite email now. Leave unchecked to save a draft only
+              — we never email without this.
+            </span>
+          </label>
           <div className="sm:col-span-2">
             <Button type="submit" className="h-10 w-fit px-4">
-              Create draft &amp; invite
+              Save draft
             </Button>
           </div>
         </form>

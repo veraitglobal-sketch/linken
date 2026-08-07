@@ -31,7 +31,7 @@ export async function GET(_request: Request, { params }: Params) {
   const siteUrl = getSiteUrl();
   const [partners, caseStudies] = await Promise.all([
     getPartnersForCompany(company.id),
-    getCaseStudiesForCompany(company.id),
+    getCaseStudiesForCompany(company.id, { confirmedOnly: true }),
   ]);
 
   return NextResponse.json(

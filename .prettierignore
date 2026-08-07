@@ -1,0 +1,8 @@
+docs/**/*.md
+*.md
+supabase/migrations/**
+public/**
+.next/**
+node_modules/**
+mcp/**
+package-lock.json

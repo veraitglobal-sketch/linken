@@ -13,7 +13,7 @@ import { ChartTooltip } from "@/components/analytics/chart-tooltip";
 import type { ChartPoint } from "@/components/analytics/chart-types";
 
 const AXIS = {
-  tick: { fill: "#8a948e", fontSize: 11 },
+  tick: { fill: "#5f6964", fontSize: 11 },
   axisLine: false as const,
   tickLine: false as const,
 };

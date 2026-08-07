@@ -43,6 +43,10 @@ export function ConfirmDecision({ view, companyName }: Props) {
           Decline
         </Button>
       </form>
+      <p className="mt-3 text-center text-[13px] leading-relaxed text-muted">
+        Something wrong in the project description? Decline and ask{" "}
+        {view.requesterName} to send an updated confirmation.
+      </p>
     </div>
   );
 }

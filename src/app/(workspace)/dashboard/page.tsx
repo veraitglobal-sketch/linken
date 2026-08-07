@@ -1,32 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HomeBoard } from "@/components/dashboard/home/home-board";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
-import { PendingGroupInvites } from "@/components/groups/pending-group-invites";
-import { NetworkMapCanvas } from "@/components/network/network-map-canvas";
+import { isSetupDismissed } from "@/features/dashboard/dismiss-setup";
+import { loadDashboardHome } from "@/features/dashboard/home-data";
 import { getDashboardSession } from "@/features/dashboard/session";
-import {
-  getDashboardGroupById,
-  getDashboardGroupForCreator,
-} from "@/features/groups/dashboard-group";
-import {
-  getOwnedGroupMemberships,
-  getPendingGroupInvitesForOwner,
-  getPendingParentProposalsForOwner,
-} from "@/features/groups/queries";
-import { resolveWorkspaceGraphScope } from "@/features/network/queries";
-import { getPartnershipInbox } from "@/features/partners/inbox";
+import { getDashboardGroupById } from "@/features/groups/dashboard-group";
 
 export const metadata: Metadata = {
-  title: "Map",
+  title: "Home",
 };
 
-export default async function DashboardOverviewPage() {
+export default async function DashboardHomePage() {
   const { user, company, group, active } = await getDashboardSession();
 
   if (!user) {
     return (
-      <WorkspacePage title="Map" description="Who you’re connected to.">
+      <WorkspacePage title="Home" description="Your next actions on Hansala.">
         <p className="text-[14px] text-muted">
           <Link
             href="/login?next=/dashboard"
@@ -34,7 +25,7 @@ export default async function DashboardOverviewPage() {
           >
             Sign in
           </Link>{" "}
-          to open the map.
+          to open your workspace.
         </p>
       </WorkspacePage>
     );
@@ -63,63 +54,52 @@ export default async function DashboardOverviewPage() {
   if (!company) {
     return (
       <WorkspacePage
-        title="Map"
-        description="Who you’re connected to."
+        title="Home"
+        description="Create a company to start collecting verified references."
       >
-        <p className="text-[14px] text-muted">
+        <div className="rounded-[24px] border border-line bg-surface px-6 py-8">
+          <h2 className="font-display text-xl font-medium text-ink">
+            No company yet
+          </h2>
+          <p className="mt-2 max-w-md text-[14px] leading-relaxed text-ink-soft">
+            Activation starts with a company profile, then your first mutual
+            confirmation.
+          </p>
           <Link
             href="/onboarding"
-            className="font-semibold text-ink underline-offset-2 hover:underline"
+            className="mt-5 inline-flex h-11 items-center rounded-xl bg-navy px-5 text-[13px] font-semibold text-white"
           >
             Create your company
-          </Link>{" "}
-          first.
-        </p>
+          </Link>
+        </div>
       </WorkspacePage>
     );
   }
 
-  const [groupInvites, parentProposals, ownedMemberships, groupData, inbox] =
-    await Promise.all([
-      getPendingGroupInvitesForOwner(),
-      getPendingParentProposalsForOwner(),
-      getOwnedGroupMemberships(),
-      getDashboardGroupForCreator(),
-      getPartnershipInbox(company.id),
-    ]);
-
-  const groupSlug =
-    groupData?.group.slug ?? ownedMemberships[0]?.groupSlug ?? null;
-  const graphScope = await resolveWorkspaceGraphScope({
-    companySlug: company.slug,
-    groupSlug,
-  });
-
-  const showInvites =
-    groupInvites.length > 0 || parentProposals.length > 0;
+  const [model, dismissed] = await Promise.all([
+    loadDashboardHome(company),
+    isSetupDismissed(),
+  ]);
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col">
-      {showInvites ? (
-        <div className="absolute top-3 left-1/2 z-30 w-[min(100%-1.5rem,28rem)] -translate-x-1/2">
-          <PendingGroupInvites
-            invites={groupInvites}
-            parentProposals={parentProposals}
-          />
-        </div>
-      ) : null}
-
-      <NetworkMapCanvas
-        scope={graphScope}
-        fullBleed
-        editable
-        viewerCompanyId={company.id}
-        pendingInviteCount={inbox.outgoingPending.length}
+    <WorkspacePage
+      title="Home"
+      description="Get your first verified reference — then grow the network."
+      action={
+        <Link
+          href="/dashboard/map"
+          className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
+        >
+          Open map
+        </Link>
+      }
+    >
+      <HomeBoard
+        companyId={company.id}
         companySlug={company.slug}
-        emptyHref={`/c/${company.slug}?add=1#add-partner`}
-        emptyLabel="Add partners on Company"
-        subtitle={groupSlug ? "Group map" : "Your map"}
+        model={model}
+        showSetupBanner={!dismissed}
       />
-    </div>
+    </WorkspacePage>
   );
 }

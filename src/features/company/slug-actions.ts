@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { isReservedCompanySlug } from "@/features/companies/reserved-slugs";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { createClient } from "@/lib/supabase/server";
 
@@ -11,6 +12,11 @@ export async function updateCompanySlug(formData: FormData) {
 
   if (!newSlugRaw) {
     redirect(`${back}?error=${encodeURIComponent("Enter a handle.")}`);
+  }
+  if (isReservedCompanySlug(newSlugRaw)) {
+    redirect(
+      `${back}?error=${encodeURIComponent("That handle is reserved. Choose another.")}`,
+    );
   }
 
   const { user, company } = await getOperatorActiveCompany();

@@ -12,7 +12,7 @@ type Props = {
 /** Public CTA — never exposes claim_token. Email match triggers a fresh invite. */
 export function UnclaimedBanner({ company, claimSent, claimError }: Props) {
   return (
-    <section className="mx-auto mt-4 max-w-6xl px-4">
+    <section id="claim" className="mx-auto mt-4 max-w-6xl scroll-mt-24 px-4">
       <div className="rounded-[28px] border border-ember/30 bg-[linear-gradient(135deg,rgba(196,120,58,0.12),rgba(14, 31, 28,0.04))] px-5 py-6 sm:px-8">
         <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
           Unclaimed profile

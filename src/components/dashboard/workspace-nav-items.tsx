@@ -84,6 +84,13 @@ export function primaryNav(companySlug?: string | null): NavItem[] {
       : []),
     {
       href: "/dashboard",
+      label: PRODUCT.home.label,
+      icon: IconHome,
+      match: "exact",
+      section: "network",
+    },
+    {
+      href: "/dashboard/map",
       label: PRODUCT.map.label,
       icon: IconGraph,
       match: "exact",

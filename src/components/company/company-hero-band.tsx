@@ -4,6 +4,7 @@ import { CompanyHeroActions } from "@/components/company/company-hero-actions";
 import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
 import { LogoMark } from "@/components/ui/logo-mark";
 import { SocialIcons } from "@/components/ui/social-icons";
+import { VerifiedStatusNote } from "@/components/company/verified-status-note";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
 import { getSchedulingForCompanyId } from "@/features/scheduling/queries";
@@ -109,14 +110,11 @@ export async function CompanyHeroBand({
                 <TrustLevelBadge level={trustLevel} onDark />
               ) : null}
             </div>
-            {company.claimed !== false && company.verified ? (
-              <p className="mt-2 text-[12px] text-white/45">
-                Verified company
-                {company.verifiedAt
-                  ? ` · ${new Date(company.verifiedAt).getFullYear()}`
-                  : ""}
-              </p>
-            ) : null}
+            <VerifiedStatusNote
+              verified={Boolean(company.verified)}
+              verifiedAt={company.verifiedAt}
+              claimed={company.claimed !== false}
+            />
             <p className="mt-5 max-w-md text-[16px] leading-relaxed text-white/70">
               {company.tagline}
             </p>

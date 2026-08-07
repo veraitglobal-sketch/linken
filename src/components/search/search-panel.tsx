@@ -9,6 +9,7 @@ import {
   type CompanySearchHit,
 } from "@/features/companies/search-action";
 import type { Company } from "@/types/company";
+import Link from "next/link";
 
 type Props = {
   mode?: "browse" | "invite";
@@ -100,12 +101,12 @@ export function SearchPanel({ mode = "browse", excludeSlug }: Props) {
                 ? "No companies match this search."
                 : "No companies registered yet."}
             </p>
-            <a
+            <Link
               href="/onboarding"
               className="inline-block text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
             >
               Create your company link
-            </a>
+            </Link>
           </div>
         ) : null}
       </div>

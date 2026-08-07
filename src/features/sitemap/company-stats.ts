@@ -15,11 +15,26 @@ export async function countCaseStudiesBySlug(db: Db, slugs: string[]) {
   const idToSlug = new Map(companies.map((c) => [c.id as string, c.slug as string]));
   const { data: cases } = await db
     .from("case_studies")
-    .select("company_id")
+    .select("id, company_id")
     .in("company_id", [...idToSlug.keys()]);
 
+  if (!cases?.length) return new Map<string, number>();
+
+  const { data: confirmed } = await db
+    .from("case_study_client_confirmation_requests")
+    .select("case_study_id")
+    .eq("status", "confirmed")
+    .in(
+      "case_study_id",
+      cases.map((c) => c.id as string),
+    );
+
+  const confirmedIds = new Set(
+    (confirmed ?? []).map((r) => r.case_study_id as string),
+  );
   const counts = new Map<string, number>();
-  for (const row of cases ?? []) {
+  for (const row of cases) {
+    if (!confirmedIds.has(row.id as string)) continue;
     const slug = idToSlug.get(row.company_id as string);
     if (!slug) continue;
     counts.set(slug, (counts.get(slug) ?? 0) + 1);

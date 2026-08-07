@@ -4,6 +4,7 @@ import { CompanyAbout } from "@/components/company/company-about";
 import { CompanyTeamSection } from "@/components/company/company-team-section";
 import { PartnerSidebar } from "@/components/partners/partner-sidebar";
 import { ReferencesSection } from "@/components/references/references-section";
+import { ConfirmedProvidersSection } from "@/components/references/confirmed-providers-section";
 import { ProfileTestimonialsSection } from "@/components/testimonials/profile-testimonials-section";
 import { TrustProgressCard } from "@/components/trust/trust-progress-card";
 import { TrustWhyCard } from "@/components/trust/trust-why-card";
@@ -26,6 +27,7 @@ type Props = {
   partnerRail?: PartnerRailSettings;
   caseStudies: CaseStudy[];
   references: ServiceReference[];
+  providers?: ServiceReference[];
   testimonials: PublicTestimonial[];
   trust: TrustProfile;
   assessmentSummary: ClientAssessmentSummary;
@@ -34,6 +36,7 @@ type Props = {
   isUnclaimed: boolean;
   showTeam: boolean;
   showRefs: boolean;
+  showProviders?: boolean;
   showCases: boolean;
   showPartners: boolean;
   showTestimonials: boolean;
@@ -55,6 +58,7 @@ export function CompanyProfileBody({
   partnerRail,
   caseStudies,
   references,
+  providers = [],
   testimonials,
   trust,
   assessmentSummary,
@@ -63,6 +67,7 @@ export function CompanyProfileBody({
   isUnclaimed,
   showTeam,
   showRefs,
+  showProviders = false,
   showCases,
   showPartners,
   showTestimonials,
@@ -96,6 +101,9 @@ export function CompanyProfileBody({
             editable={editable}
             companySlug={company.slug}
           />
+        ) : null}
+        {showProviders ? (
+          <ConfirmedProvidersSection providers={providers} />
         ) : null}
         {showCases ? (
           <CaseStudyList

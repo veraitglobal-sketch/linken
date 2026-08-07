@@ -43,6 +43,14 @@ export async function recordWidgetPlacementThrottled(input: {
       p_host: host,
       p_variant: variant,
     });
+    const { trackEngagement } = await import(
+      "@/features/product-analytics/helpers"
+    );
+    void trackEngagement("embed_installed", input.companyId, {
+      variant: variant.slice(0, 64),
+      host_bucket: "other",
+      surface: "embed",
+    });
   } catch (err) {
     console.error("[recordWidgetPlacement]", err);
   }

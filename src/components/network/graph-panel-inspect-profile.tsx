@@ -4,6 +4,7 @@ import type {
   NetworkGraphContext,
   NetworkNodeData,
 } from "@/features/network/types";
+import Link from "next/link";
 
 const ROLE_LABEL = {
   group: "Group",
@@ -67,7 +68,7 @@ export function GraphPanelInspectProfile({ selected, context }: Props) {
       {selected.kind !== "group" && selected.domainVerified === false ? (
         selected.companyId &&
         selected.companyId === context?.viewerCompanyId ? (
-          <a
+          <Link
             href="/dashboard/verification"
             className="mt-3 block rounded-2xl border border-ember/30 bg-ember/8 px-3 py-2.5 transition-colors hover:border-ember/50 hover:bg-ember/12"
           >
@@ -78,7 +79,7 @@ export function GraphPanelInspectProfile({ selected, context }: Props) {
               Verify ownership (DNS, meta tag, or email) to unlock linking —
               open verification →
             </p>
-          </a>
+          </Link>
         ) : (
           <div className="mt-3 rounded-2xl border border-ember/30 bg-ember/8 px-3 py-2.5">
             <p className="text-[12px] font-semibold text-ember">

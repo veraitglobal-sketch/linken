@@ -1,9 +1,11 @@
 "use client";
 
+import { useCallback, useRef } from "react";
 import {
   AGENT_SCOPE_PRESETS,
   type AgentScope,
 } from "@/features/agent-api/types";
+import { useFocusTrap } from "@/components/a11y/use-focus-trap";
 import { KEY_PRESETS, SCOPE_META } from "@/components/api/api-scope-meta";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +30,10 @@ export function ApiCreateKeyDialog({
   onCancel,
   onCreate,
 }: Props) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const close = useCallback(() => onCancel(), [onCancel]);
+  useFocusTrap(true, close, panelRef);
+
   function toggleScope(scope: AgentScope) {
     onScopes(
       scopes.includes(scope)
@@ -45,11 +51,13 @@ export function ApiCreateKeyDialog({
       }}
     >
       <div
+        ref={panelRef}
         role="dialog"
+        aria-modal="true"
         aria-labelledby="create-key-title"
         className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-line bg-surface p-5 shadow-[0_24px_80px_rgba(10,20,18,0.28)] sm:p-6"
       >
-        <p className="text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
+        <p className="text-[10px] font-semibold tracking-[0.14em] text-muted uppercase">
           Agent API
         </p>
         <h2
@@ -64,8 +72,9 @@ export function ApiCreateKeyDialog({
           <Input
             value={name}
             onChange={(e) => onName(e.target.value)}
-            placeholder="Viktor AI production"
+            placeholder="Production key"
             className="mt-1.5"
+            autoComplete="off"
           />
         </label>
 
@@ -77,7 +86,7 @@ export function ApiCreateKeyDialog({
                 key={preset.id}
                 type="button"
                 onClick={() => onScopes([...AGENT_SCOPE_PRESETS[preset.id]])}
-                className="rounded-xl border border-line px-3 py-2.5 text-left transition-colors hover:border-navy hover:bg-paper/70"
+                className="min-h-11 rounded-xl border border-line px-3 py-2.5 text-left transition-colors hover:border-navy hover:bg-paper/70"
               >
                 <span className="block text-[13px] font-semibold text-ink">
                   {preset.label}
@@ -96,7 +105,7 @@ export function ApiCreateKeyDialog({
             <label
               key={scope.id}
               className={cn(
-                "flex cursor-pointer gap-3 rounded-xl border px-3 py-2.5",
+                "flex min-h-11 cursor-pointer gap-3 rounded-xl border px-3 py-2.5",
                 scopes.includes(scope.id)
                   ? "border-navy bg-paper/70"
                   : "border-line",
@@ -124,7 +133,7 @@ export function ApiCreateKeyDialog({
           <Button
             type="button"
             variant="secondary"
-            className="h-9 px-3.5 text-[13px]"
+            className="h-11 px-3.5 text-[13px]"
             onClick={onCancel}
             disabled={pending}
           >
@@ -132,9 +141,10 @@ export function ApiCreateKeyDialog({
           </Button>
           <Button
             type="button"
-            className="h-9 px-3.5 text-[13px]"
+            className="h-11 px-3.5 text-[13px]"
             onClick={onCreate}
             disabled={pending || !name.trim() || scopes.length === 0}
+            aria-busy={pending}
           >
             {pending ? "Creating…" : "Create"}
           </Button>

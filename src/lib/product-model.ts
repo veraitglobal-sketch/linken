@@ -9,6 +9,10 @@ export const PRODUCT = {
     label: "Company",
     job: "Your page — add partners, team, and proof here.",
   },
+  home: {
+    label: "Home",
+    job: "Next actions — first verified reference, invites, and proof.",
+  },
   map: {
     label: "Map",
     job: "Confirmed partners and links for your workspaces. Lines draw themselves.",

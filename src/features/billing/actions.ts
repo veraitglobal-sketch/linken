@@ -66,6 +66,16 @@ export async function startProCheckout() {
   } as Parameters<typeof stripe.checkout.sessions.create>[0]);
 
   if (!session.url) redirect(billingBack("error=checkout_failed"));
+
+  const { trackLifecycle } = await import(
+    "@/features/product-analytics/helpers"
+  );
+  void trackLifecycle("checkout_started", company.id, {
+    plan: "pro",
+    previous_plan: "free",
+    surface: "web",
+  });
+
   redirect(session.url);
 }
 

@@ -38,6 +38,14 @@ export default async function OnePagerPage({ params }: Props) {
   const isOwner = await isCompanyOwnerSlug(slug);
   if (!isOwner) {
     await logProfileEvent(data.company.slug, "one_pager_view", "one_pager");
+  } else {
+    const { trackEngagement } = await import(
+      "@/features/product-analytics/helpers"
+    );
+    void trackEngagement("proposal_export_created", data.company.id, {
+      surface: "web",
+      page: "one-pager",
+    });
   }
 
   const siteUrl = getSiteUrl();

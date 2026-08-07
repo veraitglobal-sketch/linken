@@ -15,12 +15,21 @@ export async function countSitemapCaseStudies(): Promise<number> {
 
   if (companyError || !companies?.length) return 0;
 
-  const { count, error } = await supabase
+  const companyIds = companies.map((c) => c.id as string);
+  const { data: cases, error: caseError } = await supabase
     .from("case_studies")
+    .select("id")
+    .in("company_id", companyIds);
+
+  if (caseError || !cases?.length) return 0;
+
+  const { count, error } = await supabase
+    .from("case_study_client_confirmation_requests")
     .select("id", { count: "exact", head: true })
+    .eq("status", "confirmed")
     .in(
-      "company_id",
-      companies.map((c) => c.id as string),
+      "case_study_id",
+      cases.map((c) => c.id as string),
     );
 
   if (error) {
@@ -68,12 +77,13 @@ export async function listSitemapCaseStudies(
     .map((row) => {
       const companySlug = idToSlug.get(row.company_id as string);
       if (!companySlug) return null;
+      if (!confirmed.has(row.id as string)) return null;
       return {
         companySlug,
         caseSlug: row.slug as string,
         createdAt: (row.created_at as string) ?? new Date().toISOString(),
         coverImageUrl: (row.cover_image_url as string | null) ?? null,
-        clientConfirmed: confirmed.has(row.id as string),
+        clientConfirmed: true,
       };
     })
     .filter((row): row is SitemapCaseStudyRow => row != null);

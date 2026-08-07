@@ -1,13 +1,15 @@
-import { PRICING_FAQ } from "@/features/plan/pricing-faq";
+type Item = { q: string; a: string };
 
-export function PricingFaq() {
+type Props = { items: readonly Item[] };
+
+export function PricingFaq({ items }: Props) {
   return (
     <section className="mt-16 max-w-3xl">
       <h2 className="font-display text-[clamp(1.6rem,3vw,2.2rem)] font-medium tracking-[-0.035em] text-ink">
         Billing FAQ
       </h2>
       <div className="mt-8 divide-y divide-line border-y border-line">
-        {PRICING_FAQ.map((item) => (
+        {items.map((item) => (
           <details key={item.q} className="group py-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[16px] font-medium tracking-[-0.02em] text-ink marker:content-none [&::-webkit-details-marker]:hidden">
               {item.q}

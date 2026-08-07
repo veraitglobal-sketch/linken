@@ -4,6 +4,7 @@ import {
   apiMethodNotAllowed,
   apiOptions,
 } from "@/features/public-api/v1/http";
+import { guardPublicApi } from "@/features/public-api/v1/guard";
 import { getPublicCaseStudiesApi } from "@/features/public-api/v1/queries";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -12,8 +13,10 @@ export function OPTIONS() {
   return apiOptions();
 }
 
-export async function GET(_request: Request, { params }: Props) {
+export async function GET(request: Request, { params }: Props) {
   try {
+    const limited = guardPublicApi(request);
+    if (limited) return limited;
     const { slug } = await params;
     if (!slug?.trim()) {
       return apiError("invalid_request", "Company slug is required.", 400);

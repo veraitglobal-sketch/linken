@@ -5,6 +5,7 @@ import {
   type BrandedEmailContent,
 } from "@/lib/email/template";
 import { isEmailSuppressed } from "@/lib/email/suppression";
+import { maskUrlForLog } from "@/features/security/mask";
 import { getEmailSiteUrl } from "@/lib/site";
 
 export type SendBrandedInput = {
@@ -76,7 +77,7 @@ export async function sendBrandedEmail(input: SendBrandedInput) {
     }
     console.info(
       `[${input.logLabel}] Email not sent (no RESEND_API_KEY). Link:`,
-      input.linkForLog,
+      maskUrlForLog(input.linkForLog),
     );
     return { ok: true as const, mode: "log" as const, url: input.linkForLog };
   }

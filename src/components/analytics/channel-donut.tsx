@@ -16,10 +16,20 @@ export function ChannelDonut({
   const chartData = data.length
     ? data
     : [{ key: "empty", label: "—", value: 1, color: "#e2e6e3" }];
+  const summary =
+    data.length === 0
+      ? `${centerLabel}: ${centerValue}. No segments.`
+      : `${centerLabel}: ${centerValue}. ${data
+          .map((s) => `${s.label} ${s.value}`)
+          .join(", ")}.`;
 
   return (
-    <div className="flex items-center gap-5">
-      <div className="relative h-[148px] w-[148px] shrink-0">
+    <div
+      className="flex items-center gap-5"
+      role="img"
+      aria-label={summary}
+    >
+      <div className="relative h-[148px] w-[148px] shrink-0" aria-hidden>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -42,16 +52,16 @@ export function ChannelDonut({
           <p className="font-display text-[1.15rem] font-semibold tracking-[-0.03em] text-ink">
             {centerValue}
           </p>
-          <p className="text-[10px] font-medium text-[#8a948e]">{centerLabel}</p>
+          <p className="text-[10px] font-medium text-muted">{centerLabel}</p>
         </div>
       </div>
-      <ul className="min-w-0 flex-1 space-y-2">
+      <ul className="min-w-0 flex-1 space-y-2" aria-hidden>
         {segments.map((s) => (
           <li
             key={s.key}
             className="flex items-center justify-between gap-3 text-[12px]"
           >
-            <span className="inline-flex min-w-0 items-center gap-2 text-[#66706b]">
+            <span className="inline-flex min-w-0 items-center gap-2 text-muted">
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-full shadow-[0_0_0_3px_rgba(126,184,164,0.18)]"
                 style={{ background: s.color }}

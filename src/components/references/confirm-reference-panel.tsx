@@ -14,7 +14,7 @@ import type { ListingCompany } from "@/features/acquisition/listing-companies";
 import {
   confirmServiceReference,
   declineServiceReference,
-} from "@/features/references/actions";
+} from "@/features/references/confirm-actions";
 import type { ReferencePreview } from "@/features/references/queries";
 import { Button } from "@/components/ui/button";
 
@@ -157,6 +157,10 @@ export function ConfirmReferencePanel({
           Decline
         </Button>
       </form>
+      <p className="mt-3 text-center text-[13px] leading-relaxed text-muted">
+        Details wrong? Decline and ask {preview.providerName} to send an updated
+        invite.
+      </p>
     </div>
   );
 }

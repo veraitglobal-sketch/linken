@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { StatusMessage } from "@/components/a11y/status-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LegalConsent } from "@/components/legal/legal-consent";
@@ -43,9 +44,9 @@ export function OnboardingForm({ error, draft = null }: Props) {
       </div>
 
       {error ? (
-        <p className="mt-4 rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+        <StatusMessage tone="alert" className="mt-4">
           {error}
-        </p>
+        </StatusMessage>
       ) : null}
 
       <form

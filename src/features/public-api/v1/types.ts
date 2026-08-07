@@ -176,6 +176,7 @@ export type ApiVerifyResponse = {
 export type ApiErrorCode =
   | "not_found"
   | "invalid_request"
+  | "rate_limited"
   | "internal";
 
 /** Consistent error envelope for all v1 endpoints. */

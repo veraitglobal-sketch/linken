@@ -5,6 +5,7 @@ import {
   type WebhookEnvelope,
 } from "@/features/webhooks/types";
 import { signWebhookPayload } from "@/features/webhooks/sign";
+import { assertPublicHostname } from "@/features/security/assert-public-host";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const FETCH_MS = 8_000;
@@ -88,6 +89,9 @@ async function postToEndpoint(
   let errMsg = "";
 
   try {
+    const target = new URL(endpoint.url);
+    await assertPublicHostname(target.hostname);
+
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), FETCH_MS);
     const res = await fetch(endpoint.url, {

@@ -12,7 +12,7 @@ import {
   legalCopyrightName,
 } from "@/lib/legal/company";
 
-/** Static footer — no auth/DB so marketing pages can stay cached. */
+/** Footer on navy — solid light text for WCAG AA contrast (not low-opacity white). */
 export function SiteFooter() {
   const year = new Date().getFullYear();
   const company = getLegalCompany();
@@ -26,7 +26,7 @@ export function SiteFooter() {
             <Link href="/" className="inline-flex no-underline">
               <EmbedVerifiedLockup theme="dark" size="lg" />
             </Link>
-            <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-white/55">
+            <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-[#c5cdc8]">
               Company profiles, case studies, and partners — public only after
               both sides confirm.
             </p>
@@ -43,14 +43,14 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-5 text-[12px] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-5 text-[12px] text-[#a8b2ad] sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
           <p>
             © {year} {copyright}. All rights reserved.
           </p>
           <p>
             <Link
               href="/contact"
-              className="text-white/45 transition-colors hover:text-white"
+              className="text-[#c5cdc8] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--blue-soft)]"
             >
               {company.contactEmail}
             </Link>
@@ -70,7 +70,7 @@ function FooterNav({
 }) {
   return (
     <nav aria-label={title}>
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-blue-soft uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#9ec9b8] uppercase">
         {title}
       </p>
       <ul className="mt-4 space-y-3">
@@ -78,7 +78,7 @@ function FooterNav({
           <li key={link.href + link.label}>
             <Link
               href={link.href}
-              className="text-[14px] text-white/58 transition-colors hover:text-white"
+              className="inline-flex min-h-11 items-center text-[14px] text-[#d4dbd6] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--blue-soft)]"
             >
               {link.label}
             </Link>

@@ -72,7 +72,7 @@ const orgJsonLd = {
 const CRITICAL_CSS = `
 html{line-height:1.45;-webkit-text-size-adjust:100%}
 body{margin:0;background:#f0f2f0;color:#0d1210;font-family:system-ui,-apple-system,sans-serif}
-a{color:#1a5c51}
+a{color:inherit;text-decoration:none}
 img{max-width:100%;height:auto}
 `;
 

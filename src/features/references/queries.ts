@@ -20,9 +20,15 @@ export type ReferencePreview = {
   providerSlug: string;
 };
 
+/**
+ * @param includePending — owner/dashboard only. Public surfaces must omit
+ * pending (product rule: visitors never see unconfirmed claims).
+ */
 export async function getReferencesForCompany(
   companyId: string,
+  options?: { includePending?: boolean },
 ): Promise<ServiceReference[]> {
+  const includePending = Boolean(options?.includePending);
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -31,7 +37,7 @@ export async function getReferencesForCompany(
         "id, client_name, client_company_id, service, started_year, ongoing, ended_year, status, confirmed_at, confirmation_level, disclosure, client:companies!client_company_id(slug, name, logo_url, website)",
       )
       .eq("provider_company_id", companyId)
-      .in("status", ["confirmed", "pending"])
+      .in("status", includePending ? ["confirmed", "pending"] : ["confirmed"])
       .order("status", { ascending: true })
       .order("started_year", { ascending: true });
 

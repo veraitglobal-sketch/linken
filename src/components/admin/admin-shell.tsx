@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SkipLink } from "@/components/a11y/skip-link";
 import { AdminNav } from "@/components/admin/admin-nav";
 import type { PlatformStaffRole } from "@/features/admin/roles";
 
@@ -11,6 +12,7 @@ type Props = {
 export function AdminShell({ email, role, children }: Props) {
   return (
     <div className="flex min-h-dvh flex-col bg-paper text-ink">
+      <SkipLink />
       <header className="border-b border-line bg-surface px-4 py-3">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <div>
@@ -28,7 +30,13 @@ export function AdminShell({ email, role, children }: Props) {
         </div>
         <AdminNav />
       </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-6xl flex-1 px-4 py-8"
+      >
+        {children}
+      </main>
     </div>
   );
 }

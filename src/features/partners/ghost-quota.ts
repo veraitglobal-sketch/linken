@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { GHOST_DAILY_LIMIT } from "@/features/growth/invite-limits";
 
-/** Max unclaimed (ghost) profiles one firm may create per UTC day. */
-export const GHOST_DAILY_LIMIT = 10;
+export { GHOST_DAILY_LIMIT };
 
 /**
  * Count unclaimed companies created today by this firm.

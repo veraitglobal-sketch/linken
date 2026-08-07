@@ -9,7 +9,6 @@ export type AddWorkspaceLookup =
       companyId: string;
       companyName: string;
       companySlug: string;
-      claimToken: string;
       inviteEmail: string;
     }
   | {
@@ -24,26 +23,11 @@ export type AddWorkspaceLookup =
       email: string;
     };
 
-function emailDomain(email: string): string | null {
-  const at = email.lastIndexOf("@");
-  if (at < 1) return null;
-  const domain = email.slice(at + 1).trim().toLowerCase();
-  if (!domain || domain.includes(" ")) return null;
-  // Skip common free mail for domain→company match
-  if (
-    /^(gmail|googlemail|outlook|hotmail|live|yahoo|icloud|me|aol|proton|protonmail)\./.test(
-      domain,
-    ) ||
-    ["gmail.com", "outlook.com", "hotmail.com", "yahoo.com", "icloud.com"].includes(
-      domain,
-    )
-  ) {
-    return null;
-  }
-  return domain;
-}
-
-/** Find claimable draft or existing owned workspace by invite email / domain. */
+/**
+ * Find claimable draft by exact invite_email match only.
+ * Never returns claim_token. Domain-only lookups removed (token oracle).
+ * Caller must be signed in as that invite email to claim.
+ */
 export async function lookupAddWorkspace(
   rawEmail: string,
 ): Promise<AddWorkspaceLookup | { kind: "error"; error: string }> {
@@ -58,54 +42,37 @@ export async function lookupAddWorkspace(
   } = await supabase.auth.getUser();
   if (!user) return { kind: "error", error: "Sign in required." };
 
+  const sessionEmail = user.email?.trim().toLowerCase() ?? "";
+  if (!sessionEmail || sessionEmail !== email) {
+    return {
+      kind: "error",
+      error:
+        "Sign in with the invite email for that company, then look it up again.",
+    };
+  }
+
   const admin = createAdminClient();
   const db = admin ?? supabase;
 
   const { data: byInvite } = await db
     .from("companies")
-    .select("id, name, slug, claim_token, invite_email, claimed")
+    .select("id, name, slug, invite_email, claimed")
     .eq("invite_email", email)
     .eq("claimed", false)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  if (byInvite?.claim_token) {
+  if (byInvite?.id) {
     return {
       kind: "claim",
       companyId: byInvite.id as string,
       companyName: byInvite.name as string,
       companySlug: byInvite.slug as string,
-      claimToken: byInvite.claim_token as string,
       inviteEmail: email,
     };
   }
 
-  const domain = emailDomain(email);
-  if (domain) {
-    const { data: byDomain } = await db
-      .from("companies")
-      .select("id, name, slug, claim_token, invite_email, claimed, website")
-      .eq("claimed", false)
-      .not("claim_token", "is", null)
-      .ilike("website", `%${domain}%`)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (byDomain?.claim_token) {
-      return {
-        kind: "claim",
-        companyId: byDomain.id as string,
-        companyName: byDomain.name as string,
-        companySlug: byDomain.slug as string,
-        claimToken: byDomain.claim_token as string,
-        inviteEmail: email,
-      };
-    }
-  }
-
-  // Already-owned claimed company for this user matching email domain name — rare
   const { data: owned } = await supabase
     .from("companies")
     .select("id, name, slug")
@@ -113,7 +80,7 @@ export async function lookupAddWorkspace(
     .eq("claimed", true)
     .order("created_at", { ascending: true });
 
-  if (owned && owned.length > 0 && user.email?.toLowerCase() === email) {
+  if (owned && owned.length > 0) {
     const first = owned[0];
     return {
       kind: "owned",
@@ -125,4 +92,43 @@ export async function lookupAddWorkspace(
   }
 
   return { kind: "missing", email };
+}
+
+/**
+ * Claim by company id after server re-loads claim_token.
+ * Requires session email === invite_email. Never accepts a client token.
+ */
+export async function resolveClaimTokenForSession(
+  companyId: string,
+): Promise<{ ok: true; token: string } | { ok: false; error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.email) return { ok: false, error: "Sign in required." };
+
+  const admin = createAdminClient();
+  if (!admin) return { ok: false, error: "Claim is temporarily unavailable." };
+
+  const { data: ghost } = await admin
+    .from("companies")
+    .select("id, claim_token, invite_email, claimed")
+    .eq("id", companyId)
+    .eq("claimed", false)
+    .maybeSingle();
+
+  if (!ghost?.claim_token || !ghost.invite_email) {
+    return { ok: false, error: "Invalid or already claimed." };
+  }
+
+  const sessionEmail = user.email.trim().toLowerCase();
+  const invite = String(ghost.invite_email).trim().toLowerCase();
+  if (sessionEmail !== invite) {
+    return {
+      ok: false,
+      error: "Sign in with the invite email to claim this company.",
+    };
+  }
+
+  return { ok: true, token: ghost.claim_token as string };
 }

@@ -47,9 +47,14 @@ export async function getClientConfirmationByToken(token: string) {
   }
 }
 
-/** Public profile list — all case studies for the company from DB. */
+/**
+ * Case studies for a company.
+ * `confirmedOnly` — visitors/API/embeds: mutual confirm required (product rule).
+ * Owners keep the full list on their own profile and dashboard.
+ */
 export async function getCaseStudiesForCompany(
   companyId: string,
+  opts?: { confirmedOnly?: boolean },
 ): Promise<CaseStudy[]> {
   if (!companyId) return [];
 
@@ -73,13 +78,19 @@ export async function getCaseStudiesForCompany(
       loadClientConfirmationsForCases(ids),
     ]);
 
-    return cases.map((c) =>
+    const mapped = cases.map((c) =>
       mapCaseStudyRow(
         c,
         partnersByCase.get(c.id as string) ?? [],
         confirmByCase.get(c.id as string) ?? null,
       ),
     );
+    if (opts?.confirmedOnly) {
+      return mapped.filter(
+        (c) => c.clientConfirmation?.status === "confirmed",
+      );
+    }
+    return mapped;
   } catch (err) {
     console.error("[getCaseStudiesForCompany]", err);
     return [];

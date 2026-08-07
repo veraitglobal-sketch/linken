@@ -8,7 +8,7 @@ import {
   BILLING_UNIT,
   ANNUAL_BILLING_AVAILABLE,
 } from "@/features/plan/pricing-meta";
-import { PRICING_FAQ } from "@/features/plan/pricing-faq";
+import { pricingFaq } from "@/features/plan/pricing-faq";
 
 export {
   FREE_PLAN_PRICE,
@@ -18,7 +18,7 @@ export {
   ANNUAL_BILLING_AVAILABLE,
   proCta,
   pricingCtaMode,
-  PRICING_FAQ,
+  pricingFaq,
 };
 
 export type CompareValue = string | boolean;

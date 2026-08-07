@@ -11,7 +11,10 @@ export function DocsDashboardApiLink({ children, className }: Props) {
   return (
     <Link
       href="/dashboard/api"
-      className={cn("underline-offset-2 hover:underline", className)}
+      className={cn(
+        "font-semibold text-ink underline underline-offset-2",
+        className,
+      )}
     >
       {children}
     </Link>

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { listUseCaseSlugs } from "@/features/seo/use-cases/catalog";
 import { sitemapUrl } from "@/features/sitemap/url";
 
 type StaticRoute = {
@@ -7,10 +8,11 @@ type StaticRoute = {
   priority: number;
 };
 
-const ROUTES: StaticRoute[] = [
+const BASE: StaticRoute[] = [
   { path: "", changeFrequency: "weekly", priority: 1 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/pricing", changeFrequency: "weekly", priority: 0.85 },
+  { path: "/use-cases", changeFrequency: "monthly", priority: 0.8 },
   { path: "/company", changeFrequency: "monthly", priority: 0.55 },
   { path: "/contact", changeFrequency: "monthly", priority: 0.55 },
   { path: "/developers", changeFrequency: "weekly", priority: 0.9 },
@@ -26,6 +28,18 @@ const ROUTES: StaticRoute[] = [
   { path: "/terms", changeFrequency: "yearly", priority: 0.35 },
   { path: "/cookies", changeFrequency: "yearly", priority: 0.3 },
   { path: "/llms.txt", changeFrequency: "weekly", priority: 0.45 },
+];
+
+const ROUTES: StaticRoute[] = [
+  ...BASE.slice(0, 4),
+  ...listUseCaseSlugs().map(
+    (slug): StaticRoute => ({
+      path: `/use-cases/${slug}`,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }),
+  ),
+  ...BASE.slice(4),
 ];
 
 export function buildStaticSitemap(siteUrl: string): MetadataRoute.Sitemap {

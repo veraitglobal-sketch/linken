@@ -1,32 +1,13 @@
 import dns from "node:dns/promises";
-import net from "node:net";
 import { extractDomain } from "@/features/verification/domain";
+import { assertPublicHostname } from "@/features/security/assert-public-host";
 
 const DEFAULT_MAX_BYTES = 500 * 1024;
 const DEFAULT_TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 3;
 
-function isPrivateIp(ip: string): boolean {
-  if (ip === "127.0.0.1" || ip === "::1") return true;
-  if (ip.startsWith("10.")) return true;
-  if (ip.startsWith("169.254.")) return true;
-  if (ip.startsWith("192.168.")) return true;
-  if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(ip)) return true;
-  if (ip.startsWith("fc") || ip.startsWith("fd") || ip.startsWith("fe80")) return true;
-  return false;
-}
-
 async function assertPublicHost(hostname: string) {
-  const results = await dns.lookup(hostname, { all: true, verbatim: true });
-  if (results.length === 0) {
-    throw new Error("Domain did not resolve.");
-  }
-  for (const r of results) {
-    if (net.isIP(r.address) === 0) continue;
-    if (isPrivateIp(r.address)) {
-      throw new Error("Domain resolves to a private network address.");
-    }
-  }
+  await assertPublicHostname(hostname);
 }
 
 type FetchOk = {

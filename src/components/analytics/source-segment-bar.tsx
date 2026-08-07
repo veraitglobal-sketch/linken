@@ -28,12 +28,12 @@ export function SourceSegmentBar({
       <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
         {segments.map((s) => (
           <div key={s.key} className="min-w-[5.5rem]">
-            <p className="text-[11px] text-[#8a948e]">{s.label}</p>
+            <p className="text-[11px] text-muted">{s.label}</p>
             <p className="mt-0.5 text-[13px] font-semibold tabular-nums text-ink">
               {total === 1 && s.value === 0
                 ? "0%"
                 : `${Math.round((s.value / total) * 100)}%`}
-              <span className="ml-1.5 text-[11px] font-medium text-[#8a948e]">
+              <span className="ml-1.5 text-[11px] font-medium text-muted">
                 {s.value}
               </span>
             </p>

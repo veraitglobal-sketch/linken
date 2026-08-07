@@ -13,7 +13,7 @@ import { ChartTooltip } from "@/components/analytics/chart-tooltip";
 import type { ChartPoint } from "@/components/analytics/chart-types";
 
 const AXIS = {
-  tick: { fill: "#8a948e", fontSize: 11 },
+  tick: { fill: "#5f6964", fontSize: 11 },
   axisLine: false as const,
   tickLine: false as const,
 };
@@ -36,9 +36,13 @@ export function MetricAreaChart({
 }) {
   const soft = colorSoft ?? color;
 
+  const total = data.reduce((sum, row) => sum + (Number(row[dataKey]) || 0), 0);
+  const summary = `${name}: ${total} across ${data.length} days.`;
+
   return (
+    <figure className="h-full w-full" role="img" aria-label={summary}>
     <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={data} margin={{ top: 12, right: 10, left: -14, bottom: 2 }}>
+      <AreaChart data={data} margin={{ top: 12, right: 10, left: -14, bottom: 2 }} aria-hidden>
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={soft} stopOpacity={0.42} />
@@ -66,5 +70,6 @@ export function MetricAreaChart({
         />
       </AreaChart>
     </ResponsiveContainer>
+    </figure>
   );
 }

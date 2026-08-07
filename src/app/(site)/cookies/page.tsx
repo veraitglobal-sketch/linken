@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AnalyticsConsentForm } from "@/components/analytics/analytics-consent-form";
 import { LegalDoc } from "@/components/legal/legal-doc";
 import { getLegalCompany } from "@/lib/legal/company";
 import { mailto } from "@/lib/legal/emails";
@@ -16,7 +17,7 @@ export default function CookiesPage() {
     <LegalDoc
       eyebrow="Legal"
       title="Cookie Policy"
-      updated="6 August 2026"
+      updated="7 August 2026"
       currentPath="/cookies"
     >
       <p>
@@ -36,9 +37,10 @@ export default function CookiesPage() {
           onboarding draft state where needed to complete a flow.
         </li>
         <li>
-          <strong>Product analytics</strong> — limited first-party events on
-          public profiles and embeds (for example views), stored to operate and
-          improve the service. We do not run third-party ad trackers.
+          <strong>Product analytics</strong> — limited first-party events
+          (landing, activation, billing milestones) stored in Hansala to operate
+          and improve the service. We do not run third-party ad trackers by
+          default. Events never include email addresses or relationship details.
         </li>
       </ul>
 
@@ -46,16 +48,18 @@ export default function CookiesPage() {
       <p>
         We do not use advertising cookies or sell cookie data. Embeds on your
         website load from Hansala solely to show confirmed evidence you chose to
-        publish.
+        publish. Analytics properties never include email addresses or
+        relationship payloads.
       </p>
 
       <h2>Control</h2>
       <p>
-        You can block or delete cookies in your browser. Essential cookies are
-        required to stay signed in. For privacy requests, email{" "}
+        Essential cookies are required to stay signed in. You can opt out of
+        visitor product analytics below. For privacy requests, email{" "}
         <a href={mailto(privacy)}>{privacy}</a> or see{" "}
         <Link href="/data-deletion">data deletion</Link>.
       </p>
+      <AnalyticsConsentForm />
 
       <h2>More</h2>
       <p>
