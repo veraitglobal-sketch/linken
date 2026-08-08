@@ -12,7 +12,15 @@ import {
 export function HomeAssurance() {
   return (
     <HomeSection tone="tight" className="!pb-12 sm:!pb-16">
-      <div className="mx-auto max-w-6xl rounded-chapter border border-line bg-mute px-7 py-10 sm:px-10 sm:py-12 lg:rounded-hero">
+      <div className="stage-falloff relative mx-auto max-w-6xl overflow-hidden rounded-chapter bg-mute px-7 py-12 sm:px-10 sm:py-14 lg:rounded-hero">
+        {/* Same device as the dark stages, dialled right down: the orb reads
+            as light falling on the plane rather than a painted tint, and the
+            border comes off — the references carry none. */}
+        <span
+          aria-hidden
+          className="orb -top-28 right-[-6rem] h-[340px] w-[420px] bg-signal/10"
+        />
+        <div className="relative z-10">
         <div className="reveal-late grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
             <HomeEyebrow>Trust</HomeEyebrow>
@@ -40,7 +48,7 @@ export function HomeAssurance() {
 
         <nav
           aria-label="Trust pages"
-          className="mt-10 border-t border-line/80 pt-6"
+          className="mt-10 pt-6"
         >
           <ul className="flex flex-wrap gap-x-4 gap-y-2">
             {TRUST_LINKS.map((link) => (
@@ -55,6 +63,7 @@ export function HomeAssurance() {
             ))}
           </ul>
         </nav>
+        </div>
       </div>
     </HomeSection>
   );

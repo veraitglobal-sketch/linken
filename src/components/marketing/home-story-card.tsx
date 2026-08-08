@@ -25,7 +25,7 @@ export function HomeStoryCard({
               0{index + 1}
             </span>
           </div>
-          <p className="mt-6 font-display text-section text-white/[0.96]">
+          <p className="mt-6 max-w-[26ch] font-display text-[clamp(1.35rem,2vw,1.7rem)] leading-[1.18] font-medium tracking-[-0.03em] text-white/[0.96]">
             {story.headline}
           </p>
         </div>
@@ -47,7 +47,8 @@ export function HomeStoryCard({
           </Button>
         </div>
       </div>
-      <div className="relative min-h-[190px] overflow-hidden lg:min-h-0">
+      <div className="relative min-h-[190px] p-3 sm:p-4 lg:min-h-0 lg:py-5 lg:pr-5 lg:pl-0">
+        <div className="relative h-full w-full overflow-hidden rounded-card">
         <Image
           src={story.image}
           alt={story.imageAlt}
@@ -57,10 +58,11 @@ export function HomeStoryCard({
           className={`media-zoom object-cover ${story.focus}`}
           sizes="(max-width: 1024px) 100vw, 40vw"
         />
-        <div
-          className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-black/30 to-transparent"
-          aria-hidden
-        />
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black/25 to-transparent"
+            aria-hidden
+          />
+        </div>
       </div>
     </article>
   );

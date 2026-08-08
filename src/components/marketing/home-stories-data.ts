@@ -1,6 +1,6 @@
 export const HOME_STORIES = [
   {
-    tone: "bg-navy",
+    tone: "bg-[#081412]",
     sector: "Architecture & engineering",
     headline:
       "Show the delivery network behind every project — each firm confirmed by the other side.",
@@ -12,7 +12,7 @@ export const HOME_STORIES = [
     focus: "object-[center_42%]",
   },
   {
-    tone: "bg-[#142a25]",
+    tone: "bg-[#0e1f1c]",
     sector: "Construction & contracting",
     headline:
       "Subcontractors appear confirmed on the lead firm’s page — visible to clients who already trust that network.",
@@ -25,7 +25,7 @@ export const HOME_STORIES = [
     focus: "object-[center_28%]",
   },
   {
-    tone: "bg-[#1a3530]",
+    tone: "bg-[#1a5c51]",
     sector: "Agencies & consultancies",
     headline:
       "One link in the proposal. The buyer sees confirmed clients and partners before the first meeting.",

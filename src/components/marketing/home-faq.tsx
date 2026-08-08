@@ -18,13 +18,13 @@ export function HomeFaq() {
         <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted">
           Confirmation, visibility, the badge, and what stays free.
         </p>
-        <div className="reveal-late mt-10 divide-y divide-line border-y border-line">
+        <div className="reveal-late mt-10 divide-y divide-line">
           {FAQ_ITEMS.map((item) => (
             <details key={item.question} className="group py-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[17px] font-medium tracking-[-0.02em] text-ink marker:content-none [&::-webkit-details-marker]:hidden">
                 {item.question}
                 <span
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-[15px] leading-none text-muted transition-[transform,color,border-color] duration-200 group-open:rotate-45 group-open:border-ink/25 group-open:text-ink"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-mute text-[15px] leading-none text-muted transition-[transform,color,background-color] duration-200 group-open:rotate-45 group-open:bg-signal/12 group-open:text-ink"
                   aria-hidden
                 >
                   +
