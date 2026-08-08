@@ -53,8 +53,8 @@ export function OverviewRecord() {
   return (
     <div ref={ref} className="mx-auto max-w-[1180px]">
       <HomeEyebrow>The record</HomeEyebrow>
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-14">
-        <h2 className="max-w-[18ch] font-display text-chapter text-ink text-balance">
+      <div className="reveal-late mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-14">
+        <h2 className="reveal max-w-[18ch] font-display text-chapter text-ink text-balance">
           Public only after the second yes.
         </h2>
         <p className="max-w-[38ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-1 lg:text-right">

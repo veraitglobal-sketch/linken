@@ -17,8 +17,8 @@ export function HomeStories() {
     <HomeSection tone="tight" className="!pb-8 sm:!pb-10">
       <div className="mx-auto mb-12 max-w-6xl">
         <HomeEyebrow>Proof, not promises</HomeEyebrow>
-        <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-14">
-          <h2 className="max-w-[18ch] font-display text-chapter text-ink text-balance">
+        <div className="reveal-late mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-14">
+          <h2 className="reveal max-w-[18ch] font-display text-chapter text-ink text-balance">
             We don&rsquo;t print logos we don&rsquo;t have.
           </h2>
           <p className="max-w-[38ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-1 lg:text-right">

@@ -16,14 +16,11 @@ export function HomeHero() {
             </p>
           </div>
 
-          <div className="max-w-xl">
-            <p className="animate-rise font-display text-hero text-on-navy">
-              Hansala
-            </p>
-            <h1 className="animate-rise-delay mt-6 font-display text-section text-on-navy/90">
+          <div className="max-w-2xl">
+            <h1 className="animate-rise font-display text-claim text-on-navy text-balance">
               Turn your past work into verified proof.
             </h1>
-            <p className="animate-rise-delay mt-5 max-w-md text-[15px] leading-relaxed text-on-navy-soft">
+            <p className="animate-rise-delay mt-6 max-w-md text-lead text-on-navy-soft">
               Invite clients and partners to confirm. Use the same records on
               your profile, website, and proposals — public only after both
               sides agree.
@@ -34,7 +31,7 @@ export function HomeHero() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Button
                 href="/onboarding"
-                variant="light"
+                variant="primary"
                 className="h-12 min-w-[200px] px-6"
               >
                 Create your free profile

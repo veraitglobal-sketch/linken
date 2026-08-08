@@ -29,7 +29,7 @@ export function HomeClose() {
                 Start
               </p>
             </div>
-            <h2 className="mt-5 font-display text-chapter text-balance">
+            <h2 className="reveal mt-5 font-display text-chapter text-balance">
               Put your confirmed network on the record.
             </h2>
             <p className="mt-4 max-w-md text-[15px] leading-relaxed text-on-navy-soft/80">

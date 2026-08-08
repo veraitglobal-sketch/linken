@@ -12,13 +12,13 @@ export function HomeFaq() {
     <HomeSection tone="tight" className="!pb-14 sm:!pb-16">
       <div className="mx-auto max-w-3xl">
         <HomeEyebrow>FAQ</HomeEyebrow>
-        <h2 className="mt-5 font-display text-chapter text-ink text-balance">
+        <h2 className="reveal mt-5 font-display text-chapter text-ink text-balance">
           The rules, in plain language.
         </h2>
         <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted">
           Confirmation, visibility, the badge, and what stays free.
         </p>
-        <div className="mt-10 divide-y divide-line border-y border-line">
+        <div className="reveal-late mt-10 divide-y divide-line border-y border-line">
           {FAQ_ITEMS.map((item) => (
             <details key={item.question} className="group py-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[17px] font-medium tracking-[-0.02em] text-ink marker:content-none [&::-webkit-details-marker]:hidden">

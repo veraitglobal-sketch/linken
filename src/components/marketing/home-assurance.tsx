@@ -13,10 +13,10 @@ export function HomeAssurance() {
   return (
     <HomeSection tone="tight" className="!pb-12 sm:!pb-16">
       <div className="mx-auto max-w-6xl rounded-chapter border border-line bg-mute px-7 py-10 sm:px-10 sm:py-12 lg:rounded-hero">
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+        <div className="reveal-late grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
             <HomeEyebrow>Trust</HomeEyebrow>
-            <h2 className="mt-5 max-w-[16ch] font-display text-section text-ink text-balance">
+            <h2 className="reveal mt-5 max-w-[16ch] font-display text-section text-ink text-balance">
               The record protects both sides.
             </h2>
             <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-muted">

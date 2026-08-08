@@ -35,7 +35,7 @@ export function ConfirmChecklist({ items }: { items: string[] }) {
             transitionDelay: `${i * 180}ms`,
           }}
         >
-          <span className="relative flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-blue-soft/20">
+          <span className="relative flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-signal/15">
             <svg
               width="10"
               height="10"

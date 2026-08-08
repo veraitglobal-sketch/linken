@@ -6,9 +6,13 @@
   --ink-soft: #3a423e;
   --muted: #66706b;
   --line: #dde2df;
-  --paper: #f0f2f0;
-  --mute: #e8ebe8;
+  /* White ground. Retell carries 83% white and lets type, product shots and
+     one saturated tone do the work; a tinted ground flattens all three.
+     Paper survives as --mute, for the rare grouped band. */
+  --paper: #ffffff;
+  --mute: #f4f6f4;
   --surface: #ffffff;
+  --raised: #f7f9f8;
   --navy: #0e1f1c;
   --navy-deep: #081412;
   --blue: #1a5c51;
@@ -16,6 +20,13 @@
   --accent: #0e1f1c;
   --accent-hover: #081412;
   --accent-soft: rgba(14, 31, 28, 0.07);
+  /* Signal — the one saturated tone. Same hue as --blue, real chroma.
+     Retell's #3d6aef covers 1.8% of their page; this plays that role and
+     must never spread past buttons, active states and the mark.
+     #0c8260 is the most saturated value that still clears 4.5:1 with white
+     button text — measured, not chosen by eye. */
+  --signal: #0c8260;
+  --signal-hover: #0a7254;
   --success: #1f7a56;
   --ember: #b8895a;
   /* On-navy text — hero / close / dark chapters */
@@ -34,6 +45,7 @@
      its size. Ten ad-hoc clamps across the marketing sections is why the page
      reads as unrelated blocks. */
   --t-hero: clamp(3.4rem, 8.5vw, 6.2rem);
+  --t-claim: clamp(2.6rem, 5.8vw, 4.5rem);
   --t-chapter: clamp(2.5rem, 5.2vw, 4rem);
   --t-section: clamp(1.9rem, 3.4vw, 2.6rem);
   --t-lead: clamp(1.05rem, 1.4vw, 1.25rem);
@@ -55,6 +67,7 @@
   --color-line: var(--line);
   --color-paper: var(--paper);
   --color-mute: var(--mute);
+  --color-raised: var(--raised);
   --color-surface: var(--surface);
   --color-navy: var(--navy);
   --color-navy-deep: var(--navy-deep);
@@ -63,12 +76,19 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
+  --color-signal: var(--signal);
+  --color-signal-hover: var(--signal-hover);
   --color-success: var(--success);
   --color-ember: var(--ember);
   --color-plus: var(--plus);
   --color-on-navy: var(--on-navy);
   --color-on-navy-soft: var(--on-navy-soft);
   --color-on-navy-muted: var(--on-navy-muted);
+  --text-claim: var(--t-claim);
+  --text-claim--line-height: 0.98;
+  --text-claim--letter-spacing: -0.045em;
+  --text-claim--font-weight: 500;
+
   --text-hero: var(--t-hero);
   --text-hero--line-height: 0.94;
   --text-hero--letter-spacing: -0.05em;
@@ -129,7 +149,7 @@ a {
 
 /* Global keyboard focus — components may refine; never remove without replacement */
 :focus-visible {
-  outline: 2px solid var(--blue-soft);
+  outline: 2px solid var(--signal);
   outline-offset: 2px;
 }
 
@@ -139,6 +159,37 @@ a {
 
 ::selection {
   background: rgba(26, 92, 81, 0.18);
+}
+
+/* Reveal — driven by the scroll timeline, not JavaScript. No observer, no
+   library, nothing to pause or leak; unsupported browsers simply show the
+   content. Range is short and the travel small: enterprise motion should be
+   noticed only if it is missing. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 12% cover 24%;
+    }
+
+    .reveal-late {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 18% cover 34%;
+    }
+  }
 }
 
 .stage-grain {
@@ -394,7 +445,23 @@ a {
 .hero-live {
   position: relative;
   overflow: hidden;
-  background: var(--navy);
+  /* The stage was flat navy while a secondary section carried the layered
+     treatment. Two blooms — mint high left, deep green low right — over a
+     navy ramp. Retell runs exactly one gradient on their whole site and it
+     is in the hero; this is that moment. */
+  background:
+    radial-gradient(ellipse 78% 58% at 10% 6%, rgba(126, 184, 164, 0.22), transparent 58%),
+    radial-gradient(ellipse 62% 52% at 82% 94%, rgba(12, 130, 96, 0.3), transparent 60%),
+    linear-gradient(158deg, #060f0d 0%, #0e1f1c 46%, #14302a 100%);
+}
+
+.hero-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
 }
 
 /* Mark assemble — dark stage (scrubbed in JS; CSS play classes unused) */

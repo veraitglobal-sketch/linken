@@ -52,7 +52,7 @@ export function HomePlanCard({
             className={`flex gap-3 text-[13.5px] leading-relaxed ${dark ? "text-on-navy-soft" : "text-ink-soft"}`}
           >
             <span
-              className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-blue-soft"
+              className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-signal"
               aria-hidden
             />
             {feature}

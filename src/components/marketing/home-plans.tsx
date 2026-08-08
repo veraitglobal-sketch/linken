@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import { HomePlanCard } from "@/components/marketing/home-plan-card";
 import {
   HomeEyebrow,
@@ -18,8 +19,8 @@ export function HomePlans() {
     <HomeSection tone="tight" className="!pb-16 sm:!pb-20">
       <div className="mx-auto max-w-6xl">
         <HomeEyebrow>Plans</HomeEyebrow>
-        <div className="mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
-          <h2 className="max-w-[18ch] font-display text-chapter text-ink text-balance">
+        <div className="reveal-late mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
+          <h2 className="reveal max-w-[18ch] font-display text-chapter text-ink text-balance">
             The record is free. Pro is reach.
           </h2>
           <p className="max-w-[38ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-1 lg:text-right">
@@ -53,6 +54,31 @@ export function HomePlans() {
             href="/pricing"
             dark
           />
+        </div>
+
+        {/* The section's whole argument, shown instead of stated: the mark
+            spans both columns, so it visibly belongs to neither plan. It is
+            the real `EmbedVerifiedLockup`, the same one a customer's site
+            renders — not a picture of it. */}
+        <div className="mt-4 flex flex-col items-start gap-5 rounded-card border border-line px-6 py-6 sm:flex-row sm:items-center sm:gap-8 sm:px-8">
+          <EmbedVerifiedLockup size="lg" />
+          <div className="min-w-0">
+            <p className="text-[15px] font-medium tracking-[-0.01em] text-ink">
+              Included on both plans.
+            </p>
+            <p className="mt-1 max-w-lg text-[13.5px] leading-relaxed text-muted">
+              The mark is domain proof and mutual confirmation. There is no
+              price that buys it, and no plan that prints a tier beside it on
+              your visitor&rsquo;s screen.
+            </p>
+          </div>
+          <span
+            className="hidden h-10 w-px shrink-0 bg-line sm:block"
+            aria-hidden
+          />
+          <p className="shrink-0 text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
+            Earned, not bought
+          </p>
         </div>
       </div>
     </HomeSection>

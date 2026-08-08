@@ -15,8 +15,8 @@ export function HomeHighlights() {
     <HomeSection tone="tight" className="!pb-16 sm:!pb-20">
       <div className="mx-auto max-w-6xl">
         <HomeEyebrow>On your site</HomeEyebrow>
-        <div className="mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
-          <h2 className="max-w-[18ch] font-display text-chapter text-ink text-balance">
+        <div className="reveal-late mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
+          <h2 className="reveal max-w-[18ch] font-display text-chapter text-ink text-balance">
             Your proof, rendered on your own page.
           </h2>
           <p className="max-w-[38ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-1 lg:text-right">

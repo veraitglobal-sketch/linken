@@ -35,8 +35,8 @@ export function HomeOutcomes() {
     <HomeSection className="!py-20 sm:!py-28">
       <div className="mx-auto max-w-6xl">
         <HomeEyebrow>Where it pays off</HomeEyebrow>
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
-          <h2 className="max-w-[16ch] font-display text-chapter text-ink text-balance">
+        <div className="reveal-late mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
+          <h2 className="reveal max-w-[16ch] font-display text-chapter text-ink text-balance">
             Made for the moments project work is won.
           </h2>
           <p className="max-w-[34ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-2 lg:text-right">
@@ -59,7 +59,7 @@ export function HomeOutcomes() {
               </p>
               <div className="mt-8 flex items-center gap-2">
                 <span
-                  className="size-1.5 shrink-0 rounded-full bg-blue-soft"
+                  className="size-1.5 shrink-0 rounded-full bg-signal"
                   aria-hidden
                 />
                 <span className="text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">

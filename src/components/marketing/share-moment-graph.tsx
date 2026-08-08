@@ -93,7 +93,7 @@ export function ShareMomentGraph() {
   return (
     <div
       ref={stageRef}
-      className="relative mx-auto mt-14 h-[220px] w-full max-w-xl select-none sm:h-[240px]"
+      className="relative h-[300px] w-full select-none sm:h-[360px]"
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerLeave={onPointerUp}
@@ -105,16 +105,8 @@ export function ShareMomentGraph() {
         className="pointer-events-none absolute inset-[12%] rounded-[40%] bg-[radial-gradient(ellipse_at_center,rgba(14,31,28,0.07),transparent_70%)]"
       />
 
-      {/* Dot grid */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-3xl opacity-80"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #d2d8d3 1px, transparent 1px)",
-          backgroundSize: "18px 18px",
-        }}
-      />
+      {/* Dot grid removed — a consumer texture. The photographs and the
+          confirmation marks carry this section on their own. */}
 
       {/* Graph edges */}
       <svg
