@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { StyleRescue } from "@/components/layout/style-rescue";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
@@ -11,12 +11,9 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const newsreader = Newsreader({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
+/* Newsreader is not loaded here on purpose. It is a widget-theme face, and
+   the embed fetches it itself via `googleFontStylesheet` — carrying it in the
+   app bundle downloaded a font no Hansala page ever rendered. */
 
 const title = "Hansala — Mutually Confirmed Project Networks";
 const description =
@@ -68,10 +65,15 @@ const orgJsonLd = {
   ],
 };
 
-/** Baseline if external CSS fails (email WebViews / stale Safari caches). */
+/** Baseline if external CSS fails (email WebViews / stale Safari caches).
+ *
+ * These rules sit in no cascade layer, so they beat every `@layer base` rule
+ * Tailwind emits — not just when the stylesheet is missing, but always. The
+ * font therefore has to name the same variable the real rule does, or this
+ * safety net silently holds the whole site on the system face. */
 const CRITICAL_CSS = `
 html{line-height:1.45;-webkit-text-size-adjust:100%}
-body{margin:0;background:#f0f2f0;color:#0d1210;font-family:system-ui,-apple-system,sans-serif}
+body{margin:0;background:#f0f2f0;color:#0d1210;font-family:var(--font-ui),system-ui,-apple-system,sans-serif}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;height:auto}
 `;
@@ -84,7 +86,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${jakarta.variable} ${newsreader.variable} h-full antialiased`}
+      className={`${jakarta.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
         <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />

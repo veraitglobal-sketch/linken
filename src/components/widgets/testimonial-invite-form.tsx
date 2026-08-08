@@ -11,12 +11,14 @@ export function TestimonialInviteForm() {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [okUrl, setOkUrl] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
   const [linked, setLinked] = useState<string | null>(null);
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setOkUrl(null);
+    setEmailSent(false);
     setLinked(null);
     const form = e.currentTarget;
     const fd = new FormData(form);
@@ -31,6 +33,7 @@ export function TestimonialInviteForm() {
         return;
       }
       setOkUrl(result.url);
+      setEmailSent(result.emailSent);
       if (result.linkedCompany) {
         setLinked(result.linkedCompany.name);
       }
@@ -92,9 +95,14 @@ export function TestimonialInviteForm() {
       ) : null}
       {okUrl ? (
         <p className="mt-3 text-[13px] text-ink-soft">
-          Invite sent.
+          {emailSent
+            ? "Invite email sent."
+            : "Invite created, but the email could not be sent — share the link below."}
           {linked ? ` Linked to ${linked} on Hansala.` : null}{" "}
-          <a href={okUrl} className="font-semibold text-ink underline-offset-2 hover:underline">
+          <a
+            href={okUrl}
+            className="font-semibold text-ink underline-offset-2 hover:underline"
+          >
             Open link
           </a>
         </p>

@@ -6,18 +6,14 @@ function clamp(n: number, a: number, b: number) {
   return Math.min(b, Math.max(a, n));
 }
 
-/** Triangle 0→1→0 across scroll progress — assemble, then come apart. */
-function pingPong(p: number) {
-  return p < 0.5 ? p * 2 : 2 - p * 2;
-}
-
-/**
- * Scroll drives the mark: forms, then opens again.
- * Dark stage, mint mark — scrubbed, reversible.
- */
+/** Homepage §5a — the mark assembles once, on entry. Dark stage, mint mark.
+ *
+ * It used to be scroll-scrubbed inside an `h-[200vh]` runway: two screens of
+ * scrolling to deliver one sentence, and the reader had to keep moving to hold
+ * the picture together. Same choreography, played on its own. */
 export function MarkAssemble() {
   const pin = useRef<HTMLDivElement>(null);
-  const [form, setForm] = useState(0);
+  const [rawForm, setForm] = useState(0);
   const [reduce, setReduce] = useState(false);
 
   useEffect(() => {
@@ -30,34 +26,39 @@ export function MarkAssemble() {
 
   useEffect(() => {
     const el = pin.current;
-    if (!el) return;
-    if (reduce) {
-      setForm(1);
-      return;
-    }
+    if (!el || reduce) return;
 
     let raf = 0;
-    const update = () => {
-      raf = 0;
-      const rect = el.getBoundingClientRect();
-      const travel = Math.max(1, rect.height - window.innerHeight);
-      const raw = clamp(-rect.top / travel, 0, 1);
-      setForm(pingPong(raw));
-    };
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(update);
+    let start = 0;
+    const DURATION = 1400;
+
+    const tick = (now: number) => {
+      if (!start) start = now;
+      const p = clamp((now - start) / DURATION, 0, 1);
+      // ease-out cubic, so the pieces settle rather than snap
+      setForm(1 - Math.pow(1 - p, 3));
+      raf = p < 1 ? requestAnimationFrame(tick) : 0;
     };
 
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting && !raf && !start) {
+          raf = requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      io.disconnect();
       if (raf) cancelAnimationFrame(raf);
     };
   }, [reduce]);
+
+  /* Derived, not written from an effect — reduced motion holds the end state
+     without a second render pass. */
+  const form = reduce ? 1 : rawForm;
 
   const left = clamp(form / 0.35, 0, 1);
   const right = clamp((form - 0.15) / 0.35, 0, 1);
@@ -65,18 +66,20 @@ export function MarkAssemble() {
   const word = clamp((form - 0.65) / 0.35, 0, 1);
 
   return (
-    <div ref={pin} className="relative h-[220vh]">
-      <div className="sticky top-0 flex min-h-[100svh] items-center px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mark-stage relative mx-auto w-full max-w-[1180px] overflow-hidden rounded-[32px]">
+    <div ref={pin} className="relative">
+      <div className="flex items-center px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mark-stage relative mx-auto w-full max-w-[1180px] overflow-hidden rounded-hero shadow-chapter">
           <div
             className="pointer-events-none absolute inset-0 stage-grain opacity-[0.4]"
             aria-hidden
           />
-
-          <div className="relative flex min-h-[min(70vh,520px)] flex-col items-center justify-center px-8 py-16 sm:py-20">
+          <div className="relative flex min-h-[420px] flex-col items-center justify-center px-8 py-16 sm:py-20">
+            <p className="mb-8 text-[11px] font-semibold tracking-[0.16em] text-blue-soft/80 uppercase">
+              Two sides
+            </p>
             <svg
               viewBox="0 0 200 80"
-              className="h-16 w-[200px] text-[#7eb8a4] sm:h-[5.25rem] sm:w-[260px]"
+              className="h-16 w-[200px] text-blue-soft sm:h-[5.25rem] sm:w-[260px]"
               aria-hidden
             >
               <circle
@@ -109,7 +112,6 @@ export function MarkAssemble() {
                 opacity={0.25 + link * 0.75}
               />
             </svg>
-
             <div
               className="mt-9 text-center will-change-transform"
               style={{
@@ -117,7 +119,7 @@ export function MarkAssemble() {
                 transform: `translateY(${(1 - word) * 14}px)`,
               }}
             >
-              <p className="font-display text-[clamp(2rem,4.5vw,3.25rem)] font-medium tracking-[-0.045em] text-white">
+              <p className="font-display text-chapter text-white">
                 Hansala
               </p>
               <p className="mt-3 text-[14px] leading-relaxed text-white/50 sm:text-[15px]">

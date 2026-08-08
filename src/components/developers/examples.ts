@@ -125,7 +125,7 @@ export function testimonialsExample(siteUrl: string) {
       },
       "source": "case_study",
       "published_at": "2025-09-12T14:30:00.000Z",
-      "provenance_line": "Confirmed client · nordwerk-holding.com",
+      "provenance_line": "Confirmed by the client · nordwerk-holding.com · domain verified",
       "profile_url": "${siteUrl}/c/example-architecture?src=testimonial"
     }
   ],

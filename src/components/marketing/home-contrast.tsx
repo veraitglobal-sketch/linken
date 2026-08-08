@@ -1,9 +1,9 @@
 import { MarkAssemble } from "@/components/marketing/mark-assemble";
 
-/** Scroll assembles the mark, then opens it again. */
+/** Homepage §5a — mark assemble (contrast beat between outcomes and stories). */
 export function HomeContrast() {
   return (
-    <section>
+    <section aria-label="Hansala confirmation mark">
       <MarkAssemble />
     </section>
   );

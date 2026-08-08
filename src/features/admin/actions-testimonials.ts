@@ -9,7 +9,11 @@ type TestimonialSlugRow = { status: string; companies: { slug?: string } | null 
 
 function revalidateTestimonials(slug?: string) {
   revalidatePath("/admin/testimonials");
-  if (slug) revalidatePath(`/c/${slug}`);
+  revalidatePath("/dashboard/testimonials");
+  if (slug) {
+    revalidatePath(`/c/${slug}`);
+    revalidatePath(`/embed/${slug}`);
+  }
 }
 
 /** Hide sets status → withdrawn only. Never touches body/author fields. */

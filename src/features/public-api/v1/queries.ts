@@ -194,6 +194,10 @@ export async function getPublicCaseStudiesApi(
   );
 }
 
+/**
+ * Full published set for LLM markdown / evidence — not studio-curated.
+ * Host sites use getPublicTestimonialsForSites (order / exclude / limit).
+ */
 export async function getPublicTestimonialsApi(
   slug: string,
 ): Promise<ApiTestimonialsResponse | null> {
@@ -204,8 +208,9 @@ export async function getPublicTestimonialsApi(
     return { testimonials: [], count: 0 };
   }
 
-  const rows = await getPublishedTestimonials(company.id);
-  const publicRows = await toPublicTestimonials(rows, company.slug);
+  const supabase = await createClient();
+  const rows = await getPublishedTestimonials(company.id, supabase);
+  const publicRows = await toPublicTestimonials(rows, company.slug, supabase);
   return serializeTestimonials(publicRows);
 }
 

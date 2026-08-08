@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { NetworkMark } from "@/components/marketing/network-mark";
 import { HomeSection } from "@/components/marketing/home-section";
 
-/** Final calm CTA — closes the homepage composition. */
+/** Homepage §8c — dark close stage; bookend with Hero. */
 export function HomeClose() {
   return (
     <HomeSection tone="tight" className="!pb-24 sm:!pb-28">
-      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-navy px-8 py-14 text-white shadow-[0_28px_80px_rgba(8,20,18,0.22)] sm:px-12 sm:py-16 lg:rounded-[32px]">
+      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-hero bg-navy px-8 py-14 text-on-navy shadow-hero sm:px-12 sm:py-16">
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -16,7 +16,10 @@ export function HomeClose() {
           }}
           aria-hidden
         />
-        <div className="pointer-events-none absolute inset-0 stage-grain opacity-30" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 stage-grain opacity-30"
+          aria-hidden
+        />
 
         <div className="relative flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-xl">
@@ -26,10 +29,10 @@ export function HomeClose() {
                 Start
               </p>
             </div>
-            <h2 className="mt-5 font-display text-[clamp(2rem,4.2vw,3.1rem)] font-medium leading-[1.1] tracking-[-0.042em]">
+            <h2 className="mt-5 font-display text-chapter text-balance">
               Put your confirmed network on the record.
             </h2>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/55">
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-on-navy-soft/80">
               Create your company profile. Invite partners. Publish only what
               both sides confirm.
             </p>
@@ -52,15 +55,15 @@ export function HomeClose() {
           </div>
         </div>
 
-        <p className="relative mt-10 border-t border-white/10 pt-6 text-[13px] text-white/45">
-          Building on top of Hansala? The Agent API and embeds are documented
-          for{" "}
+        <p className="relative mt-10 border-t border-white/10 pt-6 text-[13px] text-on-navy-muted">
+          Building on top of Hansala? Agent API and embeds are documented for{" "}
           <Link
             href="/developers"
-            className="font-medium text-white/75 underline decoration-white/25 underline-offset-4 hover:text-white"
+            className="font-medium text-on-navy-soft underline decoration-white/25 underline-offset-4 hover:text-on-navy"
           >
             developers
-          </Link>.
+          </Link>
+          .
         </p>
       </div>
     </HomeSection>

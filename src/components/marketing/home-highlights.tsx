@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { EmbedVerified } from "@/components/embed/embed-verified";
 import {
   HomeEyebrow,
@@ -6,23 +7,32 @@ import {
 } from "@/components/marketing/home-section";
 import { getSiteUrl } from "@/lib/site";
 
-/** Full-bleed photo stage — Verified lockup + network line on the image. */
+/** Homepage §6b — embed on your site; same confirmed facts as the profile. */
 export function HomeHighlights() {
   const profileUrl = `${getSiteUrl()}/demo`;
 
   return (
-    <HomeSection tone="tight">
+    <HomeSection tone="tight" className="!pb-16 sm:!pb-20">
       <div className="mx-auto max-w-6xl">
         <HomeEyebrow>On your site</HomeEyebrow>
-        <h2 className="mt-5 max-w-2xl font-display text-[clamp(2rem,4vw,3rem)] font-medium leading-[1.08] tracking-[-0.042em] text-ink">
-          Your proof, rendered on your own page.
-        </h2>
-        <p className="mt-5 max-w-lg text-[16px] leading-relaxed text-ink-soft">
-          The same confirmed records as your Hansala profile — one paste, and it
-          stays current.
-        </p>
+        <div className="mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
+          <h2 className="max-w-[18ch] font-display text-chapter text-ink text-balance">
+            Your proof, rendered on your own page.
+          </h2>
+          <p className="max-w-[38ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-1 lg:text-right">
+            Same confirmed records as your Hansala profile — one paste, then it
+            stays current.{" "}
+            <Link
+              href="/developers"
+              className="font-semibold text-ink underline-offset-2 hover:underline"
+            >
+              Embed docs
+            </Link>
+            .
+          </p>
+        </div>
 
-        <div className="relative mt-12 min-h-[min(56vh,520px)] overflow-hidden rounded-[28px] shadow-[0_28px_70px_rgba(10,20,18,0.18)] ring-1 ring-black/[0.04] sm:min-h-[560px] lg:rounded-[32px]">
+        <div className="relative mt-11 min-h-[min(56vh,520px)] overflow-hidden rounded-chapter shadow-chapter ring-1 ring-black/[0.04] sm:min-h-[560px] lg:rounded-hero">
           <Image
             src="/images/highlight-share.jpg"
             alt="A partner opening a confirmed company page on site"
@@ -47,7 +57,7 @@ export function HomeHighlights() {
               Your network travels with every share.
             </p>
             <p className="mt-2 max-w-sm text-[13px] text-white/55">
-              Embeds and profile links — same confirmed facts.
+              Embeds and profile links — confirmed facts only.
             </p>
           </div>
         </div>

@@ -1,9 +1,12 @@
 /**
  * Agent API — list published testimonials for the key's company.
+ * Same public shape as serializeTestimonials (no pending / tokens / email).
  */
 import type { NextRequest } from "next/server";
 import { withAgentAuth } from "@/features/agent-api/handler";
 import { agentOptions } from "@/features/agent-api/http";
+import { getCompanyMetaForAgent } from "@/features/agent-api/queries";
+import { serializeTestimonials } from "@/features/public-api/v1/serializers";
 import {
   getPublishedTestimonials,
   toPublicTestimonials,
@@ -30,36 +33,23 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    const { data: company } = await admin
-      .from("companies")
-      .select("slug")
-      .eq("id", ctx.companyId)
-      .maybeSingle();
+    const meta = await getCompanyMetaForAgent(admin, ctx.companyId);
+    if (!meta?.slug) {
+      return {
+        status: 404,
+        body: {
+          error: { code: "not_found", message: "Company not found." },
+        },
+        skipAudit: true,
+      };
+    }
 
-    const slug = (company?.slug as string | undefined) ?? "";
-    const rows = await getPublishedTestimonials(ctx.companyId);
-    const publicRows = slug
-      ? await toPublicTestimonials(rows, slug)
-      : [];
+    const rows = await getPublishedTestimonials(ctx.companyId, admin);
+    const publicRows = await toPublicTestimonials(rows, meta.slug, admin);
 
     return {
       status: 200,
-      body: {
-        data: {
-          count: publicRows.length,
-          testimonials: publicRows.map((t) => ({
-            id: t.id,
-            body: t.body,
-            author_name: t.authorName,
-            author_role: t.authorRole,
-            author_company: t.authorCompany,
-            source: t.source,
-            published_at: t.publishedAt,
-            provenance_line: t.provenanceLine,
-            profile_url: t.profileUrl,
-          })),
-        },
-      },
+      body: { data: serializeTestimonials(publicRows) },
       skipAudit: true,
     };
   });

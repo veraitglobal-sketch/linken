@@ -10,6 +10,7 @@ import {
 } from "@/features/public-api/v1/testimonial-theme";
 import {
   getPublishedTestimonials,
+  selectTestimonialsByStudio,
   toPublicTestimonials,
 } from "@/features/testimonials/queries";
 import {
@@ -21,7 +22,6 @@ import {
   type TestimonialPreset,
 } from "@/features/testimonials/theme/presets";
 import { themeTokensFromPreset } from "@/features/testimonials/theme/parse";
-import type { PublicTestimonial } from "@/features/testimonials/types";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/site";
 
@@ -33,6 +33,7 @@ export type PublicTestimonialsApiBody = ApiTestimonialsResponse & {
   embed: { iframe_url: string; script_url: string };
 };
 
+/** Host-site public API — studio order/exclude/limit + theme. */
 export async function getPublicTestimonialsForSites(
   slug: string,
   opts?: { preset?: string | null; limit?: number | null },
@@ -59,19 +60,16 @@ export async function getPublicTestimonialsForSites(
   );
 
   const preset = parsePreset(opts?.preset ?? null);
-  const themeTokens = preset
-    ? themeTokensFromPreset(preset)
-    : settings.theme;
+  const themeTokens = preset ? themeTokensFromPreset(preset) : settings.theme;
   const limit = Math.min(50, Math.max(1, opts?.limit ?? settings.limit ?? 12));
 
-  const rows = await getPublishedTestimonials(company.id);
-  const publicRows = await toPublicTestimonials(rows, company.slug);
-  const sliced = orderLimit(
-    publicRows,
-    settings.order,
-    settings.excludedIds,
+  const rows = await getPublishedTestimonials(company.id, supabase);
+  const publicRows = await toPublicTestimonials(rows, company.slug, supabase);
+  const sliced = selectTestimonialsByStudio(publicRows, {
+    order: settings.order,
+    excludedIds: settings.excludedIds,
     limit,
-  );
+  });
 
   return {
     ...serializeTestimonials(sliced),
@@ -94,28 +92,6 @@ function parsePreset(raw: string | null): TestimonialPreset | null {
   return TESTIMONIAL_PRESETS.includes(raw as TestimonialPreset)
     ? (raw as TestimonialPreset)
     : null;
-}
-
-function orderLimit(
-  rows: PublicTestimonial[],
-  order: string[],
-  excluded: string[],
-  limit: number,
-): PublicTestimonial[] {
-  const ban = new Set(excluded);
-  const filtered = rows.filter((r) => !ban.has(r.id));
-  if (order.length === 0) return filtered.slice(0, limit);
-  const byId = new Map(filtered.map((r) => [r.id, r]));
-  const out: PublicTestimonial[] = [];
-  for (const id of order) {
-    const row = byId.get(id);
-    if (row) {
-      out.push(row);
-      byId.delete(id);
-    }
-  }
-  out.push(...byId.values());
-  return out.slice(0, limit);
 }
 
 function emptyBody(

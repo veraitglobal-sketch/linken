@@ -5,8 +5,9 @@
   --ink: #0d1210;
   --ink-soft: #3a423e;
   --muted: #66706b;
-  --line: #e2e6e3;
-  --paper: #f1f3f1;
+  --line: #dde2df;
+  --paper: #f0f2f0;
+  --mute: #e8ebe8;
   --surface: #ffffff;
   --navy: #0e1f1c;
   --navy-deep: #081412;
@@ -17,11 +18,34 @@
   --accent-soft: rgba(14, 31, 28, 0.07);
   --success: #1f7a56;
   --ember: #b8895a;
+  /* On-navy text — hero / close / dark chapters */
+  --on-navy: #f2f5f3;
+  --on-navy-soft: #c5cdc8;
+  --on-navy-muted: #a8b2ad;
   /* Body/UI text must use --muted or darker; --plus meets AA on paper/surface */
   --plus: #5f6964;
   --font-sans: var(--font-ui);
-  --font-display: var(--font-display);
+  /* Was `var(--font-display)` — a self-reference, which CSS treats as a cycle
+     and resolves to nothing, so every headline silently fell back to
+     system-ui. Display is Plus Jakarta Sans, same face as the body. */
+  --font-display: var(--font-ui);
+  /* Shape scale — tiles → cards → chapters → hero stages */
+  /* Display scale, stepped down from the hero rather than collapsing to half
+     its size. Ten ad-hoc clamps across the marketing sections is why the page
+     reads as unrelated blocks. */
+  --t-hero: clamp(3.4rem, 8.5vw, 6.2rem);
+  --t-chapter: clamp(2.5rem, 5.2vw, 4rem);
+  --t-section: clamp(1.9rem, 3.4vw, 2.6rem);
+  --t-lead: clamp(1.05rem, 1.4vw, 1.25rem);
+
+  --r-tile: 1.25rem; /* 20 */
+  --r-card: 1.5rem; /* 24 */
+  --r-chapter: 1.75rem; /* 28 */
+  --r-hero: 2rem; /* 32 */
   --shadow: 0 22px 64px rgba(8, 20, 18, 0.1);
+  --elev-card: 0 18px 48px rgba(8, 20, 18, 0.1);
+  --elev-chapter: 0 28px 70px rgba(8, 20, 18, 0.18);
+  --elev-hero: 0 28px 90px rgba(8, 20, 18, 0.28);
 }
 
 @theme inline {
@@ -30,6 +54,7 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-paper: var(--paper);
+  --color-mute: var(--mute);
   --color-surface: var(--surface);
   --color-navy: var(--navy);
   --color-navy-deep: var(--navy-deep);
@@ -41,6 +66,35 @@
   --color-success: var(--success);
   --color-ember: var(--ember);
   --color-plus: var(--plus);
+  --color-on-navy: var(--on-navy);
+  --color-on-navy-soft: var(--on-navy-soft);
+  --color-on-navy-muted: var(--on-navy-muted);
+  --text-hero: var(--t-hero);
+  --text-hero--line-height: 0.94;
+  --text-hero--letter-spacing: -0.05em;
+  --text-hero--font-weight: 500;
+
+  --text-chapter: var(--t-chapter);
+  --text-chapter--line-height: 0.98;
+  --text-chapter--letter-spacing: -0.045em;
+  --text-chapter--font-weight: 500;
+
+  --text-section: var(--t-section);
+  --text-section--line-height: 1.04;
+  --text-section--letter-spacing: -0.038em;
+  --text-section--font-weight: 500;
+
+  --text-lead: var(--t-lead);
+  --text-lead--line-height: 1.5;
+
+  --radius-tile: var(--r-tile);
+  --radius-card: var(--r-card);
+  --radius-chapter: var(--r-chapter);
+  --radius-hero: var(--r-hero);
+  /* Literals — @theme inline cannot reliably chain elevation vars into utilities */
+  --shadow-card: 0 18px 48px rgba(8, 20, 18, 0.1);
+  --shadow-chapter: 0 28px 70px rgba(8, 20, 18, 0.18);
+  --shadow-hero: 0 28px 90px rgba(8, 20, 18, 0.28);
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
 }
@@ -63,7 +117,7 @@ body {
   margin: 0;
   min-height: 100%;
   color: var(--ink);
-  background: #f0f2f0;
+  background: var(--paper);
   font-family: var(--font-sans), ui-sans-serif, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;

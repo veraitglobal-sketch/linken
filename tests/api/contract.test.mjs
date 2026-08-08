@@ -123,3 +123,84 @@ test("contract: references list rejects pending and secrets", () => {
     }).length > 0,
   );
 });
+
+function validateTestimonialsResponse(body) {
+  const errors = [];
+  if (!Array.isArray(body.testimonials)) {
+    return ["testimonials must be an array"];
+  }
+  if (typeof body.count !== "number") errors.push("count must be number");
+  const json = JSON.stringify(body);
+  for (const key of [
+    "submit_token",
+    "author_email",
+    "confirm_token",
+    "status",
+  ]) {
+    if (json.includes(`"${key}"`)) errors.push(`forbidden key ${key}`);
+  }
+  for (const t of body.testimonials) {
+    for (const req of [
+      "id",
+      "body",
+      "author_name",
+      "author_role",
+      "source",
+      "published_at",
+      "provenance_line",
+      "profile_url",
+    ]) {
+      if (!(req in t)) errors.push(`missing ${req}`);
+    }
+    if (
+      t.author_company != null &&
+      (typeof t.author_company.name !== "string" ||
+        typeof t.author_company.slug !== "string")
+    ) {
+      errors.push("author_company must be {name,slug} or null");
+    }
+  }
+  return errors;
+}
+
+test("contract: testimonials shape and no secret leak", () => {
+  assert.deepEqual(
+    validateTestimonialsResponse({
+      count: 1,
+      testimonials: [
+        {
+          id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          body: "They delivered on scope.",
+          author_name: "Elena Vogt",
+          author_role: "Project Director",
+          author_company: { name: "Nordwerk Holding", slug: "nordwerk-holding" },
+          source: "case_study",
+          published_at: "2025-09-12T14:30:00.000Z",
+          provenance_line:
+            "Confirmed by the client · nordwerk-holding.com · domain verified",
+          profile_url: "https://hansala.com/c/example-architecture?src=testimonial",
+        },
+      ],
+    }),
+    [],
+  );
+  assert.ok(
+    validateTestimonialsResponse({
+      count: 1,
+      testimonials: [
+        {
+          id: "x",
+          body: "y",
+          author_name: "A",
+          author_role: "B",
+          author_company: null,
+          source: "standalone",
+          published_at: "2025-01-01T00:00:00.000Z",
+          provenance_line: "Added by the provider · not confirmed",
+          profile_url: "https://hansala.com/c/x",
+          submit_token: "secret",
+        },
+      ],
+    }).length > 0,
+  );
+});

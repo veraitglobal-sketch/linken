@@ -277,14 +277,23 @@ async function respondClientRequest(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (user?.email) {
+    const { data: reqEmail } = await supabase
+      .from("case_study_client_confirmation_requests")
+      .select("email")
+      .eq("token", token)
+      .maybeSingle();
+    const toEmail =
+      user?.email?.trim() ||
+      (reqEmail?.email as string | undefined)?.trim() ||
+      "";
+    if (toEmail) {
       const { offerTestimonialAfterConfirm } = await import(
         "@/features/testimonials/post-confirm-notify"
       );
       await offerTestimonialAfterConfirm({
         token,
         source: "case_study",
-        toEmail: user.email,
+        toEmail,
       });
     }
   }

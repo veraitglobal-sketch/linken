@@ -11,7 +11,8 @@ export async function submitTestimonialForm(formData: FormData) {
   const authorName = String(formData.get("author_name") ?? "").trim();
   const authorRole = String(formData.get("author_role") ?? "").trim();
   const consent = formData.get("consent_public") === "on";
-  const authorCompanyId = String(formData.get("author_company_id") ?? "").trim() || null;
+  const authorCompanyId =
+    String(formData.get("author_company_id") ?? "").trim() || null;
 
   if (!token) {
     redirect("/?error=testimonial");
@@ -22,6 +23,8 @@ export async function submitTestimonialForm(formData: FormData) {
     redirect("/?error=testimonial");
   }
 
+  // App-layer provenance is advisory UX only — RPC recomputes and ignores
+  // client-supplied verified / free-provider / claimed flags.
   const provenance = await resolveSubmitProvenance({
     authorCompanyId: authorCompanyId ?? view.authorCompanyId,
     storedAuthorEmail: view.authorEmail,
@@ -54,6 +57,11 @@ export async function withdrawTestimonialForm(formData: FormData) {
   if (!token) redirect("/");
 
   const supabase = await createClient();
-  await supabase.rpc("withdraw_testimonial", { p_token: token });
+  const { error } = await supabase.rpc("withdraw_testimonial", {
+    p_token: token,
+  });
+  if (error) {
+    redirect(`/testimonial/${token}?error=${encodeURIComponent(error.message)}`);
+  }
   redirect(`/testimonial/${token}?done=withdrawn`);
 }

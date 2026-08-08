@@ -74,11 +74,14 @@ export async function offerTestimonialAfterConfirm(input: {
   const providerName = await providerNameForConfirm(input.token, input.source);
   if (!providerName) return testimonialUrl;
 
-  await sendPostConfirmTestimonialEmail({
+  const sent = await sendPostConfirmTestimonialEmail({
     to: email,
     providerName,
     testimonialUrl,
   });
+  if (!sent.ok) {
+    console.error("[offerTestimonialAfterConfirm] email failed", sent.error);
+  }
 
   return testimonialUrl;
 }

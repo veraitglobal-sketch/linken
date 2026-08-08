@@ -1,46 +1,30 @@
+import { FAQ_ITEMS } from "@/components/marketing/home-faq-data";
 import {
   HomeEyebrow,
   HomeSection,
 } from "@/components/marketing/home-section";
 
-export const FAQ_ITEMS = [
-  {
-    question: "How does mutual confirmation work?",
-    answer:
-      "Both companies have to click confirm. A partnership, reference, or case study only goes public once the other side agrees — nobody can confirm their own record.",
-  },
-  {
-    question: "Who can see my partnerships?",
-    answer:
-      "Only confirmed partnerships appear on your public page. Anything pending stays private until the other company confirms it.",
-  },
-  {
-    question: "What does “Verified” mean?",
-    answer:
-      "Verified means the company controls its business domain or approved identity — via email domain, DNS, or a meta tag. It does not mean Hansala guarantees the quality of its services. The badge is not a paid tier and is never for sale.",
-  },
-  {
-    question: "Is it free?",
-    answer:
-      "Yes. Your profile, confirmations, and case studies stay free. Pro unlocks premium embeds, full analytics, Agent API, branded one-pagers, and team seats.",
-  },
-];
+export { FAQ_ITEMS };
 
+/** Homepage §8b — short FAQ; answers stay product truth. */
 export function HomeFaq() {
   return (
-    <HomeSection tone="tight" className="!pb-16 sm:!pb-20">
+    <HomeSection tone="tight" className="!pb-14 sm:!pb-16">
       <div className="mx-auto max-w-3xl">
         <HomeEyebrow>FAQ</HomeEyebrow>
-        <h2 className="mt-5 font-display text-[clamp(2rem,4vw,3rem)] font-medium tracking-[-0.04em] text-ink">
-          Questions, answered.
+        <h2 className="mt-5 font-display text-chapter text-ink text-balance">
+          The rules, in plain language.
         </h2>
+        <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted">
+          Confirmation, visibility, the badge, and what stays free.
+        </p>
         <div className="mt-10 divide-y divide-line border-y border-line">
           {FAQ_ITEMS.map((item) => (
             <details key={item.question} className="group py-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[17px] font-medium tracking-[-0.02em] text-ink marker:content-none [&::-webkit-details-marker]:hidden">
                 {item.question}
                 <span
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-[15px] leading-none text-muted transition-[transform,color,border-color] duration-200 group-open:rotate-45 group-open:border-[#1a5c51]/35 group-open:text-[#1a5c51]"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-[15px] leading-none text-muted transition-[transform,color,border-color] duration-200 group-open:rotate-45 group-open:border-ink/25 group-open:text-ink"
                   aria-hidden
                 >
                   +

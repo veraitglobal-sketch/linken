@@ -11,6 +11,7 @@ type InviteResult =
       ok: true;
       token: string;
       url: string;
+      emailSent: boolean;
       linkedCompany: { id: string; name: string; slug: string } | null;
     }
   | { ok: false; error: string };
@@ -52,7 +53,7 @@ export async function createTestimonialInvite(input: {
 
   if (!result.ok) return result;
 
-  await sendTestimonialInviteEmail({
+  const sent = await sendTestimonialInviteEmail({
     to: email,
     providerName: company.name,
     testimonialUrl: result.data.url,
@@ -63,6 +64,7 @@ export async function createTestimonialInvite(input: {
   return {
     ok: true,
     ...result.data,
+    emailSent: sent.ok,
     linkedCompany: linked,
   };
 }

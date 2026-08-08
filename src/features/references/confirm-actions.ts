@@ -60,6 +60,7 @@ async function respondServiceReference(
       provider_company_id?: string;
       client_name?: string;
       service?: string;
+      invite_email?: string | null;
     } | null;
     if (row?.provider_company_id && row.id) {
       trackReferenceConfirmedAnalytics({
@@ -83,14 +84,24 @@ async function respondServiceReference(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (user?.email) {
+    let inviteEmail = row?.invite_email?.trim() ?? "";
+    if (!inviteEmail) {
+      const { data: ref } = await supabase
+        .from("service_references")
+        .select("invite_email")
+        .eq("confirm_token", token)
+        .maybeSingle();
+      inviteEmail = (ref?.invite_email as string | undefined)?.trim() ?? "";
+    }
+    const toEmail = user?.email?.trim() || inviteEmail;
+    if (toEmail) {
       const { offerTestimonialAfterConfirm } = await import(
         "@/features/testimonials/post-confirm-notify"
       );
       await offerTestimonialAfterConfirm({
         token,
         source: "reference",
-        toEmail: user.email,
+        toEmail,
       });
     }
   }
