@@ -4,8 +4,8 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 const REDUCED = "(prefers-reduced-motion: reduce)";
 
-/** Seconds of dissolve before the loop point. */
-const FADE = 0.7;
+/** Seconds of overlap between the outgoing and incoming pass. */
+const FADE = 1.2;
 
 function subscribe(cb: () => void) {
   const mq = window.matchMedia(REDUCED);
@@ -25,22 +25,20 @@ function useReducedMotion() {
 }
 
 /**
- * A still that becomes a slow loop once it is worth it.
+ * A still that becomes an endless loop once it is worth it.
  *
- * The loop is 3.2 MB, so it must never touch first paint. `preload="none"`
- * plus a `src` attached only once the plate is on screen means the file is
- * not fetched at all until it can be seen — and never for a visitor who asked
- * for reduced motion, who keeps the still.
+ * The clip does not end where it starts, so `loop` on a single element shows
+ * a jump cut. Dissolving to the poster hides the cut but stops the motion,
+ * which is just as visible.
  *
- * The generated clip does not end where it starts, so a plain `loop` shows a
- * jump cut. The poster *is* frame zero, so the clip dissolves into the still
- * just before the loop point and comes back out of it: the seam lands on an
- * identical image and reads as a breath rather than a cut.
+ * So: two elements, one clip, offset in time. While A runs out its last
+ * `FADE` seconds, B restarts from zero and crossfades in over it. The motion
+ * never stops and there is no frame where the picture jumps — the texture is
+ * an abstract drift, so a dissolve between two points in it reads as nothing
+ * at all. Works with any clip, and costs no regeneration.
  *
- * Opacity is driven by two states and a CSS transition, not by a per-frame
- * ramp. A ramp computed from `duration` leaves the video invisible for as
- * long as `duration` is `NaN` — which, with `preload="none"`, is exactly the
- * moment it starts.
+ * Weight is still gated: 3.2 MB is fetched only once the plate is on screen,
+ * and never for a visitor who asked for reduced motion, who keeps the still.
  */
 export function AmbientPlate({
   poster,
@@ -52,7 +50,8 @@ export function AmbientPlate({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const aRef = useRef<HTMLVideoElement | null>(null);
+  const bRef = useRef<HTMLVideoElement | null>(null);
   const [onScreen, setOnScreen] = useState(false);
   const reduced = useReducedMotion();
 
@@ -70,55 +69,100 @@ export function AmbientPlate({
   const play = onScreen && !reduced;
 
   useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
+    const a = aRef.current;
+    const b = bRef.current;
+    if (!a || !b) return;
+
+    const both = [a, b];
 
     if (!play) {
-      v.pause();
-      v.style.opacity = "0";
+      for (const v of both) {
+        v.pause();
+        v.style.opacity = "0";
+      }
       return;
     }
 
-    const show = () => {
+    /** The one currently showing; the other is armed to take over. */
+    let live = a;
+    let handingOver = false;
+
+    const start = (v: HTMLVideoElement) => {
+      v.currentTime = 0;
       v.style.opacity = "1";
-    };
-    /* Only dip out near the loop point; if duration is not known yet the clip
-       simply stays visible, which is the correct fallback. */
-    const onTime = () => {
-      const d = v.duration;
-      if (!Number.isFinite(d) || d <= FADE * 2) return;
-      v.style.opacity = v.currentTime > d - FADE ? "0" : "1";
+      void v.play().catch(() => {
+        /* Autoplay refused — the still underneath is the right picture. */
+      });
     };
 
-    v.addEventListener("playing", show);
-    v.addEventListener("loadeddata", show);
-    v.addEventListener("timeupdate", onTime);
-    void v.play().catch(() => {
-      /* Autoplay refused — the still underneath is already the right picture. */
-    });
+    const onTime = (e: Event) => {
+      const v = e.currentTarget as HTMLVideoElement;
+      if (v !== live || handingOver) return;
+      const d = v.duration;
+      if (!Number.isFinite(d)) return;
+      if (v.currentTime < d - FADE) return;
+
+      handingOver = true;
+      const next = v === a ? b : a;
+      start(next);
+      v.style.opacity = "0";
+      live = next;
+      /* Re-arm only after the dissolve has finished, so the outgoing element
+         is idle before it is asked to run again. */
+      window.setTimeout(() => {
+        v.pause();
+        handingOver = false;
+      }, FADE * 1000);
+    };
+
+    const onReady = (e: Event) => {
+      const v = e.currentTarget as HTMLVideoElement;
+      if (v === live) v.style.opacity = "1";
+    };
+
+    for (const v of both) {
+      v.addEventListener("timeupdate", onTime);
+      v.addEventListener("loadeddata", onReady);
+    }
+    start(a);
 
     return () => {
-      v.removeEventListener("playing", show);
-      v.removeEventListener("loadeddata", show);
-      v.removeEventListener("timeupdate", onTime);
+      for (const v of both) {
+        v.removeEventListener("timeupdate", onTime);
+        v.removeEventListener("loadeddata", onReady);
+        v.pause();
+      }
     };
   }, [play]);
 
+  const layer =
+    "absolute inset-0 h-full w-full object-cover object-center opacity-0 transition-opacity ease-linear";
+
   return (
-    <div ref={ref} className={`relative ${className ?? ""}`} aria-hidden>
-      {/* Frame zero, always painted: the loop dissolves through this. */}
+    <div ref={ref} className={className} aria-hidden>
+      {/* Frame zero, always painted, and the whole picture under reduced
+          motion or a refused autoplay. */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${poster})` }}
       />
       <video
-        ref={videoRef}
+        ref={aRef}
         src={play ? src : undefined}
         preload="none"
         muted
-        loop
         playsInline
-        className="absolute inset-0 h-full w-full object-cover object-center opacity-0 transition-opacity duration-700 ease-out"
+        className={layer}
+        style={{ transitionDuration: `${FADE}s` }}
+      />
+      <video
+        ref={bRef}
+        src={play ? src : undefined}
+        preload="none"
+        muted
+        playsInline
+        className={layer}
+        style={{ transitionDuration: `${FADE}s` }}
       />
     </div>
   );

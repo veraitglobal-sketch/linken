@@ -24,9 +24,12 @@ export function HomePlans() {
           <h2 className="reveal max-w-[18ch] font-display text-chapter text-ink text-balance">
             The record is free. Pro is reach.
           </h2>
+          {/* The badge-is-not-for-sale rule is stated verbatim in the lockup
+              below. Saying it twice spent the section's most valuable line on
+              a disclaimer instead of on what Pro actually does. */}
           <p className="max-w-[38ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-1 lg:text-right">
-            Verification is never for sale — the badge is domain proof, not a
-            paid tier. Full comparison on{" "}
+            Free keeps the record. Pro puts it in front of people — on your own
+            site, in proposals, and through the API. Full comparison on{" "}
             <Link
               href="/pricing"
               className="font-semibold text-ink underline-offset-2 hover:underline"
@@ -58,6 +61,7 @@ export function HomePlans() {
             cta="See pricing"
             href="/pricing"
             dark
+            emphasis="Most teams"
           />
         </div>
 
