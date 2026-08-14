@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import { HomePlanCard } from "@/components/marketing/home-plan-card";
+import { SectionPlate } from "@/components/marketing/section-plate";
 import {
   HomeEyebrow,
   HomeSection,
@@ -16,7 +17,7 @@ import {
 /** Homepage §7 — Free vs Pro; same source as /pricing. Badge is never sold. */
 export function HomePlans() {
   return (
-    <HomeSection tone="tight" className="!pb-16 sm:!pb-20">
+    <HomeSection>
       <div className="mx-auto max-w-6xl">
         <HomeEyebrow>Plans</HomeEyebrow>
         <div className="reveal-late mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
@@ -36,7 +37,11 @@ export function HomePlans() {
           </p>
         </div>
 
-        <div className="mt-11 grid gap-4 lg:grid-cols-2">
+        {/* Both cards on one stage rather than loose on paper: the white Free
+            card had a hairline but no ground to lift off, so the pair read as
+            two rectangles instead of a priced choice. */}
+        <SectionPlate tone="light" className="mt-11">
+          <div className="grid gap-4 lg:grid-cols-2">
           <HomePlanCard
             name="Free"
             price={FREE_PLAN_PRICE}
@@ -60,7 +65,7 @@ export function HomePlans() {
             spans both columns, so it visibly belongs to neither plan. It is
             the real `EmbedVerifiedLockup`, the same one a customer's site
             renders — not a picture of it. */}
-        <div className="mt-4 flex flex-col items-start gap-5 rounded-card border border-line px-6 py-6 sm:flex-row sm:items-center sm:gap-8 sm:px-8">
+          <div className="mt-4 flex flex-col items-start gap-5 rounded-card border border-line bg-surface px-6 py-6 sm:flex-row sm:items-center sm:gap-8 sm:px-8">
           <EmbedVerifiedLockup size="lg" />
           <div className="min-w-0">
             <p className="text-[15px] font-medium tracking-[-0.01em] text-ink">
@@ -76,10 +81,11 @@ export function HomePlans() {
             className="hidden h-10 w-px shrink-0 bg-line sm:block"
             aria-hidden
           />
-          <p className="shrink-0 text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
-            Earned, not bought
-          </p>
-        </div>
+            <p className="shrink-0 text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
+              Earned, not bought
+            </p>
+          </div>
+        </SectionPlate>
       </div>
     </HomeSection>
   );

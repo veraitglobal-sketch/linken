@@ -159,18 +159,18 @@ export function RecordStage() {
 
       {/* Right rail — the statement, then the beats as a register. */}
       <div className="flex flex-col justify-center">
-        <p className="max-w-[30ch] text-lead text-ink-soft">
+        <p className="max-w-[30ch] text-lead text-on-navy-soft">
           Pending stays private. Confirmed becomes one fact on both sides —
           profile, embed, and API.
         </p>
-        <ol className="mt-8 border-t border-line">
+        <ol className="mt-8 border-t border-white/12">
           {BEATS.map((b, i) => (
-            <li key={b.key} className="border-b border-line py-3.5">
+            <li key={b.key} className="border-b border-white/12 py-3.5">
               <div className="flex items-baseline gap-3">
                 <span
                   className={cn(
                     "text-[11px] font-semibold tabular-nums transition-colors duration-500",
-                    i === active ? "text-signal" : "text-muted/50",
+                    i === active ? "text-blue-soft" : "text-on-navy-muted/50",
                   )}
                 >
                   {String(i + 1).padStart(2, "0")}
@@ -179,12 +179,12 @@ export function RecordStage() {
                   <p
                     className={cn(
                       "text-[13px] font-semibold transition-colors duration-500",
-                      i === active ? "text-ink" : "text-muted",
+                      i === active ? "text-on-navy" : "text-on-navy-muted",
                     )}
                   >
                     {b.label}
                   </p>
-                  <p className="mt-0.5 text-[12px] leading-snug text-muted">
+                  <p className="mt-0.5 text-[12px] leading-snug text-on-navy-muted">
                     {b.note}
                   </p>
                 </div>

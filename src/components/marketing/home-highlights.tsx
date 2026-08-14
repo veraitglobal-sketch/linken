@@ -12,7 +12,7 @@ export function HomeHighlights() {
   const profileUrl = `${getSiteUrl()}/demo`;
 
   return (
-    <HomeSection tone="tight" className="!pb-16 sm:!pb-20">
+    <HomeSection>
       <div className="mx-auto max-w-6xl">
         <HomeEyebrow>On your site</HomeEyebrow>
         <div className="reveal-late mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">

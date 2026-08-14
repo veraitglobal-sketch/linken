@@ -14,7 +14,7 @@ const LAST = HOME_STORIES.length - 1;
 /** Homepage §5b — sector scenarios; no invented customers or quotes. */
 export function HomeStories() {
   return (
-    <HomeSection tone="tight" className="!pb-8 sm:!pb-10">
+    <HomeSection>
       <div className="mx-auto mb-12 max-w-6xl">
         <HomeEyebrow>Proof, not promises</HomeEyebrow>
         <div className="reveal-late mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-14">

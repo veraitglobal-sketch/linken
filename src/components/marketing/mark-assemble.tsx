@@ -68,7 +68,19 @@ export function MarkAssemble() {
   return (
     <div ref={pin} className="relative">
       <div className="flex items-center px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mark-stage relative mx-auto w-full max-w-[1180px] overflow-hidden rounded-hero shadow-chapter">
+        <div className="mark-stage relative mx-auto w-full max-w-6xl overflow-hidden rounded-hero shadow-chapter">
+          {/* Our own mark cast into a concrete facade — generated from the
+              brand SVG, so it claims nothing we cannot claim. Pushed right and
+              held down hard: the animated mark assembles on the left, the
+              built one answers it, and neither competes for the centre. */}
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 w-[58%] bg-[url('/images/mark-facade.webp')] bg-cover bg-[68%_center] opacity-70"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy-deep via-navy/92 via-45% to-navy/35"
+            aria-hidden
+          />
           <div
             className="pointer-events-none absolute inset-0 stage-grain opacity-[0.4]"
             aria-hidden

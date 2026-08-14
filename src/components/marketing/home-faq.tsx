@@ -9,7 +9,7 @@ export { FAQ_ITEMS };
 /** Homepage §8b — short FAQ; answers stay product truth. */
 export function HomeFaq() {
   return (
-    <HomeSection tone="tight" className="!pb-14 sm:!pb-16">
+    <HomeSection>
       <div className="mx-auto max-w-3xl">
         <HomeEyebrow>FAQ</HomeEyebrow>
         <h2 className="reveal mt-5 font-display text-chapter text-ink text-balance">

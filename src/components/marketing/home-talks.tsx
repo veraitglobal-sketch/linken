@@ -7,7 +7,7 @@ import {
 /** Homepage §6a — share moment: one link carries the confirmed network. */
 export function HomeTalks() {
   return (
-    <HomeSection tone="mute" className="!py-16 sm:!py-20">
+    <HomeSection tone="mute">
       <div className="mx-auto max-w-6xl">
         {/* This section is about one link travelling outward, so the
             composition travels too: the words hold the left edge and the flow

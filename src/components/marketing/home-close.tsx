@@ -1,13 +1,26 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { AmbientPlate } from "@/components/marketing/ambient-plate";
 import { NetworkMark } from "@/components/marketing/network-mark";
 import { HomeSection } from "@/components/marketing/home-section";
 
 /** Homepage §8c — dark close stage; bookend with Hero. */
 export function HomeClose() {
   return (
-    <HomeSection tone="tight" className="!pb-24 sm:!pb-28">
+    <HomeSection>
       <div className="relative mx-auto max-w-6xl overflow-hidden rounded-hero bg-navy px-8 py-14 text-on-navy shadow-hero sm:px-12 sm:py-16">
+        {/* The loop lives here rather than in the hero: deep below the fold,
+            so 3.2 MB never touches first paint, and it turns the last thing a
+            visitor sees from a flat slab into a moment. */}
+        <AmbientPlate
+          poster="/images/hero-plate.webp"
+          src="/videos/hero-plate.mp4"
+          className="absolute inset-0 opacity-55"
+        />
+        <div
+          className="pointer-events-none absolute inset-0 bg-navy/45"
+          aria-hidden
+        />
         <div
           className="pointer-events-none absolute inset-0"
           style={{
