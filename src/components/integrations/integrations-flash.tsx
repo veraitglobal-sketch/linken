@@ -18,6 +18,13 @@ export function IntegrationsFlash({
       </p>
     );
   }
+  if (connected === "slack") {
+    return (
+      <p className="mb-5 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
+        Slack connected. Confirmations and inquiries will post to your channel.
+      </p>
+    );
+  }
   if (connected) {
     return (
       <p className="mb-5 rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">

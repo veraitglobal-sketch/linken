@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { IntegrationsFlash } from "@/components/integrations/integrations-flash";
 import { SchedulingIntegrations } from "@/components/integrations/scheduling-integrations";
+import { SlackIntegrations } from "@/components/integrations/slack-integrations";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { getSchedulingForActiveCompany } from "@/features/scheduling/queries";
+import { getCompanySlackStatus } from "@/features/slack/queries";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 
 export const metadata: Metadata = {
@@ -37,7 +39,7 @@ export default async function DashboardIntegrationsPage({
     return (
       <WorkspacePage
         title="Integrations"
-        description="Connect booking tools for your company profile."
+        description="Connect booking tools and Slack for your company."
       >
         <p className="text-[14px] text-muted">
           <Link
@@ -56,7 +58,7 @@ export default async function DashboardIntegrationsPage({
     return (
       <WorkspacePage
         title="Integrations"
-        description="Connect booking tools for your company profile."
+        description="Connect booking tools and Slack for your company."
       >
         <p className="text-[14px] text-muted">
           <Link
@@ -71,12 +73,15 @@ export default async function DashboardIntegrationsPage({
     );
   }
 
-  const scheduling = await getSchedulingForActiveCompany(company.id);
+  const [scheduling, slack] = await Promise.all([
+    getSchedulingForActiveCompany(company.id),
+    getCompanySlackStatus(company.id),
+  ]);
 
   return (
     <WorkspacePage
       title="Integrations"
-      description="Connect Calendly or Cal.com so visitors can book on your profile."
+      description="Bookings on your profile, and Slack alerts when something is confirmed."
     >
       <IntegrationsFlash
         error={params.error}
@@ -84,7 +89,10 @@ export default async function DashboardIntegrationsPage({
         saved={params.saved}
         disconnected={params.disconnected}
       />
-      <SchedulingIntegrations scheduling={scheduling} />
+      <div className="space-y-8">
+        <SlackIntegrations slack={slack} />
+        <SchedulingIntegrations scheduling={scheduling} />
+      </div>
     </WorkspacePage>
   );
 }

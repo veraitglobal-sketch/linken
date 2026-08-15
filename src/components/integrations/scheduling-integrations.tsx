@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SchedulingLinkForm } from "@/components/integrations/scheduling-link-form";
 import { SchedulingStatus } from "@/components/integrations/scheduling-status";
 import type { CompanyScheduling } from "@/features/scheduling/types";
@@ -60,17 +59,6 @@ export function SchedulingIntegrations({ scheduling }: Props) {
       </section>
 
       <SchedulingLinkForm scheduling={scheduling} />
-
-      <p className="text-[12px] text-muted">
-        Slack and CRM notifications will live here later.{" "}
-        <Link
-          href="/dashboard/api"
-          className="font-semibold text-ink underline-offset-2 hover:underline"
-        >
-          Agent API
-        </Link>{" "}
-        is separate.
-      </p>
     </div>
   );
 }

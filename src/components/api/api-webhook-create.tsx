@@ -54,10 +54,15 @@ export function ApiWebhookCreate({ onClose, onCreated, onError }: Props) {
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://example.com/hooks/hansala"
+            placeholder="https://hooks.slack.com/services/… or your HTTPS URL"
             className="mt-1.5 h-10 w-full rounded-xl border border-line bg-paper px-3 text-[13px] text-ink"
           />
         </label>
+        <p className="mt-1.5 text-[11px] leading-relaxed text-muted">
+          Slack Incoming Webhooks are supported — paste a{" "}
+          <code className="text-ink">hooks.slack.com</code> URL and we format
+          the message for Slack automatically.
+        </p>
         <label className="mt-3 block text-[12px] font-semibold text-muted">
           Label (optional)
           <input

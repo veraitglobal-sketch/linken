@@ -4,19 +4,17 @@ import {
   MAX_DELIVERY_ATTEMPTS,
   type WebhookEnvelope,
 } from "@/features/webhooks/types";
+import {
+  formatSlackWebhookBody,
+  isSlackIncomingWebhookUrl,
+} from "@/features/webhooks/slack-format";
+import { sendWebhookPost } from "@/features/webhooks/send";
 import { signWebhookPayload } from "@/features/webhooks/sign";
-import { assertPublicHostname } from "@/features/security/assert-public-host";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const FETCH_MS = 8_000;
+type EndpointRow = { id: string; url: string; secret: string };
 
-type EndpointRow = {
-  id: string;
-  url: string;
-  secret: string;
-};
-
-/** Deliver one queued row. Returns whether to retry. */
+/** Deliver one queued row. Retries up to MAX_DELIVERY_ATTEMPTS. */
 export async function attemptDelivery(deliveryId: number): Promise<void> {
   const admin = createAdminClient();
   if (!admin) return;
@@ -74,46 +72,32 @@ async function postToEndpoint(
   endpoint: EndpointRow,
   envelope: WebhookEnvelope,
 ) {
-  const body = JSON.stringify(envelope);
+  const slack = isSlackIncomingWebhookUrl(endpoint.url);
+  const body = slack
+    ? formatSlackWebhookBody(envelope)
+    : JSON.stringify(envelope);
   const ts = Math.floor(Date.now() / 1000);
   const signature = signWebhookPayload(endpoint.secret, body, ts);
-  const attempt = await admin
+
+  const { data: attemptRow } = await admin
     .from("webhook_deliveries")
     .select("attempt_count")
     .eq("id", deliveryId)
     .single();
+  const nextCount = ((attemptRow?.attempt_count as number) ?? 0) + 1;
 
-  const nextCount = ((attempt.data?.attempt_count as number) ?? 0) + 1;
-
-  let statusCode: number | null = null;
-  let errMsg = "";
-
-  try {
-    const target = new URL(endpoint.url);
-    await assertPublicHostname(target.hostname);
-
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), FETCH_MS);
-    const res = await fetch(endpoint.url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": "Hansala-Webhooks/1.0",
-        "Hansala-Signature": signature,
-        "Hansala-Event": envelope.type,
-        "Hansala-Delivery": String(deliveryId),
-        "Hansala-Idempotency-Key": envelope.id,
-      },
-      body,
-      signal: controller.signal,
-      redirect: "error",
-    });
-    clearTimeout(timer);
-    statusCode = res.status;
-    if (!res.ok) errMsg = `HTTP ${res.status}`;
-  } catch (e) {
-    errMsg = e instanceof Error ? e.message : "Delivery failed";
-  }
+  const { statusCode, errMsg } = await sendWebhookPost(
+    endpoint.url,
+    body,
+    slack
+      ? undefined
+      : {
+          "Hansala-Signature": signature,
+          "Hansala-Event": envelope.type,
+          "Hansala-Delivery": String(deliveryId),
+          "Hansala-Idempotency-Key": envelope.id,
+        },
+  );
 
   const ok = statusCode != null && statusCode >= 200 && statusCode < 300;
   const done = ok || nextCount >= MAX_DELIVERY_ATTEMPTS;
@@ -125,7 +109,10 @@ async function postToEndpoint(
       last_status_code: statusCode,
       last_error: errMsg.slice(0, 500),
       status: ok ? "success" : done ? "failed" : "pending",
-      next_attempt_at: ok || done ? null : new Date(Date.now() + 2_000 * nextCount).toISOString(),
+      next_attempt_at:
+        ok || done
+          ? null
+          : new Date(Date.now() + 2_000 * nextCount).toISOString(),
       completed_at: done ? new Date().toISOString() : null,
     })
     .eq("id", deliveryId);

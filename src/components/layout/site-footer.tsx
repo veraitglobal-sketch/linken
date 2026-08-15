@@ -19,7 +19,7 @@ export function SiteFooter() {
   const copyright = legalCopyrightName(company);
 
   return (
-    <footer className="mt-8 border-t border-line bg-navy text-white">
+    <footer className="mt-8 bg-navy text-white">
       <div className="mx-auto max-w-6xl px-6 py-14 sm:px-8 lg:px-10">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.7fr_0.7fr_0.7fr_0.7fr] lg:gap-8">
           <div>

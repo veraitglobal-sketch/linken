@@ -17,6 +17,21 @@ export default function WebhooksPage() {
         API scope <code>webhooks:manage</code>.
       </p>
 
+      <h2>Slack</h2>
+      <p>
+        Customers connect their own Slack from{" "}
+        <Link href="/dashboard/integrations">Workspace → Integrations</Link>{" "}
+        (OAuth). Hansala hosts one Slack app; each company authorizes their
+        workspace and picks a channel. Confirmations and inquiries post there
+        automatically.
+      </p>
+      <p>
+        Advanced: paste a Slack Incoming Webhook URL as a generic webhook
+        endpoint under{" "}
+        <Link href="/dashboard/api">Workspace → API</Link> — Slack hosts are
+        auto-formatted.
+      </p>
+
       <h2>Events</h2>
       <ul>
         <li>

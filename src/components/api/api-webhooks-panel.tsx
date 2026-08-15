@@ -65,7 +65,7 @@ export function ApiWebhooksPanel({ endpoints, deliveries }: Props) {
   return (
     <ApiSection
       title="Webhooks"
-      description="HTTPS endpoints receive signed POSTs when confirmed events happen. Secret is shown once."
+      description="HTTPS endpoints receive signed POSTs when confirmed events happen. Slack Incoming Webhook URLs are auto-formatted. Secret is shown once."
       action={
         <Button
           type="button"

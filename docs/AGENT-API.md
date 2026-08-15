@@ -219,6 +219,20 @@ MCP tools (settings:write): `hansala_list_widget_variants`, `hansala_list_widget
 `hansala_upload_partner_logo` (image_path | image_url | image_base64),
 `hansala_get_widget_snippet`.
 
+## Webhooks (`webhooks:manage`)
+
+```bash
+curl "$BASE/webhooks"
+curl -X POST "$BASE/webhooks" -d '{"url":"https://…","events":["inquiry.created"]}'
+curl -X POST "$BASE/webhooks/{id}/test" -d '{"event":"inquiry.created"}'
+```
+
+Events: `inquiry.created`, `partnership.accepted`, `reference.confirmed`, `booking.connected`.
+
+**Slack:** if `url` is a Slack Incoming Webhook (`https://hooks.slack.com/services/…`),
+delivery posts a short Slack message instead of the raw Hansala JSON envelope.
+HMAC headers are omitted for Slack hosts (Slack ignores them). See `/developers/webhooks`.
+
 ## MCP
 
 See `mcp/hansala/` — tools covering profile, media, references, partners, widgets, verification, team.

@@ -27,6 +27,8 @@ export function emitWebhookEvent(
 
   after(async () => {
     await dispatchNow(companyId, type, data, eventId);
+    const { notifyCompanySlack } = await import("@/features/slack/notify");
+    await notifyCompanySlack(companyId, type, data, eventId);
   });
 }
 
