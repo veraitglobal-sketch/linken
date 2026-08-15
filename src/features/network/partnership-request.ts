@@ -90,6 +90,7 @@ export async function requestPartnership(formData: FormData) {
     );
   }
 
+  let partnershipId = existing?.id as string | undefined;
   if (existing) {
     const { error } = await supabase
       .from("partnerships")
@@ -102,12 +103,17 @@ export async function requestPartnership(formData: FormData) {
       .eq("id", existing.id);
     if (error) redirect(withBackQuery(back, { error: error.message }));
   } else {
-    const { error } = await supabase.from("partnerships").insert({
-      requester_id: mine.id,
-      recipient_id: target.id,
-      status: "pending",
-    });
+    const { data: inserted, error } = await supabase
+      .from("partnerships")
+      .insert({
+        requester_id: mine.id,
+        recipient_id: target.id,
+        status: "pending",
+      })
+      .select("id")
+      .maybeSingle();
     if (error) redirect(withBackQuery(back, { error: error.message }));
+    partnershipId = inserted?.id as string | undefined;
   }
 
   const admin = createAdminClient();
@@ -118,6 +124,19 @@ export async function requestPartnership(formData: FormData) {
           "Partnership saved locally, but notify email needs SUPABASE_SERVICE_ROLE_KEY.",
       }),
     );
+  }
+  if (partnershipId) {
+    const { emitPartnershipRequested } = await import(
+      "@/features/network/emit-partnership-requested"
+    );
+    emitPartnershipRequested({
+      partnershipId,
+      requesterId: mine.id,
+      recipientId: target.id as string,
+      requesterName: mine.name,
+      recipientName: target.name as string,
+      recipientSlug: target.slug as string,
+    });
   }
   if (target.owner_id) {
     const { data: ownerData } = await admin.auth.admin.getUserById(

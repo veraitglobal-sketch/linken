@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { IntegrationsFlash } from "@/components/integrations/integrations-flash";
 import { SchedulingIntegrations } from "@/components/integrations/scheduling-integrations";
 import { SlackIntegrations } from "@/components/integrations/slack-integrations";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { getSchedulingForActiveCompany } from "@/features/scheduling/queries";
+import { completeSlackPendingAction } from "@/features/slack/actions";
 import { getCompanySlackStatus } from "@/features/slack/queries";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 
@@ -19,6 +21,7 @@ type Props = {
     connected?: string;
     saved?: string;
     disconnected?: string;
+    slack_pending?: string;
   }>;
 };
 
@@ -71,6 +74,22 @@ export default async function DashboardIntegrationsPage({
         </p>
       </WorkspacePage>
     );
+  }
+
+  if (params.slack_pending === "1") {
+    const pending = await completeSlackPendingAction();
+    if (pending.ok) {
+      redirect("/dashboard/integrations?connected=slack");
+    }
+    if (!("skip" in pending && pending.skip)) {
+      const err =
+        "error" in pending && pending.error
+          ? pending.error
+          : "Could not finish Slack connect.";
+      redirect(
+        `/dashboard/integrations?error=${encodeURIComponent(err)}`,
+      );
+    }
   }
 
   const [scheduling, slack] = await Promise.all([

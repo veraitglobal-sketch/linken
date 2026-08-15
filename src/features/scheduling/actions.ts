@@ -57,6 +57,10 @@ export async function saveSchedulingLink(formData: FormData) {
       provider,
       url,
       label: label.slice(0, 40),
+      company_slug: company.slug,
+      for_company_id: company.id,
+      for_company_name: company.name,
+      for_company_slug: company.slug,
     },
     `booking_${company.id}_${provider}`,
   );

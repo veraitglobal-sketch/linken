@@ -2,11 +2,13 @@ import "server-only";
 
 import { formatSlackWebhookBody } from "@/features/webhooks/slack-format";
 import type { WebhookEventType } from "@/features/webhooks/types";
+import { slackBlocksFromEnvelope } from "@/features/slack/blocks";
+import { postSlackChatMessage } from "@/features/slack/post-message";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
- * Post to the company's Slack Incoming Webhook if connected.
- * Failures are logged; they never block the product action.
+ * Post to the company's Slack channel if connected.
+ * Prefers bot + Block Kit; falls back to Incoming Webhook.
  */
 export async function notifyCompanySlack(
   companyId: string,
@@ -19,12 +21,11 @@ export async function notifyCompanySlack(
 
   const { data: row } = await admin
     .from("company_slack")
-    .select("webhook_url")
+    .select("webhook_url, bot_token, channel_id")
     .eq("company_id", companyId)
     .maybeSingle();
 
-  const url = row?.webhook_url as string | undefined;
-  if (!url?.startsWith("https://hooks.slack.com/")) return;
+  if (!row) return;
 
   const envelope = {
     id:
@@ -34,6 +35,23 @@ export async function notifyCompanySlack(
     created_at: new Date().toISOString(),
     data,
   };
+
+  const botToken = (row.bot_token as string | null)?.trim() ?? "";
+  const channelId = (row.channel_id as string | null)?.trim() ?? "";
+  if (botToken.startsWith("xoxb-") && channelId) {
+    const { text, blocks } = slackBlocksFromEnvelope(envelope);
+    const posted = await postSlackChatMessage({
+      botToken,
+      channelId,
+      text,
+      blocks,
+    });
+    if (posted.ok) return;
+    console.error("[slack] bot post", posted.error);
+  }
+
+  const url = row.webhook_url as string | undefined;
+  if (!url?.startsWith("https://hooks.slack.com/")) return;
 
   try {
     const res = await fetch(url, {
@@ -45,12 +63,10 @@ export async function notifyCompanySlack(
       body: formatSlackWebhookBody(envelope),
       redirect: "error",
     });
-    if (!res.ok) {
-      console.error("[slack] delivery", res.status);
-    }
+    if (!res.ok) console.error("[slack] webhook", res.status);
   } catch (e) {
     console.error(
-      "[slack] delivery",
+      "[slack] webhook",
       e instanceof Error ? e.message : "failed",
     );
   }

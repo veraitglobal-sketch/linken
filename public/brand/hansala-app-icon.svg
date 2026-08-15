@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Hansala">
+  <!-- Full-bleed square — Slack applies its own corner mask. No transparency. -->
+  <rect width="512" height="512" fill="#7eb8a4"/>
+  <g fill="#0e1f1c" stroke="#0e1f1c" stroke-linecap="round">
+    <line x1="156" y1="256" x2="356" y2="256" stroke-width="22"/>
+    <circle cx="140" cy="256" r="48" stroke="none"/>
+    <circle cx="372" cy="256" r="48" stroke="none"/>
+  </g>
+</svg>

@@ -227,7 +227,7 @@ curl -X POST "$BASE/webhooks" -d '{"url":"https://…","events":["inquiry.create
 curl -X POST "$BASE/webhooks/{id}/test" -d '{"event":"inquiry.created"}'
 ```
 
-Events: `inquiry.created`, `partnership.accepted`, `reference.confirmed`, `booking.connected`.
+Events: `inquiry.created`, `partnership.requested`, `partnership.accepted`, `reference.confirmed`, `booking.connected`.
 
 **Slack:** if `url` is a Slack Incoming Webhook (`https://hooks.slack.com/services/…`),
 delivery posts a short Slack message instead of the raw Hansala JSON envelope.

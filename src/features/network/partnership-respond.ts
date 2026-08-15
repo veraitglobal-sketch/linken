@@ -79,22 +79,46 @@ export async function respondPartnership(formData: FormData) {
 
   if (decision === "accepted") {
     const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
-    const payload = {
+    const { data: firms } = await supabase
+      .from("companies")
+      .select("id, name, slug")
+      .in("id", [row.requester_id as string, row.recipient_id as string]);
+    const byId = new Map(
+      (firms ?? []).map((f) => [
+        f.id as string,
+        { name: (f.name as string) ?? "", slug: (f.slug as string) ?? "" },
+      ]),
+    );
+    const requester = byId.get(row.requester_id as string);
+    const recipient = byId.get(row.recipient_id as string);
+    const base = {
       partnership_id: partnershipId,
       requester_id: row.requester_id,
       recipient_id: row.recipient_id,
+      requester_name: requester?.name ?? null,
+      recipient_name: recipient?.name ?? null,
       responded_at: respondedAt,
     };
     emitWebhookEvent(
       row.recipient_id as string,
       "partnership.accepted",
-      payload,
+      {
+        ...base,
+        for_company_id: row.recipient_id,
+        for_company_name: recipient?.name ?? null,
+        for_company_slug: recipient?.slug ?? null,
+      },
       `partnership_${partnershipId}`,
     );
     emitWebhookEvent(
       row.requester_id as string,
       "partnership.accepted",
-      payload,
+      {
+        ...base,
+        for_company_id: row.requester_id,
+        for_company_name: requester?.name ?? null,
+        for_company_slug: requester?.slug ?? null,
+      },
       `partnership_${partnershipId}`,
     );
 

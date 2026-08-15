@@ -71,10 +71,19 @@ export async function POST(request: NextRequest, { params }: Ctx) {
       };
     }
 
+    const { data: company } = await admin
+      .from("companies")
+      .select("name, slug")
+      .eq("id", ctx.companyId)
+      .maybeSingle();
+
     emitWebhookEvent(ctx.companyId, type, {
       test: true,
       endpoint_id: id,
       message: "Hansala webhook test event",
+      for_company_id: ctx.companyId,
+      for_company_name: (company?.name as string) ?? null,
+      for_company_slug: (company?.slug as string) ?? null,
     });
 
     return {

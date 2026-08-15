@@ -105,14 +105,16 @@ export async function setSchedulingAgentCore(
       ? input.label.trim().slice(0, 40)
       : "Book a call";
 
-  const { error } = await admin
+  const { data: company, error } = await admin
     .from("companies")
     .update({
       scheduling_provider: provider,
       scheduling_url: url,
       scheduling_label: label,
     })
-    .eq("id", companyId);
+    .eq("id", companyId)
+    .select("name, slug")
+    .maybeSingle();
 
   if (error) return { ok: false, error: error.message };
 
@@ -120,7 +122,15 @@ export async function setSchedulingAgentCore(
   emitWebhookEvent(
     companyId,
     "booking.connected",
-    { provider, url, label },
+    {
+      provider,
+      url,
+      label,
+      company_slug: company?.slug ?? null,
+      for_company_id: companyId,
+      for_company_name: company?.name ?? null,
+      for_company_slug: company?.slug ?? null,
+    },
     `booking_${companyId}_${provider}`,
   );
 

@@ -2,6 +2,7 @@
 
 export const WEBHOOK_EVENTS = [
   "inquiry.created",
+  "partnership.requested",
   "partnership.accepted",
   "reference.confirmed",
   "booking.connected",
@@ -18,6 +19,11 @@ export const WEBHOOK_EVENT_META: {
     id: "inquiry.created",
     label: "Inquiry created",
     description: "Someone sent a message on your public profile.",
+  },
+  {
+    id: "partnership.requested",
+    label: "Partnership requested",
+    description: "Another company asked to partner (pending your confirm).",
   },
   {
     id: "partnership.accepted",

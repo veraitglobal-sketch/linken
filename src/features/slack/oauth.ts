@@ -13,15 +13,15 @@ export function slackRedirectUri(): string {
   return `${schedulingOAuthOrigin()}/api/integrations/slack/callback`;
 }
 
-/** User picks their workspace + channel; Slack returns an Incoming Webhook URL.
- * Do not pass `team` — omitting it lets users with multiple workspaces choose.
- * The Hansala Slack app must have Public Distribution activated, or only the
- * development workspace (e.g. Vera) can install. */
+/**
+ * User picks workspace + channel (incoming-webhook).
+ * chat:write enables Block Kit + Accept/Decline buttons.
+ */
 export function slackAuthorizeUrl(state: string): string {
   const clientId = process.env.SLACK_CLIENT_ID!.trim();
   const params = new URLSearchParams({
     client_id: clientId,
-    scope: "incoming-webhook",
+    scope: "incoming-webhook,chat:write",
     redirect_uri: slackRedirectUri(),
     state,
   });
@@ -34,6 +34,8 @@ export type SlackOAuthResult = {
   channelId: string;
   channelName: string;
   webhookUrl: string;
+  botToken: string;
+  slackUserId: string;
 };
 
 export async function exchangeSlackCode(
@@ -65,7 +67,9 @@ export async function exchangeSlackCode(
   const json = (await res.json()) as {
     ok?: boolean;
     error?: string;
+    access_token?: string;
     team?: { id?: string; name?: string };
+    authed_user?: { id?: string };
     incoming_webhook?: {
       url?: string;
       channel?: string;
@@ -79,9 +83,16 @@ export async function exchangeSlackCode(
 
   const webhookUrl = json.incoming_webhook?.url?.trim() ?? "";
   const teamId = json.team?.id?.trim() ?? "";
+  const botToken = json.access_token?.trim() ?? "";
   if (!webhookUrl.startsWith("https://hooks.slack.com/") || !teamId) {
     return {
       error: "Slack did not return a channel webhook. Try Connect again.",
+    };
+  }
+  if (!botToken.startsWith("xoxb-")) {
+    return {
+      error:
+        "Slack did not return a bot token. Add chat:write in the Slack app and reconnect.",
     };
   }
 
@@ -91,5 +102,7 @@ export async function exchangeSlackCode(
     channelId: json.incoming_webhook?.channel_id?.trim() ?? "",
     channelName: (json.incoming_webhook?.channel ?? "").replace(/^#/, ""),
     webhookUrl,
+    botToken,
+    slackUserId: json.authed_user?.id?.trim() ?? "",
   };
 }

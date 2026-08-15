@@ -23,7 +23,8 @@ export default function WebhooksPage() {
         <Link href="/dashboard/integrations">Workspace → Integrations</Link>{" "}
         (OAuth). Hansala hosts one Slack app; each company authorizes their
         workspace and picks a channel. Confirmations and inquiries post there
-        automatically.
+        automatically. Partnership requests can include Accept / Decline
+        buttons (bot <code>chat:write</code>).
       </p>
       <p>
         Advanced: paste a Slack Incoming Webhook URL as a generic webhook
@@ -36,6 +37,10 @@ export default function WebhooksPage() {
       <ul>
         <li>
           <code>inquiry.created</code> — new profile inquiry
+        </li>
+        <li>
+          <code>partnership.requested</code> — pending partner request
+          (recipient)
         </li>
         <li>
           <code>partnership.accepted</code> — partnership confirmed (both

@@ -84,7 +84,7 @@ export async function GET(request: Request) {
       scheduling_label: "Book a call",
     })
     .eq("id", parsed.companyId)
-    .select("slug")
+    .select("name, slug")
     .maybeSingle();
 
   if (error) {
@@ -99,6 +99,10 @@ export async function GET(request: Request) {
       provider: "calcom",
       url: schedulingUrl,
       label: "Book a call",
+      company_slug: company?.slug ?? null,
+      for_company_id: parsed.companyId,
+      for_company_name: company?.name ?? null,
+      for_company_slug: company?.slug ?? null,
     },
     `booking_${parsed.companyId}_calcom`,
   );

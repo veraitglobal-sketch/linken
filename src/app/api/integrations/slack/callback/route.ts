@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { exchangeSlackCode } from "@/features/slack/oauth";
+import { verifySlackInstallState } from "@/features/slack/install-state";
+import {
+  encodeSlackPending,
+  SLACK_PENDING_COOKIE,
+  slackPendingCookieOptions,
+} from "@/features/slack/pending-cookie";
 import { upsertCompanySlack } from "@/features/slack/queries";
 import { verifySchedulingState } from "@/features/scheduling/oauth-state";
 import { getSiteUrl } from "@/lib/site";
@@ -9,6 +15,7 @@ import { createClient } from "@/lib/supabase/server";
 function back(query: string) {
   return NextResponse.redirect(
     new URL(`/dashboard/integrations?${query}`, getSiteUrl()),
+    302,
   );
 }
 
@@ -25,6 +32,27 @@ export async function GET(request: Request) {
   }
   if (!code || !state) {
     return back(`error=${encodeURIComponent("Missing Slack authorization.")}`);
+  }
+
+  if (verifySlackInstallState(state)) {
+    const token = await exchangeSlackCode(code);
+    if ("error" in token) {
+      return back(`error=${encodeURIComponent(token.error)}`);
+    }
+    const res = NextResponse.redirect(
+      new URL(
+        "/login?next=" +
+          encodeURIComponent("/dashboard/integrations?slack_pending=1"),
+        getSiteUrl(),
+      ),
+      302,
+    );
+    res.cookies.set(
+      SLACK_PENDING_COOKIE,
+      encodeSlackPending(token),
+      slackPendingCookieOptions(),
+    );
+    return res;
   }
 
   const parsed = verifySchedulingState(state);
@@ -57,6 +85,8 @@ export async function GET(request: Request) {
     channelId: token.channelId,
     channelName: token.channelName,
     webhookUrl: token.webhookUrl,
+    botToken: token.botToken,
+    slackUserId: token.slackUserId,
   });
 
   if (!saved.ok) {

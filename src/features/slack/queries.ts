@@ -36,6 +36,8 @@ export async function upsertCompanySlack(input: {
   channelId: string;
   channelName: string;
   webhookUrl: string;
+  botToken: string;
+  slackUserId: string;
 }): Promise<{ ok: true } | { ok: false; error: string }> {
   const admin = createAdminClient();
   if (!admin) return { ok: false, error: "Service unavailable." };
@@ -48,6 +50,8 @@ export async function upsertCompanySlack(input: {
       channel_id: input.channelId,
       channel_name: input.channelName,
       webhook_url: input.webhookUrl,
+      bot_token: input.botToken,
+      slack_user_id: input.slackUserId,
       connected_by: input.userId,
       connected_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

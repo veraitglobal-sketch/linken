@@ -7,7 +7,7 @@ import { signSchedulingState } from "@/features/scheduling/oauth-state";
 import { getSiteUrl } from "@/lib/site";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
 
-/** Start Slack OAuth — customer connects their own workspace. */
+/** Start Slack OAuth from dashboard Connect — always 302 to slack.com. */
 export async function GET() {
   if (!slackOAuthConfigured()) {
     return NextResponse.redirect(
@@ -18,6 +18,7 @@ export async function GET() {
           ),
         getSiteUrl(),
       ),
+      302,
     );
   }
 
@@ -30,5 +31,5 @@ export async function GET() {
     userId: user.id,
   });
 
-  return NextResponse.redirect(slackAuthorizeUrl(state));
+  return NextResponse.redirect(slackAuthorizeUrl(state), 302);
 }

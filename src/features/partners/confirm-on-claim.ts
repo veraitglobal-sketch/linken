@@ -63,24 +63,53 @@ export async function confirmPartnershipsAfterClaim(
     );
 
   const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
+  const firmIds = [
+    ...new Set(
+      accept.flatMap((p) => [p.requester_id as string, p.recipient_id as string]),
+    ),
+  ];
+  const { data: firms } = await supabase
+    .from("companies")
+    .select("id, name, slug")
+    .in("id", firmIds);
+  const byId = new Map(
+    (firms ?? []).map((f) => [
+      f.id as string,
+      { name: (f.name as string) ?? "", slug: (f.slug as string) ?? "" },
+    ]),
+  );
   for (const p of accept) {
-    const payload = {
+    const requester = byId.get(p.requester_id as string);
+    const recipient = byId.get(p.recipient_id as string);
+    const base = {
       partnership_id: p.id,
       requester_id: p.requester_id,
       recipient_id: p.recipient_id,
+      requester_name: requester?.name ?? null,
+      recipient_name: recipient?.name ?? null,
       responded_at: respondedAt,
       via: "claim",
     };
     emitWebhookEvent(
       p.recipient_id as string,
       "partnership.accepted",
-      payload,
+      {
+        ...base,
+        for_company_id: p.recipient_id,
+        for_company_name: recipient?.name ?? null,
+        for_company_slug: recipient?.slug ?? null,
+      },
       `partnership_${p.id}`,
     );
     emitWebhookEvent(
       p.requester_id as string,
       "partnership.accepted",
-      payload,
+      {
+        ...base,
+        for_company_id: p.requester_id,
+        for_company_name: requester?.name ?? null,
+        for_company_slug: requester?.slug ?? null,
+      },
       `partnership_${p.id}`,
     );
   }

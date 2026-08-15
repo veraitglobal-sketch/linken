@@ -67,6 +67,11 @@ async function respondServiceReference(
         providerCompanyId: row.provider_company_id,
         confirmerCompanyId: company.id,
       });
+      const { data: provider } = await supabase
+        .from("companies")
+        .select("name, slug")
+        .eq("id", row.provider_company_id)
+        .maybeSingle();
       const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");
       emitWebhookEvent(
         row.provider_company_id,
@@ -76,6 +81,10 @@ async function respondServiceReference(
           client_name: row.client_name ?? null,
           service: row.service ?? null,
           confirmed_by_company_id: company.id,
+          confirmed_by_company_name: company.name,
+          for_company_id: row.provider_company_id,
+          for_company_name: (provider?.name as string) ?? null,
+          for_company_slug: (provider?.slug as string) ?? null,
         },
         `reference_${row.id}`,
       );

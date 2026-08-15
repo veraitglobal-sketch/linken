@@ -109,6 +109,9 @@ export async function sendInquiry(formData: FormData) {
         service_interest: serviceInterest || null,
         message: message.slice(0, 2000),
         company_slug: row.company_slug,
+        for_company_id: companyRow.id,
+        for_company_name: row.company_name,
+        for_company_slug: row.company_slug,
       },
       `inquiry_${row.inquiry_id}`,
     );

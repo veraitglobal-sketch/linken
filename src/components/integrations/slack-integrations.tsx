@@ -23,10 +23,17 @@ export function SlackIntegrations({ slack }: Props) {
         Activity in your workspace
       </h2>
       <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-muted">
-        Connect your own Slack workspace — not Hansala&apos;s. You choose the
-        workspace and channel; when a partnership or reference is confirmed, or
-        someone sends an inquiry, that channel gets the alert.
+        Alerts for <span className="font-semibold text-ink">this</span> company
+        profile only — same as Calendly Connect. Partnership requests can be
+        accepted or declined from Slack (by the person who connected). Inquiries
+        and confirms include Open buttons back to Hansala.
       </p>
+      {slack ? (
+        <p className="mt-2 text-[12px] text-muted">
+          Already connected before action buttons? Disconnect and Connect again
+          so Slack grants <span className="font-semibold text-ink">chat:write</span>.
+        </p>
+      ) : null}
 
       {slack ? (
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

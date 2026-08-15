@@ -153,6 +153,9 @@ export async function sendTestWebhookAction(
   emitWebhookEvent(gate.company!.id, type, {
     test: true,
     message: "Hansala webhook test event",
+    for_company_id: gate.company!.id,
+    for_company_name: gate.company!.name,
+    for_company_slug: gate.company!.slug,
   });
   revalidatePath("/dashboard/api");
   return { ok: true };
