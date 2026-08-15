@@ -6,17 +6,11 @@
   --ink-soft: #3a423e;
   --muted: #66706b;
   --line: #dde2df;
-  /* White ground. Retell carries 83% white and lets type, product shots and
-     one saturated tone do the work; a tinted ground flattens all three.
-     Paper survives as --mute, for the rare grouped band. */
-  /* Paper, not screen white. AGENTS.md specifies #f0f2f0 as the ground;
-     the site had drifted to pure #ffffff, which reads as a document editor
-     rather than a register. Cards stay #ffffff so they lift off it — that
-     separation is what a flat white ground could never give them. */
-  --paper: #f0f2f0;
-  --mute: #e7ebe8;
+  /* White ground — full-site paper. */
+  --paper: #ffffff;
+  --mute: #ffffff;
   --surface: #ffffff;
-  --raised: #f7f9f8;
+  --raised: #ffffff;
   --navy: #0e1f1c;
   --navy-deep: #081412;
   --blue: #1a5c51;
@@ -144,10 +138,15 @@ body {
   margin: 0;
   min-height: 100%;
   color: var(--ink);
-  background: var(--paper);
+  background: #ffffff;
   font-family: var(--font-sans), ui-sans-serif, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+html {
+  background: #ffffff;
+  color-scheme: light;
 }
 
 a {
@@ -164,8 +163,13 @@ a {
   outline: none;
 }
 
+/* Dragging across a section paints the whole block rect, not just the glyphs
+   — that is how browsers highlight, but a saturated wash reads as something
+   left drawn on the page rather than as a selection. Ink at low alpha keeps
+   the selection legible and stops it looking like a rendering fault. */
 ::selection {
-  background: rgba(26, 92, 81, 0.18);
+  background: rgba(14, 31, 28, 0.13);
+  color: var(--ink);
 }
 
 /* Premium surface devices, lifted from how Vercel and Retell actually build
@@ -553,7 +557,7 @@ a {
 
 /* Network map — flat field, hairline edges, quiet depth */
 .linken-flow-stage {
-  background: #f4f5f4;
+  background: #ffffff;
 }
 
 .linken-flow-canvas {

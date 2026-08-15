@@ -6,9 +6,9 @@ import { FAQ_ITEMS, HomeFaq } from "@/components/marketing/home-faq";
 import { HomeHero } from "@/components/marketing/home-hero";
 import { HomeHighlights } from "@/components/marketing/home-highlights";
 import { HomeOutcomes } from "@/components/marketing/home-outcomes";
-import { HomeOverview } from "@/components/marketing/home-overview";
 import { HomePlans } from "@/components/marketing/home-plans";
 import { HomeStories } from "@/components/marketing/home-stories";
+import { HomeSurfaces } from "@/components/marketing/home-surfaces";
 import { HomeProductFlow } from "@/components/marketing/product-flow";
 import { HomeTalks } from "@/components/marketing/home-talks";
 import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
@@ -54,7 +54,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <HomeHero />
-      <HomeOverview />
+      <HomeSurfaces />
       <HomeProductFlow />
       <HomeOutcomes />
       <HomeContrast />

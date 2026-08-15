@@ -3,17 +3,20 @@ import {
   HomeSection,
 } from "@/components/marketing/home-section";
 import { ProductFlowLive } from "@/components/marketing/product-flow-live";
-import { ProductFlowScreen } from "@/components/marketing/product-flow-screen";
-import { FlowStage } from "@/components/marketing/product-flow-stage";
-import { FlowAppWindow } from "@/components/marketing/product-flow-window";
 
 /**
- * Retell platform split — live map on the left, second product screen on the
- * right (confirm for now; a third screen comes later).
+ * How a record is made — one screen, full measure.
+ *
+ * This was a two-up split, live map beside a static confirm screen. The
+ * static one was showing a beat the live one already plays: `ProductFlowLive`
+ * switches `scene` to "confirm" mid-loop, so the pair repeated itself and each
+ * half rendered at 564px — too small to hold anyone.
+ *
+ * One screen at full width doubles the stage and loses nothing.
  */
 export function HomeProductFlow() {
   return (
-    <HomeSection>
+    <HomeSection id="how-it-works">
       <div className="mx-auto max-w-6xl">
         <HomeEyebrow>How a record is made</HomeEyebrow>
         <div className="mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
@@ -25,14 +28,8 @@ export function HomeProductFlow() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-2 lg:gap-6">
+        <div className="mt-12">
           <ProductFlowLive />
-
-          <ProductFlowScreen caption="They confirm — the only way the record goes live.">
-            <FlowStage>
-              <FlowAppWindow scene="confirm" step={6} confirmed={false} />
-            </FlowStage>
-          </ProductFlowScreen>
         </div>
       </div>
     </HomeSection>

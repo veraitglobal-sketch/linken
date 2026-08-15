@@ -10,13 +10,14 @@ import { SectionPlate } from "@/components/marketing/section-plate";
  *
  * Rhythm follows HomeSection's default (py-20 sm:py-28). This section wrote
  * its own 96px and sat shallower than every neighbour.
+ *
+ * `#how-it-works` lives on ProductFlow, the section actually titled "How a
+ * record is made". It was on both, which made the id duplicate and sent the
+ * hero's link to whichever came first in the DOM — this one.
  */
 export function HomeOverview() {
   return (
-    <section
-      id="how-it-works"
-      className="scroll-mt-20 px-6 py-20 sm:px-8 sm:py-28 lg:px-10"
-    >
+    <section className="px-6 py-20 sm:px-8 sm:py-28 lg:px-10">
       <div className="mx-auto max-w-6xl">
         {/* No eyebrow, no stacked heading. The composition already makes the
             claim, and its own statement carries the <h2> inside the stage —

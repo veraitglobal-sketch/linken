@@ -6,31 +6,46 @@ import {
 
 export { FAQ_ITEMS };
 
-/** Homepage §8b — short FAQ; answers stay product truth. */
+/** Homepage FAQ — Retell rhythm: air, hairlines, circular toggle. */
 export function HomeFaq() {
   return (
     <HomeSection>
-      <div className="mx-auto max-w-3xl">
-        <HomeEyebrow>FAQ</HomeEyebrow>
-        <h2 className="reveal mt-5 font-display text-chapter text-ink text-balance">
-          The rules, in plain language.
-        </h2>
-        <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted">
-          Confirmation, visibility, the badge, and what stays free.
-        </p>
-        <div className="reveal-late mt-10 divide-y divide-line">
+      <div className="mx-auto max-w-4xl">
+        <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
+          <div>
+            <HomeEyebrow>FAQ</HomeEyebrow>
+            <h2 className="mt-5 max-w-[16ch] font-display text-chapter text-ink text-balance">
+              The rules, in plain language.
+            </h2>
+          </div>
+          <p className="max-w-[34ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-1 lg:text-right">
+            Confirmation, visibility, the badge, and what stays free.
+          </p>
+        </div>
+
+        <div className="mt-14 border-t border-line/80">
           {FAQ_ITEMS.map((item) => (
-            <details key={item.question} className="group py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[17px] font-medium tracking-[-0.02em] text-ink marker:content-none [&::-webkit-details-marker]:hidden">
-                {item.question}
+            <details
+              key={item.question}
+              className="group border-b border-line/80"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 font-display text-[17px] leading-snug font-medium tracking-[-0.025em] text-ink marker:content-none sm:py-7 sm:text-[18px] [&::-webkit-details-marker]:hidden">
+                <span className="text-balance">{item.question}</span>
                 <span
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-mute text-[15px] leading-none text-muted transition-[transform,color,background-color] duration-200 group-open:rotate-45 group-open:bg-signal/12 group-open:text-ink"
+                  className="grid size-9 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink-soft shadow-[0_1px_0_rgba(13,18,16,0.04)] transition-[transform,border-color,color,background-color] duration-200 group-open:rotate-45 group-open:border-signal/35 group-open:bg-signal/8 group-open:text-signal"
                   aria-hidden
                 >
-                  +
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                    <path
+                      d="M6 2v8M2 6h8"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </span>
               </summary>
-              <p className="mt-3.5 max-w-xl text-[15px] leading-relaxed text-ink-soft">
+              <p className="max-w-2xl pb-7 text-[15px] leading-relaxed text-ink-soft sm:pb-8">
                 {item.answer}
               </p>
             </details>

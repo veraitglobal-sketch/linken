@@ -1,7 +1,13 @@
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 
-export type GlyphKind = "attach" | "answer" | "network" | "resolve";
+export type GlyphKind =
+  | "attach"
+  | "answer"
+  | "network"
+  | "resolve"
+  | "seal"
+  | "endpoint";
 
 /** Per-element delay and tempo, read by the animation classes. */
 const beat = (delay: number, dur: number): CSSProperties =>
@@ -42,6 +48,8 @@ export function OutcomeGlyph({
         {kind === "answer" ? <Answer /> : null}
         {kind === "network" ? <Network /> : null}
         {kind === "resolve" ? <Resolve /> : null}
+        {kind === "seal" ? <Seal /> : null}
+        {kind === "endpoint" ? <Endpoint /> : null}
       </svg>
     </div>
   );
@@ -185,6 +193,67 @@ function Resolve() {
       />
       <circle cx="22" cy="36" r="3.2" className="fill-blue" />
       <circle cx="42" cy="36" r="3.2" className="fill-blue" />
+    </g>
+  );
+}
+
+/** Domain proof — the ring closes around the mark. */
+function Seal() {
+  return (
+    <g fill="none" strokeLinecap="round">
+      <circle
+        cx="32"
+        cy="32"
+        r="19"
+        className="glyph-link stroke-blue"
+        strokeWidth={2}
+        pathLength={30}
+        style={beat(0, 3.6)}
+      />
+      <circle cx="32" cy="32" r="19" className="stroke-line" strokeWidth={1.4} />
+      <line
+        x1="26"
+        y1="32"
+        x2="38"
+        y2="32"
+        className="stroke-blue"
+        strokeWidth={2}
+      />
+      <circle cx="24" cy="32" r="3" className="fill-blue" />
+      <circle cx="40" cy="32" r="3" className="fill-blue" />
+    </g>
+  );
+}
+
+/** One endpoint, answering. */
+function Endpoint() {
+  return (
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 20 L12 32 L20 44" className="stroke-line" strokeWidth={1.6} />
+      <path d="M44 20 L52 32 L44 44" className="stroke-line" strokeWidth={1.6} />
+      <line
+        x1="26"
+        y1="32"
+        x2="38"
+        y2="32"
+        className="glyph-link stroke-blue"
+        strokeWidth={2}
+        style={beat(0.3, 3.2)}
+      />
+      <circle
+        cx="24"
+        cy="32"
+        r="3"
+        className="glyph-node fill-blue"
+        style={{ ...beat(0.3, 3.2), transformOrigin: "24px 32px" }}
+      />
+      <circle
+        cx="40"
+        cy="32"
+        r="3"
+        className="glyph-node fill-blue"
+        style={{ ...beat(0.3, 3.2), transformOrigin: "40px 32px" }}
+      />
     </g>
   );
 }

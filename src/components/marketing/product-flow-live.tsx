@@ -53,7 +53,10 @@ export function ProductFlowLive() {
 
   return (
     <div ref={ref}>
-      <ProductFlowScreen caption="You add them — the path runs live on your map.">
+      {/* Covers the whole loop now that this is the only screen: the static
+          confirm panel that used to sit beside it is gone, and this one already
+          switches scene to confirm mid-cycle. */}
+      <ProductFlowScreen caption="You add them. They confirm. Only then does the record go live.">
         <FlowStage>
           <FlowAppWindow
             scene={scene}

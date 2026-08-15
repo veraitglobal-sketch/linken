@@ -73,7 +73,7 @@ const orgJsonLd = {
  * safety net silently holds the whole site on the system face. */
 const CRITICAL_CSS = `
 html{line-height:1.45;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper,#fff);color:var(--ink,#0d1210);font-family:var(--font-ui),system-ui,-apple-system,sans-serif}
+body{margin:0;background:#fff;color:var(--ink,#0d1210);font-family:var(--font-ui),system-ui,-apple-system,sans-serif}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;height:auto}
 `;
