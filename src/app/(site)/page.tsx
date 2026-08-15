@@ -57,12 +57,12 @@ export default function HomePage() {
       <HomeHero />
       <HomeSurfaces />
       <HomeProductFlow />
+      <HomeIntegrations />
       <HomeOutcomes />
       <HomeContrast />
       <HomeStories />
       <HomeTalks />
       <HomeHighlights />
-      <HomeIntegrations />
       <HomePlans />
       <HomeAssurance />
       <HomeFaq />

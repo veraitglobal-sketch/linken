@@ -1,6 +1,11 @@
 /** Only integrations Hansala actually ships today. */
 
-export type IntegrationId = "calendly" | "calcom" | "claude" | "cursor";
+export type IntegrationId =
+  | "calendly"
+  | "calcom"
+  | "slack"
+  | "claude"
+  | "cursor";
 
 export type IntegrationTile = {
   id: IntegrationId;
@@ -26,6 +31,13 @@ export const HOME_INTEGRATIONS: IntegrationTile[] = [
     href: "https://cal.com",
     kind: "Bookings",
     color: "#111111",
+  },
+  {
+    id: "slack",
+    name: "Slack",
+    href: "/dashboard/integrations",
+    kind: "Alerts",
+    color: "#4A154B",
   },
   {
     id: "claude",
