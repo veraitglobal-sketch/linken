@@ -15,8 +15,13 @@ export type Surface = {
   glyph: SurfaceGlyphKind;
 };
 
-/** Three plates, cycled — Retell reuses one across all seven, which reads as
- *  a template. Three is enough variety that no two neighbours repeat. */
+/**
+ * Four plates, cycled. Retell reuses a single tile across all seven cards,
+ * which reads as a template. Four is enough that no two cards in view ever
+ * share one — and they are one family (macro glass, same grade) rather than
+ * six unrelated pictures, because a consistent set reads more expensive than
+ * a varied one.
+ */
 /** Matches the `gap-5` on the track. */
 const GAP = 20;
 
@@ -24,6 +29,7 @@ const TILES = [
   "/images/tile-1.webp",
   "/images/tile-2.webp",
   "/images/tile-3.webp",
+  "/images/tile-4.webp",
 ];
 
 /**
