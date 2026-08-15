@@ -50,7 +50,7 @@ function NavRow({
   return (
     <span
       className={cn(
-        "relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px]",
+        "relative flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[12.5px]",
         active
           ? "bg-[#f0f3f1] font-semibold text-blue"
           : locked
@@ -71,14 +71,14 @@ function NavRow({
 
 export function FlowSidebar() {
   return (
-    <nav className="flex w-[232px] shrink-0 flex-col border-r border-line/70 bg-surface px-3.5 py-4">
+    <nav className="flex w-[232px] shrink-0 flex-col border-r border-line/70 bg-surface px-3.5 py-3.5">
       <span className="flex items-center gap-2 px-1.5">
         <NetworkMark size={16} animate={false} />
         <span className="font-display text-[15px] font-semibold tracking-[-0.03em] text-blue">
           Hansala
         </span>
       </span>
-      <span className="mt-4 flex items-center gap-2.5 rounded-xl border border-line/70 bg-[#f9faf9] px-2.5 py-2">
+      <span className="mt-3 flex items-center gap-2.5 rounded-xl border border-line/70 bg-[#f9faf9] px-2.5 py-1.5">
         <FlowMark
           name={FLOW_HUB.name}
           initials={FLOW_HUB.initials}
@@ -94,27 +94,27 @@ export function FlowSidebar() {
           </span>
         </span>
       </span>
-      <p className="mt-5 px-3 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">
+      <p className="mt-3.5 px-3 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">
         Main
       </p>
-      <ul className="mt-1.5 space-y-0.5">
+      <ul className="mt-1 space-y-px">
         {NAV_MAIN.map((i) => (
           <li key={i.label}>
             <NavRow {...i} active={i.label === "Map"} />
           </li>
         ))}
       </ul>
-      <p className="mt-5 px-3 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">
+      <p className="mt-3.5 px-3 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">
         More
       </p>
-      <ul className="mt-1.5 space-y-0.5">
+      <ul className="mt-1 space-y-px">
         {NAV_MORE.map((i) => (
           <li key={i.label}>
             <NavRow {...i} />
           </li>
         ))}
       </ul>
-      <ul className="mt-5 space-y-0.5 border-t border-line/70 pt-4">
+      <ul className="mt-3 space-y-px border-t border-line/70 pt-2.5">
         {NAV_FOOT.map((i) => (
           <li key={i.label}>
             <NavRow {...i} />

@@ -56,10 +56,22 @@ export function FlowWorkspaceScene({
         </div>
         <div className="relative h-full w-full overflow-hidden">
           <FlowGrid />
+          {/* The connection is the whole point of this screen, and it was 1%
+              of it: a 147×49 card in a 648×740 canvas. Scaling the map layer
+              keeps the path attached to its nodes — the anchors are design
+              units, so moving the cards by hand would break the curve.
+
+              Origin sits at the right-hand node, not between the two: the
+              further right it is, the less the right edge travels. At 370 the
+              cards measured 149→664 and overflowed a 648-wide canvas by 16px;
+              at 432 the same 1.3 lands 130→645.
+
+              The grid stays outside this group so the dot pitch does not
+              coarsen with it, and so do the zoom controls, which are chrome. */}
           <div
-            className="absolute rounded-[22px] border border-dashed border-line transition-colors duration-500"
-            style={{ left: 140, top: 250, width: 460, height: 220 }}
-          />
+            className="absolute inset-0"
+            style={{ transform: "scale(1.3)", transformOrigin: "432px 286px" }}
+          >
           <svg
             className="absolute inset-0 h-full w-full"
             aria-hidden
@@ -104,6 +116,7 @@ export function FlowWorkspaceScene({
               pending={!confirmed}
               confirmed={confirmed}
             />
+          </div>
           </div>
           <FlowMapControls />
         </div>

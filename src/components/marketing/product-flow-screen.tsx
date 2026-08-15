@@ -19,7 +19,7 @@ export function ProductFlowScreen({
             Generated in navy/mint, never purple. `.mark-stage` stays beneath
             as the fallback colour and keeps the shadow. */}
         <div
-          className="pointer-events-none absolute inset-0 bg-[url('/images/screen-plate.webp')] bg-cover bg-center"
+          className="pointer-events-none absolute inset-0 bg-[url('/images/stage-plate-v2.webp')] bg-cover bg-center"
           aria-hidden
         />
         <div

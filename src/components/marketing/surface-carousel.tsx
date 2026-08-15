@@ -16,20 +16,24 @@ export type Surface = {
 };
 
 /**
- * Four plates, cycled. Retell reuses a single tile across all seven cards,
- * which reads as a template. Four is enough that no two cards in view ever
- * share one — and they are one family (macro glass, same grade) rather than
- * six unrelated pictures, because a consistent set reads more expensive than
- * a varied one.
+ * Three plates, cycled. Retell reuses a single tile across all seven cards,
+ * which reads as a template; three is enough that the two cards in view never
+ * share one (1,2,3,1,2,3 — no neighbour repeats).
+ *
+ * Ink diffusion rather than the macro-glass set that briefly replaced it:
+ * sharper is not warmer, and four near-identical glass edges sat colder
+ * against the rest of the page than these do.
  */
 /** Matches the `gap-5` on the track. */
 const GAP = 20;
 
+/* Renamed from `tile-N`: the glass set had shipped under those exact names,
+   so browsers and the image optimiser kept serving the cached bytes after the
+   files were replaced. A new path is the only reliable bust. */
 const TILES = [
-  "/images/tile-1.webp",
-  "/images/tile-2.webp",
-  "/images/tile-3.webp",
-  "/images/tile-4.webp",
+  "/images/plate-ink-1.webp",
+  "/images/plate-ink-2.webp",
+  "/images/plate-ink-3.webp",
 ];
 
 /**

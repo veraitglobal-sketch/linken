@@ -16,9 +16,16 @@ export const FLOW_TARGET = {
 
 export const FLOW_DOMAIN = FLOW_TARGET.domain;
 
-/** Design canvas size — UI is drawn full-size then scaled. */
+/**
+ * Design canvas size — UI is drawn full-size then scaled.
+ *
+ * Height was 740 while the two nodes the screen exists to show occupied a band
+ * of 154: nearly 5:1 empty canvas to content, most of it dead space below the
+ * cards. 560 crops that without touching the map itself. The sidebar had to
+ * lose its lower rows first — twelve of them were what held the window tall.
+ */
 export const FLOW_DESIGN_W = 1180;
-export const FLOW_DESIGN_H = 740;
+export const FLOW_DESIGN_H = 560;
 
 /** 0 idle → 8 back on the map */
 export const FLOW_DURATIONS = [

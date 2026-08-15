@@ -133,7 +133,7 @@ export async function connectGraphNodes(input: {
 
   const { data: endpoints } = await supabase
     .from("companies")
-    .select("id, owner_id")
+    .select("id, owner_id, name, slug")
     .in("id", [parentId, childId]);
   const owners = (endpoints ?? []).map((c) => c.owner_id as string | null);
   if (
@@ -163,6 +163,7 @@ export async function connectGraphNodes(input: {
     return { ok: false, error: "Partnership request already pending." };
   }
 
+  let partnershipId = existing?.id as string | undefined;
   if (existing) {
     const { error } = await supabase
       .from("partnerships")
@@ -175,12 +176,39 @@ export async function connectGraphNodes(input: {
       .eq("id", existing.id);
     if (error) return { ok: false, error: error.message };
   } else {
-    const { error } = await supabase.from("partnerships").insert({
-      requester_id: requesterId,
-      recipient_id: recipientId,
-      status: "pending",
-    });
+    const { data: inserted, error } = await supabase
+      .from("partnerships")
+      .insert({
+        requester_id: requesterId,
+        recipient_id: recipientId,
+        status: "pending",
+      })
+      .select("id")
+      .maybeSingle();
     if (error) return { ok: false, error: error.message };
+    partnershipId = inserted?.id as string | undefined;
+  }
+
+  if (partnershipId) {
+    const byId = new Map(
+      (endpoints ?? []).map((c) => [
+        c.id as string,
+        { name: (c.name as string) ?? "", slug: (c.slug as string) ?? "" },
+      ]),
+    );
+    const requester = byId.get(requesterId);
+    const recipient = byId.get(recipientId);
+    const { emitPartnershipRequested } = await import(
+      "@/features/network/emit-partnership-requested"
+    );
+    await emitPartnershipRequested({
+      partnershipId,
+      requesterId,
+      recipientId,
+      requesterName: requester?.name ?? "",
+      recipientName: recipient?.name ?? "",
+      recipientSlug: recipient?.slug ?? "",
+    });
   }
 
   revalidateGraph();

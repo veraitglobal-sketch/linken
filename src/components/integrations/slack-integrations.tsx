@@ -25,8 +25,8 @@ export function SlackIntegrations({ slack }: Props) {
       <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-muted">
         Alerts for <span className="font-semibold text-ink">this</span> company
         profile only — same as Calendly Connect. Partnership requests can be
-        accepted or declined from Slack (by the person who connected). Inquiries
-        and confirms include Open buttons back to Hansala.
+        confirmed or declined from Slack (by the person who connected). Alerts
+        include company, domain, and contact when available.
       </p>
       {slack ? (
         <p className="mt-2 text-[12px] text-muted">

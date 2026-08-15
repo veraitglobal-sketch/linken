@@ -59,11 +59,28 @@ export function slackTextFromEnvelope(envelope: WebhookEnvelope): string {
     }
     case "partnership.requested": {
       const from = str(d, "requester_name") || "A company";
+      const domain = str(d, "requester_domain");
+      const website = str(d, "requester_website");
+      const city = str(d, "requester_city");
+      const country = str(d, "requester_country");
+      const place = [city, country].filter(Boolean).join(", ");
+      const contact = str(d, "requester_contact_name");
+      const email = str(d, "requester_contact_email");
+      const slug = str(d, "requester_slug");
+      const verified = d.requester_verified === true;
       return [
         header(d),
-        `*Partnership request* from ${from}`,
+        `*Partnership request* from ${from}${verified ? " · domain verified" : ""}`,
+        domain ? `Domain: ${domain}` : "",
+        website && website !== domain ? `Website: ${website}` : "",
+        place ? `Location: ${place}` : "",
+        contact ? `Contact: ${contact}` : "",
+        email ? `Email: ${email}` : "",
+        slug ? linkLine("View profile", `/c/${slug}`) : "",
         linkLine("Open partners", "/dashboard/partners"),
-      ].join("\n");
+      ]
+        .filter(Boolean)
+        .join("\n");
     }
     case "partnership.accepted": {
       const a = str(d, "requester_name") || "A company";

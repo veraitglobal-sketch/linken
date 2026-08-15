@@ -129,7 +129,7 @@ export async function requestPartnership(formData: FormData) {
     const { emitPartnershipRequested } = await import(
       "@/features/network/emit-partnership-requested"
     );
-    emitPartnershipRequested({
+    await emitPartnershipRequested({
       partnershipId,
       requesterId: mine.id,
       recipientId: target.id as string,

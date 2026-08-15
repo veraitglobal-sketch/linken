@@ -45,7 +45,7 @@ export function slackBlocksFromEnvelope(envelope: WebhookEnvelope): {
             type: "button",
             action_id: "partnership_accept",
             style: "primary",
-            text: { type: "plain_text", text: "Accept", emoji: false },
+            text: { type: "plain_text", text: "Confirm", emoji: false },
             value: signSlackPartnershipAction({
               partnershipId,
               companyId,

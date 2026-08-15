@@ -33,11 +33,18 @@ function slackTextFromEnvelope(envelope) {
   }
   if (envelope.type === "partnership.requested") {
     const from = str(d, "requester_name") || "A company";
-    return `${header(d)}\n*Partnership request* from ${from}`;
-  }
-  if (envelope.type === "partnership.requested") {
-    const from = str(d, "requester_name") || "A company";
-    return `${header(d)}\n*Partnership request* from ${from}`;
+    const domain = str(d, "requester_domain");
+    const contact = str(d, "requester_contact_name");
+    const email = str(d, "requester_contact_email");
+    return [
+      header(d),
+      `*Partnership request* from ${from}`,
+      domain ? `Domain: ${domain}` : "",
+      contact ? `Contact: ${contact}` : "",
+      email ? `Email: ${email}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
   }
   if (envelope.type === "partnership.accepted") {
     const a = str(d, "requester_name") || "A company";
@@ -108,16 +115,20 @@ test("Slack text for test event", () => {
 });
 
 test("Slack partnership request text", () => {
-  assert.match(
-    slackTextFromEnvelope({
-      type: "partnership.requested",
-      data: {
-        for_company_name: "Beta",
-        requester_name: "Acme",
-      },
-    }),
-    /Partnership request/,
-  );
+  const text = slackTextFromEnvelope({
+    type: "partnership.requested",
+    data: {
+      for_company_name: "Beta",
+      requester_name: "Acme",
+      requester_domain: "acme.com",
+      requester_contact_email: "ops@acme.com",
+      requester_contact_name: "Sam Lee",
+    },
+  });
+  assert.match(text, /Partnership request/);
+  assert.match(text, /acme\.com/);
+  assert.match(text, /Sam Lee/);
+  assert.match(text, /ops@acme\.com/);
 });
 
 test("Slack booking provider appears in text", () => {
