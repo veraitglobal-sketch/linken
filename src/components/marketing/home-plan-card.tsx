@@ -78,8 +78,11 @@ export function HomePlanCard({
             key={feature}
             className={`flex gap-3 text-[13.5px] leading-relaxed ${dark ? "text-on-navy-soft" : "text-ink-soft"}`}
           >
+            {/* One hue family across both cards: `--blue` on light, its mint
+                sibling on dark. The saturated `--signal` green sat beside mint
+                in the same row and read as a second brand. */}
             <span
-              className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${dark ? "bg-blue-soft" : "bg-signal"}`}
+              className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${dark ? "bg-blue-soft" : "bg-blue"}`}
               aria-hidden
             />
             {feature}

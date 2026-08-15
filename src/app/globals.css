@@ -9,8 +9,12 @@
   /* White ground. Retell carries 83% white and lets type, product shots and
      one saturated tone do the work; a tinted ground flattens all three.
      Paper survives as --mute, for the rare grouped band. */
-  --paper: #ffffff;
-  --mute: #f4f6f4;
+  /* Paper, not screen white. AGENTS.md specifies #f0f2f0 as the ground;
+     the site had drifted to pure #ffffff, which reads as a document editor
+     rather than a register. Cards stay #ffffff so they lift off it — that
+     separation is what a flat white ground could never give them. */
+  --paper: #f0f2f0;
+  --mute: #e7ebe8;
   --surface: #ffffff;
   --raised: #f7f9f8;
   --navy: #0e1f1c;
@@ -20,14 +24,17 @@
   --accent: #0e1f1c;
   --accent-hover: #081412;
   --accent-soft: rgba(14, 31, 28, 0.07);
-  /* Signal — the one saturated tone. Same hue as --blue, real chroma.
-     Retell's #3d6aef covers 1.8% of their page; this plays that role and
-     must never spread past buttons, active states and the mark.
-     #0c8260 is the most saturated value that still clears 4.5:1 with white
-     button text — measured, not chosen by eye. */
-  --signal: #0c8260;
-  --signal-hover: #0a7254;
-  --success: #1f7a56;
+  /* Signal — buttons, active states, the mark.
+     Was #0c8260: a fifth green. Measured on the homepage, five distinct
+     saturated greens rendered at once (#1a5c51, #7eb8a4, #1f7a56, #9ec9b8,
+     #0c8260) while AGENTS.md names two. #0c8260 is far more saturated and
+     yellower than the brand pair, so it read as a second brand wherever the
+     two met. Folded into --blue: one hue, deep on paper and mint on navy.
+     #1a5c51 clears 7.3:1 with white button text — better than the value it
+     replaces. Changed here, not across the 19 files that consume it. */
+  --signal: #1a5c51;
+  --signal-hover: #14483f;
+  --success: #1a5c51;
   --ember: #b8895a;
   /* On-navy text — hero / close / dark chapters */
   --on-navy: #f2f5f3;
@@ -696,5 +703,87 @@ a {
     max-width: none !important;
     padding: 0 !important;
     box-shadow: none !important;
+  }
+}
+
+/* Outcome glyphs — the four moments, drawn from the mark's own vocabulary:
+   nodes, links and rules. SVG rather than Lottie so the colours ride the
+   tokens; a Lottie bakes its palette into JSON and would have sailed through
+   the five-greens-to-two fold untouched.
+
+   Animation lives in classes, not inline styles: the `animation` shorthand
+   resets `animation-play-state` to running, and an inline declaration beats
+   the stylesheet — so an inline shorthand made the off-screen pause
+   unreachable. Per-element delay comes in through a custom property. */
+.glyph-link,
+.glyph-node,
+.glyph-sweep,
+.glyph-lift {
+  animation-play-state: paused;
+  animation-delay: var(--glyph-delay, 0s);
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+.glyph.is-live .glyph-link,
+.glyph.is-live .glyph-node,
+.glyph.is-live .glyph-sweep,
+.glyph.is-live .glyph-lift {
+  animation-play-state: running;
+}
+
+.glyph-link {
+  animation-name: glyph-link;
+  animation-duration: var(--glyph-dur, 3.4s);
+  stroke-dasharray: 30;
+}
+
+.glyph-node {
+  animation-name: glyph-node;
+  animation-duration: var(--glyph-dur, 3.4s);
+}
+
+.glyph-sweep {
+  animation-name: glyph-sweep;
+  animation-duration: var(--glyph-dur, 3.4s);
+  animation-direction: alternate;
+}
+
+.glyph-lift {
+  animation-name: glyph-lift;
+  animation-duration: var(--glyph-dur, 3.4s);
+}
+
+@keyframes glyph-link {
+  0%, 8% { stroke-dashoffset: 30; }
+  38%, 72% { stroke-dashoffset: 0; }
+  92%, 100% { stroke-dashoffset: 30; }
+}
+
+@keyframes glyph-node {
+  0%, 14% { opacity: 0.16; transform: scale(0.55); }
+  42%, 76% { opacity: 1; transform: scale(1); }
+  96%, 100% { opacity: 0.16; transform: scale(0.55); }
+}
+
+@keyframes glyph-sweep {
+  from { transform: translateY(0); }
+  to { transform: translateY(26px); }
+}
+
+@keyframes glyph-lift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2.5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glyph-link,
+  .glyph-node,
+  .glyph-sweep,
+  .glyph-lift {
+    animation: none !important;
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+    transform: none !important;
   }
 }

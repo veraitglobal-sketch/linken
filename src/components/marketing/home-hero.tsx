@@ -62,9 +62,12 @@ export function HomeHero() {
 
             <div className="animate-rise-late space-y-5">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                {/* Light, not primary: with `--signal` folded into the brand
+                    teal the filled button sits at 2.1:1 against the hero
+                    plate. White separates and matches the Close bookend. */}
                 <Button
                   href="/onboarding"
-                  variant="primary"
+                  variant="light"
                   className="h-12 min-w-[200px] px-6"
                 >
                   Create your free profile

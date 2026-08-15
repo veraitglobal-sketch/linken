@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionPlate } from "@/components/marketing/section-plate";
 import {
   ASSURANCE_FACTS,
   TRUST_LINKS,
@@ -12,14 +13,11 @@ import {
 export function HomeAssurance() {
   return (
     <HomeSection>
-      <div className="stage-falloff relative mx-auto max-w-6xl overflow-hidden rounded-chapter bg-mute px-7 py-12 sm:px-10 sm:py-14 lg:rounded-hero">
-        {/* Same device as the dark stages, dialled right down: the orb reads
-            as light falling on the plane rather than a painted tint, and the
-            border comes off — the references carry none. */}
-        <span
-          aria-hidden
-          className="orb -top-28 right-[-6rem] h-[340px] w-[420px] bg-signal/10"
-        />
+      {/* Was `stage-falloff` + a `--signal` orb on a light panel. That falloff
+          paints 55% near-black into the corners — a dark-stage device that
+          smears grey across paper — and the orb added a fourth green. Plans
+          sits directly above on a clean light plate; the two now match. */}
+      <SectionPlate tone="light" className="mx-auto max-w-6xl">
         <div className="relative z-10">
         <div className="reveal-late grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
@@ -64,7 +62,7 @@ export function HomeAssurance() {
           </ul>
         </nav>
         </div>
-      </div>
+      </SectionPlate>
     </HomeSection>
   );
 }

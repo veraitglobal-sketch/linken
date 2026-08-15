@@ -159,9 +159,13 @@ export function RecordStage() {
 
       {/* Right rail — the statement, then the beats as a register. */}
       <div className="flex flex-col justify-center">
-        <p className="max-w-[30ch] text-lead text-on-navy-soft">
-          Pending stays private. Confirmed becomes one fact on both sides —
-          profile, embed, and API.
+        {/* This is the section's heading, living inside the stage rather than
+            stacked above it. */}
+        <h2 className="max-w-[18ch] font-display text-[26px] leading-[1.15] font-medium tracking-[-0.03em] text-on-navy text-balance sm:text-[30px]">
+          Pending stays private. Confirmed becomes one fact on both sides.
+        </h2>
+        <p className="mt-3 max-w-[32ch] text-[14px] leading-relaxed text-on-navy-muted">
+          Profile, embed, and API — the same record in every surface.
         </p>
         <ol className="mt-8 border-t border-white/12">
           {BEATS.map((b, i) => (
