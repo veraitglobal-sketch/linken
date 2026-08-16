@@ -2,7 +2,7 @@ import { NetworkMark } from "@/components/marketing/network-mark";
 import { cn } from "@/lib/cn";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 
-/** Compact seal — mint mark on navy, readable at embed size. */
+/** Modern seal — mint on navy, soft outer glow. */
 export function EmbedPartnerSeal({
   theme,
   className,
@@ -14,15 +14,15 @@ export function EmbedPartnerSeal({
   return (
     <span
       className={cn(
-        "flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] ring-1",
+        "relative flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-[13px]",
         dark
-          ? "bg-[#7eb8a4] text-[#081412] ring-[#7eb8a4]/40"
-          : "bg-[#0e1f1c] text-[#7eb8a4] ring-black/10",
+          ? "bg-[#7eb8a4] text-[#081412] shadow-[0_0_0_1px_rgba(126,184,164,0.35),0_8px_20px_rgba(126,184,164,0.18)]"
+          : "bg-[#0e1f1c] text-[#7eb8a4] shadow-[0_0_0_1px_rgba(14,31,28,0.08),0_10px_24px_rgba(8,20,18,0.14)]",
         className,
       )}
       aria-hidden
     >
-      <NetworkMark size={20} animate={false} />
+      <NetworkMark size={18} animate={false} />
     </span>
   );
 }

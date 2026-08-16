@@ -64,19 +64,19 @@ export function DeveloperPartnerWidget({
 
         <div
           className={cn(
-            "mt-4 flex justify-center rounded-hero px-6 py-12 sm:px-10 sm:py-14",
-            theme === "dark"
-              ? "bg-[#081412] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
-              : "bg-[#e4e8e5] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]",
+            "mt-4 flex justify-center rounded-hero px-6 py-11 sm:px-12 sm:py-14",
+            theme === "dark" ? "bg-[#081412]" : "bg-[#eef1ef]",
           )}
         >
-          <EmbedPartnerCard
-            name={companyName}
-            profileUrl={profileUrl}
-            verified={verified}
-            referredCount={referredCount}
-            theme={theme}
-          />
+          <div className="w-full max-w-[420px]">
+            <EmbedPartnerCard
+              name={companyName}
+              profileUrl={profileUrl}
+              verified={verified}
+              referredCount={referredCount}
+              theme={theme}
+            />
+          </div>
         </div>
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start">
