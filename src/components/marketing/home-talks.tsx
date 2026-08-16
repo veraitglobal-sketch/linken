@@ -1,4 +1,4 @@
-import { LinkPreviewCard } from "@/components/marketing/link-preview-card";
+import { ShareMomentGraph } from "@/components/marketing/share-moment-graph";
 import {
   HomeEyebrow,
   HomeSection,
@@ -24,17 +24,14 @@ export function HomeTalks() {
           </h2>
         </div>
 
-        <div className="mt-12 grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <div className="mt-12 grid items-center gap-10 lg:grid-cols-[0.62fr_1.38fr] lg:gap-16">
           <p className="max-w-[32ch] text-lead text-muted">
             Confirmed partners and projects travel with every proposal, pitch,
             and introduction — the same facts, wherever you send them.
           </p>
 
-          {/* The unfurl, not a draggable graph: this section is about a link
-              travelling, and the artifact of that is what the recipient sees
-              when it lands. */}
-          <div className="reveal-late flex min-w-0 justify-start lg:justify-end">
-            <LinkPreviewCard />
+          <div className="reveal-late min-w-0 lg:-mr-10 xl:-mr-16">
+            <ShareMomentGraph />
           </div>
         </div>
       </div>

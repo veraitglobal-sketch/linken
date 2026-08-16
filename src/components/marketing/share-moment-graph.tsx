@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -9,18 +8,36 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
+import { HOME_SHOWCASE_LOGOS } from "@/features/marketing/showcase-logos";
 import { cn } from "@/lib/cn";
 
-type NodePos = { id: string; src: string; x: number; y: number };
+type NodePos = {
+  id: string;
+  name: string;
+  initials: string;
+  logoUrl?: string | null;
+  x: number;
+  y: number;
+};
 
 const NODE = 88;
 const STAGE_H = 220;
 
-const INITIAL: NodePos[] = [
-  { id: "a", src: "/images/story-projects.jpg", x: 0.18, y: 0.42 },
-  { id: "b", src: "/images/story-collaboration-v2.jpg", x: 0.5, y: 0.5 },
-  { id: "c", src: "/images/story-team.jpg", x: 0.82, y: 0.4 },
-];
+/* Real companies, not stock photographs. The nodes stood for the network a
+   link carries, and were three generic `story-*.jpg` faces — a section about
+   confirmed records showing people who confirmed nothing.
+   HOME_SHOWCASE_LOGOS has sat unused in the repo since it was written. */
+const INITIAL: NodePos[] = HOME_SHOWCASE_LOGOS.slice(0, 3).map(
+  (company, i) => ({
+    id: company.name,
+    name: company.name,
+    initials: company.initials,
+    logoUrl: company.logoUrl,
+    x: [0.18, 0.5, 0.82][i],
+    y: [0.42, 0.5, 0.4][i],
+  }),
+);
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -152,7 +169,7 @@ export function ShareMomentGraph() {
         <button
           key={n.id}
           type="button"
-          aria-label="Drag to rearrange"
+          aria-label={`${n.name} — drag to rearrange`}
           onPointerDown={(e) => onPointerDown(e, n.id)}
           className={cn(
             "absolute touch-none overflow-hidden rounded-[22px] border border-white bg-white shadow-[0_12px_40px_rgba(8,20,18,0.12)] transition-shadow",
@@ -168,14 +185,15 @@ export function ShareMomentGraph() {
             transform: "translate(-50%, -50%)",
           }}
         >
-          <Image
-            src={n.src}
-            alt=""
-            fill
-            className="pointer-events-none object-cover"
-            sizes="88px"
-            draggable={false}
-          />
+          <span className="pointer-events-none grid h-full w-full place-items-center px-3">
+            <EmbedBareLogo
+              name={n.name}
+              initials={n.initials}
+              logoUrl={n.logoUrl}
+              theme="light"
+              size="md"
+            />
+          </span>
         </button>
       ))}
 
