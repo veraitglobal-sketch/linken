@@ -109,7 +109,7 @@ export default async function DashboardIntegrationsPage({
         disconnected={params.disconnected}
       />
       <div className="space-y-8">
-        <SlackIntegrations slack={slack} />
+        <SlackIntegrations companyName={company.name} slack={slack} />
         <SchedulingIntegrations scheduling={scheduling} />
       </div>
     </WorkspacePage>

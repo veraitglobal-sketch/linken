@@ -26,6 +26,10 @@ function header(data) {
   return `*Hansala · ${name}*`;
 }
 
+function linkLine(label, path) {
+  return `<https://www.hansala.com${path}|${label}>`;
+}
+
 function slackTextFromEnvelope(envelope) {
   const d = envelope.data ?? {};
   if (d.test === true) {
@@ -42,6 +46,7 @@ function slackTextFromEnvelope(envelope) {
       domain ? `Domain: ${domain}` : "",
       contact ? `Contact: ${contact}` : "",
       email ? `Email: ${email}` : "",
+      linkLine("Open partners", "/dashboard/partners"),
     ]
       .filter(Boolean)
       .join("\n");
@@ -54,10 +59,14 @@ function slackTextFromEnvelope(envelope) {
   if (envelope.type === "inquiry.created") {
     const who = str(d, "sender_name") || "Someone";
     const preview = str(d, "message").slice(0, 160);
+    const slug = str(d, "company_slug");
     return [
       header(d),
       `*New inquiry* from ${who}`,
       preview ? `_${preview}_` : "",
+      slug
+        ? linkLine("Open inbox", "/dashboard/inbox")
+        : linkLine("Open workspace", "/dashboard"),
     ]
       .filter(Boolean)
       .join("\n");
@@ -97,11 +106,14 @@ test("Slack inquiry preview", () => {
       for_company_name: "Acme",
       sender_name: "Sam",
       message: "We need a quote for spring work.",
+      company_slug: "acme",
     },
   });
   assert.match(text, /New inquiry/);
   assert.match(text, /Sam/);
   assert.match(text, /quote for spring/);
+  assert.match(text, /Hansala · Acme/);
+  assert.match(text, /Open inbox/);
 });
 
 test("Slack text for test event", () => {
@@ -129,6 +141,7 @@ test("Slack partnership request text", () => {
   assert.match(text, /acme\.com/);
   assert.match(text, /Sam Lee/);
   assert.match(text, /ops@acme\.com/);
+  assert.match(text, /Open partners/);
 });
 
 test("Slack booking provider appears in text", () => {

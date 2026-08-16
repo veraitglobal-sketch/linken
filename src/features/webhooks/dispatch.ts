@@ -14,8 +14,11 @@ function isEvent(value: string): value is WebhookEventType {
 }
 
 /**
- * Queue outbound webhooks for a company. Non-blocking via `after()`.
+ * Queue outbound webhooks + Slack for a company. Non-blocking via `after()`.
  * No-op when no endpoints or admin client missing.
+ *
+ * `companyId` is the Hansala tenant key — every Slack write goes through this
+ * argument, never a Slack team_id lookup.
  */
 export function emitWebhookEvent(
   companyId: string,

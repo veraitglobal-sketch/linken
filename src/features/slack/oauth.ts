@@ -15,7 +15,8 @@ export function slackRedirectUri(): string {
 
 /**
  * User picks workspace + channel (incoming-webhook).
- * chat:write enables Block Kit + Accept/Decline buttons.
+ * chat:write enables Block Kit + Confirm/Decline — keep scopes minimal;
+ * do not add channels:history or users:read without a product need.
  */
 export function slackAuthorizeUrl(state: string): string {
   const clientId = process.env.SLACK_CLIENT_ID!.trim();

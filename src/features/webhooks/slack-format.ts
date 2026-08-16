@@ -85,20 +85,32 @@ export function slackTextFromEnvelope(envelope: WebhookEnvelope): string {
     case "partnership.accepted": {
       const a = str(d, "requester_name") || "A company";
       const b = str(d, "recipient_name") || "a company";
+      const slug = str(d, "for_company_slug");
       return [
         header(d),
         `*Partnership confirmed* — ${a} ↔ ${b}`,
+        slug
+          ? linkLine("View profile", `/c/${slug}`)
+          : "",
         linkLine("Open partners", "/dashboard/partners"),
-      ].join("\n");
+      ]
+        .filter(Boolean)
+        .join("\n");
     }
     case "reference.confirmed": {
       const client = str(d, "client_name") || "A client";
       const service = str(d, "service");
+      const slug = str(d, "for_company_slug");
       return [
         header(d),
         `*Reference confirmed* — ${client}${service ? ` · ${service}` : ""}`,
+        slug
+          ? linkLine("View profile", `/c/${slug}`)
+          : "",
         linkLine("Open references", "/dashboard/references"),
-      ].join("\n");
+      ]
+        .filter(Boolean)
+        .join("\n");
     }
     case "booking.connected": {
       const provider = str(d, "provider") || "booking";

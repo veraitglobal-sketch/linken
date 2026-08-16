@@ -9,6 +9,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 /**
  * Post to the company's Slack channel if connected.
  * Prefers bot + Block Kit; falls back to Incoming Webhook.
+ *
+ * Multi-tenant: lookup is always by Hansala `companyId` — never by Slack
+ * `team_id` alone. Company A never receives Company B's events.
  */
 export async function notifyCompanySlack(
   companyId: string,
@@ -16,8 +19,10 @@ export async function notifyCompanySlack(
   data: Record<string, unknown>,
   eventId?: string,
 ): Promise<void> {
+  if (!companyId) return;
+
   const admin = createAdminClient();
-  if (!admin || !companyId) return;
+  if (!admin) return;
 
   const { data: row } = await admin
     .from("company_slack")

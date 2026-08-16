@@ -18,7 +18,7 @@ export function FlowAppWindow({
     <div className="relative h-full w-full overflow-hidden">
       <FlowWorkspaceScene step={step} confirmed={confirmed} />
       <Pane show={scene === "confirm"}>
-        <FlowConfirmScene step={step} />
+        <FlowConfirmScene />
       </Pane>
     </div>
   );

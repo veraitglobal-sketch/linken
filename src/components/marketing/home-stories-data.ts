@@ -12,7 +12,7 @@ export const HOME_STORIES = [
     focus: "object-[center_42%]",
   },
   {
-    tone: "bg-[#0e1f1c]",
+    tone: "bg-[#14352e]",
     sector: "Construction & contracting",
     headline:
       "Subcontractors appear confirmed on the lead firm’s page — visible to clients who already trust that network.",

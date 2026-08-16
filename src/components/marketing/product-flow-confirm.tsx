@@ -1,19 +1,58 @@
 "use client";
 
+import { ConfirmDecision } from "@/components/confirm/confirm-decision";
 import { NetworkMark } from "@/components/marketing/network-mark";
 import {
   FLOW_HUB,
   FLOW_TARGET,
 } from "@/components/marketing/product-flow-data";
-import {
-  FlowCheckMark,
-  FlowMark,
-} from "@/components/marketing/product-flow-parts";
-import { cn } from "@/lib/cn";
+import type { ClientConfirmationView } from "@/types/client-confirmation";
 
-export function FlowConfirmScene({ step }: { step: number }) {
-  const pressed = step >= 7;
+/**
+ * The real confirm screen, not a drawing of one.
+ *
+ * This pane used to redraw the decision by hand, and the copy had already
+ * drifted: it said "{name} says they worked with you", where the product says
+ * "says they delivered this project for you". A lookalike moves away from the
+ * product with every commit, and it was missing the optional-depth fields and
+ * the decline reason entirely.
+ *
+ * `ConfirmDecision` is the component `/confirm/[token]` renders. Fed props
+ * instead of a database row, so the homepage touches no network — a marketing
+ * page must never depend on a record existing.
+ *
+ * `inert` + `aria-hidden`: the component carries two server-action forms, and
+ * this is a picture of the product, not a control.
+ *
+ * The chrome around it stays ours — browser bar and Hansala header are the
+ * stage, and the product does not ship them.
+ */
 
+/** The relationship the repo documents as real: Vera IT ↔ Dienstemarkt. */
+const FLOW_VIEW: ClientConfirmationView = {
+  id: "flow-confirmation",
+  caseStudyId: "flow-case",
+  requestedByCompanyId: "vera-it",
+  email: `hello@${FLOW_TARGET.domain}`,
+  token: "flow",
+  status: "pending",
+  confirmedByCompanyId: null,
+  createdAt: "2026-03-02",
+  confirmedAt: null,
+  caseTitle: "Platform delivery and ongoing support",
+  caseSlug: "platform-delivery",
+  caseSummary:
+    "Built and shipped the platform, then stayed on for delivery — confirmed by both sides on Hansala.",
+  caseYear: "2026",
+  caseLocation: "Germany",
+  requesterName: FLOW_HUB.name,
+  requesterSlug: "verait",
+  confirmerName: FLOW_TARGET.name,
+  confirmerSlug: "dienstemarkt",
+  confirmerLogoUrl: FLOW_TARGET.logo,
+};
+
+export function FlowConfirmScene() {
   return (
     <div className="flex h-full w-full flex-col bg-[#f7f8fa]">
       <header className="flex h-12 shrink-0 items-center gap-3 border-b border-line bg-surface px-5">
@@ -37,66 +76,9 @@ export function FlowConfirmScene({ step }: { step: number }) {
         </span>
       </div>
 
-      <div className="flex min-h-0 flex-1 justify-center px-8 pt-5">
-        <div className="w-[620px]">
-          <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-            Partner confirmation
-          </p>
-          <h2 className="mt-2 font-display text-[26px] leading-[1.1] font-medium tracking-[-0.035em] text-ink">
-            {FLOW_HUB.name} says they worked with you.
-          </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-            Confirm as{" "}
-            <span className="font-semibold text-ink">{FLOW_TARGET.name}</span>{" "}
-            that this partnership is real.
-          </p>
-
-          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-line/80 bg-surface px-4 py-3">
-            <FlowMark
-              name={FLOW_HUB.name}
-              initials={FLOW_HUB.initials}
-              logo={FLOW_HUB.logo}
-            />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-[14px] font-semibold tracking-[-0.02em] text-ink">
-                {FLOW_HUB.name}
-              </p>
-              <p className="truncate text-[12px] text-muted">
-                {FLOW_HUB.domain} ·{" "}
-                <span className="font-semibold text-success">
-                  Domain verified
-                </span>
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-5 flex gap-2.5">
-            <div
-              className={cn(
-                "flex h-11 flex-1 items-center justify-center rounded-xl text-[14px] font-semibold transition-all duration-300",
-                pressed
-                  ? "scale-[0.99] bg-blue text-white"
-                  : "bg-navy text-white",
-              )}
-            >
-              {pressed ? (
-                <span className="flex items-center gap-2">
-                  <FlowCheckMark onDark />
-                  Confirmed
-                </span>
-              ) : (
-                "Confirm partnership"
-              )}
-            </div>
-            <div className="flex h-11 w-[140px] items-center justify-center rounded-xl border border-line bg-surface text-[14px] font-semibold text-ink-soft">
-              Decline
-            </div>
-          </div>
-
-          <p className="mt-3 text-[11.5px] leading-relaxed text-muted">
-            You received this because {FLOW_HUB.name} added {FLOW_TARGET.name}{" "}
-            on Hansala. Only your company can create this record.
-          </p>
+      <div className="flex min-h-0 flex-1 justify-center overflow-hidden px-8 pt-6">
+        <div inert aria-hidden className="w-[620px] select-none">
+          <ConfirmDecision view={FLOW_VIEW} companyName={FLOW_TARGET.name} />
         </div>
       </div>
     </div>

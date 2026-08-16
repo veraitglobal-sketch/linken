@@ -4,11 +4,12 @@ import { slackOAuthConfigured } from "@/features/slack/oauth";
 import type { CompanySlackPublic } from "@/features/slack/queries";
 
 type Props = {
+  companyName: string;
   slack: CompanySlackPublic | null;
 };
 
 /** Customer connects their own Slack workspace via Hansala's Slack app. */
-export function SlackIntegrations({ slack }: Props) {
+export function SlackIntegrations({ companyName, slack }: Props) {
   const ready = slackOAuthConfigured();
   const channel = slack?.channelName
     ? `#${slack.channelName}`
@@ -23,15 +24,18 @@ export function SlackIntegrations({ slack }: Props) {
         Activity in your workspace
       </h2>
       <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-muted">
-        Alerts for <span className="font-semibold text-ink">this</span> company
-        profile only — same as Calendly Connect. Partnership requests can be
-        confirmed or declined from Slack (by the person who connected). Alerts
-        include company, domain, and contact when available.
+        Alerts for{" "}
+        <span className="font-semibold text-ink">{companyName}</span> only —
+        the active company profile, same as Calendly Connect. Switch companies
+        in the workspace switcher before Connect if you manage more than one.
+        Partnership requests can be confirmed or declined from Slack (by the
+        person who connected).
       </p>
       {slack ? (
         <p className="mt-2 text-[12px] text-muted">
           Already connected before action buttons? Disconnect and Connect again
-          so Slack grants <span className="font-semibold text-ink">chat:write</span>.
+          so Slack grants{" "}
+          <span className="font-semibold text-ink">chat:write</span>.
         </p>
       ) : null}
 
@@ -41,6 +45,8 @@ export function SlackIntegrations({ slack }: Props) {
             Connected to <span className="font-semibold">{slack.teamName}</span>
             {" · "}
             <span className="font-semibold">{channel}</span>
+            {" · "}
+            <span className="text-muted">{companyName}</span>
           </p>
           <SlackConnectButton mode="disconnect" />
         </div>

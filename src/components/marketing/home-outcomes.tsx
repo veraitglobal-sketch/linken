@@ -1,4 +1,4 @@
-import { CheckAnswer } from "@/components/marketing/check-answer";
+import { HomeOutcomesVideo } from "@/components/marketing/home-outcomes-video";
 import {
   HomeEyebrow,
   HomeSection,
@@ -37,24 +37,14 @@ const OUTCOMES: readonly OutcomeStop[] = [
 
 /**
  * Homepage §4 — moments where confirmed records win work.
- *
- * Four parallel text columns carried four ideas and held none. The argument is
- * single — four different people check you, all four land on the same record —
- * so it is shown on a rail instead of listed.
- *
- * Dark among the light plates above and below: no new colour, and the section
- * that carries the argument is the one that changes material.
+ * Right column: muted loop video; click opens YouTube lightbox.
  */
 export function HomeOutcomes() {
   return (
     <HomeSection className="!py-20 sm:!py-28">
       <div className="mx-auto max-w-6xl">
         <HomeEyebrow>Where it pays off</HomeEyebrow>
-        {/* The right column carried a paragraph mirroring the heading — the
-            block every generated page opens with. It holds the answer instead:
-            four rows below describe someone checking, and none of them showed
-            what the check returns. */}
-        <div className="reveal-late mt-6 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
+        <div className="reveal-late mt-6 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:gap-14">
           <div>
             <h2 className="reveal max-w-[16ch] font-display text-chapter text-ink text-balance">
               Made for the moments project work is won.
@@ -63,10 +53,10 @@ export function HomeOutcomes() {
               For AEC, specialist contractors, agencies, and consulting.
             </p>
           </div>
-          {/* `w-full` on the wrapper: `justify-self-end` shrink-wraps it, and
-              the panel's own `w-full` then resolves against 0. */}
           <div className="w-full lg:flex lg:justify-end">
-            <CheckAnswer />
+            <div className="w-full max-w-xl lg:max-w-none">
+              <HomeOutcomesVideo />
+            </div>
           </div>
         </div>
 

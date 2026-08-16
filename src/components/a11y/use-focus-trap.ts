@@ -51,12 +51,12 @@ export function useFocusTrap(
     }
 
     document.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       previous.current?.focus?.();
     };
   }, [active, onClose, panelRef]);
