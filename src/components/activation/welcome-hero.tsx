@@ -64,6 +64,9 @@ export function WelcomeHero({ companyName, companySlug, checklist, from }: Props
               Open dashboard
             </Button>
           )}
+          <Button href="/dashboard/widgets" variant="onDark" className="h-12 px-6">
+            Add embed to your website
+          </Button>
           <Button href={profileUrl} variant="onDark" className="h-12 px-6">
             View live profile
           </Button>

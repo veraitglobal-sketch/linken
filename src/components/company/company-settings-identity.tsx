@@ -14,7 +14,7 @@ export function CompanySettingsIdentity({
     <div className="space-y-4">
       <SectionLabel>Identity</SectionLabel>
 
-      <SettingsField label="Company name">
+      <SettingsField label="Organization name">
         <Input name="name" required defaultValue={company.name} maxLength={120} />
       </SettingsField>
 

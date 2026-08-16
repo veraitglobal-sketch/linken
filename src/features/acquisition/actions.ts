@@ -19,6 +19,7 @@ export async function seedOnboardingFromConfirm(formData: FormData) {
 
   await saveOnboardingDraft({
     name,
+    organizationKind: "company",
     website,
     category: "",
     city: "",

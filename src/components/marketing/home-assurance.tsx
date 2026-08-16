@@ -13,7 +13,7 @@ import {
 /**
  * Trust — light outer plate; hero photo + glass inside.
  * Text hierarchy matches dark stages (hero / close): title → soft → muted.
- * Panel sets `color` so `a{color:inherit}` from critical CSS stays on-navy.
+ * Panel sets `color` so links inherit on-navy when utilities are soft.
  */
 export function HomeAssurance() {
   return (

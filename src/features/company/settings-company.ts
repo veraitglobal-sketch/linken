@@ -3,6 +3,7 @@ export type SettingsCompany = {
   slug: string;
   tagline: string;
   description: string;
+  organizationKind: string;
   category: string;
   city: string;
   country: string;
@@ -21,6 +22,7 @@ type Row = {
   slug: string;
   tagline: string | null;
   description: string | null;
+  organization_kind?: string | null;
   category: string | null;
   city: string | null;
   country: string | null;
@@ -56,6 +58,7 @@ export function toSettingsCompany(row: Row, publicHost: string): SettingsCompany
     slug: row.slug,
     tagline: row.tagline ?? "",
     description: row.description ?? "",
+    organizationKind: row.organization_kind ?? "company",
     category: row.category ?? "",
     city: row.city ?? "",
     country: row.country ?? "Germany",

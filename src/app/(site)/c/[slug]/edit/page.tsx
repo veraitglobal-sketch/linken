@@ -106,7 +106,7 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
   const { data: full, error: loadError } = await supabase
     .from("companies")
     .select(
-      "name, slug, tagline, description, category, city, country, website, linkedin_url, facebook_url, services, accepting_clients, verified, invite_reminders_enabled, logo_url, logo_source, cover_image_url",
+      "name, slug, tagline, description, organization_kind, category, city, country, website, linkedin_url, facebook_url, services, accepting_clients, verified, invite_reminders_enabled, logo_url, logo_source, cover_image_url",
     )
     .eq("id", company.id)
     .maybeSingle();

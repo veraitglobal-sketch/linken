@@ -62,6 +62,7 @@ export async function updateCompanyProfile(formData: FormData) {
       name: next.name,
       tagline: next.tagline,
       description: next.description,
+      organization_kind: next.organization_kind,
       category: next.category,
       city: next.city,
       country: next.country,

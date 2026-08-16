@@ -1,3 +1,4 @@
+import { parseOrganizationKind } from "@/features/company/organization-kind";
 import { extractDomain } from "@/features/verification/domain";
 
 /** Rejected even if present in FormData — defense in depth beyond UI. */
@@ -56,6 +57,7 @@ export type ParsedProfile = {
   name: string;
   tagline: string;
   description: string;
+  organization_kind: string;
   category: string;
   city: string;
   country: string;
@@ -71,13 +73,20 @@ export function parseSettingsFormData(
 ): { ok: true; data: ParsedProfile } | { ok: false; error: string } {
   const name = String(formData.get("name") ?? "").trim();
   if (!name || name.length > 120) {
-    return { ok: false, error: "Company name is required (max 120 characters)." };
+    return { ok: false, error: "Organization name is required (max 120 characters)." };
   }
 
   const website = String(formData.get("website") ?? "").trim();
   if (website && !extractDomain(website)) {
     return { ok: false, error: "Website must be a valid domain or URL." };
   }
+  if (!website) {
+    return { ok: false, error: "Website is required." };
+  }
+
+  const organizationKind =
+    parseOrganizationKind(String(formData.get("organization_kind") ?? "")) ??
+    "company";
 
   const linkedinRaw = String(formData.get("linkedin_url") ?? "");
   const facebookRaw = String(formData.get("facebook_url") ?? "");
@@ -103,6 +112,7 @@ export function parseSettingsFormData(
       name,
       tagline: String(formData.get("tagline") ?? "").trim().slice(0, 160),
       description: String(formData.get("description") ?? "").trim().slice(0, 4000),
+      organization_kind: organizationKind,
       category: String(formData.get("category") ?? "").trim().slice(0, 80),
       city: String(formData.get("city") ?? "").trim().slice(0, 80),
       country: String(formData.get("country") ?? "").trim().slice(0, 80) || "Germany",

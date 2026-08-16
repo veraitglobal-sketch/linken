@@ -67,14 +67,15 @@ const orgJsonLd = {
 
 /** Baseline if external CSS fails (email WebViews / stale Safari caches).
  *
- * These rules sit in no cascade layer, so they beat every `@layer base` rule
- * Tailwind emits — not just when the stylesheet is missing, but always. The
- * font therefore has to name the same variable the real rule does, or this
- * safety net silently holds the whole site on the system face. */
+ * These rules sit in no cascade layer, so they beat every `@layer` rule
+ * Tailwind emits — not just when the stylesheet is missing, but always.
+ * Do not set `a { color: … }` here: it permanently overrides `text-white`
+ * on navy CTAs (Inbox tabs, Reply by email) and leaves dark text on dark.
+ * Color comes from body / utilities once the real stylesheet loads. */
 const CRITICAL_CSS = `
 html{line-height:1.45;-webkit-text-size-adjust:100%}
 body{margin:0;background:#fff;color:var(--ink,#0d1210);font-family:var(--font-ui),system-ui,-apple-system,sans-serif}
-a{color:inherit;text-decoration:none}
+a{text-decoration:none}
 img{max-width:100%;height:auto}
 `;
 

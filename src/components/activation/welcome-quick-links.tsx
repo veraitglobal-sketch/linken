@@ -11,7 +11,7 @@ const links = (slug: string) =>
     { label: PRODUCT.map.label, href: "/dashboard", hint: "Your network" },
     { label: "Case studies", href: "/dashboard/cases", hint: "Portfolio" },
     { label: "Verification", href: "/dashboard/verification", hint: "Domain" },
-    { label: "Widgets", href: "/dashboard/widgets", hint: "Embed badge" },
+    { label: "Widgets", href: "/dashboard/widgets", hint: "Embed on your site" },
     { label: PRODUCT.inbox.label, href: "/dashboard/inbox", hint: "Requests" },
   ] as const;
 

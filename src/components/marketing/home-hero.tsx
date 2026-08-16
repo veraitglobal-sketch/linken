@@ -20,7 +20,8 @@ export function HomeHero() {
           fill
           priority
           fetchPriority="high"
-          className="object-cover object-center"
+          draggable={false}
+          className="pointer-events-none select-none object-cover object-center"
           sizes="100vw"
           aria-hidden
         />

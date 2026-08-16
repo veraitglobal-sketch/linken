@@ -77,10 +77,19 @@ export async function createCompany(formData: FormData) {
   const city = String(formData.get("city") ?? "").trim();
   const website = String(formData.get("website") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
+  const { parseOrganizationKind } = await import(
+    "@/features/company/organization-kind"
+  );
+  const organizationKind =
+    parseOrganizationKind(String(formData.get("organization_kind") ?? "")) ??
+    "company";
   const baseSlug = toSlug(name);
 
   if (!name || !baseSlug) {
-    redirect("/onboarding?error=Company%20name%20is%20required");
+    redirect("/onboarding?error=Organization%20name%20is%20required");
+  }
+  if (!website) {
+    redirect("/onboarding?error=Website%20is%20required");
   }
 
   const supabase = await createClient();
@@ -89,7 +98,14 @@ export async function createCompany(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    await saveOnboardingDraft({ name, category, city, website, description });
+    await saveOnboardingDraft({
+      name,
+      organizationKind,
+      category,
+      city,
+      website,
+      description,
+    });
     redirect(`/login?next=${encodeURIComponent("/onboarding")}`);
   }
 
@@ -107,6 +123,7 @@ export async function createCompany(formData: FormData) {
         claim_token: null,
         name,
         slug,
+        organization_kind: organizationKind,
         category,
         city,
         website,
