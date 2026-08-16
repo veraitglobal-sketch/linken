@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await getPartnerEmbedData(slug);
   return {
     title: data
-      ? `${data.name} · Hansala developer partner`
-      : "Hansala developer partner",
+      ? `${data.name} · Hansala Premium Partner`
+      : "Hansala Premium Partner",
     robots: { index: false, follow: true },
   };
 }
@@ -31,7 +31,7 @@ export default async function PartnerEmbedPage({ params, searchParams }: Props) 
   const theme = parseEmbedTheme(themeRaw);
   const isPreview = preview === "1";
 
-  let data = await getPartnerEmbedData(slug);
+  const data = await getPartnerEmbedData(slug);
   if (!data) {
     const redirectSlug = await resolveCompanySlugRedirect(slug);
     if (redirectSlug) {
@@ -64,17 +64,16 @@ export default async function PartnerEmbedPage({ params, searchParams }: Props) 
   }
 
   return wrapEmbed(
-    <div className="box-border flex w-full justify-start p-1">
+    <div className="box-border flex w-full items-center justify-center py-2">
       <EmbedPartnerCard
         name={data.name}
         profileUrl={data.profileUrl}
-        verified={data.verified}
-        referredCount={data.referredCount}
+        logoUrl={data.logoUrl}
         theme={theme}
       />
     </div>,
     theme,
     w,
-    { transparent: true },
+    { center: true, transparent: true },
   );
 }

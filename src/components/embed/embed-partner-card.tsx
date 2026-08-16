@@ -1,124 +1,109 @@
-import { EmbedPartnerSeal } from "@/components/embed/embed-partner-seal";
+import { NetworkMark } from "@/components/marketing/network-mark";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 import { cn } from "@/lib/cn";
 
 type Props = {
   name: string;
   profileUrl: string;
-  verified: boolean;
-  referredCount: number;
+  logoUrl?: string | null;
   theme?: EmbedTheme;
 };
 
+function initials(name: string) {
+  return (
+    name
+      .split(/\s+/)
+      .map((p) => p[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "·"
+  );
+}
+
 /**
- * Modern partner credential for agency sites.
- * Readable type only — no bg-clip. Mint rail + seal as the one accent.
+ * Webflow-style partner lockup — transparent stage.
+ * Mark → Hansala → pill (partner favicon + Premium Partner).
  */
 export function EmbedPartnerCard({
   name,
   profileUrl,
-  verified,
-  referredCount,
+  logoUrl,
   theme = "light",
 }: Props) {
   const dark = theme === "dark";
-  const meta =
-    referredCount > 0
-      ? referredCount === 1
-        ? "1 company referred"
-        : `${referredCount} companies referred`
-      : "View on Hansala";
+  const mark = initials(name);
 
   return (
     <a
       href={profileUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group box-border block w-full max-w-[420px] no-underline"
+      className="group box-border flex w-full max-w-[280px] flex-col items-center no-underline"
     >
+      {/* Hansala mark */}
       <span
         className={cn(
-          "relative flex overflow-hidden rounded-card border transition-[box-shadow,border-color,transform] duration-200 ease-out",
-          "group-hover:-translate-y-px",
+          "flex h-11 w-11 items-center justify-center rounded-full",
           dark
-            ? "border-white/[0.10] bg-[#0e1f1c] shadow-[0_20px_48px_rgba(0,0,0,0.35)] group-hover:border-white/[0.16]"
-            : "border-[#0e1f1c]/[0.07] bg-white shadow-card group-hover:border-[#0e1f1c]/[0.12] group-hover:shadow-chapter",
+            ? "bg-[#7eb8a4] text-[#081412]"
+            : "bg-[#0e1f1c] text-[#7eb8a4]",
+        )}
+        aria-hidden
+      >
+        <NetworkMark size={18} animate={false} />
+      </span>
+
+      <span
+        className={cn(
+          "mt-3 font-display text-[28px] font-semibold leading-none tracking-[-0.045em]",
+          dark ? "text-white" : "text-[#0d1210]",
         )}
       >
-        {/* Mint status rail */}
+        Hansala
+      </span>
+
+      {/* Premium Partner pill — light chrome, like Webflow */}
+      <span
+        className={cn(
+          "mt-4 inline-flex items-center gap-2 rounded-full border px-3 py-1.5",
+          dark
+            ? "border-white/18 bg-white/[0.06]"
+            : "border-[#0e1f1c]/12 bg-white/90 shadow-[0_1px_2px_rgba(8,20,18,0.04)]",
+        )}
+      >
         <span
-          className="w-[3px] shrink-0 bg-[#7eb8a4]"
-          aria-hidden
-        />
-
-        <span className="flex min-w-0 flex-1 items-start gap-3.5 px-4 py-3.5">
-          <EmbedPartnerSeal theme={theme} className="mt-0.5" />
-
-          <span className="min-w-0 flex-1 pt-0.5">
-            {verified ? (
-              <span
-                className={cn(
-                  "block text-[10px] font-semibold tracking-[0.16em] uppercase",
-                  dark ? "text-[#7eb8a4]" : "text-[#1a5c51]",
-                )}
-              >
-                Verified
-              </span>
-            ) : null}
-
-            <span
-              className={cn(
-                "mt-1 block font-display text-[14px] leading-[1.25] tracking-[-0.02em]",
-                dark ? "text-[#f2f5f3]" : "text-[#0d1210]",
-              )}
-            >
-              <span className="font-semibold">Hansala</span>{" "}
-              <span
-                className={cn(
-                  "font-bold",
-                  dark ? "text-[#c5cdc8]" : "text-[#8a9390]",
-                )}
-              >
-                Developer Partner
-              </span>
-            </span>
-
-            <span
-              className={cn(
-                "mt-2.5 block h-px w-full max-w-[180px]",
-                dark
-                  ? "bg-gradient-to-r from-white/18 to-transparent"
-                  : "bg-gradient-to-r from-[#0e1f1c]/12 to-transparent",
-              )}
-              aria-hidden
+          className={cn(
+            "flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-[5px]",
+            dark ? "bg-white/10" : "bg-[#f0f2f0]",
+          )}
+        >
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={logoUrl}
+              alt=""
+              width={20}
+              height={20}
+              className="h-full w-full object-contain p-0.5"
             />
-
+          ) : (
             <span
               className={cn(
-                "mt-2.5 block truncate font-display text-[16px] font-semibold leading-tight tracking-[-0.035em]",
-                dark ? "text-white" : "text-[#0d1210]",
+                "text-[8px] font-bold tracking-wide",
+                dark ? "text-white/70" : "text-[#0e1f1c]/70",
               )}
             >
-              {name}
+              {mark}
             </span>
-
-            <span
-              className={cn(
-                "mt-1 block text-[11px] font-medium tracking-[0.01em]",
-                dark ? "text-[#a8b2ad]" : "text-[#66706b]",
-              )}
-            >
-              {meta}
-              <span
-                className={cn(
-                  "ml-1 opacity-0 transition-opacity duration-150 group-hover:opacity-70",
-                  dark ? "text-white" : "text-[#0e1f1c]",
-                )}
-              >
-                →
-              </span>
-            </span>
-          </span>
+          )}
+        </span>
+        <span
+          className={cn(
+            "text-[13px] font-semibold tracking-[-0.02em]",
+            dark ? "text-[#f2f5f3]" : "text-[#0d1210]",
+          )}
+        >
+          Premium Partner
         </span>
       </span>
     </a>

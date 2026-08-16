@@ -11,6 +11,7 @@ export type PartnerEmbedData = {
   slug: string;
   verified: boolean;
   website: string | null;
+  logoUrl: string | null;
   referredCount: number;
   profileUrl: string;
   eligible: boolean;
@@ -25,7 +26,9 @@ export async function getPartnerEmbedData(
   const publicClient = createPublicClient();
   const { data: row, error } = await publicClient
     .from("companies")
-    .select("id, name, slug, verified, website, organization_kind, claimed")
+    .select(
+      "id, name, slug, verified, website, logo_url, organization_kind, claimed",
+    )
     .eq("slug", slug)
     .maybeSingle();
 
@@ -51,6 +54,7 @@ export async function getPartnerEmbedData(
     slug: row.slug as string,
     verified: Boolean(row.verified),
     website: (row.website as string | null) ?? null,
+    logoUrl: (row.logo_url as string | null) ?? null,
     referredCount,
     profileUrl: `${siteUrl}/c/${row.slug}?src=partner-badge`,
     eligible,

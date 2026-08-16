@@ -12,8 +12,7 @@ type Props = {
   companySlug: string;
   siteUrl: string;
   profileUrl: string;
-  verified: boolean;
-  referredCount: number;
+  logoUrl?: string | null;
 };
 
 export function DeveloperPartnerWidget({
@@ -21,8 +20,7 @@ export function DeveloperPartnerWidget({
   companySlug,
   siteUrl,
   profileUrl,
-  verified,
-  referredCount,
+  logoUrl,
 }: Props) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const snippet = buildPartnerEmbedSnippet({
@@ -38,8 +36,7 @@ export function DeveloperPartnerWidget({
           Partner badge
         </h2>
         <p className="mt-1 max-w-md text-[12px] leading-relaxed text-muted">
-          Put your firm name on your site as a Hansala developer partner. Paste
-          once — visitors can verify you on Hansala.
+          Modern lockup for your site — Hansala + your mark as Premium Partner.
         </p>
       </header>
 
@@ -64,19 +61,16 @@ export function DeveloperPartnerWidget({
 
         <div
           className={cn(
-            "mt-4 flex justify-center rounded-hero px-6 py-11 sm:px-12 sm:py-14",
-            theme === "dark" ? "bg-[#081412]" : "bg-[#eef1ef]",
+            "mt-4 flex justify-center rounded-hero px-6 py-12 sm:py-14",
+            theme === "dark" ? "bg-[#081412]" : "bg-white",
           )}
         >
-          <div className="w-full max-w-[420px]">
-            <EmbedPartnerCard
-              name={companyName}
-              profileUrl={profileUrl}
-              verified={verified}
-              referredCount={referredCount}
-              theme={theme}
-            />
-          </div>
+          <EmbedPartnerCard
+            name={companyName}
+            profileUrl={profileUrl}
+            logoUrl={logoUrl}
+            theme={theme}
+          />
         </div>
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start">

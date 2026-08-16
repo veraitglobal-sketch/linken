@@ -13,7 +13,7 @@ import type { ReferredClientRow } from "@/features/commissions/types";
 type Props = {
   companySlug: string;
   companyName: string;
-  verified: boolean;
+  companyLogoUrl?: string | null;
   referralUrl: string;
   siteUrl: string;
   totals: CommissionTotals;
@@ -24,7 +24,7 @@ type Props = {
 export function DeveloperDashboard({
   companySlug,
   companyName,
-  verified,
+  companyLogoUrl,
   referralUrl,
   siteUrl,
   totals,
@@ -54,8 +54,7 @@ export function DeveloperDashboard({
           companySlug={companySlug}
           siteUrl={siteUrl}
           profileUrl={profileUrl}
-          verified={verified}
-          referredCount={clients.length}
+          logoUrl={companyLogoUrl}
         />
         <DeveloperReferralLink url={referralUrl} />
         <DeveloperClients clients={paying} siteUrl={siteUrl} />

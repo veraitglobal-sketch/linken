@@ -18,7 +18,8 @@ import { getSiteUrl } from "@/lib/site";
 export const metadata: Metadata = { title: "Earnings" };
 
 export default async function DeveloperPartnersPage() {
-  const { user, company, needsCompanySwitch } = await assertCompanyWorkspace();
+  const { user, company, active, needsCompanySwitch } =
+    await assertCompanyWorkspace();
 
   if (!user) {
     redirect("/developers/partners");
@@ -63,7 +64,7 @@ export default async function DeveloperPartnersPage() {
     <DeveloperDashboard
       companySlug={company.slug}
       companyName={company.name}
-      verified={company.verified}
+      companyLogoUrl={active?.type === "company" ? active.logoUrl : null}
       referralUrl={referralUrl}
       siteUrl={siteUrl}
       totals={totals}
