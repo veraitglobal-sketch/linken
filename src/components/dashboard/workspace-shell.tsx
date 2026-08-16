@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { GettingStartedPill } from "@/components/activation/getting-started-pill";
 import { SkipLink } from "@/components/a11y/skip-link";
 import { WorkspaceDesktopAside } from "@/components/dashboard/workspace-desktop-aside";
-import { WorkspaceMobileMenu } from "@/components/dashboard/workspace-mobile-menu";
 import { WorkspaceMobileNav } from "@/components/dashboard/workspace-mobile-nav";
 import { WORKSPACE_PAGE_META } from "@/components/dashboard/workspace-page-meta";
+import {
+  WorkspacePublicLink,
+  WorkspaceShellChecklist,
+  WorkspaceShellMenu,
+  publicWorkspaceLabel,
+} from "@/components/dashboard/workspace-shell-bits";
 import type { ActivationChecklist } from "@/features/activation/checklist";
 import type { WorkspaceSection } from "@/features/workspace/sections";
 import type { WorkspaceContext } from "@/features/workspace/types";
@@ -21,6 +25,7 @@ type Props = {
   checklist?: ActivationChecklist | null;
   allowedSections?: WorkspaceSection[] | null;
   showDeveloperNav?: boolean;
+  partnerMode?: boolean;
   operatorBanner?: ReactNode;
   signedIn?: boolean;
 };
@@ -33,6 +38,7 @@ export function WorkspaceShell({
   checklist,
   allowedSections = null,
   showDeveloperNav = false,
+  partnerMode = false,
   operatorBanner = null,
   signedIn = true,
 }: Props) {
@@ -54,6 +60,14 @@ export function WorkspaceShell({
       : active?.type === "group"
         ? `/g/${active.slug}`
         : null;
+  const publicLabel = publicWorkspaceLabel(active, partnerMode);
+  const menu = {
+    active,
+    allowedSections,
+    showDeveloperNav,
+    partnerMode,
+    signedIn,
+  };
 
   return (
     <div className="flex min-h-0 flex-1">
@@ -64,6 +78,7 @@ export function WorkspaceShell({
         verified={verified}
         allowedSections={allowedSections}
         showDeveloperNav={showDeveloperNav}
+        partnerMode={partnerMode}
         signedIn={signedIn}
       />
 
@@ -75,12 +90,7 @@ export function WorkspaceShell({
             <div className="pointer-events-none absolute top-3 right-3 z-40 flex items-center gap-2 sm:top-4 sm:right-4">
               <div className="pointer-events-auto">
                 {signedIn ? (
-                  <WorkspaceMobileMenu
-                    active={active}
-                    allowedSections={allowedSections}
-                    showDeveloperNav={showDeveloperNav}
-                    signedIn={signedIn}
-                  />
+                  <WorkspaceShellMenu {...menu} />
                 ) : (
                   <Link
                     href="/login?next=/dashboard"
@@ -90,24 +100,26 @@ export function WorkspaceShell({
                   </Link>
                 )}
               </div>
-              {signedIn && checklist && !checklist.complete ? (
-                <div className="pointer-events-auto shrink-0">
-                  <GettingStartedPill checklist={checklist} />
-                </div>
-              ) : null}
+              <div className="pointer-events-auto shrink-0">
+                <WorkspaceShellChecklist
+                  checklist={checklist}
+                  partnerMode={partnerMode}
+                  signedIn={signedIn}
+                />
+              </div>
               {publicHref ? (
-                <Link
+                <WorkspacePublicLink
                   href={publicHref}
-                  className="pointer-events-auto inline-flex h-8 shrink-0 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)] transition-colors hover:bg-paper"
-                >
-                  Company
-                </Link>
+                  label={publicLabel}
+                  floating
+                />
               ) : null}
             </div>
             {signedIn ? (
               <WorkspaceMobileNav
                 pathname={pathname}
                 companySlug={active?.type === "company" ? active.slug : null}
+                partnerMode={partnerMode}
               />
             ) : null}
             <main
@@ -122,14 +134,7 @@ export function WorkspaceShell({
           <>
             <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-line/50 bg-surface/90 px-4 py-3 backdrop-blur-sm sm:h-14 sm:flex-nowrap sm:py-0 sm:px-7">
               <div className="flex min-w-0 flex-1 items-center gap-3">
-                {signedIn ? (
-                  <WorkspaceMobileMenu
-                    active={active}
-                    allowedSections={allowedSections}
-                    showDeveloperNav={showDeveloperNav}
-                    signedIn={signedIn}
-                  />
-                ) : null}
+                <WorkspaceShellMenu {...menu} />
                 <div className="min-w-0 flex-1">
                   <h1 className="truncate font-display text-[16px] font-medium tracking-[-0.04em] text-ink">
                     {active?.type === "group" && pathname === "/dashboard"
@@ -142,9 +147,11 @@ export function WorkspaceShell({
                     </p>
                   ) : null}
                 </div>
-                {signedIn && checklist && !checklist.complete ? (
-                  <GettingStartedPill checklist={checklist} />
-                ) : null}
+                <WorkspaceShellChecklist
+                  checklist={checklist}
+                  partnerMode={partnerMode}
+                  signedIn={signedIn}
+                />
               </div>
               {!signedIn ? (
                 <Link
@@ -154,12 +161,7 @@ export function WorkspaceShell({
                   Sign in
                 </Link>
               ) : publicHref ? (
-                <Link
-                  href={publicHref}
-                  className="inline-flex h-8 shrink-0 items-center rounded-full border border-line/80 bg-paper/80 px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
-                >
-                  {active?.type === "group" ? "Public group" : "Company"}
-                </Link>
+                <WorkspacePublicLink href={publicHref} label={publicLabel} />
               ) : (
                 <Link
                   href="/onboarding"
@@ -173,6 +175,7 @@ export function WorkspaceShell({
               <WorkspaceMobileNav
                 pathname={pathname}
                 companySlug={active?.type === "company" ? active.slug : null}
+                partnerMode={partnerMode}
               />
             ) : null}
             <main

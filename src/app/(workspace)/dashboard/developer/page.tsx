@@ -11,21 +11,22 @@ import {
 import { getCommissionMonthSeries } from "@/features/commissions/series";
 import { buildPartnerReferralUrl } from "@/features/growth/partner-referral-url";
 import { assertCompanyWorkspace } from "@/features/workspace/company-gate";
+import { isDeveloperPartnerKind } from "@/features/workspace/partner-mode";
 import { getSiteUrl } from "@/lib/site";
 import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Developer partners" };
+export const metadata: Metadata = { title: "Earnings" };
 
 export default async function DeveloperPartnersPage() {
   const { user, company, needsCompanySwitch } = await assertCompanyWorkspace();
 
   if (needsCompanySwitch) {
-    return <SwitchCompanyNotice title="Developer partners" />;
+    return <SwitchCompanyNotice title="Earnings" />;
   }
 
   if (!user) {
     return (
-      <WorkspacePage title="Developer partners">
+      <WorkspacePage title="Earnings">
         <Link
           href="/login?next=/dashboard/developer"
           className="font-semibold text-ink underline"
@@ -38,7 +39,7 @@ export default async function DeveloperPartnersPage() {
 
   if (!company) {
     return (
-      <WorkspacePage title="Developer partners">
+      <WorkspacePage title="Earnings">
         <Link href="/onboarding" className="font-semibold text-ink underline">
           Create your company
         </Link>
@@ -46,8 +47,9 @@ export default async function DeveloperPartnersPage() {
     );
   }
 
+  const partner = isDeveloperPartnerKind(company.organizationKind);
   const hasBook = await companyHasReferrals(company.id);
-  if (!hasBook) redirect("/dashboard");
+  if (!partner && !hasBook) redirect("/dashboard");
 
   const siteUrl = getSiteUrl();
   const referralUrl =

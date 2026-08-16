@@ -7,6 +7,7 @@ export const ORGANIZATION_KINDS = [
   "public_body",
   "political_party",
   "cooperative",
+  "developer_partner",
   "other",
 ] as const;
 
@@ -38,6 +39,11 @@ export const ORGANIZATION_KIND_META: {
     id: "cooperative",
     label: "Cooperative",
     categoryHint: "Housing, energy, retail…",
+  },
+  {
+    id: "developer_partner",
+    label: "Developer partner",
+    categoryHint: "Agency, studio, integrator…",
   },
   { id: "other", label: "Other organization", categoryHint: "Your sector…" },
 ];

@@ -32,7 +32,7 @@ const admin = createClient(
 async function upsertReferred(veraId, row) {
   const { data: existing } = await admin
     .from("companies")
-    .select("id")
+    .select("id, claim_token")
     .eq("slug", row.slug)
     .maybeSingle();
 
@@ -48,7 +48,6 @@ async function upsertReferred(veraId, row) {
     description: row.description,
     tagline: row.tagline,
     owner_id: null,
-    claim_token: row.claim_token,
   };
 
   if (existing?.id) {
@@ -65,6 +64,7 @@ async function upsertReferred(veraId, row) {
     .insert({
       ...payload,
       slug: row.slug,
+      claim_token: row.claim_token,
     })
     .select("id")
     .single();
@@ -80,6 +80,13 @@ async function main() {
     .maybeSingle();
   if (vErr || !vera) throw new Error(vErr?.message ?? "vera not found");
   console.log("partner", vera.slug, vera.id);
+
+  const { error: kindErr } = await admin
+    .from("companies")
+    .update({ organization_kind: "developer_partner" })
+    .eq("id", vera.id);
+  if (kindErr) throw kindErr;
+  console.log("vera → organization_kind=developer_partner");
 
   const freeId = await upsertReferred(vera.id, {
     name: "Demo Client Free",

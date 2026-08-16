@@ -37,7 +37,7 @@ async function loadCompanySession(
   let query = supabase
     .from("companies")
     .select(
-      "id, name, slug, category, city, website, verified, accepting_clients, plan, radar, receive_intros, intro_suspended_until, claimed",
+      "id, name, slug, category, city, website, verified, accepting_clients, plan, radar, receive_intros, intro_suspended_until, claimed, organization_kind",
     )
     .eq("id", companyId);
 
@@ -81,6 +81,7 @@ async function loadCompanySession(
     role,
     claimed: data.claimed !== false,
     permissions,
+    organizationKind: (data.organization_kind as string) ?? "company",
   };
 }
 

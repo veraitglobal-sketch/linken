@@ -39,6 +39,7 @@ export type DashboardCompany = {
   claimed: boolean;
   /** Section keys for members; null means full access (owner/admin/operator). */
   permissions: import("@/features/workspace/sections").WorkspaceSection[] | null;
+  organizationKind: string;
 };
 
 export type WorkspaceGroupBrief = {
