@@ -29,7 +29,11 @@ function Pane({ show, children }: { show: boolean; children: ReactNode }) {
     <div
       aria-hidden={!show}
       className={cn(
-        "absolute inset-0 transition-transform duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+        // z-20 beats the workspace toolbar's z-10. The workspace renders
+        // underneath at all times and its top bar is positioned, so without a
+        // higher layer the "Company | Map | Inbox" tabs and "Your map" counter
+        // punched straight through the confirm screen's own browser chrome.
+        "absolute inset-0 z-20 transition-transform duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
         show ? "translate-x-0" : "pointer-events-none translate-x-full",
       )}
     >

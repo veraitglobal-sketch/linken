@@ -64,4 +64,12 @@ export const WORKSPACE_PAGE_META: Record<
     title: "Integrations",
     description: "Connect Calendly or Cal.com for booking.",
   },
+  "/dashboard/developer": {
+    title: "Developer partners",
+    description: "Referred companies and accrued commission.",
+  },
+  "/dashboard/billing": {
+    title: "Billing",
+    description: "Manage your Hansala plan.",
+  },
 };

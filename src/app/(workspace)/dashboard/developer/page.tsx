@@ -1,0 +1,70 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { WorkspacePage } from "@/components/dashboard/workspace-page";
+import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
+import { DeveloperDashboard } from "@/components/developer/developer-dashboard";
+import {
+  companyHasReferrals,
+  getCommissionTotals,
+  getReferredClients,
+} from "@/features/commissions/queries";
+import { buildPartnerReferralUrl } from "@/features/growth/partner-referral-url";
+import { assertCompanyWorkspace } from "@/features/workspace/company-gate";
+import { getSiteUrl } from "@/lib/site";
+import { redirect } from "next/navigation";
+
+export const metadata: Metadata = { title: "Developer partners" };
+
+export default async function DeveloperPartnersPage() {
+  const { user, company, needsCompanySwitch } = await assertCompanyWorkspace();
+
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="Developer partners" />;
+  }
+
+  if (!user) {
+    return (
+      <WorkspacePage title="Developer partners">
+        <Link
+          href="/login?next=/dashboard/developer"
+          className="font-semibold text-ink underline"
+        >
+          Sign in
+        </Link>
+      </WorkspacePage>
+    );
+  }
+
+  if (!company) {
+    return (
+      <WorkspacePage title="Developer partners">
+        <Link href="/onboarding" className="font-semibold text-ink underline">
+          Create your company
+        </Link>
+      </WorkspacePage>
+    );
+  }
+
+  const hasBook = await companyHasReferrals(company.id);
+  if (!hasBook) redirect("/dashboard");
+
+  const siteUrl = getSiteUrl();
+  const referralUrl =
+    buildPartnerReferralUrl(siteUrl, company.slug) ??
+    `${siteUrl}/onboarding?ref=${company.slug}`;
+
+  const [totals, clients] = await Promise.all([
+    getCommissionTotals(company.id),
+    getReferredClients(company.id),
+  ]);
+
+  return (
+    <DeveloperDashboard
+      companySlug={company.slug}
+      referralUrl={referralUrl}
+      siteUrl={siteUrl}
+      totals={totals}
+      clients={clients}
+    />
+  );
+}

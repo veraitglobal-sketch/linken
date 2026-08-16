@@ -2,7 +2,7 @@ import Image from "next/image";
 
 /**
  * Homepage §5a — facade carries the mark (carved in the photo).
- * Copy sits left on a navy scrim; no second SVG logo over the carved sign.
+ * Full-bleed plate; copy left on a navy scrim. No second SVG logo.
  */
 export function MarkAssemble() {
   return (
@@ -14,16 +14,16 @@ export function MarkAssemble() {
           fill
           quality={78}
           draggable={false}
-          className="pointer-events-none select-none object-cover object-[72%_center]"
+          className="pointer-events-none select-none object-cover object-[70%_center]"
           sizes="(max-width: 1152px) 100vw, 1152px"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/88 via-40% to-transparent"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/90 via-35% to-transparent"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-y-0 right-0 w-[42%] bg-gradient-to-l from-navy/25 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy-deep/50 to-transparent"
           aria-hidden
         />
         <div
@@ -31,7 +31,7 @@ export function MarkAssemble() {
           aria-hidden
         />
 
-        <div className="relative flex min-h-[420px] flex-col justify-end px-8 py-12 sm:min-h-[480px] sm:px-12 sm:py-16 lg:max-w-[48%]">
+        <div className="relative flex min-h-[420px] flex-col justify-center px-8 py-12 sm:min-h-[480px] sm:px-12 sm:py-16 lg:max-w-[48%]">
           <p className="animate-rise text-[11px] font-semibold tracking-[0.16em] text-blue-soft/85 uppercase">
             Two sides
           </p>

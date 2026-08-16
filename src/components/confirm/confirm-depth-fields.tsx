@@ -8,13 +8,13 @@ type Props = {
 /** Optional L2/L3 + named/undisclosed — L1 is the confirm submit itself. */
 export function ConfirmDepthFields({ showDepth = true }: Props) {
   return (
-    <div className="mt-5 space-y-4 rounded-2xl border border-line/70 bg-[#f7f8fa] px-4 py-4">
+    <div className="mt-4 space-y-3 rounded-xl border border-line/70 bg-[#f7f8fa] px-3.5 py-3">
       {showDepth ? (
-        <fieldset className="space-y-2">
-          <legend className="text-[11px] font-semibold tracking-[0.1em] text-muted uppercase">
+        <fieldset className="space-y-1.5">
+          <legend className="text-[10px] font-semibold tracking-[0.1em] text-muted uppercase">
             Optional depth
           </legend>
-          <label className="flex items-start gap-2.5 text-[13px] text-ink-soft">
+          <label className="flex items-start gap-2 text-[12.5px] text-ink-soft">
             <input
               type="checkbox"
               name="level_scope"
@@ -25,7 +25,7 @@ export function ConfirmDepthFields({ showDepth = true }: Props) {
               Scope and timeline look accurate ({confirmationLevelLabel(2)})
             </span>
           </label>
-          <label className="flex items-start gap-2.5 text-[13px] text-ink-soft">
+          <label className="flex items-start gap-2 text-[12.5px] text-ink-soft">
             <input
               type="checkbox"
               name="level_outcome"
@@ -38,11 +38,11 @@ export function ConfirmDepthFields({ showDepth = true }: Props) {
           </label>
         </fieldset>
       ) : null}
-      <fieldset className="space-y-2">
-        <legend className="text-[11px] font-semibold tracking-[0.1em] text-muted uppercase">
+      <fieldset className="space-y-1.5">
+        <legend className="text-[10px] font-semibold tracking-[0.1em] text-muted uppercase">
           How your company appears
         </legend>
-        <label className="flex items-start gap-2.5 text-[13px] text-ink-soft">
+        <label className="flex items-start gap-2 text-[12.5px] text-ink-soft">
           <input
             type="radio"
             name="disclosure"
@@ -52,7 +52,7 @@ export function ConfirmDepthFields({ showDepth = true }: Props) {
           />
           <span>Show my company name publicly</span>
         </label>
-        <label className="flex items-start gap-2.5 text-[13px] text-ink-soft">
+        <label className="flex items-start gap-2 text-[12.5px] text-ink-soft">
           <input
             type="radio"
             name="disclosure"

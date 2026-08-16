@@ -13,25 +13,25 @@ const OUTCOMES: readonly OutcomeStop[] = [
     title: "Proposals",
     body: "Attach a confirmed reference list or one-pager. The client checks every record before the first meeting.",
     checker: "The client",
-    glyph: "attach",
+    glyph: "onepager",
   },
   {
     title: "Tenders",
     body: "Answer reference requirements with records the other side confirmed — not a list you wrote yourself.",
     checker: "The awarding body",
-    glyph: "answer",
+    glyph: "testimonial",
   },
   {
     title: "Sales",
     body: "Prospects see who you have actually delivered for on your public profile — before the first call.",
     checker: "The prospect",
-    glyph: "network",
+    glyph: "logos",
   },
   {
     title: "Procurement",
     body: "A vendor check resolves to a plain answer: a confirmed record, or no file. Never a paid badge.",
     checker: "Vendor management",
-    glyph: "resolve",
+    glyph: "mark",
   },
 ] as const;
 

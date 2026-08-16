@@ -87,6 +87,7 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
       eyebrow="Hansala · Client confirmation"
       title="Project confirmation"
       subtitle={`From ${view.requesterName} · ${view.caseTitle}`}
+      compact
     >
       <ConfirmPanel
         view={view}

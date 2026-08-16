@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { OnboardingForm } from "@/components/onboarding/onboarding-form";
 import { OnboardingStage } from "@/components/onboarding/onboarding-stage";
 import { readOnboardingDraft } from "@/features/company/onboarding-draft";
+import { captureReferralFromRefParam } from "@/features/growth/capture-referral";
 
 export const metadata: Metadata = {
   title: "Create company",
@@ -9,11 +10,12 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; ref?: string }>;
 };
 
 export default async function OnboardingPage({ searchParams }: Props) {
-  const { error } = await searchParams;
+  const { error, ref } = await searchParams;
+  await captureReferralFromRefParam(ref);
   const draft = await readOnboardingDraft();
 
   return (

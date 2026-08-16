@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { IconHome } from "@/components/dashboard/workspace-icons";
 import { WorkspaceNavLink } from "@/components/dashboard/workspace-nav-link";
 import {
-  MORE_NAV,
+  moreNav,
   primaryNav,
   type NavItem,
 } from "@/components/dashboard/workspace-nav-items";
@@ -31,6 +31,7 @@ type Props = {
   groupSlug?: string | null;
   contextType?: WorkspaceContextType | null;
   allowedSections?: WorkspaceSection[] | null;
+  showDeveloperNav?: boolean;
 };
 
 export function WorkspaceNav({
@@ -38,6 +39,7 @@ export function WorkspaceNav({
   groupSlug,
   contextType,
   allowedSections = null,
+  showDeveloperNav = false,
 }: Props) {
   const pathname = usePathname();
   const isGroup = contextType === "group";
@@ -51,7 +53,7 @@ export function WorkspaceNav({
     });
 
   const main = filter(primaryNav(companySlug));
-  const more = filter(MORE_NAV);
+  const more = filter(moreNav({ showDeveloper: showDeveloperNav }));
 
   return (
     <nav className="flex flex-col gap-6" aria-label="Workspace">

@@ -15,6 +15,7 @@ type Props = {
   contexts: WorkspaceContext[];
   verified?: boolean;
   allowedSections?: WorkspaceSection[] | null;
+  showDeveloperNav?: boolean;
   signedIn?: boolean;
   footer?: ReactNode;
 };
@@ -28,6 +29,7 @@ export function WorkspaceDesktopAside({
   contexts,
   verified,
   allowedSections = null,
+  showDeveloperNav = false,
   signedIn = true,
   footer,
 }: Props) {
@@ -86,6 +88,7 @@ export function WorkspaceDesktopAside({
               groupSlug={active?.type === "group" ? active.slug : null}
               contextType={active?.type ?? null}
               allowedSections={allowedSections}
+              showDeveloperNav={showDeveloperNav}
             />
           ) : null}
         </div>

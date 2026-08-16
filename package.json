@@ -11,7 +11,7 @@
     "format:check": "prettier --check \"tests/**/*.{mjs,ts}\" \"e2e/**/*.{ts,mjs}\" \"scripts/post-deploy-smoke.mjs\"",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit",
-    "test:unit": "node --test scripts/test-domain-allowed.mjs scripts/test-activation-derive.mjs scripts/test-plan-access.mjs scripts/test-dashboard-home.mjs scripts/test-seo-public.mjs scripts/test-product-analytics.mjs scripts/test-growth-loop.mjs scripts/test-a11y-static.mjs scripts/test-security.mjs scripts/test-hs-testimonials-seal.mjs scripts/test-slack-webhook.mjs tests/**/*.test.mjs",
+    "test:unit": "node --test scripts/test-domain-allowed.mjs scripts/test-activation-derive.mjs scripts/test-plan-access.mjs scripts/test-dashboard-home.mjs scripts/test-seo-public.mjs scripts/test-product-analytics.mjs scripts/test-growth-loop.mjs scripts/test-a11y-static.mjs scripts/test-security.mjs scripts/test-hs-testimonials-seal.mjs scripts/test-slack-webhook.mjs scripts/test-partner-commissions.mjs tests/**/*.test.mjs",
     "test:email": "node --test tests/email/**/*.test.mjs",
     "test:api-contract": "node --test tests/api/**/*.test.mjs",
     "test:authz": "node --test tests/authz/**/*.test.mjs scripts/test-security.mjs",

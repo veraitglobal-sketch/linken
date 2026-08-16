@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { OperatorBranchBanner } from "@/components/dashboard/operator-branch-banner";
 import { WorkspaceShell } from "@/components/dashboard/workspace-shell";
 import { getActivationChecklist } from "@/features/activation/checklist";
+import { companyHasReferrals } from "@/features/commissions/queries";
 import { getDashboardSession } from "@/features/dashboard/session";
 import { getCompanyVerification } from "@/features/verification/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -15,18 +16,21 @@ export default async function DashboardLayout({
 
   let verified = false;
   let checklist = null;
+  let showDeveloperNav = false;
   let operatorBanner = null as ReactNode;
 
   if (company) {
-    const [verification, activation] = await Promise.all([
+    const [verification, activation, hasReferrals] = await Promise.all([
       getCompanyVerification(company.id),
       company.role === "owner" || company.role === "operator"
         ? getActivationChecklist(company.id)
         : Promise.resolve(null),
+      companyHasReferrals(company.id),
     ]);
     verified = Boolean(verification?.verified);
     checklist =
       activation && !activation.complete ? activation : null;
+    showDeveloperNav = hasReferrals;
 
     if (company.role === "operator" && company.claimed === false) {
       const supabase = await createClient();
@@ -57,6 +61,7 @@ export default async function DashboardLayout({
       verified={verified}
       checklist={checklist}
       allowedSections={allowedSections}
+      showDeveloperNav={showDeveloperNav}
       operatorBanner={operatorBanner}
     >
       {children}

@@ -9,13 +9,13 @@ export default function ConfirmLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-full flex-1 flex-col bg-paper text-ink">
       <SkipLink />
-      <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-line/70 bg-surface/90 px-4 backdrop-blur-sm sm:px-6">
+      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-line/70 bg-surface/90 px-4 backdrop-blur-sm sm:px-5">
         <Link
           href="/"
-          className="inline-flex min-h-11 shrink-0 items-center gap-2.5 text-ink transition-opacity hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--blue-soft)]"
+          className="inline-flex min-h-10 shrink-0 items-center gap-2 text-ink transition-opacity hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--blue-soft)]"
         >
-          <NetworkMark size={18} className="text-navy" />
-          <span className="font-display text-[15px] font-semibold tracking-[-0.04em]">
+          <NetworkMark size={16} className="text-navy" />
+          <span className="font-display text-[14px] font-semibold tracking-[-0.04em]">
             Hansala
           </span>
         </Link>
@@ -24,7 +24,7 @@ export default function ConfirmLayout({ children }: { children: ReactNode }) {
       <main
         id="main-content"
         tabIndex={-1}
-        className="flex min-h-0 flex-1 flex-col px-4 py-6 sm:px-6 sm:py-10"
+        className="flex min-h-0 flex-1 flex-col px-4 py-4 sm:px-5 sm:py-6"
       >
         {children}
       </main>

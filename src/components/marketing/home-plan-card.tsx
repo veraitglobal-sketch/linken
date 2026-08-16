@@ -21,6 +21,7 @@ export function HomePlanCard({
   href,
   dark,
   emphasis,
+  bridge,
 }: {
   name: string;
   price: string;
@@ -32,13 +33,19 @@ export function HomePlanCard({
   /** Marks the plan the section is selling. Our own pricing only — a widget
    *  on a customer's site must never print a tier. */
   emphasis?: string;
+  /** Fills the dead space equal heights create on the shorter card. */
+  bridge?: string;
 }) {
   return (
     <article
+      /* Free had `bg-surface` on a `--paper` that is also #ffffff, so a white
+         card sat on white with only a hairline: beside a solid navy block it
+         read as unfinished rather than as the smaller plan. A faint ink tint
+         gives it a body of its own. */
       className={`flex flex-col rounded-card p-7 sm:p-9 ${
         dark
           ? "bg-navy text-on-navy shadow-chapter"
-          : "border border-line bg-surface"
+          : "border border-line bg-ink/[0.028] shadow-[0_1px_2px_rgba(8,20,18,0.03)]"
       }`}
     >
       <div className="flex items-start justify-between gap-4">
@@ -89,6 +96,15 @@ export function HomePlanCard({
           </li>
         ))}
       </ul>
+
+      {/* Equal heights across unequal feature counts leave a void above the
+          shorter card's button. A bridge line fills it with a path rather
+          than air. */}
+      {bridge ? (
+        <p className="mt-6 border-t border-line/70 pt-4 text-[13px] leading-relaxed text-muted">
+          {bridge}
+        </p>
+      ) : null}
 
       <div className="mt-auto pt-8">
         <Button

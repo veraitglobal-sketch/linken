@@ -20,6 +20,7 @@ type Props = {
   verified?: boolean;
   checklist?: ActivationChecklist | null;
   allowedSections?: WorkspaceSection[] | null;
+  showDeveloperNav?: boolean;
   operatorBanner?: ReactNode;
   signedIn?: boolean;
 };
@@ -31,6 +32,7 @@ export function WorkspaceShell({
   verified,
   checklist,
   allowedSections = null,
+  showDeveloperNav = false,
   operatorBanner = null,
   signedIn = true,
 }: Props) {
@@ -61,6 +63,7 @@ export function WorkspaceShell({
         contexts={contexts}
         verified={verified}
         allowedSections={allowedSections}
+        showDeveloperNav={showDeveloperNav}
         signedIn={signedIn}
       />
 
@@ -75,6 +78,7 @@ export function WorkspaceShell({
                   <WorkspaceMobileMenu
                     active={active}
                     allowedSections={allowedSections}
+                    showDeveloperNav={showDeveloperNav}
                     signedIn={signedIn}
                   />
                 ) : (
@@ -122,6 +126,7 @@ export function WorkspaceShell({
                   <WorkspaceMobileMenu
                     active={active}
                     allowedSections={allowedSections}
+                    showDeveloperNav={showDeveloperNav}
                     signedIn={signedIn}
                   />
                 ) : null}

@@ -12,6 +12,7 @@ import type { WorkspaceContext } from "@/features/workspace/types";
 type Props = {
   active: WorkspaceContext | null;
   allowedSections?: WorkspaceSection[] | null;
+  showDeveloperNav?: boolean;
   signedIn?: boolean;
 };
 
@@ -19,6 +20,7 @@ type Props = {
 export function WorkspaceMobileMenu({
   active,
   allowedSections = null,
+  showDeveloperNav = false,
   signedIn = true,
 }: Props) {
   const [open, setOpen] = useState(false);
@@ -83,6 +85,7 @@ export function WorkspaceMobileMenu({
                 groupSlug={active?.type === "group" ? active.slug : null}
                 contextType={active?.type ?? null}
                 allowedSections={allowedSections}
+                showDeveloperNav={showDeveloperNav}
               />
             ) : (
               <p className="px-2.5 text-[13px] text-muted">

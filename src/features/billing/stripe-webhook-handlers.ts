@@ -5,6 +5,7 @@ import {
   applySubscription,
   downgradeToFree,
 } from "@/features/billing/sync";
+import { accrueCommissionFromInvoicePaid } from "@/features/commissions/invoice-paid";
 import { parsePlan } from "@/features/plan/entitlements";
 import {
   inferSubscriptionChange,
@@ -111,6 +112,11 @@ export async function handleStripeAnalyticsEvent(
         event: "payment_failed",
         plan: await priorPlan(admin, companyId),
       });
+      return;
+    }
+    case "invoice.paid": {
+      const invoice = event.data.object as Stripe.Invoice;
+      await accrueCommissionFromInvoicePaid(admin, invoice);
       return;
     }
     default:

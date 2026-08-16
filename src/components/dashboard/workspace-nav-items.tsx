@@ -1,71 +1,14 @@
-import type { ComponentType } from "react";
 import {
-  IconBilling,
-  IconChart,
   IconGraph,
-  IconGroup,
   IconHome,
   IconInbox,
-  IconKey,
-  IconRadar,
-  IconShield,
-  IconStructure,
-  IconTeam,
-  IconWidgets,
 } from "@/components/dashboard/workspace-icons";
+import { moreNav } from "@/components/dashboard/workspace-more-nav";
+import type { NavItem } from "@/components/dashboard/workspace-nav-types";
 import { PRODUCT } from "@/lib/product-model";
 
-function IconCases({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden
-    >
-      <path
-        d="M7 4.5h10A1.5 1.5 0 0 1 18.5 6v14L12 16.5 5.5 20V6A1.5 1.5 0 0 1 7 4.5Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconTestimonials({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden
-    >
-      <path
-        d="M5 6.5h14M5 12h9M5 17.5h11"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-export type NavItem = {
-  href: string;
-  label: string;
-  icon: ComponentType<{ className?: string }>;
-  match?: "exact" | "prefix";
-  companyOnly?: boolean;
-  section?: import("@/features/workspace/sections").WorkspaceSection;
-  /** Show a padlock — feature parked until the network is dense enough. */
-  locked?: boolean;
-  lockedHint?: string;
-};
+export type { NavItem };
+export { moreNav };
 
 /** The only three things most users need. */
 export function primaryNav(companySlug?: string | null): NavItem[] {
@@ -106,85 +49,5 @@ export function primaryNav(companySlug?: string | null): NavItem[] {
   ];
 }
 
-/** Advanced / rare — never in the main story. */
-export const MORE_NAV: NavItem[] = [
-  {
-    href: "/dashboard/cases",
-    label: "Case studies",
-    icon: IconCases,
-    companyOnly: true,
-  },
-  {
-    href: "/dashboard/testimonials",
-    label: "Testimonials",
-    icon: IconTestimonials,
-    companyOnly: true,
-    section: "widgets",
-  },
-  {
-    href: "/dashboard/verification",
-    label: "Verification",
-    icon: IconShield,
-    companyOnly: true,
-    section: "verification",
-  },
-  {
-    href: "/dashboard/team",
-    label: "Team access",
-    icon: IconTeam,
-    companyOnly: true,
-    section: "team",
-  },
-  {
-    href: "/dashboard/structure",
-    label: PRODUCT.structure.label,
-    icon: IconStructure,
-    section: "structure",
-  },
-  { href: "/dashboard/group", label: "Group", icon: IconGroup },
-  {
-    href: "/dashboard/insights",
-    label: "Insights",
-    icon: IconChart,
-    companyOnly: true,
-    section: "insights",
-  },
-  {
-    href: "/dashboard/radar",
-    label: "Radar",
-    icon: IconRadar,
-    companyOnly: true,
-    section: "radar",
-    locked: true,
-    lockedHint:
-      "Radar unlocks when enough companies are on Hansala to make matching useful.",
-  },
-  {
-    href: "/dashboard/billing",
-    label: "Billing",
-    icon: IconBilling,
-    companyOnly: true,
-    section: "settings",
-  },
-  {
-    href: "/dashboard/widgets",
-    label: "Widgets",
-    icon: IconWidgets,
-    companyOnly: true,
-    section: "widgets",
-  },
-  {
-    href: "/dashboard/integrations",
-    label: "Integrations",
-    icon: IconWidgets,
-    companyOnly: true,
-    section: "settings",
-  },
-  {
-    href: "/dashboard/api",
-    label: "API",
-    icon: IconKey,
-    companyOnly: true,
-    section: "api",
-  },
-];
+/** @deprecated Prefer moreNav({ showDeveloper }) */
+export const MORE_NAV: NavItem[] = moreNav();

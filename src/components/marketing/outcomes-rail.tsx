@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import {
-  OutcomeGlyph,
-  type GlyphKind,
-} from "@/components/marketing/outcome-glyph";
+import { OutcomeBadge } from "@/components/marketing/outcome-badge";
+import type { SurfaceGlyphKind } from "@/components/marketing/surface-glyph";
 import { cn } from "@/lib/cn";
 
 const REDUCED = "(prefers-reduced-motion: reduce)";
@@ -20,7 +18,7 @@ export type OutcomeStop = {
   title: string;
   body: string;
   checker: string;
-  glyph: GlyphKind;
+  glyph: SurfaceGlyphKind;
 };
 
 /**
@@ -42,7 +40,7 @@ export type OutcomeStop = {
  * stops cycling.
  */
 export function OutcomesRail({ stops }: { stops: readonly OutcomeStop[] }) {
-  const ref = useRef<HTMLOListElement | null>(null);
+  const ref = useRef<HTMLUListElement | null>(null);
   const [active, setActive] = useState(0);
   const [onScreen, setOnScreen] = useState(false);
   /* Read through the store: syncing a media query into state inside an effect
@@ -74,7 +72,7 @@ export function OutcomesRail({ stops }: { stops: readonly OutcomeStop[] }) {
   }, [onScreen, still, stops.length]);
 
   return (
-    <ol ref={ref} className="m-0 list-none p-0">
+    <ul ref={ref} className="m-0 list-none p-0">
       {stops.map((stop, i) => {
         const lit = still || i === active;
         return (
@@ -82,13 +80,11 @@ export function OutcomesRail({ stops }: { stops: readonly OutcomeStop[] }) {
             key={stop.title}
             className="flex items-start gap-6 border-t border-line py-8 last:border-b sm:gap-9 lg:py-9"
           >
-            <OutcomeGlyph
+            <OutcomeBadge
               kind={stop.glyph}
+              index={i}
               live={lit}
-              className={cn(
-                "size-[68px] transition-opacity duration-500 sm:size-[84px]",
-                lit ? "opacity-100" : "opacity-45",
-              )}
+              className="size-[76px] sm:size-[92px]"
             />
 
             <div className="min-w-0 flex-1">
@@ -118,6 +114,6 @@ export function OutcomesRail({ stops }: { stops: readonly OutcomeStop[] }) {
           </li>
         );
       })}
-    </ol>
+    </ul>
   );
 }

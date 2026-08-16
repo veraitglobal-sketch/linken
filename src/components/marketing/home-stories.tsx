@@ -48,7 +48,7 @@ export function HomeStories() {
               top: `calc(${STACK_TOP} + ${index * PEEK}px)`,
             }}
           >
-            <HomeStoryCard story={story} index={index} />
+            <HomeStoryCard story={story} />
           </div>
         ))}
       </div>

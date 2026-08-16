@@ -44,6 +44,7 @@ export const SECTION_BY_HREF: Record<string, WorkspaceSection> = {
   "/dashboard/settings": "settings",
   "/dashboard/billing": "settings",
   "/dashboard/integrations": "settings",
+  "/dashboard/developer": "settings",
 };
 
 export function parseSectionPermissions(raw: unknown): WorkspaceSection[] {
