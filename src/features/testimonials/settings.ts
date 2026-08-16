@@ -14,7 +14,8 @@ export type TestimonialLayout =
   | "marquee"
   | "editorial"
   | "featured"
-  | "strip";
+  | "strip"
+  | "wall";
 
 export const TESTIMONIAL_LAYOUTS: TestimonialLayout[] = [
   "single",
@@ -25,6 +26,7 @@ export const TESTIMONIAL_LAYOUTS: TestimonialLayout[] = [
   "editorial",
   "featured",
   "strip",
+  "wall",
 ];
 
 export type TestimonialsSettings = {

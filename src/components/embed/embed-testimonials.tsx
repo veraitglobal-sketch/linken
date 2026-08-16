@@ -3,6 +3,7 @@ import { EmbedResizeReporter } from "@/components/embed/embed-resize-reporter";
 import { EmbedTestimonialCard } from "@/components/embed/embed-testimonial-card";
 import { EmbedTestimonialThemeShell } from "@/components/embed/embed-testimonial-theme-shell";
 import { EmbedTestimonialsMotion } from "@/components/embed/embed-testimonials-motion";
+import { EmbedTestimonialsWall } from "@/components/embed/embed-testimonials-wall";
 import { embedMutedClass, type EmbedTheme } from "@/components/embed/embed-theme";
 import type { TestimonialLayout } from "@/features/testimonials/settings";
 import type { TestimonialThemeTokens } from "@/features/testimonials/theme/presets";
@@ -67,14 +68,19 @@ export function EmbedTestimonials({
     <EmbedTestimonialThemeShell theme={theme}>
       <div className="box-border w-full px-0.5 py-1">
         <EmbedResizeReporter />
-        <EmbedPlacementRail
-          label="Client testimonials"
-          href={profileUrl}
-          linkLabel={companyName}
-          theme={themeParam}
-        />
-        <div className="mt-2">
-          {renderLayout(fitting, layout, profileUrl, theme.maxColumns)}
+        {/* The wall brings its own header — the "Hansala / Verified" lockup and
+            the section label — so the rail would be a second row saying the same
+            thing above it. */}
+        {layout !== "wall" ? (
+          <EmbedPlacementRail
+            label="Client testimonials"
+            href={profileUrl}
+            linkLabel={companyName}
+            theme={themeParam}
+          />
+        ) : null}
+        <div className={layout === "wall" ? undefined : "mt-2"}>
+          {renderLayout(fitting, layout, profileUrl, theme.maxColumns, themeParam)}
         </div>
       </div>
     </EmbedTestimonialThemeShell>
@@ -86,6 +92,7 @@ function renderLayout(
   layout: TestimonialLayout,
   profileUrl: string,
   maxColumns: number,
+  themeParam: EmbedTheme,
 ) {
   if (layout === "single" || layout === "featured") {
     return (
@@ -99,6 +106,17 @@ function renderLayout(
         items={items}
         profileUrl={profileUrl}
         mode={layout}
+      />
+    );
+  }
+
+  if (layout === "wall") {
+    return (
+      <EmbedTestimonialsWall
+        items={items}
+        profileUrl={profileUrl}
+        maxColumns={maxColumns}
+        themeParam={themeParam}
       />
     );
   }

@@ -16,6 +16,10 @@ export const LAYOUT_FIT: Record<TestimonialLayout, LayoutFitRule> = {
   masonry: { maxChars: 380, minCount: 1, maxCount: 12, label: "medium-length quotes" },
   carousel: { maxChars: 400, minCount: 1, maxCount: 12, label: "medium-length quotes" },
   marquee: { maxChars: 140, minCount: 2, maxCount: 12, label: "short quotes" },
+  /* Four is where the loop stops being visible. Below it a column repeats the
+     same card within one screen height and the wall reads as a bug rather than
+     as a list that runs past the frame. */
+  wall: { maxChars: 380, minCount: 4, maxCount: 12, label: "several medium-length quotes" },
 };
 
 export function testimonialFitsLayout(body: string, layout: TestimonialLayout): boolean {
