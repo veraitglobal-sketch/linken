@@ -9,10 +9,6 @@ import {
   primaryNav,
   type NavItem,
 } from "@/components/dashboard/workspace-nav-items";
-import {
-  partnerMoreNav,
-  partnerPrimaryNav,
-} from "@/components/dashboard/workspace-partner-nav";
 import type { WorkspaceContextType } from "@/features/workspace/types";
 import type { WorkspaceSection } from "@/features/workspace/sections";
 import { PRODUCT } from "@/lib/product-model";
@@ -35,10 +31,8 @@ type Props = {
   groupSlug?: string | null;
   contextType?: WorkspaceContextType | null;
   allowedSections?: WorkspaceSection[] | null;
-  /** Company book with referrals — adds Developer to the company shell. */
+  /** Company book with referrals / partner — Earnings under More. */
   showDeveloperNav?: boolean;
-  /** Full partner shell — replaces company Main/More. */
-  partnerMode?: boolean;
 };
 
 export function WorkspaceNav({
@@ -47,7 +41,6 @@ export function WorkspaceNav({
   contextType,
   allowedSections = null,
   showDeveloperNav = false,
-  partnerMode = false,
 }: Props) {
   const pathname = usePathname();
   const isGroup = contextType === "group";
@@ -60,18 +53,14 @@ export function WorkspaceNav({
       return true;
     });
 
-  const main = filter(
-    partnerMode ? partnerPrimaryNav(companySlug) : primaryNav(companySlug),
-  );
-  const more = filter(
-    partnerMode ? partnerMoreNav() : moreNav({ showDeveloper: showDeveloperNav }),
-  );
+  const main = filter(primaryNav(companySlug));
+  const more = filter(moreNav({ showDeveloper: showDeveloperNav }));
 
   return (
     <nav className="flex flex-col gap-6" aria-label="Workspace">
       <div>
         <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
-          {partnerMode ? "Partner" : "Main"}
+          Main
         </p>
         <NavList items={main} pathname={pathname} />
       </div>
@@ -79,7 +68,7 @@ export function WorkspaceNav({
       {more.length > 0 ? (
         <div>
           <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
-            {partnerMode ? "Account" : PRODUCT.operate.label}
+            {PRODUCT.operate.label}
           </p>
           <NavList items={more} pathname={pathname} />
         </div>

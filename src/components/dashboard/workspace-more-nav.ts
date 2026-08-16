@@ -106,7 +106,7 @@ export function moreNav(opts?: { showDeveloper?: boolean }): NavItem[] {
   if (opts?.showDeveloper) {
     items.push({
       href: "/dashboard/developer",
-      label: "Developer",
+      label: "Earnings",
       icon: IconDeveloper,
       companyOnly: true,
       section: "settings",

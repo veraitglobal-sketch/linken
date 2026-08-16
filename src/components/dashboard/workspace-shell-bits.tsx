@@ -12,7 +12,6 @@ type MenuProps = {
   active: WorkspaceContext | null;
   allowedSections: WorkspaceSection[] | null;
   showDeveloperNav: boolean;
-  partnerMode: boolean;
   signedIn: boolean;
 };
 
@@ -23,7 +22,6 @@ export function WorkspaceShellMenu(props: MenuProps) {
       active={props.active}
       allowedSections={props.allowedSections}
       showDeveloperNav={props.showDeveloperNav}
-      partnerMode={props.partnerMode}
       signedIn={props.signedIn}
     />
   );
@@ -31,14 +29,12 @@ export function WorkspaceShellMenu(props: MenuProps) {
 
 export function WorkspaceShellChecklist({
   checklist,
-  partnerMode,
   signedIn,
 }: {
   checklist?: ActivationChecklist | null;
-  partnerMode: boolean;
   signedIn: boolean;
 }) {
-  if (!signedIn || partnerMode || !checklist || checklist.complete) return null;
+  if (!signedIn || !checklist || checklist.complete) return null;
   return <GettingStartedPill checklist={checklist} />;
 }
 
@@ -67,8 +63,7 @@ export function WorkspacePublicLink({
 
 export function publicWorkspaceLabel(
   active: WorkspaceContext | null,
-  partnerMode: boolean,
 ): string {
   if (active?.type === "group") return "Public group";
-  return partnerMode ? "Profile" : "Company";
+  return "Company";
 }

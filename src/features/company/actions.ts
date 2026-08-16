@@ -197,7 +197,7 @@ export async function createCompany(formData: FormData) {
   }
 
   if (organizationKind === "developer_partner") {
-    redirect("/dashboard/developer");
+    redirect("/dashboard");
   }
 
   redirect("/welcome?from=onboarding");

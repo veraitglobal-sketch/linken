@@ -25,7 +25,6 @@ type Props = {
   checklist?: ActivationChecklist | null;
   allowedSections?: WorkspaceSection[] | null;
   showDeveloperNav?: boolean;
-  partnerMode?: boolean;
   operatorBanner?: ReactNode;
   signedIn?: boolean;
 };
@@ -38,7 +37,6 @@ export function WorkspaceShell({
   checklist,
   allowedSections = null,
   showDeveloperNav = false,
-  partnerMode = false,
   operatorBanner = null,
   signedIn = true,
 }: Props) {
@@ -60,12 +58,11 @@ export function WorkspaceShell({
       : active?.type === "group"
         ? `/g/${active.slug}`
         : null;
-  const publicLabel = publicWorkspaceLabel(active, partnerMode);
+  const publicLabel = publicWorkspaceLabel(active);
   const menu = {
     active,
     allowedSections,
     showDeveloperNav,
-    partnerMode,
     signedIn,
   };
 
@@ -78,7 +75,6 @@ export function WorkspaceShell({
         verified={verified}
         allowedSections={allowedSections}
         showDeveloperNav={showDeveloperNav}
-        partnerMode={partnerMode}
         signedIn={signedIn}
       />
 
@@ -103,7 +99,6 @@ export function WorkspaceShell({
               <div className="pointer-events-auto shrink-0">
                 <WorkspaceShellChecklist
                   checklist={checklist}
-                  partnerMode={partnerMode}
                   signedIn={signedIn}
                 />
               </div>
@@ -119,7 +114,6 @@ export function WorkspaceShell({
               <WorkspaceMobileNav
                 pathname={pathname}
                 companySlug={active?.type === "company" ? active.slug : null}
-                partnerMode={partnerMode}
               />
             ) : null}
             <main
@@ -149,7 +143,6 @@ export function WorkspaceShell({
                 </div>
                 <WorkspaceShellChecklist
                   checklist={checklist}
-                  partnerMode={partnerMode}
                   signedIn={signedIn}
                 />
               </div>
@@ -175,7 +168,6 @@ export function WorkspaceShell({
               <WorkspaceMobileNav
                 pathname={pathname}
                 companySlug={active?.type === "company" ? active.slug : null}
-                partnerMode={partnerMode}
               />
             ) : null}
             <main

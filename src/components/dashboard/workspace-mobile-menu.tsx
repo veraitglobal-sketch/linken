@@ -13,7 +13,6 @@ type Props = {
   active: WorkspaceContext | null;
   allowedSections?: WorkspaceSection[] | null;
   showDeveloperNav?: boolean;
-  partnerMode?: boolean;
   signedIn?: boolean;
 };
 
@@ -22,7 +21,6 @@ export function WorkspaceMobileMenu({
   active,
   allowedSections = null,
   showDeveloperNav = false,
-  partnerMode = false,
   signedIn = true,
 }: Props) {
   const [open, setOpen] = useState(false);
@@ -88,7 +86,6 @@ export function WorkspaceMobileMenu({
                 contextType={active?.type ?? null}
                 allowedSections={allowedSections}
                 showDeveloperNav={showDeveloperNav}
-                partnerMode={partnerMode}
               />
             ) : (
               <p className="px-2.5 text-[13px] text-muted">

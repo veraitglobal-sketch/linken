@@ -18,23 +18,22 @@ export default async function DashboardLayout({
   let verified = false;
   let checklist = null;
   let showDeveloperNav = false;
-  let partnerMode = false;
   let operatorBanner = null as ReactNode;
 
   if (company) {
-    partnerMode = isDeveloperPartnerKind(company.organizationKind);
     const [verification, activation, hasReferrals] = await Promise.all([
       getCompanyVerification(company.id),
-      !partnerMode &&
-      (company.role === "owner" || company.role === "operator")
+      company.role === "owner" || company.role === "operator"
         ? getActivationChecklist(company.id)
         : Promise.resolve(null),
-      partnerMode ? Promise.resolve(false) : companyHasReferrals(company.id),
+      companyHasReferrals(company.id),
     ]);
     verified = Boolean(verification?.verified);
     checklist =
       activation && !activation.complete ? activation : null;
-    showDeveloperNav = !partnerMode && hasReferrals;
+    // Earnings is a separate panel in More — never replaces the company shell.
+    showDeveloperNav =
+      hasReferrals || isDeveloperPartnerKind(company.organizationKind);
 
     if (company.role === "operator" && company.claimed === false) {
       const supabase = await createClient();
@@ -66,7 +65,6 @@ export default async function DashboardLayout({
       checklist={checklist}
       allowedSections={allowedSections}
       showDeveloperNav={showDeveloperNav}
-      partnerMode={partnerMode}
       operatorBanner={operatorBanner}
     >
       {children}

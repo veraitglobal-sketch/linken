@@ -28,7 +28,7 @@ export function PartnerProgramHero() {
           Join as a developer partner
         </Button>
         <Button
-          href="/login?next=/dashboard/developer"
+          href="/login?next=/dashboard"
           variant="secondary"
           className="h-12 min-w-[160px] px-6"
         >

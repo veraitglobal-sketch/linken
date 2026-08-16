@@ -7,29 +7,16 @@ import { cn } from "@/lib/cn";
 type Props = {
   pathname: string;
   companySlug?: string | null;
-  partnerMode?: boolean;
 };
 
-export function WorkspaceMobileNav({
-  pathname,
-  companySlug,
-  partnerMode = false,
-}: Props) {
-  const items = partnerMode
-    ? ([
-        ["/dashboard", "Home"] as const,
-        ["/dashboard/developer", "Earnings"] as const,
-        ...(companySlug
-          ? [[`/c/${companySlug}`, "Profile"] as const]
-          : []),
-      ] as const)
-    : ([
-        ...(companySlug
-          ? [[`/c/${companySlug}`, PRODUCT.company.label] as const]
-          : []),
-        ["/dashboard", PRODUCT.map.label] as const,
-        ["/dashboard/inbox", PRODUCT.inbox.label] as const,
-      ] as const);
+export function WorkspaceMobileNav({ pathname, companySlug }: Props) {
+  const items = [
+    ...(companySlug
+      ? [[`/c/${companySlug}`, PRODUCT.company.label] as const]
+      : []),
+    ["/dashboard", PRODUCT.map.label] as const,
+    ["/dashboard/inbox", PRODUCT.inbox.label] as const,
+  ];
 
   return (
     <div className="flex gap-1 overflow-x-auto border-b border-line/60 bg-surface/90 px-3 py-2 lg:hidden">
