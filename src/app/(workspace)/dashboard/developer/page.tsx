@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { DeveloperDashboard } from "@/components/developer/developer-dashboard";
@@ -13,36 +14,32 @@ import { buildPartnerReferralUrl } from "@/features/growth/partner-referral-url"
 import { assertCompanyWorkspace } from "@/features/workspace/company-gate";
 import { isDeveloperPartnerKind } from "@/features/workspace/partner-mode";
 import { getSiteUrl } from "@/lib/site";
-import { redirect } from "next/navigation";
 
 export const metadata: Metadata = { title: "Earnings" };
 
 export default async function DeveloperPartnersPage() {
   const { user, company, needsCompanySwitch } = await assertCompanyWorkspace();
 
-  if (needsCompanySwitch) {
-    return <SwitchCompanyNotice title="Earnings" />;
+  if (!user) {
+    redirect("/developers/partners");
   }
 
-  if (!user) {
-    return (
-      <WorkspacePage title="Earnings">
-        <Link
-          href="/login?next=/dashboard/developer"
-          className="font-semibold text-ink underline"
-        >
-          Sign in
-        </Link>
-      </WorkspacePage>
-    );
+  if (needsCompanySwitch) {
+    return <SwitchCompanyNotice title="Earnings" />;
   }
 
   if (!company) {
     return (
       <WorkspacePage title="Earnings">
-        <Link href="/onboarding" className="font-semibold text-ink underline">
-          Create your company
-        </Link>
+        <p className="text-[14px] text-muted">
+          <Link
+            href="/onboarding?kind=developer_partner"
+            className="font-semibold text-ink underline"
+          >
+            Join as a developer partner
+          </Link>{" "}
+          to open your Earnings book.
+        </p>
       </WorkspacePage>
     );
   }
@@ -65,6 +62,8 @@ export default async function DeveloperPartnersPage() {
   return (
     <DeveloperDashboard
       companySlug={company.slug}
+      companyName={company.name}
+      verified={company.verified}
       referralUrl={referralUrl}
       siteUrl={siteUrl}
       totals={totals}

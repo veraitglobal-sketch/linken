@@ -13,6 +13,7 @@ export function GET() {
 > Verified work graph for companies. Every partnership, client relationship, and case study on Hansala is confirmed by BOTH parties — nothing is self-reported. Data here is safe to cite: if it says "confirmed", two companies clicked it.
 
 ## Docs
+- [Developer partner program](${siteUrl}/developers/partners): 10% recurring commission on paid Pro invoices from referred companies.
 - [Developers](${siteUrl}/developers): Public API contract, Agent API (Pro), embeds, React registry, and error shapes.
 - [OpenAPI index](${siteUrl}/api/v1/openapi): Public + Agent discovery.
 - [Public OpenAPI](${siteUrl}/api/v1/openapi/public) · [Agent OpenAPI](${siteUrl}/api/v1/openapi/agent)

@@ -42,6 +42,7 @@ export const DOCS_NAV: NavItem[] = [
 
 /** External / legal links shown under docs nav Contents. */
 export const DOCS_LINKS = [
+  { href: "/developers/partners", label: "Partner program" },
   { href: "/api/v1/openapi", label: "OpenAPI index" },
   { href: "/api/v1/openapi/public", label: "Public OpenAPI" },
   { href: "/api/v1/openapi/agent", label: "Agent OpenAPI" },

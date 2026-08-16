@@ -106,7 +106,11 @@ export async function createCompany(formData: FormData) {
       website,
       description,
     });
-    redirect(`/login?next=${encodeURIComponent("/onboarding")}`);
+    const next =
+      organizationKind === "developer_partner"
+        ? "/onboarding?kind=developer_partner"
+        : "/onboarding";
+    redirect(`/login?next=${encodeURIComponent(next)}`);
   }
 
   // If the handle is taken, bump the slug only (name stays as typed).
@@ -190,6 +194,10 @@ export async function createCompany(formData: FormData) {
   // Mid-step when auto-verify did not pass — non-blocking “Do it later”
   if (!autoVerified) {
     redirect("/onboarding/verify");
+  }
+
+  if (organizationKind === "developer_partner") {
+    redirect("/dashboard/developer");
   }
 
   redirect("/welcome?from=onboarding");

@@ -15,25 +15,35 @@ import { toSlug } from "@/lib/slug";
 type Props = {
   error?: string;
   draft?: OnboardingDraft | null;
+  partnerMode?: boolean;
 };
 
-export function OnboardingForm({ error, draft = null }: Props) {
+export function OnboardingForm({
+  error,
+  draft = null,
+  partnerMode = false,
+}: Props) {
   const [name, setName] = useState(draft?.name ?? "");
   const slug = toSlug(name) || "your-organization";
-  const defaultKind = parseOrganizationKind(draft?.organizationKind ?? "") ?? "company";
+  const defaultKind =
+    parseOrganizationKind(draft?.organizationKind ?? "") ??
+    (partnerMode ? "developer_partner" : "company");
 
   return (
     <div className="relative flex flex-col justify-center border-t border-line bg-[#fbfbfc] px-6 py-8 sm:px-9 sm:py-10 lg:border-t-0 lg:border-l lg:border-white/10">
       <div className="animate-rise">
         <p className="text-[11px] font-semibold tracking-[0.16em] text-[#1a5c51] uppercase">
-          Profile details
+          {partnerMode ? "Partner details" : "Profile details"}
         </p>
         <h1 className="mt-3 font-display text-[clamp(1.7rem,2.4vw,2.15rem)] font-medium tracking-[-0.035em] text-ink">
-          Register your organization
+          {partnerMode
+            ? "Register as a developer partner"
+            : "Register your organization"}
         </h1>
         <p className="mt-2 max-w-md text-[14px] leading-relaxed text-ink-soft">
-          Company, nonprofit, association, or party — same mutual confirmation.
-          Your public link is what partners open.
+          {partnerMode
+            ? "Your workspace opens on Earnings. Share your referral link with clients you already work with."
+            : "Company, nonprofit, association, or party — same mutual confirmation. Your public link is what partners open."}
         </p>
       </div>
 
@@ -127,7 +137,9 @@ export function OnboardingForm({ error, draft = null }: Props) {
         </label>
 
         <Button type="submit" className="mt-1 h-12 w-full">
-          Create organization profile
+          {partnerMode
+            ? "Create partner workspace"
+            : "Create organization profile"}
         </Button>
         <LegalConsent action="create" />
       </form>

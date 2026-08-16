@@ -3,6 +3,7 @@ import { WorkspaceCard, WorkspacePage } from "@/components/dashboard/workspace-p
 import { DeveloperClients } from "@/components/developer/developer-clients";
 import { DeveloperEarnings } from "@/components/developer/developer-earnings";
 import { DeveloperGapList } from "@/components/developer/developer-gap-list";
+import { DeveloperPartnerWidget } from "@/components/developer/developer-partner-widget";
 import { DeveloperProgress } from "@/components/developer/developer-progress";
 import { DeveloperReferralLink } from "@/components/developer/developer-referral-link";
 import type { CommissionTotals } from "@/features/commissions/queries";
@@ -11,6 +12,8 @@ import type { ReferredClientRow } from "@/features/commissions/types";
 
 type Props = {
   companySlug: string;
+  companyName: string;
+  verified: boolean;
   referralUrl: string;
   siteUrl: string;
   totals: CommissionTotals;
@@ -20,6 +23,8 @@ type Props = {
 
 export function DeveloperDashboard({
   companySlug,
+  companyName,
+  verified,
   referralUrl,
   siteUrl,
   totals,
@@ -28,10 +33,11 @@ export function DeveloperDashboard({
 }: Props) {
   const paying = clients.filter((c) => c.plan !== "free");
   const free = clients.filter((c) => c.plan === "free");
+  const profileUrl = `${siteUrl.replace(/\/$/, "")}/c/${companySlug}`;
 
   return (
     <WorkspacePage
-      title="Developer partners"
+      title="Earnings"
       description="10% of every paid invoice from companies you referred."
       wide
     >
@@ -42,6 +48,14 @@ export function DeveloperDashboard({
           currency={totals.currency || "eur"}
           payingCount={paying.length}
           freeCount={free.length}
+        />
+        <DeveloperPartnerWidget
+          companyName={companyName}
+          companySlug={companySlug}
+          siteUrl={siteUrl}
+          profileUrl={profileUrl}
+          verified={verified}
+          referredCount={clients.length}
         />
         <DeveloperReferralLink url={referralUrl} />
         <DeveloperClients clients={paying} siteUrl={siteUrl} />

@@ -5,6 +5,7 @@ export const FOOTER_PRODUCT = [
   { label: "Pricing", href: "/pricing" },
   { label: "Use cases", href: "/use-cases" },
   { label: "Developers", href: "/developers" },
+  { label: "Partner program", href: "/developers/partners" },
   { label: "Changelog", href: "/changelog" },
   { label: "Status", href: "/status" },
   { label: "Demo", href: "/demo" },
@@ -22,6 +23,7 @@ export const FOOTER_TRUST = [
 ] as const;
 
 export const FOOTER_DEVELOPERS = [
+  { label: "Partner program", href: "/developers/partners" },
   { label: "API docs", href: "/developers" },
   { label: "OpenAPI", href: "/api/v1/openapi" },
   { label: "Webhooks", href: "/developers/webhooks" },

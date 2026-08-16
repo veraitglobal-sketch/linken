@@ -10,19 +10,35 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ error?: string; ref?: string }>;
+  searchParams: Promise<{ error?: string; ref?: string; kind?: string }>;
 };
 
 export default async function OnboardingPage({ searchParams }: Props) {
-  const { error, ref } = await searchParams;
+  const { error, ref, kind } = await searchParams;
   await captureReferralFromRefParam(ref);
   const draft = await readOnboardingDraft();
+  const kindHint =
+    kind === "developer_partner" ? "developer_partner" : undefined;
+  const mergedDraft = kindHint
+    ? {
+        name: draft?.name ?? "",
+        organizationKind: kindHint,
+        category: draft?.category ?? "",
+        city: draft?.city ?? "",
+        website: draft?.website ?? "",
+        description: draft?.description ?? "",
+      }
+    : draft;
 
   return (
     <section className="flex flex-1 items-center px-4 py-6">
       <div className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-[32px] lg:min-h-[min(72vh,720px)] lg:grid-cols-[0.95fr_1.05fr]">
-        <OnboardingStage />
-        <OnboardingForm error={error} draft={draft} />
+        <OnboardingStage partnerMode={kindHint === "developer_partner"} />
+        <OnboardingForm
+          error={error}
+          draft={mergedDraft}
+          partnerMode={kindHint === "developer_partner"}
+        />
       </div>
     </section>
   );

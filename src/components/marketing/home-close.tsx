@@ -69,12 +69,19 @@ export function HomeClose() {
         </div>
 
         <p className="relative mt-10 border-t border-white/10 pt-6 text-[13px] text-on-navy-muted">
-          Building on top of Hansala? Agent API and embeds are documented for{" "}
+          Agency or studio? See the{" "}
+          <Link
+            href="/developers/partners"
+            className="font-medium text-on-navy-soft underline decoration-white/25 underline-offset-4 hover:text-on-navy"
+          >
+            developer partner program
+          </Link>
+          . Building on the API?{" "}
           <Link
             href="/developers"
             className="font-medium text-on-navy-soft underline decoration-white/25 underline-offset-4 hover:text-on-navy"
           >
-            developers
+            Developer docs
           </Link>
           .
         </p>
