@@ -64,8 +64,10 @@ export function DeveloperPartnerWidget({
 
         <div
           className={cn(
-            "mt-4 flex justify-center rounded-[20px] px-4 py-6",
-            theme === "dark" ? "bg-[#081412]" : "bg-mute/60",
+            "mt-4 flex justify-center rounded-hero px-6 py-12 sm:px-10 sm:py-14",
+            theme === "dark"
+              ? "bg-[#081412] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+              : "bg-[#e4e8e5] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]",
           )}
         >
           <EmbedPartnerCard

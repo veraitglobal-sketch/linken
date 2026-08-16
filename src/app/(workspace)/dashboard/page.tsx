@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { HomeBoard } from "@/components/dashboard/home/home-board";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
@@ -8,7 +7,6 @@ import { isSetupDismissed } from "@/features/dashboard/dismiss-setup";
 import { loadDashboardHome } from "@/features/dashboard/home-data";
 import { getDashboardSession } from "@/features/dashboard/session";
 import { getDashboardGroupById } from "@/features/groups/dashboard-group";
-import { isDeveloperPartnerKind } from "@/features/workspace/partner-mode";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -16,10 +14,6 @@ export const metadata: Metadata = {
 
 export default async function DashboardHomePage() {
   const { user, company, group, active } = await getDashboardSession();
-
-  if (company && isDeveloperPartnerKind(company.organizationKind)) {
-    redirect("/dashboard/developer");
-  }
 
   if (!user) {
     return (

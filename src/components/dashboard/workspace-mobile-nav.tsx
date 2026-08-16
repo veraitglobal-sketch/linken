@@ -17,11 +17,11 @@ export function WorkspaceMobileNav({
 }: Props) {
   const items = partnerMode
     ? ([
+        ["/dashboard", "Home"] as const,
         ["/dashboard/developer", "Earnings"] as const,
         ...(companySlug
           ? [[`/c/${companySlug}`, "Profile"] as const]
           : []),
-        ["/dashboard/billing", "Billing"] as const,
       ] as const)
     : ([
         ...(companySlug

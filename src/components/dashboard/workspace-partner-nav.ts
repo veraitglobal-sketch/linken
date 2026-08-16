@@ -1,15 +1,26 @@
 import {
   IconBilling,
+  IconExternal,
+  IconHome,
   IconKey,
+  IconSettings,
   IconShield,
   IconTeam,
 } from "@/components/dashboard/workspace-icons";
 import { IconDeveloper } from "@/components/dashboard/workspace-nav-extra-icons";
 import type { NavItem } from "@/components/dashboard/workspace-nav-types";
 
-/** Partner workspace — earnings book, not the company operate shell. */
+/** Partner workspace — Home first; Earnings is a destination, not a trap. */
 export function partnerPrimaryNav(companySlug?: string | null): NavItem[] {
   return [
+    {
+      href: "/dashboard",
+      label: "Home",
+      icon: IconHome,
+      match: "exact",
+      companyOnly: true,
+      section: "settings",
+    },
     {
       href: "/dashboard/developer",
       label: "Earnings",
@@ -23,7 +34,7 @@ export function partnerPrimaryNav(companySlug?: string | null): NavItem[] {
           {
             href: `/c/${companySlug}`,
             label: "Public profile",
-            icon: IconShield,
+            icon: IconExternal,
             match: "prefix" as const,
             companyOnly: true,
             section: "settings" as const,
@@ -66,7 +77,7 @@ export function partnerMoreNav(): NavItem[] {
     {
       href: "/dashboard/settings",
       label: "Settings",
-      icon: IconBilling,
+      icon: IconSettings,
       companyOnly: true,
       section: "settings",
     },
