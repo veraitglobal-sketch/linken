@@ -8,8 +8,9 @@ export type CommissionTotals = {
   currency: string;
 };
 
-export type { ReferredClientRow } from "@/features/commissions/types";
+export type { ReferredClientRow, CommissionMonthPoint } from "@/features/commissions/types";
 export { getReferredClients } from "@/features/commissions/referred-clients";
+export { getCommissionMonthSeries } from "@/features/commissions/series";
 
 function monthStartIso(now = new Date()): string {
   return new Date(

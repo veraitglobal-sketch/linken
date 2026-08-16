@@ -7,3 +7,11 @@ export type ReferredClientRow = {
   monthlyCommissionCents: number;
   installedVariants: string[];
 };
+
+export type CommissionMonthPoint = {
+  /** YYYY-MM */
+  key: string;
+  label: string;
+  cents: number;
+  euros: number;
+};

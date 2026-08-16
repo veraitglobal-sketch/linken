@@ -8,6 +8,7 @@ import {
   getCommissionTotals,
   getReferredClients,
 } from "@/features/commissions/queries";
+import { getCommissionMonthSeries } from "@/features/commissions/series";
 import { buildPartnerReferralUrl } from "@/features/growth/partner-referral-url";
 import { assertCompanyWorkspace } from "@/features/workspace/company-gate";
 import { getSiteUrl } from "@/lib/site";
@@ -53,9 +54,10 @@ export default async function DeveloperPartnersPage() {
     buildPartnerReferralUrl(siteUrl, company.slug) ??
     `${siteUrl}/onboarding?ref=${company.slug}`;
 
-  const [totals, clients] = await Promise.all([
+  const [totals, clients, series] = await Promise.all([
     getCommissionTotals(company.id),
     getReferredClients(company.id),
+    getCommissionMonthSeries(company.id),
   ]);
 
   return (
@@ -64,6 +66,7 @@ export default async function DeveloperPartnersPage() {
       referralUrl={referralUrl}
       siteUrl={siteUrl}
       totals={totals}
+      series={series}
       clients={clients}
     />
   );

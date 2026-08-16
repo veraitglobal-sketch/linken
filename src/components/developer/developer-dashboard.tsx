@@ -3,8 +3,10 @@ import { WorkspaceCard, WorkspacePage } from "@/components/dashboard/workspace-p
 import { DeveloperClients } from "@/components/developer/developer-clients";
 import { DeveloperEarnings } from "@/components/developer/developer-earnings";
 import { DeveloperGapList } from "@/components/developer/developer-gap-list";
+import { DeveloperProgress } from "@/components/developer/developer-progress";
 import { DeveloperReferralLink } from "@/components/developer/developer-referral-link";
 import type { CommissionTotals } from "@/features/commissions/queries";
+import type { CommissionMonthPoint } from "@/features/commissions/types";
 import type { ReferredClientRow } from "@/features/commissions/types";
 
 type Props = {
@@ -12,6 +14,7 @@ type Props = {
   referralUrl: string;
   siteUrl: string;
   totals: CommissionTotals;
+  series: CommissionMonthPoint[];
   clients: ReferredClientRow[];
 };
 
@@ -20,6 +23,7 @@ export function DeveloperDashboard({
   referralUrl,
   siteUrl,
   totals,
+  series,
   clients,
 }: Props) {
   const paying = clients.filter((c) => c.plan !== "free");
@@ -33,6 +37,12 @@ export function DeveloperDashboard({
     >
       <div className="mx-auto max-w-3xl space-y-8">
         <DeveloperEarnings totals={totals} />
+        <DeveloperProgress
+          series={series}
+          currency={totals.currency || "eur"}
+          payingCount={paying.length}
+          freeCount={free.length}
+        />
         <DeveloperReferralLink url={referralUrl} />
         <DeveloperClients clients={paying} siteUrl={siteUrl} />
         <DeveloperGapList clients={free} siteUrl={siteUrl} />
@@ -44,7 +54,7 @@ export function DeveloperDashboard({
               </p>
               <p className="mx-auto mt-2 max-w-sm text-[12px] leading-relaxed text-muted">
                 Share your referral link. When someone creates a company from
-                it, they appear here.
+                it, they appear here — commission starts when they pay.
               </p>
               <Link
                 href={`/c/${companySlug}`}
