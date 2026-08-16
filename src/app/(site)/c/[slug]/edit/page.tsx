@@ -113,7 +113,14 @@ export default async function CompanyEditPage({ params, searchParams }: Props) {
 
   if (loadError) {
     console.error("[CompanyEditPage] load", slug, loadError.message);
-    throw new Error(`Could not load company: ${loadError.message}`);
+    return (
+      <ProfileEditGate
+        title="Could not load profile"
+        body="We could not load the fields for this company. Try again in a moment."
+        href={`/c/${slug}`}
+        cta="View profile"
+      />
+    );
   }
   if (!full) {
     return (
