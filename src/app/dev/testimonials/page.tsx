@@ -47,6 +47,7 @@ function Stage({
   width,
   dark = false,
   stage,
+  checker = false,
 }: {
   title: string;
   note: string;
@@ -55,6 +56,8 @@ function Stage({
   dark?: boolean;
   /** Explicit host ground, for checking a translucent fill on a mid tone. */
   stage?: string;
+  /** Checkerboard instead of a colour — transparency you can see, not measure. */
+  checker?: boolean;
 }) {
   return (
     <section className="space-y-3">
@@ -69,7 +72,20 @@ function Stage({
           the fit filter and the placement rail. */}
       <div
         className="rounded-card p-6"
-        style={{ background: stage ?? (dark ? "#081412" : "#ffffff"), maxWidth: width }}
+        style={
+          checker
+            ? {
+                maxWidth: width,
+                /* The classic transparency checkerboard. Anything the widget
+                   paints hides it; anything that stays see-through does not. */
+                backgroundImage:
+                  "linear-gradient(45deg, #d8ded9 25%, transparent 25%), linear-gradient(-45deg, #d8ded9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #d8ded9 75%), linear-gradient(-45deg, transparent 75%, #d8ded9 75%)",
+                backgroundSize: "16px 16px",
+                backgroundPosition: "0 0, 0 8px, 8px -8px, -8px 0",
+                backgroundColor: "#f3f5f3",
+              }
+            : { background: stage ?? (dark ? "#081412" : "#ffffff"), maxWidth: width }
+        }
       >
         <EmbedTestimonials
           items={ITEMS}

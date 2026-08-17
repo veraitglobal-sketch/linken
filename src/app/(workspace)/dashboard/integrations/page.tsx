@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { IntegrationsFlash } from "@/components/integrations/integrations-flash";
-import { SchedulingIntegrations } from "@/components/integrations/scheduling-integrations";
-import { SlackIntegrations } from "@/components/integrations/slack-integrations";
+import { IntegrationsGrid } from "@/components/integrations/integrations-grid";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { getSchedulingForActiveCompany } from "@/features/scheduling/queries";
@@ -108,10 +107,11 @@ export default async function DashboardIntegrationsPage({
         saved={params.saved}
         disconnected={params.disconnected}
       />
-      <div className="space-y-8">
-        <SlackIntegrations companyName={company.name} slack={slack} />
-        <SchedulingIntegrations scheduling={scheduling} />
-      </div>
+      <IntegrationsGrid
+        companyName={company.name}
+        slack={slack}
+        scheduling={scheduling}
+      />
     </WorkspacePage>
   );
 }

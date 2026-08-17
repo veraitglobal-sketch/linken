@@ -20,10 +20,26 @@ import { cn } from "@/lib/cn";
  * configurator uses, so the snippet, the height and the preview source cannot
  * drift from what the gallery hands out.
  *
- * The dark stage is deliberate and is the only dark thing on the page. This
- * embed lands on somebody else's site, and the one check nobody performs unless
- * the interface performs it for them is what it looks like on a dark ground.
+ * The ground defaults to the checkerboard. This embed lands on somebody else's
+ * page, and the two checks nobody performs unless the interface performs them
+ * are what it looks like on a dark ground and whether it is painting a white
+ * rectangle behind itself.
  */
+
+/**
+ * What sits behind the widget while they judge it.
+ *
+ * `null` is the checkerboard `PreviewStage` already draws, and it is the default
+ * on purpose: the embed paints nothing behind the cards, and the only way to be
+ * sure of that is to see a ground it cannot hide. A white stage looks identical
+ * whether the widget is transparent or painting white, which is exactly the
+ * mistake that reaches a customer's page.
+ */
+const GROUNDS: { label: string; color: string | null; title: string }[] = [
+  { label: "Transparent", color: null, title: "Checkerboard — shows through wherever the embed paints nothing" },
+  { label: "White", color: "#ffffff", title: "A light host page" },
+  { label: "Dark", color: "#081412", title: "A dark host page" },
+];
 
 type Props = {
   widget: WidgetDefinition;
@@ -65,30 +81,52 @@ export function TestimonialsEmbedPanel({
             the snippet never changes.
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-1 rounded-full border border-line p-0.5">
-          {(["light", "dark"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => studio.setTheme(t)}
-              aria-pressed={studio.theme === t}
-              className={cn(
-                "h-8 rounded-full px-3 text-[11px] font-semibold capitalize transition-colors",
-                studio.theme === t
-                  ? "bg-navy text-on-navy"
-                  : "text-muted hover:text-ink",
-              )}
-            >
-              {t}
-            </button>
-          ))}
+        {/* Two different questions, kept apart because conflating them is how
+            people ship a widget that looks right in the dashboard and wrong on
+            their site: the theme is what the widget itself is, the ground is
+            what happens to be behind it. */}
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1 rounded-full border border-line p-0.5">
+            {(["light", "dark"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => studio.setTheme(t)}
+                aria-pressed={studio.theme === t}
+                className={cn(
+                  "h-8 rounded-full px-3 text-[11px] font-semibold capitalize transition-colors",
+                  studio.theme === t
+                    ? "bg-navy text-on-navy"
+                    : "text-muted hover:text-ink",
+                )}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-1 rounded-full border border-line p-0.5">
+            {GROUNDS.map((g) => (
+              <button
+                key={g.label}
+                type="button"
+                onClick={() => studio.setStageBg(g.color)}
+                aria-pressed={studio.stageBg === g.color}
+                title={g.title}
+                className={cn(
+                  "h-8 rounded-full px-3 text-[11px] font-semibold transition-colors",
+                  studio.stageBg === g.color
+                    ? "bg-navy text-on-navy"
+                    : "text-muted hover:text-ink",
+                )}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
-      <PreviewStage
-        color={studio.theme === "dark" ? "#081412" : null}
-        className="!p-5"
-      >
+      <PreviewStage color={studio.stageBg} className="!p-5">
         <LazyEmbedPreview
           src={studio.previewSrc}
           height={studio.height}
