@@ -48,6 +48,10 @@ type Props = {
   isPro: boolean;
   /** A verified website domain, needed for the per-company frame-ancestors. */
   domainReady: boolean;
+  /** The shape being previewed — not necessarily the saved one. */
+  layout: string;
+  /** False while previewing a shape they have not applied to their site yet. */
+  isSaved: boolean;
 };
 
 export function TestimonialsEmbedPanel({
@@ -56,8 +60,10 @@ export function TestimonialsEmbedPanel({
   slug,
   isPro,
   domainReady,
+  layout,
+  isSaved,
 }: Props) {
-  const studio = useWidgetStudio(widget, siteUrl, slug);
+  const studio = useWidgetStudio(widget, siteUrl, slug, layout);
   const [copied, setCopied] = useState(false);
   const proLocked = Boolean(widget.pro && !isPro);
 
@@ -77,8 +83,9 @@ export function TestimonialsEmbedPanel({
             On your website
           </p>
           <p className="mt-1 text-[13px] text-ink-soft">
-            Live preview of your own records. Reorder below and this updates —
-            the snippet never changes.
+            {isSaved
+              ? "Your own records, at the size they render on your site."
+              : "Previewing a shape you have not applied yet — the snippet below is for this one."}
           </p>
         </div>
         {/* Two different questions, kept apart because conflating them is how

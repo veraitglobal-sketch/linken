@@ -14,6 +14,9 @@ export function useWidgetStudio(
   widget: WidgetDefinition,
   siteUrl: string,
   slug: string,
+  /* Testimonials only: preview a shape without saving it first. Optional, so
+     the widgets modal that also uses this hook is untouched. */
+  layout?: string,
 ) {
   const [theme, setTheme] = useState<WidgetTheme>("light");
   const [widthMode, setWidthMode] = useState<"100%" | "px">("100%");
@@ -33,8 +36,9 @@ export function useWidgetStudio(
         theme,
         width: widthMode === "100%" ? undefined : widthPx,
         preview: true,
+        layout,
       }),
-    [siteUrl, slug, widget.id, theme, widthMode, widthPx],
+    [siteUrl, slug, widget.id, theme, widthMode, widthPx, layout],
   );
 
   const snippet = useMemo(
@@ -45,8 +49,9 @@ export function useWidgetStudio(
         variant: widget.id,
         theme,
         width,
+        layout,
       }),
-    [siteUrl, slug, widget.id, theme, width],
+    [siteUrl, slug, widget.id, theme, width, layout],
   );
 
   const tokens = useMemo(() => tokenizeShell(snippet), [snippet]);

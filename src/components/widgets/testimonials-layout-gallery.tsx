@@ -74,7 +74,12 @@ function groupsWithRest() {
 }
 
 type Props = {
+  /** The shape currently in the preview above. */
   layout: TestimonialLayout;
+  /** The shape actually live on their site. */
+  savedLayout: TestimonialLayout;
+  /** Show a shape in the preview without committing to it. */
+  onPreview: (next: TestimonialLayout) => void;
   /** How many of the included records fit each layout's character cap. */
   fitCounts: Record<TestimonialLayout, number>;
   includedCount: number;
@@ -86,6 +91,8 @@ type Props = {
 
 export function TestimonialsLayoutGallery({
   layout,
+  savedLayout,
+  onPreview,
   fitCounts,
   includedCount,
   siteUrl,
@@ -116,8 +123,10 @@ export function TestimonialsLayoutGallery({
     window.setTimeout(() => setCopied(null), 2000);
   }
 
-  function pick(next: TestimonialLayout) {
-    if (next === layout) return;
+  /* Clicking previews. It used to save immediately, which meant every idle
+     click changed what was live on the customer's site — and, because the
+     preview URL never carried the layout, without showing anything for it. */
+  function apply(next: TestimonialLayout) {
     startTransition(async () => {
       await saveTestimonialLayout(next);
       router.refresh();
@@ -127,7 +136,7 @@ export function TestimonialsLayoutGallery({
   return (
     <div className={cn(pending && "pointer-events-none opacity-70")}>
       <p className="text-[11px] font-semibold tracking-[0.14em] text-plus uppercase">
-        The shape on your site
+        Shapes · click to preview above
       </p>
       <div className="mt-3 space-y-4">
         {groupsWithRest().map((group) => {
@@ -167,7 +176,7 @@ export function TestimonialsLayoutGallery({
                           swallow the click that selects. */}
                       <button
                         type="button"
-                        onClick={() => pick(id)}
+                        onClick={() => onPreview(id)}
                         aria-pressed={active}
                         className="rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                       >
@@ -188,11 +197,24 @@ export function TestimonialsLayoutGallery({
                           </p>
                         )}
                       </button>
+                      {id === savedLayout ? (
+                        <p className="mt-2 text-[10.5px] font-semibold tracking-[0.1em] text-[#1f7a56] uppercase">
+                          Live on your site
+                        </p>
+                      ) : active ? (
+                        <button
+                          type="button"
+                          onClick={() => apply(id)}
+                          className="mt-2 h-8 rounded-full bg-navy text-[10.5px] font-semibold text-on-navy transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                        >
+                          Use this shape
+                        </button>
+                      ) : null}
                       {active && isPro ? (
                         <button
                           type="button"
                           onClick={() => copySnippet(id, shown)}
-                          className="mt-2 h-8 rounded-full bg-navy text-[10.5px] font-semibold text-on-navy transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                          className="mt-1.5 h-8 rounded-full border border-line text-[10.5px] font-semibold text-ink transition-colors hover:bg-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                         >
                           {copied === id ? "Copied" : "Copy code"}
                         </button>
