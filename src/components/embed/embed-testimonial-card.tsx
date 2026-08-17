@@ -73,6 +73,30 @@ export function EmbedTestimonialCard({
         color: "var(--hs-tm-text)",
       }}
     >
+      {/* The evidence, stamped at the head of the card.
+          It sat under the attribution and made that block three lines deep under
+          a 35px circle — bottom-heavy, and the reference it is being measured
+          against has exactly two. Up here the bottom clears to name + company,
+          and the line that actually distinguishes this from a review site is the
+          first thing read rather than the smallest thing on the card. */}
+      {quiet && item.provenanceLine ? (
+        <p
+          className="hs-tm-attribution hs-tm-seal m-0 mb-3 leading-none opacity-70"
+          style={{
+            color: "var(--hs-tm-muted)",
+            fontSize: "max(11px, 0.62em)",
+            letterSpacing: "0.01em",
+          }}
+        >
+          <VerifiedBadge
+            size={12}
+            title="Confirmed on Hansala"
+            className="mr-1 inline-block align-[-0.2em]"
+          />
+          {item.provenanceLine}
+        </p>
+      ) : null}
+
       {!compact && !quiet ? (
         <span
           aria-hidden
@@ -128,20 +152,43 @@ export function EmbedTestimonialCard({
               hairline, which gave a card three registers where the body only
               needs to be answered by one. */}
           <div className="flex items-start gap-3">
+            {/* The author company's own logo when it has uploaded one, initials
+                when it has not. Never a stock face and never a generated one:
+                the record carries no likeness, and inventing one here would put
+                a fabricated person beside a real quote. */}
             <span
               aria-hidden
-              className="grid shrink-0 place-items-center rounded-full font-semibold"
+              className="grid shrink-0 place-items-center overflow-hidden rounded-full font-semibold"
               style={{
                 width: "2.3em",
                 height: "2.3em",
-                /* Neutral, not mint. A wall shows a dozen of these at once, and
-                   a dozen mint discs would make the accent the loudest thing on
-                   a page that is not ours. Mint is the mark, once, at the right. */
-                background: "var(--hs-tm-border)",
-                color: "var(--hs-tm-muted)",
+                /* Tinted from the accent, not flat grey.
+                   Clerk's equivalent circle is a photograph, and most of the
+                   life in that wall comes from twelve small patches of real
+                   colour. We have no photograph and will not invent one — but a
+                   grey disc with grey initials is dead, and twelve of them make
+                   the wall read as a spreadsheet.
+                   Fourteen per cent is a tint, not a disc: the earlier version
+                   filled these solid, which did make the accent the loudest
+                   thing on the page. And the colour is the host's own
+                   `--hs-tm-accent`, so on someone else's site the circles pick
+                   up their palette rather than ours. */
+                background: "color-mix(in srgb, var(--hs-tm-accent) 20%, transparent)",
+                color: "var(--hs-tm-accent)",
               }}
             >
-              <span className="text-[0.62em] tracking-[0.02em]">{monogram(item)}</span>
+              {item.authorCompany?.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={item.authorCompany.logoUrl}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="text-[0.62em] tracking-[0.02em]">{monogram(item)}</span>
+              )}
             </span>
 
             <div className="hs-tm-attribution min-w-0 flex-1">
@@ -153,8 +200,14 @@ export function EmbedTestimonialCard({
               </p>
               {(item.authorRole || item.authorCompany?.name) && (
                 <p
-                  className="m-0 mt-0.5 text-[0.8em] leading-snug"
-                  style={{ color: "var(--hs-tm-muted)" }}
+                  className="m-0 mt-0.5 leading-snug"
+                  /* Floored in px. Everything on this card is sized in `em` so it
+                     tracks the host's own type, but `em` alone means a host at
+                     15px renders this at 12 and the provenance below at 9.6 —
+                     unreadable on a phone, and the provenance is the one line
+                     that has to be read. `max()` keeps the host's scaling upward
+                     and stops it collapsing downward. */
+                  style={{ color: "var(--hs-tm-muted)", fontSize: "max(12.5px, 0.8em)" }}
                 >
                   {/* Company first, then role — "Stripe, CEO", not "CEO · Stripe".
                       The company is the part a reader is placing; the role
@@ -177,31 +230,6 @@ export function EmbedTestimonialCard({
               The date is gone with it. `provenanceLine` is the evidence and is
               non-negotiable; the month a record was published is neither, and it
               was the thing tipping the line over the edge. */}
-          {item.provenanceLine ? (
-            <p
-              /* Set to recede. A real provenance line runs to about sixty
-                 characters — "Confirmed by the client · nordwerk-holding.com ·
-                 domain verified" is what `provenance.ts` generates, not example
-                 verbosity — and at 346px it takes two lines however it is set.
-                 So it is allowed to take two, quietly: smaller than the role,
-                 tighter, and lighter, so the block still reads as name, then
-                 company, then a caption. */
-              className="hs-tm-attribution hs-tm-seal m-0 mt-2.5 text-[0.64em] leading-[1.45] opacity-80"
-              /* When it does take two lines, it must not leave "verified" alone
-                 on the second. `pretty` only touches the last lines, so nothing
-                 above the break moves. */
-              style={{ color: "var(--hs-tm-muted)", textWrap: "pretty" }}
-            >
-              {/* Inline flow, not flex — this sits inside the guard, which
-                  reverts `display` and would drop a flex row to a block. */}
-              <VerifiedBadge
-                size={12}
-                title="Confirmed on Hansala"
-                className="mr-1 inline-block align-[-0.15em]"
-              />
-              {item.provenanceLine}
-            </p>
-          ) : null}
         </footer>
       ) : (
       <footer className={cn("hs-tm-attribution mt-4", compact && "mt-2.5")}>

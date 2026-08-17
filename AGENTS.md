@@ -44,8 +44,8 @@ conversion, and visual preference.
 The embeds are the distribution channel. They live on customer sites, so:
 
 - **A widget carries no brand of its own except the check mark.** No Hansala colours, no
-  gradients, no our-radii. Type, colour and spacing inherit from the host or are neutral
-  and configurable. The only place mint may appear is the verification mark.
+  gradients, no our-radii. Type is Geist — already in the iframe. Colour and spacing
+  inherit from the host or are configurable. "Match my site" can still copy the host font. The only place mint may appear is the verification mark.
 - **Never print a plan tier.** No "Pro" badge on a customer's site — it tells their
   visitor the badge was paid for rather than earned.
 - **The verify line and mark cannot be hidden**, including by custom CSS.
@@ -60,8 +60,8 @@ The embeds are the distribution channel. They live on customer sites, so:
 
 Taken from the live product — check the running site before assuming otherwise.
 
-- **Display type is Plus Jakarta Sans** — headlines *and* figures. There is no serif in
-  headlines. Newsreader exists but is not the display face.
+- **Display type is Geist** — headlines *and* figures. Body is Geist. Micro-labels
+  are Inter. Code is Geist Mono. There is no serif in headlines. Widgets use Geist too.
 - Tokens live in `src/app/globals.css`. No new accent colours.
 - Surfaces: `#0e1f1c` on `#f0f2f0`; hero radius 28–32px, cards 20–24px, pills 99px.
 - Micro-labels: uppercase, ~11px, `tracking-[0.16em]`, muted.

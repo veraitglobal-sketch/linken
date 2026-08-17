@@ -130,7 +130,7 @@ export function TestimonialsThemeControls({ theme }: Props) {
           onBlur={(e) => {
             if (e.target.value.trim() !== theme.fontFamily) saveFont(e.target.value);
           }}
-          placeholder='"Inter", system-ui, sans-serif'
+          placeholder='"Geist", ui-sans-serif, sans-serif'
           className="mt-1.5 w-full rounded-xl border border-line bg-paper px-3 py-2 text-[13px]"
         />
       </label>

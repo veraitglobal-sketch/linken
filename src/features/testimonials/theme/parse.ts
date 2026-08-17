@@ -1,4 +1,5 @@
 import {
+  EMBED_UI_FONT,
   PRESET_TOKENS,
   TESTIMONIAL_PRESETS,
   type TestimonialAlign,
@@ -44,10 +45,15 @@ function parseColumns(
   return raw === 2 || raw === 3 || raw === 4 ? raw : fallback;
 }
 
+const LEGACY_SYSTEM_STACK =
+  'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+
 function parseFontFamily(raw: unknown, fallback: string): string {
   if (typeof raw !== "string") return fallback;
   const v = raw.trim().slice(0, 200);
   if (!v || /[<>{}]/.test(v)) return fallback;
+  const first = v.split(",")[0]?.trim().replace(/^['"]|['"]$/g, "") ?? "";
+  if (/^Newsreader$/i.test(first) || v === LEGACY_SYSTEM_STACK) return EMBED_UI_FONT;
   return v;
 }
 

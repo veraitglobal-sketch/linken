@@ -52,11 +52,18 @@ export const PRESET_LABELS: Record<TestimonialPreset, string> = {
   dark: "Dark",
 };
 
-/** Host-fit presets — Hansala quality without fighting the parent brand. */
+/** Same face as Hansala. The embed iframe already loads Geist via next/font. */
+export const EMBED_UI_FONT = '"Geist", ui-sans-serif, sans-serif';
+
+/**
+ * Host-fit presets — Geist on the customer's page, not a serif and not the
+ * host OS. Colour and radius stay neutral. "Match my site" still copies the
+ * host font when they ask.
+ */
 export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = {
   minimal: {
     preset: "minimal",
-    fontFamily: '"Newsreader", Georgia, "Times New Roman", serif',
+    fontFamily: EMBED_UI_FONT,
     fontSize: 17,
     lineHeight: 1.4,
     textColor: "#0d1210",
@@ -75,7 +82,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
   },
   editorial: {
     preset: "editorial",
-    fontFamily: '"Newsreader", Georgia, "Times New Roman", serif',
+    fontFamily: EMBED_UI_FONT,
     fontSize: 18,
     lineHeight: 1.38,
     textColor: "#0d1210",
@@ -94,7 +101,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
   },
   card: {
     preset: "card",
-    fontFamily: '"Newsreader", Georgia, "Times New Roman", serif',
+    fontFamily: EMBED_UI_FONT,
     fontSize: 16,
     lineHeight: 1.4,
     textColor: "#0d1210",
@@ -113,7 +120,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
   },
   bordered: {
     preset: "bordered",
-    fontFamily: '"Newsreader", Georgia, "Times New Roman", serif',
+    fontFamily: EMBED_UI_FONT,
     fontSize: 16,
     lineHeight: 1.4,
     textColor: "#0d1210",
@@ -132,7 +139,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
   },
   glass: {
     preset: "glass",
-    fontFamily: '"Newsreader", Georgia, "Times New Roman", serif',
+    fontFamily: EMBED_UI_FONT,
     fontSize: 16,
     lineHeight: 1.4,
     textColor: "#0d1210",
@@ -151,7 +158,7 @@ export const PRESET_TOKENS: Record<TestimonialPreset, TestimonialThemeTokens> = 
   },
   dark: {
     preset: "dark",
-    fontFamily: '"Newsreader", Georgia, "Times New Roman", serif',
+    fontFamily: EMBED_UI_FONT,
     fontSize: 16,
     lineHeight: 1.4,
     textColor: "#f1f3f1",

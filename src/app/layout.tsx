@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { geist, geistMono, inter } from "@/app/fonts";
 import { StyleRescue } from "@/components/layout/style-rescue";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-ui",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-/* Newsreader is not loaded here on purpose. It is a widget-theme face, and
-   the embed fetches it itself via `googleFontStylesheet` — carrying it in the
-   app bundle downloaded a font no Hansala page ever rendered. */
+/* Newsreader is not loaded here. Widgets use Geist from this layout; a host
+   that wants a different face sets it in the testimonial studio. */
 
 const title = "Hansala — Mutually Confirmed Project Networks";
 const description =
@@ -87,7 +79,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${jakarta.variable} h-full antialiased`}
+      className={`${geist.variable} ${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
         <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />

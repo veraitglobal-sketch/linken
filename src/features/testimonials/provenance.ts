@@ -44,17 +44,27 @@ export function formatTestimonialProvenance(input: {
   authorDomainVerified: boolean;
   authorIsFreeProvider: boolean;
 }): string {
+  /* "Confirmed by the client" was carried at the head of every one of these and
+     is exactly what the check mark beside the line already says, so it is gone —
+     roughly forty per cent of the string, and the difference between fitting on
+     one line and taking two on a 340px card.
+     What could not go is the part that separates a strong source from a weak
+     one. A domain-verified record and one confirmed from a gmail address must
+     never render alike; that distinction is the product, so each branch still
+     states its own evidence. The wording stays factual — "private address", not
+     "unverified" — and the standalone case still says plainly that nobody
+     confirmed it. */
   if (input.source === "standalone") {
     return "Added by the provider · not confirmed";
   }
   if (input.authorIsFreeProvider && input.authorDomain) {
-    return `Confirmed from a private address (${input.authorDomain})`;
+    return `Private address (${input.authorDomain})`;
   }
   if (input.authorDomainVerified && input.authorDomain) {
-    return `Confirmed by the client · ${input.authorDomain} · domain verified`;
+    return `${input.authorDomain} · domain verified`;
   }
   if (input.authorDomain) {
-    return `Confirmed by the client · ${input.authorDomain}`;
+    return input.authorDomain;
   }
   return "Confirmed by the client";
 }

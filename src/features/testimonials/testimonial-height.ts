@@ -4,6 +4,14 @@ import { TESTIMONIAL_LAYOUTS } from "@/features/testimonials/settings";
 /** The masked window the columns drift behind. */
 export const WALL_WINDOW = 560;
 /**
+ * The same window once the container is down to a single column.
+ *
+ * 560 plus the header is 676, which on a 844px phone is eighty per cent of the
+ * screen given over to one drifting column — the reader cannot see what is above
+ * or below it, so the wall stops reading as part of a page and becomes the page.
+ */
+export const WALL_WINDOW_NARROW = 400;
+/**
  * The "Hansala / Verified" lockup row above the window, outside the mask.
  *
  * 44 of it is the lockup; the rest is the gap down to the first card. At 48 the

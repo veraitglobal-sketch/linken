@@ -45,8 +45,10 @@ code still hardcodes pixels; new work should not add to it.
 
 ## Type
 
-One family: **Plus Jakarta Sans** via `--font-ui`. `font-display` and
-`font-sans` both resolve to it. No serif in Hansala's own chrome.
+**Geist** via `--font-ui` for body, headlines, figures, and widgets
+(`font-sans` / `font-display`). **Inter** via `--font-label` for micro-labels.
+**Geist Mono** via `--font-mono` for code. No serif in Hansala chrome or as a
+widget default. "Match my site" can still copy a host font.
 
 | Role | Size |
 |---|---|

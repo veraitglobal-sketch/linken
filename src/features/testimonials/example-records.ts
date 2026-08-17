@@ -1,3 +1,4 @@
+import { formatTestimonialProvenance } from "@/features/testimonials/provenance";
 import type { PublicTestimonial } from "@/features/testimonials/types";
 
 /**
@@ -31,7 +32,7 @@ export const EXAMPLE_TESTIMONIALS: PublicTestimonial[] = [
     "Elena Vogt",
     "Project Director",
     "Nordwerk Holding",
-    "Confirmed by the client · nordwerk-holding.com · domain verified",
+    "nordwerk-holding.com",
   ),
   record(
     "b",
@@ -39,7 +40,7 @@ export const EXAMPLE_TESTIMONIALS: PublicTestimonial[] = [
     "Example Author",
     "Head of Delivery",
     "Example Build GmbH",
-    "Confirmed by the client · example-build.de · domain verified",
+    "example-build.de",
   ),
   record(
     "c",
@@ -47,9 +48,8 @@ export const EXAMPLE_TESTIMONIALS: PublicTestimonial[] = [
     "Example Author",
     "Managing Partner",
     "Example Elektro",
-    /* Factual, never judgemental — AGENTS.md. A free-provider address is stated
-       as what it is and scores zero; it is never called unverified. */
-    "Confirmed from a gmail.com address",
+    "gmail.com",
+    true,
   ),
   record(
     "d",
@@ -57,7 +57,7 @@ export const EXAMPLE_TESTIMONIALS: PublicTestimonial[] = [
     "Example Author",
     "Operations Lead",
     "Example Logistik",
-    "Confirmed by the client · example-logistik.de · domain verified",
+    "example-logistik.de",
   ),
   record(
     "e",
@@ -65,7 +65,7 @@ export const EXAMPLE_TESTIMONIALS: PublicTestimonial[] = [
     "Example Author",
     "Technical Director",
     "Example Ingenieure",
-    "Confirmed by the client · example-ingenieure.de · domain verified",
+    "example-ingenieure.de",
   ),
   record(
     "f",
@@ -73,7 +73,8 @@ export const EXAMPLE_TESTIMONIALS: PublicTestimonial[] = [
     "Example Author",
     "Founder",
     "Example Werkstatt",
-    "Confirmed from a gmail.com address",
+    "gmail.com",
+    true,
   ),
 ];
 
@@ -83,7 +84,8 @@ function record(
   authorName: string,
   authorRole: string,
   company: string,
-  provenanceLine: string,
+  domain: string | null,
+  freeProvider = false,
 ): PublicTestimonial {
   return {
     id: `example-${id}`,
@@ -93,10 +95,22 @@ function record(
     authorCompany: {
       name: company,
       slug: company.toLowerCase().replace(/\s+/g, "-"),
+      /* No logo, deliberately. These companies do not exist, so there is no
+         logo of theirs to show — the card falls back to initials, which is also
+         what a real record looks like before that company uploads one. */
+      logoUrl: null,
     },
     source: "reference",
     publishedAt: "2025-09-12T14:30:00.000Z",
     profileUrl: "/c/example-architecture",
-    provenanceLine,
+    /* Built by the real formatter, never typed out. A fixture with its own
+       hand-written provenance string silently stops matching the product the
+       first time the wording changes — which it just did. */
+    provenanceLine: formatTestimonialProvenance({
+      source: "reference",
+      authorDomain: domain,
+      authorDomainVerified: !!domain && !freeProvider,
+      authorIsFreeProvider: freeProvider,
+    }),
   };
 }

@@ -114,10 +114,21 @@ function TestimonialsStudioInner({ entries: initial, layout, limit, theme }: Pro
         </p>
       ) : (
         <ul className={`divide-y divide-line ${pending ? "opacity-70" : ""}`}>
-          {rows.map((entry) => (
+          {rows.map((entry, i) => (
             <TestimonialsStudioRow
               key={entry.id}
               entry={entry}
+              /* The capacity, drawn.
+                 The cut already existed in the data — `belowCut` in
+                 `queries.ts` — but it showed only as a dimmed row with a small
+                 grey caption, so nobody could see where the widget stops. This
+                 is the same fact as a line across the list: above it appears on
+                 the customer's site, below it does not until they reorder.
+                 Drawn before the first row past the cut, and only when there is
+                 something past it — a line at the end of a short list would be
+                 announcing a limit nobody has reached. */
+              cutBefore={entry.included && entry.belowCut && !rows[i - 1]?.belowCut}
+              cutLabel={`${Math.min(includedCount, limit)} of ${includedCount} shown · the rest stay on your profile`}
               onDragStart={() => onDragStart(entry.id)}
               onDrop={() => onDrop(entry.id)}
             />

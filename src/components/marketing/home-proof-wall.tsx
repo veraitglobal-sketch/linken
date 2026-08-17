@@ -35,9 +35,15 @@ type Props = {
 const WALL_THEME: TestimonialThemeTokens = {
   ...PRESET_TOKENS.card,
   fontFamily: "var(--font-ui)",
-  fontSize: 15,
-  radius: 20,
-  spacing: 20,
+  /* 16, not 15. Clerk's body sets at 16 and the extra pixel is most of why
+     their card reads as something to read rather than something to scan. */
+  fontSize: 16,
+  /* 14, not 20. A 20px radius on a 340px card reads soft and friendly; the
+     crispness that reads as premium comes from a tighter corner against a
+     half-pixel ring. The `card` preset already ships 14 — the override to 20
+     was mine, borrowed from Hansala's own big surfaces, where it belongs. */
+  radius: 14,
+  spacing: 22,
   /* The shadow's half-pixel ring is the edge now. Keeping the border as well
      would draw two, a hairline inside a hairline. */
   borderWidth: 0,
@@ -57,7 +63,20 @@ const FEATURE_THEME: TestimonialThemeTokens = {
 
 export function HomeProofWall({ feature, wall, profileUrl }: Props) {
   return (
-    <HomeSection tone="mute">
+    /* The ground, stated locally.
+     *
+     * `tone="mute"` resolves to `--mute`, and `--mute` and `--paper` are both
+     * `#ffffff` in the live `globals.css` — so the band does not exist and white
+     * cards sit on white with a hairline between them. No shadow rescues that;
+     * the reason a wall of cards reads as expensive elsewhere is a near-white
+     * ground under pure-white cards, and we had one surface doing both jobs.
+     *
+     * `#f4f6f4` is the design language's own ground, not a new colour: the
+     * reference records `--paper: #f0f2f0` and `--mute: #e8ebe8`, which the
+     * tokens have since drifted away from. Set here rather than globally because
+     * changing `--mute` would restyle every banded section on the site at once —
+     * that is a decision about the whole page, not about this one. */
+    <HomeSection tone="mute" className="!bg-[#f4f6f4]">
       <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)] lg:gap-20">
         <div className="reveal">
           <HomeEyebrow>Written by the other side</HomeEyebrow>
@@ -91,13 +110,17 @@ export function HomeProofWall({ feature, wall, profileUrl }: Props) {
             {/* The glyph the wall cards deliberately do not have. On a card it is
                 ornament repeated forty times; here it is the one signal that the
                 block below is somebody else's voice and not more of our copy. */}
+            {/* Tight to the card below it. The provenance stamp now sits at the
+                head of the card, so the glyph and the stamp both introduce the
+                quote — with air between them they read as two separate openings
+                instead of one. */}
             <span
               aria-hidden
-              className="mt-5 block font-display text-[4.5rem] leading-[0.62] font-medium text-ink/15 select-none"
+              className="mt-4 block font-display text-[4.5rem] leading-[0.44] font-medium text-ink/15 select-none"
             >
               “
             </span>
-            <div className="mt-4">
+            <div className="mt-1">
               <EmbedTestimonialThemeShell theme={FEATURE_THEME}>
                 <EmbedTestimonialCard
                   item={feature}
@@ -134,13 +157,21 @@ export function HomeProofWall({ feature, wall, profileUrl }: Props) {
                  product. Worth a second opinion that mint is spread this thin —
                  AGENTS.md keeps it for the mark and one accent, and this is
                  texture rather than an accent, which is a reading, not a rule. */
+              /* Finer and denser, but more saturated — a smaller dot at a higher
+                 alpha reads as sharper rather than heavier, where a bigger dot
+                 at a low alpha just reads as smudge. The grid drops to 12px so
+                 the texture runs through every gap between cards instead of
+                 only the wide ones.
+                 The tinted layers stay exact multiples of 12 with offsets that
+                 are multiples of 12, so every coloured dot still lands on a node
+                 of the base grid: one grid, some of it in colour. */
               backgroundImage: [
-                "radial-gradient(circle at 1px 1px, rgba(126,184,164,0.5) 1px, transparent 0)",
-                "radial-gradient(circle at 1px 1px, rgba(26,92,81,0.3) 0.9px, transparent 0)",
-                "radial-gradient(circle at 1px 1px, rgba(13,18,16,0.1) 0.8px, transparent 0)",
+                "radial-gradient(circle at 1px 1px, rgba(126,184,164,0.95) 0.75px, transparent 0)",
+                "radial-gradient(circle at 1px 1px, rgba(26,92,81,0.6) 0.7px, transparent 0)",
+                "radial-gradient(circle at 1px 1px, rgba(13,18,16,0.16) 0.6px, transparent 0)",
               ].join(","),
-              backgroundSize: "80px 64px, 112px 96px, 16px 16px",
-              backgroundPosition: "32px 16px, 64px 48px, 0 0",
+              backgroundSize: "60px 48px, 84px 72px, 12px 12px",
+              backgroundPosition: "24px 12px, 48px 36px, 0 0",
               maskImage:
                 "radial-gradient(120% 80% at 50% 50%, #000 35%, transparent 100%)",
               WebkitMaskImage:

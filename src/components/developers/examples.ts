@@ -92,7 +92,7 @@ export function testimonialsExample(siteUrl: string) {
   "layout": "grid",
   "theme": {
     "preset": "minimal",
-    "font_family": "\\"Newsreader\\", Georgia, serif",
+    "font_family": "\\"Geist\\", ui-sans-serif, sans-serif",
     "font_size": 15,
     "text_color": "#0e1f1c",
     "muted_color": "#5c6b68",

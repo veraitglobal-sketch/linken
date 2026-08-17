@@ -5,7 +5,12 @@ import { EmbedTestimonialCard } from "@/components/embed/embed-testimonial-card"
 import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import { useLogoWallActive } from "@/components/embed/use-logo-wall-active";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
-import { WALL_HEADER, WALL_WINDOW } from "@/features/testimonials/testimonial-height";
+import {
+  WALL_HEADER,
+  WALL_LOCKUP,
+  WALL_WINDOW,
+  WALL_WINDOW_NARROW,
+} from "@/features/testimonials/testimonial-height";
 import type { PublicTestimonial } from "@/features/testimonials/types";
 
 /**
@@ -103,8 +108,14 @@ export function EmbedTestimonialsWall({
   themeParam = "light",
 }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const active = useLogoWallActive(rootRef);
+  const onScreen = useLogoWallActive(rootRef);
   const [cols, setCols] = useState(1);
+  /* Every card is a link, and on a phone the reader is trying to hit a target
+     that is sliding away from their thumb. A pointer over the wall stops it —
+     which on touch fires the moment a finger lands, so the tap resolves against
+     something standing still. It resumes when the finger leaves. */
+  const [held, setHeld] = useState(false);
+  const active = onScreen && !held;
 
   useMeasureBeforePaint(() => {
     const el = rootRef.current;
@@ -123,9 +134,17 @@ export function EmbedTestimonialsWall({
   if (!items.length) return null;
 
   const columns = toColumns(items, cols);
+  /* A single column means a narrow container, whatever the viewport says. */
+  const windowHeight = cols === 1 ? Math.min(height, WALL_WINDOW_NARROW) : height;
 
   return (
-    <div ref={rootRef} className="hs-tm-wall relative w-full">
+    <div
+      ref={rootRef}
+      className="hs-tm-wall relative w-full"
+      onPointerEnter={() => setHeld(true)}
+      onPointerLeave={() => setHeld(false)}
+      onPointerCancel={() => setHeld(false)}
+    >
       <style>{KEYFRAMES}</style>
 
       {/* Above the mask, not inside it — a header behind that gradient would be
@@ -136,9 +155,12 @@ export function EmbedTestimonialsWall({
           be safe, because what the rule protects — the mark and the provenance —
           is on every card, guarded, below. This row states it once more at the
           top rather than being the only place it is stated. */}
+      {/* `height` includes the padding, so the row itself is `WALL_LOCKUP` tall
+          and the padding is the gap down to the first card. One constant still
+          drives the iframe height, and the air cannot drift out of sync with it. */}
       <div
-        className="flex items-center justify-between gap-4 pb-3"
-        style={{ height: WALL_HEADER }}
+        className="flex items-center justify-between gap-4"
+        style={{ height: WALL_HEADER, paddingBottom: WALL_HEADER - WALL_LOCKUP }}
       >
         {/* `lg`, not `md`: at 36px the mark inside the seal was a smudge. */}
         <EmbedVerifiedLockup theme={themeParam} size="lg" subtitle="Verified" />
@@ -149,7 +171,7 @@ export function EmbedTestimonialsWall({
           /* The label was an 18px-tall hit area. The padding takes it to 44
              without moving the text: `self-end` plus the negative margin keeps
              the baseline where it was against the lockup. */
-          className="-mb-3.5 flex min-h-11 shrink-0 items-end self-end px-2 pb-3 text-[10px] font-semibold tracking-[0.16em] uppercase no-underline opacity-55 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          className="flex min-h-11 shrink-0 items-center px-2 text-[10px] font-semibold tracking-[0.16em] uppercase no-underline opacity-55 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           style={{ color: "var(--hs-tm-muted)" }}
         >
           Testimonials
@@ -159,7 +181,7 @@ export function EmbedTestimonialsWall({
       <div
         className="relative w-full overflow-hidden"
         style={{
-          height,
+          height: windowHeight,
           display: "grid",
           gap: `${COL_GAP}px`,
           gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,

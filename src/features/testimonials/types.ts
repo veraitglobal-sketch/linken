@@ -30,7 +30,13 @@ export type PublicTestimonial = {
   body: string;
   authorName: string;
   authorRole: string;
-  authorCompany: { name: string; slug: string } | null;
+  /**
+   * `logoUrl` is the author company's own logo, uploaded by that company — the
+   * only picture we are entitled to put next to their words. There is no
+   * per-person photograph on a record and none is invented; when the logo is
+   * absent the card sets the initials instead.
+   */
+  authorCompany: { name: string; slug: string; logoUrl: string | null } | null;
   source: TestimonialSource;
   publishedAt: string;
   profileUrl: string;

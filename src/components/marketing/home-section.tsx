@@ -42,7 +42,7 @@ export function HomeEyebrow({
   return (
     <p
       className={cn(
-        "text-[11px] font-semibold tracking-[0.16em] uppercase",
+        "font-label text-[11px] font-semibold tracking-[0.16em] uppercase",
         onDark ? "text-blue-soft" : "text-blue",
         className,
       )}

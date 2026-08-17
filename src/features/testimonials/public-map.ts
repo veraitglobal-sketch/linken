@@ -128,16 +128,20 @@ export async function filterUndisclosedTestimonials(
 export async function loadAuthorCompanies(
   supabase: SupabaseClient,
   ids: string[],
-): Promise<Map<string, { name: string; slug: string }>> {
+): Promise<Map<string, { name: string; slug: string; logoUrl: string | null }>> {
   if (!ids.length) return new Map();
   const { data } = await supabase
     .from("companies")
-    .select("id, name, slug")
+    .select("id, name, slug, logo_url")
     .in("id", ids);
   return new Map(
     (data ?? []).map((c) => [
       c.id as string,
-      { name: c.name as string, slug: c.slug as string },
+      {
+        name: c.name as string,
+        slug: c.slug as string,
+        logoUrl: (c.logo_url as string | null) ?? null,
+      },
     ]),
   );
 }
@@ -162,7 +166,7 @@ export async function toPublicTestimonials(
       authorName: r.authorName,
       authorRole: r.authorRole,
       authorCompany: author
-        ? { name: author.name, slug: author.slug }
+        ? { name: author.name, slug: author.slug, logoUrl: author.logoUrl }
         : null,
       source: r.source,
       publishedAt: r.publishedAt ?? r.createdAt,

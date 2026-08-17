@@ -39,8 +39,10 @@
   --font-sans: var(--font-ui);
   /* Was `var(--font-display)` — a self-reference, which CSS treats as a cycle
      and resolves to nothing, so every headline silently fell back to
-     system-ui. Display is Plus Jakarta Sans, same face as the body. */
+     system-ui. Display is Geist, same face as the body. */
   --font-display: var(--font-ui);
+  --font-label: var(--font-inter);
+  --font-code: var(--font-geist-mono);
   /* Shape scale — tiles → cards → chapters → hero stages */
   /* Display scale, stepped down from the hero rather than collapsing to half
      its size. Ten ad-hoc clamps across the marketing sections is why the page
@@ -118,6 +120,8 @@
   --shadow-hero: 0 28px 90px rgba(8, 20, 18, 0.28);
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
+  --font-label: var(--font-label);
+  --font-mono: var(--font-code);
 }
 
 * {
@@ -142,6 +146,14 @@ body {
   font-family: var(--font-sans), ui-sans-serif, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Clerk uses Inter for micro UI labels. Same role: uppercase, wide tracking. */
+.uppercase.tracking-\[0\.12em\],
+.uppercase.tracking-\[0\.14em\],
+.uppercase.tracking-\[0\.16em\],
+.uppercase.tracking-\[0\.18em\] {
+  font-family: var(--font-label), ui-sans-serif, sans-serif;
 }
 
 html {
