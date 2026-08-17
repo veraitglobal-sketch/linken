@@ -46,12 +46,15 @@ function Stage({
   preset,
   width,
   dark = false,
+  stage,
 }: {
   title: string;
   note: string;
   preset: keyof typeof PRESET_TOKENS;
   width: number;
   dark?: boolean;
+  /** Explicit host ground, for checking a translucent fill on a mid tone. */
+  stage?: string;
 }) {
   return (
     <section className="space-y-3">
@@ -66,7 +69,7 @@ function Stage({
           the fit filter and the placement rail. */}
       <div
         className="rounded-card p-6"
-        style={{ background: dark ? "#081412" : "#ffffff", maxWidth: width }}
+        style={{ background: stage ?? (dark ? "#081412" : "#ffffff"), maxWidth: width }}
       >
         <EmbedTestimonials
           items={ITEMS}
@@ -129,9 +132,27 @@ export default function DevTestimonialsPage() {
         />
         <Stage
           title="Dark preset · 736px"
-          note="On a dark host page."
+          note="On a dark host page. The fill is white at 6% — neutral, so it takes the host's dark rather than painting ours over it."
           preset="dark"
           width={736}
+          dark
+        />
+        {/* The claim is "sits on any background", so it is checked on the ground
+            that actually breaks it: a mid tone, where a white-at-78% fill used
+            to read as a slab and a dark fill as a hole. */}
+        <Stage
+          title="Glass · mid tone, light direction"
+          note="The ground that breaks a sheer fill. The card carries its own contrast instead: 16.31:1 body, 5.36:1 provenance."
+          preset="glass"
+          width={736}
+          stage="#6b7570"
+        />
+        <Stage
+          title="Glass · mid tone, dark direction"
+          note="Same ground, same preset, the other direction — the host still shows through at 82%."
+          preset="glass"
+          width={736}
+          stage="#6b7570"
           dark
         />
 

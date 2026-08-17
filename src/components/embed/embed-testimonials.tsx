@@ -6,7 +6,10 @@ import { EmbedTestimonialsMotion } from "@/components/embed/embed-testimonials-m
 import { EmbedTestimonialsWall } from "@/components/embed/embed-testimonials-wall";
 import { embedMutedClass, type EmbedTheme } from "@/components/embed/embed-theme";
 import type { TestimonialLayout } from "@/features/testimonials/settings";
-import type { TestimonialThemeTokens } from "@/features/testimonials/theme/presets";
+import {
+  translucentTypeFor,
+  type TestimonialThemeTokens,
+} from "@/features/testimonials/theme/presets";
 import { filterForLayout } from "@/features/testimonials/theme/layout-fit";
 import type { PublicTestimonial } from "@/features/testimonials/types";
 import { cn } from "@/lib/cn";
@@ -56,6 +59,17 @@ export function EmbedTestimonials({
 }: Props) {
   const fitting = filterForLayout(items, layout);
 
+  /* `glass` is the one preset whose fill is deliberately neutral so it can sit
+     on any host ground — which means its type cannot also be fixed. Measured on
+     a mid tone it gave 4.04:1 on the body and 1.10:1 on the provenance, so the
+     evidence line was invisible on exactly the backgrounds the preset exists
+     for. The fill still adapts by itself; the light/dark param decides the ink.
+     Every other preset states its own ground and keeps its own colours. */
+  const resolvedTheme =
+    theme.preset === "glass"
+      ? { ...theme, ...translucentTypeFor(themeParam === "dark") }
+      : theme;
+
   if (!fitting.length) {
     return (
       <p className={cn("px-1 py-6 text-center text-[12px]", embedMutedClass(themeParam))}>
@@ -65,7 +79,7 @@ export function EmbedTestimonials({
   }
 
   return (
-    <EmbedTestimonialThemeShell theme={theme}>
+    <EmbedTestimonialThemeShell theme={resolvedTheme}>
       <div className="box-border w-full px-0.5 py-1">
         <EmbedResizeReporter />
         {/* The wall brings its own header — the "Hansala / Verified" lockup and

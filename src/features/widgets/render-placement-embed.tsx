@@ -4,6 +4,10 @@ import { EmbedFooterStrip } from "@/components/embed/embed-footer-strip";
 import { EmbedLogoWallGrid } from "@/components/embed/embed-logo-wall-grid";
 import { EmbedPartnersRotate } from "@/components/embed/embed-partners-rotate";
 import { EmbedTestimonials } from "@/components/embed/embed-testimonials";
+import {
+  TESTIMONIAL_LAYOUTS,
+  type TestimonialLayout,
+} from "@/features/testimonials/settings";
 import { EmbedProLockedNote } from "@/components/embed/embed-pro-locked-note";
 import type { EmbedTheme } from "@/components/embed/embed-theme";
 import { getCaseGalleryEntries } from "@/features/widgets/case-gallery";
@@ -40,8 +44,10 @@ export async function renderPlacementEmbed(input: {
   resolved: Resolve;
   viaHost?: string | null;
   confirmedCount?: number;
+  /** Testimonials only: the shape this placement declared in its own URL. */
+  layoutOverride?: string;
 }): Promise<ReactNode | null> {
-  const { company, theme, variant, w, resolved, viaHost } = input;
+  const { company, theme, variant, w, resolved, viaHost, layoutOverride } = input;
   const siteUrl = getSiteUrl();
   const profileUrl = `${siteUrl}/c/${company.slug}?src=embed`;
 
@@ -162,7 +168,16 @@ export async function renderPlacementEmbed(input: {
     const settings = await loadWidgetSettings(company.id);
     const rows = await getSelectedTestimonials(company.id, settings);
     const items = await toPublicTestimonials(rows, company.slug);
-    const layout = settings.testimonials.layout;
+    /* The placement's own shape wins when it names a real one, so a company can
+       run a wall and a strip side by side.
+       Checked against the list rather than passed through `parseTestimonialLayout`
+       alone: that helper answers "grid" for anything it does not recognise, so a
+       mistyped or stale URL would quietly replace the owner's chosen layout with
+       a grid. Falling back to the saved setting is the honest failure. */
+    const override = TESTIMONIAL_LAYOUTS.includes(layoutOverride as TestimonialLayout)
+      ? (layoutOverride as TestimonialLayout)
+      : null;
+    const layout = override ?? settings.testimonials.layout;
     const node = (
       <>
         <EmbedTestimonials

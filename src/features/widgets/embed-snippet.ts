@@ -15,6 +15,8 @@ export function buildEmbedSrc(input: {
   theme: WidgetTheme;
   width?: string;
   preview?: boolean;
+  /** Testimonials only: this placement's own shape, overriding the saved one. */
+  layout?: string;
 }): string {
   const url = new URL(`${input.siteUrl}/embed/${input.slug}`);
   if (input.variant !== "horizontal") {
@@ -29,6 +31,14 @@ export function buildEmbedSrc(input: {
   if (input.preview) {
     url.searchParams.set("preview", "1");
   }
+  /* Carried in the URL so one company can run more than one shape at once — a
+     wall on the homepage and a strip in the footer. Records, order and theme
+     still come from settings, so "embed once, configure forever" holds where it
+     matters: a new confirmed testimonial appears in both without anyone
+     touching either snippet. Only the shape is fixed at paste time. */
+  if (input.layout) {
+    url.searchParams.set("layout", input.layout);
+  }
   return url.toString();
 }
 
@@ -38,8 +48,11 @@ export function buildEmbedSnippet(input: {
   variant: WidgetVariant;
   theme: WidgetTheme;
   width: string;
+  layout?: string;
+  /** Height for that layout — the resize script corrects it, this avoids a jump. */
+  height?: number;
 }): string {
-  const height = widgetHeight(input.variant);
+  const height = input.height ?? widgetHeight(input.variant);
   const isFluid = input.width === "100%";
   const px = input.width.replace(/px$/i, "");
   const src = buildEmbedSrc({
@@ -49,6 +62,7 @@ export function buildEmbedSnippet(input: {
     theme: input.theme,
     width: isFluid ? undefined : px,
     preview: false,
+    layout: input.layout,
   });
   const widthAttr = isFluid ? "100%" : px;
   const styleWidth = isFluid ? "100%" : `${px}px`;

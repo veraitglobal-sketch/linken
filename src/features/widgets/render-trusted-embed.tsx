@@ -28,9 +28,11 @@ export async function renderTrustedEmbed(input: {
   variant: string;
   w?: string;
   isPreview: boolean;
+  /** Testimonials only: shape declared by this placement, not by settings. */
+  layoutOverride?: string;
   viaHost?: string | null;
 }) {
-  const { company, theme, variant, w, isPreview, viaHost } = input;
+  const { company, theme, variant, w, isPreview, viaHost, layoutOverride } = input;
   const siteUrl = getSiteUrl();
   const profileUrl = `${siteUrl}/c/${company.slug}?src=embed`;
 
@@ -59,6 +61,7 @@ export async function renderTrustedEmbed(input: {
       resolved,
       viaHost,
       confirmedCount,
+      layoutOverride,
     });
   }
 

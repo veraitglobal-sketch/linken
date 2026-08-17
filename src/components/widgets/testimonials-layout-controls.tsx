@@ -2,36 +2,22 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import type { TestimonialLayout } from "@/features/testimonials/settings";
-import {
-  saveTestimonialLayout,
-  saveTestimonialLimit,
-} from "@/features/testimonials/testimonials-studio-actions";
-import { STUDIO_LAYOUT_OPTIONS } from "@/features/testimonials/testimonial-height";
+import { saveTestimonialLimit } from "@/features/testimonials/testimonials-studio-actions";
 import { cn } from "@/lib/cn";
 
 type Props = {
-  layout: TestimonialLayout;
   limit: number;
   includedCount: number;
   totalCount: number;
 };
 
 export function TestimonialsLayoutControls({
-  layout,
   limit,
   includedCount,
   totalCount,
 }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-
-  function pickLayout(next: TestimonialLayout) {
-    startTransition(async () => {
-      await saveTestimonialLayout(next);
-      router.refresh();
-    });
-  }
 
   function onLimitChange(value: number) {
     startTransition(async () => {
@@ -56,26 +42,10 @@ export function TestimonialsLayoutControls({
           className="mt-2 w-full max-w-xs"
         />
       </label>
-      <div>
-        <p className="text-[12px] font-medium text-ink">Layout</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {STUDIO_LAYOUT_OPTIONS.map((opt) => (
-            <button
-              key={opt.id}
-              type="button"
-              onClick={() => pickLayout(opt.id)}
-              className={cn(
-                "rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-colors",
-                layout === opt.id
-                  ? "border-ink bg-ink text-paper"
-                  : "border-line bg-surface text-ink hover:border-ink/30",
-              )}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* The layout pills used to live here. `TestimonialsLayoutGallery` now
+          makes that choice with the shape and the fit count on each option, and
+          two pickers for one setting is one too many. This keeps the limit,
+          which the gallery deliberately does not touch. */}
     </div>
   );
 }

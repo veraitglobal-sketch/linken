@@ -98,11 +98,13 @@ export default async function DashboardTestimonialsPage() {
           >
             View on profile
           </Link>
+          {/* The embed code is on this page now, so this points at the rest of
+              the catalog rather than promising something already here. */}
           <Link
             href="/dashboard/widgets"
             className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-paper"
           >
-            Embed code
+            All widgets
           </Link>
         </div>
       }
@@ -143,6 +145,9 @@ export default async function DashboardTestimonialsPage() {
           layout={testimonialSettings.layout}
           limit={testimonialSettings.limit}
           theme={testimonialSettings.theme}
+          siteUrl={getSiteUrl()}
+          slug={company.slug}
+          isPro={company.plan === "pro"}
         />
         <TestimonialInviteForm />
         <TestimonialPendingList rows={pending} />

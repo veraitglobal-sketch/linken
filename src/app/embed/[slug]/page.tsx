@@ -22,6 +22,7 @@ type Props = {
   searchParams: Promise<{
     variant?: string;
     theme?: string;
+    layout?: string;
     preview?: string;
     w?: string;
   }>;
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function EmbedBadgePage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { variant = "horizontal", theme: themeRaw, preview, w } =
+  const { variant = "horizontal", theme: themeRaw, preview, w, layout } =
     await searchParams;
   const theme = parseEmbedTheme(themeRaw);
   const company = await getCompanyForPage(slug);
@@ -48,6 +49,7 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
       const qs = new URLSearchParams();
       if (variant) qs.set("variant", variant);
       if (themeRaw) qs.set("theme", themeRaw);
+      if (layout) qs.set("layout", layout);
       if (w) qs.set("w", w);
       const suffix = qs.toString();
       permanentRedirect(`/embed/${redirectSlug}${suffix ? `?${suffix}` : ""}`);
@@ -98,6 +100,7 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
     variant,
     w,
     isPreview,
+    layoutOverride: layout,
     viaHost: placement.host,
   });
 }
