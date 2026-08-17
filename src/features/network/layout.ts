@@ -5,4 +5,3 @@ export type {
 } from "@/features/network/layout-types";
 export { layoutRadial } from "@/features/network/layout-radial";
 export { layoutTree } from "@/features/network/layout-tree";
-export { ellipsesFromMembership } from "@/features/network/layout-clusters";

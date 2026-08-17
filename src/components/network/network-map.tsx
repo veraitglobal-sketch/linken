@@ -4,7 +4,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   useTransition,
 } from "react";
@@ -32,11 +31,6 @@ import {
   NetworkCompanyNode,
   type FlowNodeData,
 } from "@/components/network/network-company-node";
-import { NetworkClusterHalo } from "@/components/network/network-cluster-halo";
-import {
-  isClusterNodeId,
-  toHaloNodes,
-} from "@/components/network/network-cluster-nodes";
 import { NetworkEdgeLine } from "@/components/network/network-edge";
 import { toFlowEdge } from "@/components/network/network-flow-edge";
 import { NetworkHint } from "@/components/network/network-hint";
@@ -52,11 +46,7 @@ import {
   disconnectGraphEdge,
   reconnectStructureLink,
 } from "@/features/network/graph-actions";
-import {
-  ellipsesFromMembership,
-  layoutRadial,
-  layoutTree,
-} from "@/features/network/layout";
+import { layoutRadial, layoutTree } from "@/features/network/layout";
 import {
   clearGraphPositions,
   graphLayoutKey,
@@ -67,13 +57,11 @@ import {
 import type {
   NetworkEdge,
   NetworkGraph,
-  NetworkNode,
   NetworkNodeData,
 } from "@/features/network/types";
 
 const nodeTypes = {
   company: NetworkCompanyNode,
-  clusterHalo: NetworkClusterHalo,
 };
 
 const edgeTypes = {
@@ -200,13 +188,8 @@ export function NetworkMap({
     [graph.edges, editable, nodesById],
   );
 
-  const clusterMembershipRef = useRef<
-    { ownerId: string; nodeIds: string[] }[]
-  >([]);
-
   useEffect(() => {
     if (graph.nodes.length === 0) {
-      clusterMembershipRef.current = [];
       setNodes([]);
       setEdges([]);
       return;
@@ -218,11 +201,6 @@ export function NetworkMap({
     const auto = usesTree
       ? layoutTree(graph.nodes, graph.edges)
       : layoutRadial(graph.nodes, graph.edges);
-
-    clusterMembershipRef.current = auto.clusters.map((c) => ({
-      ownerId: c.ownerId,
-      nodeIds: c.nodeIds,
-    }));
 
     // Keep user-dragged positions across refresh / data updates
     const saved = loadGraphPositions(layoutKey);
@@ -244,38 +222,26 @@ export function NetworkMap({
       } satisfies FlowNodeData,
     }));
 
-    const posMap = new Map(
-      companyNodes.map((n) => [n.id, n.position] as const),
-    );
-    const clusters = ellipsesFromMembership(
-      clusterMembershipRef.current,
-      posMap,
-    );
-
-    setNodes([...toHaloNodes(clusters), ...companyNodes]);
+    setNodes(companyNodes);
     setEdges(buildFlowEdges(companyNodes, null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signature, layoutKey, editable, onSelect, onAdd, setNodes, setEdges, buildFlowEdges]);
 
   useEffect(() => {
     setNodes((prev) => {
-      const next = prev.map((n) => {
-        if (n.type === "clusterHalo" || isClusterNodeId(n.id)) return n;
-        return {
-          ...n,
+      const next = prev.map((n) => ({
+        ...n,
+        selected: n.id === selectedId,
+        data: {
+          ...(n.data as FlowNodeData),
+          onSelect,
+          onAdd,
           selected: n.id === selectedId,
-          data: {
-            ...(n.data as FlowNodeData),
-            onSelect,
-            onAdd,
-            selected: n.id === selectedId,
-            editable,
-          },
-        };
-      });
-      const company = next.filter((n) => !isClusterNodeId(n.id));
-      if (company.length > 0) {
-        setEdges(buildFlowEdges(company, selectedId));
+          editable,
+        },
+      }));
+      if (next.length > 0) {
+        setEdges(buildFlowEdges(next, selectedId));
       }
       return next;
     });
@@ -289,10 +255,7 @@ export function NetworkMap({
 
   const persistPositions = useCallback(
     (nds: Node[]) => {
-      saveGraphPositions(
-        layoutKey,
-        positionsFromNodes(nds.filter((n) => !isClusterNodeId(n.id))),
-      );
+      saveGraphPositions(layoutKey, positionsFromNodes(nds));
     },
     [layoutKey],
   );
@@ -306,17 +269,9 @@ export function NetworkMap({
 
   const onNodeDragStop = useCallback(() => {
     setNodes((nds) => {
-      const company = nds.filter((n) => !isClusterNodeId(n.id));
-      persistPositions(company);
-      const posMap = new Map(
-        company.map((n) => [n.id, n.position] as const),
-      );
-      const clusters = ellipsesFromMembership(
-        clusterMembershipRef.current,
-        posMap,
-      );
-      setEdges(buildFlowEdges(company, selectedId));
-      return [...toHaloNodes(clusters), ...company];
+      persistPositions(nds);
+      setEdges(buildFlowEdges(nds, selectedId));
+      return nds;
     });
   }, [buildFlowEdges, persistPositions, selectedId, setEdges, setNodes]);
 
@@ -328,10 +283,6 @@ export function NetworkMap({
     const auto = usesTree
       ? layoutTree(graph.nodes, graph.edges)
       : layoutRadial(graph.nodes, graph.edges);
-    clusterMembershipRef.current = auto.clusters.map((c) => ({
-      ownerId: c.ownerId,
-      nodeIds: c.nodeIds,
-    }));
     const hubId = resolveHubId(auto.nodes, graph.context?.focusCompanyId);
     setNodes((prev) => {
       const companyNodes: Node[] = auto.nodes.map((n) => {
@@ -353,7 +304,7 @@ export function NetworkMap({
           } satisfies FlowNodeData,
         };
       });
-      return [...toHaloNodes(auto.clusters), ...companyNodes];
+      return companyNodes;
     });
   }, [
     editable,
@@ -497,9 +448,7 @@ export function NetworkMap({
       : null,
   ].filter(Boolean) as string[];
 
-  const firmCount = nodes.filter(
-    (n) => n.type === "company" && !isClusterNodeId(n.id),
-  ).length;
+  const firmCount = nodes.filter((n) => n.type === "company").length;
 
   const showOwnershipLegend = graph.edges.some((e) => e.type === "subsidiary");
   const showCoOwnerLegend = graph.edges.some((e) => e.type === "co_owner");
