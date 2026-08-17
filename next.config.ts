@@ -65,8 +65,19 @@ const nextConfig: NextConfig = {
         source: "/images/:path*",
         headers: [
           {
+            /* Not `immutable`.
+               `immutable` promises the browser this URL's bytes will never
+               change, so it stops revalidating entirely — for the year the
+               max-age allows. That is correct for content-hashed filenames like
+               `/_next/static/…`, and wrong here, where `slack.svg` keeps its
+               name when its contents are fixed. A broken logo was cached that
+               way and no reload could dislodge it; the fix was invisible to
+               anyone who had already loaded the page.
+               An hour fresh, a day of serving the old copy while fetching the
+               new one in the background: still effectively free, and a
+               correction reaches people the same day instead of next year. */
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            value: "public, max-age=3600, stale-while-revalidate=86400",
           },
         ],
       },
@@ -74,8 +85,19 @@ const nextConfig: NextConfig = {
         source: "/logos/:path*",
         headers: [
           {
+            /* Not `immutable`.
+               `immutable` promises the browser this URL's bytes will never
+               change, so it stops revalidating entirely — for the year the
+               max-age allows. That is correct for content-hashed filenames like
+               `/_next/static/…`, and wrong here, where `slack.svg` keeps its
+               name when its contents are fixed. A broken logo was cached that
+               way and no reload could dislodge it; the fix was invisible to
+               anyone who had already loaded the page.
+               An hour fresh, a day of serving the old copy while fetching the
+               new one in the background: still effectively free, and a
+               correction reaches people the same day instead of next year. */
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            value: "public, max-age=3600, stale-while-revalidate=86400",
           },
         ],
       },
