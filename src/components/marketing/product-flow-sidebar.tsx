@@ -52,16 +52,16 @@ function NavRow({
       className={cn(
         "relative flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[12.5px]",
         active
-          ? "bg-[#f0f3f1] font-semibold text-blue"
+          ? "bg-paper font-semibold text-blue"
           : locked
-            ? "text-[#aab3ae]"
+            ? "text-plus"
             : "text-ink-soft",
       )}
     >
       {active ? (
         <span className="absolute top-1.5 bottom-1.5 -left-3.5 w-[3px] rounded-full bg-blue" />
       ) : null}
-      <span className={active ? "text-blue" : "text-[#96a09a]"}>
+      <span className={active ? "text-blue" : "text-plus"}>
         <FlowGlyph d={d} />
       </span>
       <span className="flex-1 truncate">{label}</span>
@@ -74,11 +74,11 @@ export function FlowSidebar() {
     <nav className="flex w-[232px] shrink-0 flex-col border-r border-line/70 bg-surface px-3.5 py-3.5">
       <span className="flex items-center gap-2 px-1.5">
         <NetworkMark size={16} animate={false} />
-        <span className="font-display text-[15px] font-semibold tracking-[-0.03em] text-blue">
+        <span className="font-display text-[15px] font-semibold tracking-[-0.03em] text-ink">
           Hansala
         </span>
       </span>
-      <span className="mt-3 flex items-center gap-2.5 rounded-xl border border-line/70 bg-[#f9faf9] px-2.5 py-1.5">
+      <span className="mt-3 flex items-center gap-2.5 rounded-tile border border-line bg-paper px-2.5 py-1.5">
         <FlowMark
           name={FLOW_HUB.name}
           initials={FLOW_HUB.initials}
@@ -86,7 +86,7 @@ export function FlowSidebar() {
           small
         />
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-[13px] font-semibold text-ink">
+          <span className="block truncate font-display text-[13px] font-medium tracking-[-0.03em] text-ink">
             {FLOW_HUB.name}
           </span>
           <span className="block truncate text-[11px] text-muted">
@@ -127,7 +127,7 @@ export function FlowSidebar() {
 
 export function FlowMapControls() {
   return (
-    <div className="absolute bottom-5 left-5 flex flex-col overflow-hidden rounded-xl border border-line/80 bg-surface/95 backdrop-blur">
+    <div className="absolute bottom-5 left-5 flex flex-col overflow-hidden rounded-tile border border-line bg-surface">
       {["M12 5v14M5 12h14", "M5 12h14", "M4 9V4h5M20 15v5h-5"].map((d, i) => (
         <span
           key={d}

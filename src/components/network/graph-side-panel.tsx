@@ -51,12 +51,12 @@ export function GraphSidePanel({
     <aside
       className={cn(
         "linken-panel-enter absolute inset-y-0 right-0 z-30 flex w-[min(100%,22.5rem)] flex-col",
-        "border-l border-line bg-white/95 shadow-[-20px_0_48px_rgba(8,20,18,0.1)] backdrop-blur-xl",
+        "border-l border-line bg-surface",
       )}
     >
       <div className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
         <div className="min-w-0">
-          <h2 className="text-[16px] font-semibold tracking-[-0.03em] text-ink">
+          <h2 className="font-display text-[16px] font-medium tracking-[-0.03em] text-ink">
             {mode === "add"
               ? "Add a company"
               : selected

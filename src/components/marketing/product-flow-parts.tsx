@@ -100,14 +100,10 @@ export function FlowNodeCard({
   return (
     <div
       className={cn(
-        "relative bg-surface px-3 py-2.5 transition-shadow duration-300",
-        hub
-          ? "w-[164px] rounded-2xl border border-navy/20"
-          : "w-[150px] rounded-xl border",
-        pending ? "border-dashed border-line" : "border-line/90",
-        active
-          ? "shadow-[0_0_0_2px_rgba(26,92,81,0.12),0_10px_24px_rgba(8,20,18,0.08)]"
-          : "shadow-[0_1px_0_rgba(255,255,255,0.95)_inset,0_4px_14px_rgba(8,20,18,0.04)]",
+        "relative bg-surface px-3 py-2.5",
+        hub ? "w-[164px] rounded-tile border border-navy/20" : "w-[150px] rounded-tile border",
+        pending ? "border-dashed border-line" : "border-line",
+        active && "border-blue/40 shadow-card",
       )}
     >
       {confirmed ? (
@@ -118,10 +114,10 @@ export function FlowNodeCard({
       <div className="flex items-center gap-2.5">
         <FlowMark name={name} initials={initials} logo={logo} small />
         <div className="min-w-0">
-          <p className="truncate text-[12px] font-semibold tracking-[-0.01em] text-ink">
+          <p className="truncate font-display text-[12px] font-medium tracking-[-0.03em] text-ink">
             {name}
           </p>
-          <p className="mt-0.5 text-[9px] font-semibold tracking-[0.14em] text-muted uppercase">
+          <p className="mt-0.5 text-[10px] font-semibold tracking-[0.14em] text-muted uppercase">
             {role}
           </p>
         </div>
@@ -148,7 +144,7 @@ export function FlowRequestPill({
         state === "idle" && "bg-navy text-white",
         state === "pending" && "border border-line bg-paper text-muted",
         state === "official" &&
-          "border border-blue/25 bg-[#eafaf3] text-blue",
+          "border border-blue/25 bg-accent-soft text-blue",
       )}
     >
       {label}
@@ -164,7 +160,7 @@ export function FlowGrid() {
         className="absolute inset-0 opacity-60"
         style={{
           backgroundImage:
-            "radial-gradient(circle, #e3e8e5 1px, transparent 1px)",
+            "radial-gradient(circle, var(--line) 1px, transparent 1px)",
           backgroundSize: "18px 18px",
         }}
       />
@@ -173,7 +169,7 @@ export function FlowGrid() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(120% 90% at 30% 45%, transparent 40%, rgba(252,253,252,0.9) 100%)",
+            "radial-gradient(120% 90% at 30% 45%, transparent 40%, rgba(255,255,255,0.92) 100%)",
         }}
       />
     </>

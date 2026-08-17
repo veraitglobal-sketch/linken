@@ -539,7 +539,7 @@ export function NetworkMap({
       <NetworkHint visible={editable && firmCount === 1 && !panelOpen} />
 
       {error ? (
-        <div className="absolute top-14 left-1/2 z-30 max-w-sm -translate-x-1/2 rounded-2xl border border-red-200/80 bg-red-50/95 px-3.5 py-2 text-center text-[12px] font-medium text-red-800 shadow-[0_10px_28px_rgba(8,20,18,0.08)] backdrop-blur-md">
+        <div className="absolute top-14 left-1/2 z-30 max-w-sm -translate-x-1/2 rounded-tile border border-line bg-surface px-3.5 py-2 text-center text-[12px] font-medium text-ink">
           {error}
         </div>
       ) : null}
@@ -576,7 +576,7 @@ export function NetworkMap({
         preventScrolling
         proOptions={{ hideAttribution: true }}
         defaultEdgeOptions={{ type: "smoothstep" }}
-        connectionLineStyle={{ stroke: "#1a5c51", strokeWidth: 1.25 }}
+        connectionLineStyle={{ stroke: "var(--blue)", strokeWidth: 1.25 }}
         onPaneClick={closePanel}
         className="linken-flow-canvas"
       >
@@ -584,13 +584,13 @@ export function NetworkMap({
           variant={BackgroundVariant.Dots}
           gap={22}
           size={1}
-          color="rgba(14, 31, 28, 0.07)"
+          color="var(--line)"
           bgColor="transparent"
         />
         <Controls
           showInteractive={false}
           position="bottom-left"
-          className="!m-4 !overflow-hidden !rounded-lg !border !border-line/50 !bg-white/95 !shadow-[0_2px_12px_rgba(8,20,18,0.05)] [&>button]:!h-7 [&>button]:!w-7 [&>button]:!border-0 [&>button]:!bg-transparent [&>button]:!fill-muted"
+          className="!m-5"
         />
       </ReactFlow>
 

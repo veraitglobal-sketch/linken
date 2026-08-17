@@ -16,10 +16,10 @@ export function toFlowEdge(
   const isPartner = e.type === "partner" || e.type === "client";
 
   const stroke = selected
-    ? "#1a5c51"
+    ? "var(--blue)"
     : isOwnership
-      ? "#0e1f1c"
-      : "#b0b8b3";
+      ? "var(--navy)"
+      : "var(--muted)";
 
   const handles =
     positions && nodesById

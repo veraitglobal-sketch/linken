@@ -54,7 +54,7 @@ const FLOW_VIEW: ClientConfirmationView = {
 
 export function FlowConfirmScene() {
   return (
-    <div className="flex h-full w-full flex-col bg-[#f7f8fa]">
+    <div className="flex h-full w-full flex-col bg-paper">
       <header className="flex h-12 shrink-0 items-center gap-3 border-b border-line bg-surface px-5">
         <div className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-line" />

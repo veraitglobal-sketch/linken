@@ -30,15 +30,15 @@ export function FlowWorkspaceScene({
   return (
     <div className="flex h-full w-full bg-surface">
       <FlowSidebar />
-      <section className="relative min-w-0 flex-1 bg-[#fcfdfc]">
+      <section className="relative min-w-0 flex-1 bg-surface">
         <div className="absolute inset-x-0 top-0 z-10 flex items-center gap-4 px-5 py-4">
-          <div className="flex items-center gap-1 rounded-full border border-line/70 bg-surface p-1 shadow-[0_1px_2px_rgba(8,20,18,0.05)]">
+          <div className="flex items-center gap-1 rounded-card border border-line bg-surface p-1">
             {["Company", "Map", "Inbox"].map((t) => (
               <span
                 key={t}
                 className={cn(
-                  "rounded-full px-3.5 py-1.5 text-[12.5px] font-medium",
-                  t === "Map" ? "bg-navy text-white" : "text-ink-soft",
+                  "rounded-full px-3.5 py-1.5 text-[12px] font-semibold",
+                  t === "Map" ? "bg-navy text-white" : "text-ink",
                 )}
               >
                 {t}
@@ -46,10 +46,10 @@ export function FlowWorkspaceScene({
             ))}
           </div>
           <div>
-            <p className="text-[14px] font-semibold tracking-[-0.02em] text-ink">
+            <p className="font-display text-[15px] font-medium tracking-[-0.03em] text-ink">
               Your map
             </p>
-            <p className="text-[11.5px] text-muted">
+            <p className="text-[11px] text-muted">
               1 company · {confirmed ? "1 partner" : "0 partners"}
             </p>
           </div>
@@ -79,7 +79,7 @@ export function FlowWorkspaceScene({
           >
             <path
               d="M 364 360 C 396 360, 400 300, 430 300"
-              stroke={confirmed ? "#1a5c51" : "#a7b1ac"}
+              stroke={confirmed ? "var(--blue)" : "var(--muted)"}
               strokeWidth={confirmed ? 2 : 1.5}
               strokeDasharray={confirmed ? "0" : "5 5"}
               strokeLinecap="round"

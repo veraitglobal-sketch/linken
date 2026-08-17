@@ -46,8 +46,8 @@ export function OwnerLoopBar({
               "inline-flex h-8 items-center rounded-full px-3 text-[12px] font-semibold transition-colors",
               on
                 ? "bg-navy text-white"
-                : overlay
-                  ? "bg-surface/90 text-ink shadow-sm ring-1 ring-line backdrop-blur-md hover:bg-paper"
+                :                 overlay
+                  ? "bg-surface text-ink ring-1 ring-line hover:bg-paper"
                   : "text-ink hover:bg-paper",
             )}
           >

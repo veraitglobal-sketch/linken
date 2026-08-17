@@ -91,10 +91,10 @@ export function FlowInspector({
         <span
           className={cn(
             "flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-300",
-            adding ? "bg-[#eafaf3]" : "bg-transparent",
+            adding ? "bg-accent-soft" : "bg-transparent",
           )}
         >
-          <span className={adding ? "text-blue" : "text-[#96a09a]"}>
+          <span className={adding ? "text-blue" : "text-muted"}>
             <FlowGlyph d="M12 5v14M5 12h14" />
           </span>
           <span className="min-w-0 flex-1">
@@ -118,7 +118,7 @@ export function FlowInspector({
           )}
         >
           <div className="overflow-hidden">
-            <div className="mt-2 flex h-10 items-center rounded-xl border border-line bg-[#f7f9f8] px-3">
+            <div className="mt-2 flex h-10 items-center rounded-xl border border-line bg-paper px-3">
               {step >= 3 && step < 6 ? (
                 <SearchField typing={step === 3} />
               ) : (

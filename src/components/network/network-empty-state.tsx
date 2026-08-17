@@ -46,7 +46,7 @@ export function NetworkEmptyState({
       <div className="relative mt-7">
         <Link
           href={emptyHref}
-          className="inline-flex h-10 items-center rounded-2xl bg-navy px-4 text-[12px] font-semibold text-white shadow-[0_10px_24px_rgba(8,20,18,0.14)] transition-colors hover:bg-accent-hover"
+          className="inline-flex h-10 items-center rounded-full bg-navy px-4 text-[12px] font-semibold text-white transition-colors hover:bg-accent-hover"
         >
           {emptyLabel}
         </Link>

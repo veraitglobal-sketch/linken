@@ -599,11 +599,11 @@ a {
 
 /* Network map — flat field, hairline edges, quiet depth */
 .linken-flow-stage {
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .linken-flow-canvas {
-  --xy-edge-stroke-selected: #1a5c51;
+  --xy-edge-stroke-selected: var(--blue);
 }
 
 .linken-flow .react-flow__node {
@@ -626,20 +626,20 @@ a {
 
 .linken-flow .react-flow__edge.selected .react-flow__edge-path,
 .linken-flow .react-flow__edge:focus .react-flow__edge-path {
-  stroke: #1a5c51 !important;
+  stroke: var(--blue) !important;
   stroke-width: 1.75 !important;
   opacity: 1 !important;
 }
 
 .linken-flow .react-flow__connection-line {
-  stroke: #1a5c51 !important;
+  stroke: var(--blue) !important;
   stroke-width: 1.25 !important;
 }
 
 .linken-flow-connecting .react-flow__handle.linken-handle {
   opacity: 1 !important;
-  background: #1a5c51 !important;
-  box-shadow: 0 0 0 2px #fff;
+  background: var(--blue) !important;
+  box-shadow: 0 0 0 2px var(--surface);
 }
 
 .linken-flow .react-flow__handle.linken-handle {
@@ -649,19 +649,23 @@ a {
 
 .linken-flow .react-flow__handle.linken-handle:hover {
   transform: scale(1.2);
-  background: #1a5c51 !important;
+  background: var(--blue) !important;
 }
 
 .linken-flow .react-flow__controls {
-  box-shadow: 0 2px 12px rgba(8, 20, 18, 0.05) !important;
+  overflow: hidden !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--r-tile) !important;
+  box-shadow: none !important;
 }
 
 .linken-flow .react-flow__controls-button {
   border: none !important;
+  background: var(--surface) !important;
 }
 
 .linken-flow .react-flow__controls-button:hover {
-  background: rgba(14, 31, 28, 0.04) !important;
+  background: var(--paper) !important;
 }
 
 .linken-flow .react-flow__minimap-mask {

@@ -40,7 +40,7 @@ export function NetworkEdgeLine(props: EdgeProps) {
 
   const showDetach = Boolean(selected && deletable);
   const halo = selected
-    ? { stroke: "rgba(26, 92, 81, 0.12)", strokeWidth: 5 }
+    ? { stroke: "color-mix(in srgb, var(--blue) 12%, transparent)", strokeWidth: 5 }
     : null;
 
   return (
@@ -58,7 +58,7 @@ export function NetworkEdgeLine(props: EdgeProps) {
               e.stopPropagation();
               deleteElements({ edges: [{ id }] });
             }}
-            className="nodrag nopan absolute flex h-5 w-5 items-center justify-center rounded-full border border-line/80 bg-white text-[11px] font-medium text-muted shadow-sm transition-colors hover:border-blue/30 hover:text-blue"
+            className="nodrag nopan absolute flex h-5 w-5 items-center justify-center rounded-full border border-line/80 bg-surface text-[11px] font-medium text-muted transition-colors hover:border-blue/30 hover:text-blue"
             style={{
               transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
               pointerEvents: "all",

@@ -14,7 +14,7 @@ function Swatch({ dashed, dark }: { dashed?: boolean; dark?: boolean }) {
         y1="3"
         x2="18"
         y2="3"
-        stroke={dark ? "#0e1f1c" : "#b0b8b3"}
+        stroke={dark ? "var(--navy)" : "var(--muted)"}
         strokeWidth="1.25"
         strokeDasharray={dashed ? "2.5 3.5" : undefined}
         strokeLinecap="round"
@@ -43,14 +43,14 @@ export function NetworkMapLegend({
   return (
     <div
       className={cn(
-        "pointer-events-none absolute right-4 bottom-4 z-20 flex items-center gap-4 rounded-xl px-3.5 py-2",
-        "border border-line/60 bg-white/90 shadow-[0_4px_20px_rgba(8,20,18,0.04)] backdrop-blur-md",
+        "pointer-events-none absolute right-4 bottom-4 z-20 flex items-center gap-4 rounded-tile px-3.5 py-2",
+        "border border-line bg-surface",
       )}
     >
       {items.map((item) => (
         <div
           key={item.label}
-          className="flex items-center gap-1.5 text-[10px] font-medium tracking-[0.06em] text-muted uppercase"
+          className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase"
         >
           <Swatch dashed={item.dashed} dark={item.dark} />
           {item.label}

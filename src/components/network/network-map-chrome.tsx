@@ -24,8 +24,7 @@ type Props = {
   showStructureTools?: boolean;
 };
 
-const GLASS =
-  "border border-white/80 bg-white/80 shadow-[0_10px_32px_rgba(8,20,18,0.07)] backdrop-blur-xl";
+const BAR = "border border-line bg-surface shadow-card";
 
 /**
  * Single floating toolbar: nav chips, map context, and edit tools in one row.
@@ -52,8 +51,8 @@ export function NetworkMapChrome({
     <div className="pointer-events-none absolute inset-x-0 top-0 z-20 p-3 sm:p-4">
       <div
         className={cn(
-          "pointer-events-auto mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-2 gap-y-2 rounded-2xl px-2 py-2 sm:gap-x-3 sm:px-3",
-          GLASS,
+          "pointer-events-auto mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-2 gap-y-2 rounded-card px-2 py-2 sm:gap-x-3 sm:px-3",
+          BAR,
         )}
       >
         {companySlug ? (
@@ -72,7 +71,7 @@ export function NetworkMapChrome({
 
         <div className="flex min-w-0 flex-1 basis-[10rem] items-center gap-2 px-1 sm:basis-auto">
           <div className="min-w-0">
-            <p className="font-display truncate text-[13px] font-semibold tracking-[-0.03em] text-ink">
+            <p className="font-display truncate text-[15px] font-medium tracking-[-0.03em] text-ink">
               {title}
             </p>
             <p className="mt-0.5 truncate text-[10px] text-muted">{subtitle}</p>

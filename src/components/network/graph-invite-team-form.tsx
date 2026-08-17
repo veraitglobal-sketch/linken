@@ -53,7 +53,7 @@ export function GraphInviteTeamForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mt-2 space-y-2.5 rounded-xl border border-line bg-[#f7f8fa] px-3 py-3"
+      className="mt-2 space-y-2.5 rounded-xl border border-line bg-paper px-3 py-3"
     >
       <p className="text-[12px] font-semibold text-ink">Invite a teammate</p>
       <p className="text-[11px] text-muted">

@@ -21,7 +21,7 @@ export function GraphDetachDialog({ edge, onCancel }: Props) {
   if (!edge.detachable) {
     return (
       <div
-        className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]"
+        className="absolute inset-0 z-30 flex items-center justify-center bg-navy-deep/55 px-4"
         role="presentation"
         onClick={(e) => {
           if (e.target === e.currentTarget) onCancel();
@@ -32,7 +32,7 @@ export function GraphDetachDialog({ edge, onCancel }: Props) {
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
-          className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]"
+          className="w-full max-w-sm rounded-card border border-line bg-surface p-5 shadow-card"
         >
           <h2 id={titleId} className="font-display text-lg font-medium text-ink">
             Can’t detach here
@@ -56,7 +56,7 @@ export function GraphDetachDialog({ edge, onCancel }: Props) {
 
   return (
     <div
-      className="absolute inset-0 z-30 flex items-center justify-center bg-[#081412]/55 px-4 backdrop-blur-[2px]"
+      className="absolute inset-0 z-30 flex items-center justify-center bg-navy-deep/55 px-4"
       role="presentation"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCancel();
@@ -67,7 +67,7 @@ export function GraphDetachDialog({ edge, onCancel }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="w-full max-w-sm rounded-[22px] border border-line bg-white p-5 shadow-[0_20px_50px_rgba(10,20,18,0.3)]"
+        className="w-full max-w-sm rounded-card border border-line bg-surface p-5 shadow-card"
       >
         <p className="text-[10px] font-semibold tracking-[0.12em] text-ember uppercase">
           Detach link

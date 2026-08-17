@@ -8,9 +8,12 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
+import {
+  SHARE_NODE,
+  ShareMomentEdge,
+  ShareMomentNode,
+} from "@/components/marketing/share-moment-parts";
 import { HOME_SHOWCASE_LOGOS } from "@/features/marketing/showcase-logos";
-import { cn } from "@/lib/cn";
 
 type NodePos = {
   id: string;
@@ -21,7 +24,6 @@ type NodePos = {
   y: number;
 };
 
-const NODE = 88;
 const STAGE_H = 220;
 
 /* Real companies, not stock photographs. The nodes stood for the network a
@@ -94,8 +96,8 @@ export function ShareMomentGraph() {
   function onPointerMove(e: ReactPointerEvent<HTMLDivElement>) {
     if (!dragId || !stageRef.current) return;
     const r = stageRef.current.getBoundingClientRect();
-    const pad = NODE / 2 / r.width;
-    const padY = NODE / 2 / r.height;
+    const pad = SHARE_NODE / 2 / r.width;
+    const padY = SHARE_NODE / 2 / r.height;
     const x = clamp((e.clientX - r.left) / r.width, pad, 1 - pad);
     const y = clamp((e.clientY - r.top) / r.height, padY, 1 - padY);
     setNodes((prev) =>
@@ -103,101 +105,40 @@ export function ShareMomentGraph() {
     );
   }
 
-  function onPointerUp() {
-    setDragId(null);
-  }
-
   return (
     <div
       ref={stageRef}
       className="relative h-[300px] w-full select-none sm:h-[360px]"
       onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerLeave={onPointerUp}
+      onPointerUp={() => setDragId(null)}
+      onPointerLeave={() => setDragId(null)}
       onPointerDown={measure}
     >
-      {/* Soft glow behind the cluster */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-[12%] rounded-[40%] bg-[radial-gradient(ellipse_at_center,rgba(14,31,28,0.07),transparent_70%)]"
+        className="pointer-events-none absolute inset-[12%] rounded-[40%] bg-[radial-gradient(ellipse_at_center,var(--accent-soft),transparent_70%)]"
       />
-
-      {/* Dot grid removed — a consumer texture. The photographs and the
-          confirmation marks carry this section on their own. */}
-
-      {/* Graph edges */}
       <svg
         className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
         aria-hidden
       >
-        {edges.map(({ from, to }) => {
-          const x1 = from.px;
-          const y1 = from.py;
-          const x2 = to.px;
-          const y2 = to.py;
-          const mx = (x1 + x2) / 2;
-          const my = (y1 + y2) / 2 - Math.min(28, Math.abs(x2 - x1) * 0.08);
-          // Point on the quadratic at t=0.5 — where the confirmation seal sits.
-          const cx = (x1 + 2 * mx + x2) / 4;
-          const cy = (y1 + 2 * my + y2) / 4;
-          return (
-            <g key={`${from.id}-${to.id}`}>
-              <path
-                d={`M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`}
-                fill="none"
-                stroke="#a3b1a9"
-                strokeWidth="2"
-                strokeDasharray="6 7"
-                strokeLinecap="round"
-                className="transition-[d] duration-75"
-              />
-              <circle cx={cx} cy={cy} r="9" fill="#fff" stroke="#7eb8a4" strokeWidth="1.5" />
-              <path
-                d={`M ${cx - 3.5} ${cy} l 2.5 2.5 l 4.5 -5`}
-                stroke="#1a5c51"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </g>
-          );
-        })}
+        {edges.map(({ from, to }) => (
+          <ShareMomentEdge key={`${from.id}-${to.id}`} from={from} to={to} />
+        ))}
       </svg>
-
       {points.map((n) => (
-        <button
+        <ShareMomentNode
           key={n.id}
-          type="button"
-          aria-label={`${n.name} — drag to rearrange`}
+          name={n.name}
+          initials={n.initials}
+          logoUrl={n.logoUrl}
+          x={n.px}
+          y={n.py}
+          dragging={dragId === n.id}
           onPointerDown={(e) => onPointerDown(e, n.id)}
-          className={cn(
-            "absolute touch-none overflow-hidden rounded-[22px] border border-white bg-white shadow-[0_12px_40px_rgba(8,20,18,0.12)] transition-shadow",
-            "cursor-grab active:cursor-grabbing",
-            dragId === n.id &&
-              "z-10 shadow-[0_16px_48px_rgba(8,20,18,0.2)] ring-2 ring-blue-soft/45",
-          )}
-          style={{
-            width: NODE,
-            height: NODE,
-            left: n.px,
-            top: n.py,
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <span className="pointer-events-none grid h-full w-full place-items-center px-3">
-            <EmbedBareLogo
-              name={n.name}
-              initials={n.initials}
-              logoUrl={n.logoUrl}
-              theme="light"
-              size="md"
-            />
-          </span>
-        </button>
+        />
       ))}
-
-      <p className="pointer-events-none absolute right-3 bottom-2 text-[10px] font-medium tracking-[0.04em] text-muted/70">
+      <p className="pointer-events-none absolute right-3 bottom-2 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">
         Drag to rearrange
       </p>
     </div>

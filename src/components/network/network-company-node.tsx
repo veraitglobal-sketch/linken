@@ -26,7 +26,7 @@ const ROLE: Record<NetworkNodeKind, string> = {
 };
 
 const CARD =
-  "border bg-white transition-[border-color,box-shadow] duration-200";
+  "border bg-surface transition-[border-color,box-shadow] duration-200";
 
 /** Quiet enterprise cards — hub reads first, partners stay compact. */
 function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
@@ -36,14 +36,12 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
   const hub = Boolean(d.isHub);
   const partner = d.kind === "partner" || d.kind === "client";
   const open = !partner || on;
-  const unverified =
-    d.kind !== "group" && !d.moreCount && d.domainVerified === false;
 
   return (
     <div
       className={cn(
         "linken-node group/node relative linken-node-enter",
-        open ? (hub ? "w-[152px]" : "w-[140px]") : "w-12",
+        open ? (hub ? "w-[164px]" : "w-[150px]") : "w-12",
       )}
     >
       <NetworkNodeHandles canWire={canWire} />
@@ -60,16 +58,11 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
         tabIndex={0}
         className={cn(
           CARD,
-          "relative w-full cursor-grab text-left active:cursor-grabbing",
-          open ? "rounded-xl" : "rounded-[14px]",
-          d.kind === "client" ? "border-dashed border-line" : "border-line/80",
+          "relative w-full cursor-grab rounded-tile text-left active:cursor-grabbing",
+          d.kind === "client" ? "border-dashed border-line" : "border-line",
           on
-            ? "border-blue/35 shadow-[0_0_0_1px_rgba(26,92,81,0.08),0_8px_20px_rgba(8,20,18,0.06)]"
-            : cn(
-                "shadow-[0_1px_2px_rgba(8,20,18,0.04)]",
-                hub && "border-navy/15",
-                "hover:border-line hover:shadow-[0_4px_16px_rgba(8,20,18,0.05)]",
-              ),
+            ? "border-blue/40 shadow-card"
+            : cn(hub && "border-navy/20", "hover:border-navy/25"),
         )}
       >
         <div
@@ -91,15 +84,14 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
               <div className="min-w-0 flex-1">
                 <p
                   className={cn(
-                    "truncate font-semibold tracking-[-0.02em] text-ink",
+                    "truncate font-display font-medium tracking-[-0.03em] text-ink",
                     hub ? "text-[13px]" : "text-[12px]",
                   )}
                 >
                   {d.name}
                 </p>
-                <p className="mt-px truncate text-[10px] text-muted">
+                <p className="mt-px truncate text-[10px] font-semibold tracking-[0.14em] text-muted uppercase">
                   {ROLE[d.kind]}
-                  {unverified ? " · Unverified" : ""}
                 </p>
               </div>
               {d.publicTeamCount && d.publicTeamCount > 0 && d.companyId ? (
@@ -120,7 +112,7 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
           title="Add"
           className={cn(
             "nodrag nopan absolute -bottom-7 left-1/2 z-10 flex h-5 w-5 -translate-x-1/2 items-center justify-center",
-            "rounded-full border border-line/80 bg-white text-muted shadow-sm",
+            "rounded-full border border-line bg-surface text-muted",
             "opacity-0 transition-opacity group-hover/node:opacity-100",
             on && "opacity-100",
           )}

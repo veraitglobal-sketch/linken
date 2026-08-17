@@ -17,8 +17,7 @@ function NetworkClusterHaloInner({ data }: NodeProps) {
       style={{ width: d.width, height: d.height }}
     >
       <div
-        className="h-full w-full rounded-[32px] border border-dashed border-line/70 bg-white/30"
-        style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7)" }}
+        className="h-full w-full rounded-hero border border-dashed border-line/80 bg-paper/40"
       />
     </div>
   );

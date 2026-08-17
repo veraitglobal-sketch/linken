@@ -49,13 +49,13 @@ export async function NetworkMapCanvas({
         "relative flex flex-col overflow-hidden bg-surface",
         fullBleed
           ? "h-full min-h-0"
-          : "rounded-2xl border border-line shadow-[0_12px_40px_rgba(8,20,18,0.05)]",
+          : "rounded-card border border-line shadow-card",
       )}
     >
       {!fullBleed ? (
         <div className="flex shrink-0 items-center gap-3 border-b border-line/80 px-3.5 py-2.5 sm:px-4">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-semibold tracking-[-0.02em] text-ink">
+            <p className="truncate font-display text-[13px] font-medium tracking-[-0.03em] text-ink">
               {subtitle ?? "Network"}
             </p>
             {counts.length > 0 ? (

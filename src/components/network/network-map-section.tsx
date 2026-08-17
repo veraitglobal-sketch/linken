@@ -28,9 +28,9 @@ export async function NetworkMapSection({
       id="network-map"
       className="mx-auto mt-5 max-w-6xl scroll-mt-28 px-4"
     >
-      <div className="overflow-hidden rounded-[22px] border border-line/80 bg-surface shadow-[0_16px_48px_rgba(8,20,18,0.05)]">
+      <div className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
         <div className="border-b border-line/70 px-5 py-5 sm:px-7">
-          <p className="text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.16em] text-plus uppercase">
             {PRODUCT.map.label}
           </p>
           <h2 className="mt-1.5 font-display text-[clamp(1.4rem,2.2vw,1.75rem)] font-medium tracking-[-0.04em] text-ink">
@@ -73,7 +73,7 @@ export async function NetworkMapSection({
                 {n.data.href && n.data.href !== "#" ? (
                   <Link
                     href={n.data.href}
-                    className="flex items-center justify-between rounded-2xl border border-line px-3 py-2.5 text-[13px]"
+                    className="flex items-center justify-between rounded-tile border border-line px-3 py-2.5 text-[13px]"
                   >
                     <span className="font-medium text-ink">{n.data.name}</span>
                     <span className="text-[11px] tracking-[0.06em] text-muted uppercase">
@@ -81,7 +81,7 @@ export async function NetworkMapSection({
                     </span>
                   </Link>
                 ) : (
-                  <div className="rounded-2xl border border-line px-3 py-2.5 text-[13px] text-muted">
+                  <div className="rounded-tile border border-line px-3 py-2.5 text-[13px] text-muted">
                     {n.data.name}
                   </div>
                 )}
@@ -90,7 +90,7 @@ export async function NetworkMapSection({
           </ul>
           <Link
             href={fullMapHref}
-            className="mt-3 inline-block text-[13px] font-semibold text-[#1a5c51] underline-offset-2 hover:underline"
+            className="mt-3 inline-block text-[13px] font-semibold text-blue underline-offset-2 hover:underline"
           >
             Open full map
           </Link>
