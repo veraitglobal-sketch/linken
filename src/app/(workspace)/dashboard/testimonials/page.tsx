@@ -4,7 +4,7 @@ import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notic
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { TestimonialInviteForm } from "@/components/widgets/testimonial-invite-form";
 import { TestimonialPendingList } from "@/components/widgets/testimonial-pending-list";
-import { TestimonialsEmbedPanel } from "@/components/widgets/testimonials-embed-panel";
+import { TestimonialsWorkbench } from "@/components/widgets/testimonials-workbench";
 import { TestimonialsStudio } from "@/components/widgets/testimonials-studio";
 import { WIDGET_CATALOG } from "@/features/widgets/catalog";
 import { getSiteUrl } from "@/lib/site";
@@ -13,6 +13,12 @@ import {
   countPublishedTestimonials,
   getTestimonialsStudioEntries,
 } from "@/features/testimonials/queries";
+import {
+  TESTIMONIAL_LAYOUTS,
+  type TestimonialLayout,
+} from "@/features/testimonials/settings";
+import { testimonialFitsLayout } from "@/features/testimonials/theme/layout-fit";
+import type { TestimonialStudioEntry } from "@/features/testimonials/queries";
 import { parseWidgetSettings } from "@/features/widgets/settings";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { createClient } from "@/lib/supabase/server";
@@ -116,12 +122,15 @@ export default async function DashboardTestimonialsPage() {
           there is no widget to show, so the invite is the page. */}
       <div className="space-y-6">
         {publishedCount > 0 && testimonialsWidget ? (
-          <TestimonialsEmbedPanel
+          <TestimonialsWorkbench
             widget={testimonialsWidget}
             siteUrl={getSiteUrl()}
             slug={company.slug}
             isPro={company.plan === "pro"}
             domainReady={domainReady}
+            savedLayout={testimonialSettings.layout}
+            includedCount={entries.filter((e) => e.included).length}
+            fitCounts={fitCountsFor(entries)}
           />
         ) : (
           <div className="rounded-2xl border border-line bg-surface px-5 py-4 text-[13px] leading-relaxed text-ink-soft">
@@ -145,13 +154,23 @@ export default async function DashboardTestimonialsPage() {
           layout={testimonialSettings.layout}
           limit={testimonialSettings.limit}
           theme={testimonialSettings.theme}
-          siteUrl={getSiteUrl()}
-          slug={company.slug}
-          isPro={company.plan === "pro"}
         />
         <TestimonialInviteForm />
         <TestimonialPendingList rows={pending} />
       </div>
     </WorkspacePage>
   );
+}
+
+/* How many included records clear each layout's character cap. Computed on the
+   server from the same rows the studio lists, so the picker's counts and the
+   list can never disagree. */
+function fitCountsFor(rows: TestimonialStudioEntry[]) {
+  const included = rows.filter((r) => r.included);
+  return Object.fromEntries(
+    TESTIMONIAL_LAYOUTS.map((l) => [
+      l,
+      included.filter((r) => testimonialFitsLayout(r.body, l)).length,
+    ]),
+  ) as Record<TestimonialLayout, number>;
 }

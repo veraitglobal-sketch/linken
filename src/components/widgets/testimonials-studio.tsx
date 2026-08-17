@@ -3,17 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { TestimonialsLayoutControls } from "@/components/widgets/testimonials-layout-controls";
-import { TestimonialsLayoutGallery } from "@/components/widgets/testimonials-layout-gallery";
 import { TestimonialsThemeControls } from "@/components/widgets/testimonials-theme-controls";
 import { TestimonialsStudioRow } from "@/components/widgets/testimonials-studio-row";
 import type { TestimonialLayout } from "@/features/testimonials/settings";
 import type { TestimonialStudioEntry } from "@/features/testimonials/queries";
 import type { TestimonialThemeTokens } from "@/features/testimonials/theme/presets";
-import {
-  layoutFitWarnings,
-  testimonialFitsLayout,
-} from "@/features/testimonials/theme/layout-fit";
-import { TESTIMONIAL_LAYOUTS } from "@/features/testimonials/settings";
+import { layoutFitWarnings } from "@/features/testimonials/theme/layout-fit";
 import { saveTestimonialOrder } from "@/features/testimonials/testimonials-studio-actions";
 
 type Props = {
@@ -21,9 +16,6 @@ type Props = {
   layout: TestimonialLayout;
   limit: number;
   theme: TestimonialThemeTokens;
-  siteUrl: string;
-  slug: string;
-  isPro: boolean;
 };
 
 export function TestimonialsStudio({
@@ -31,7 +23,6 @@ export function TestimonialsStudio({
   layout,
   limit,
   theme,
-  ...rest
 }: Props) {
   return (
     <TestimonialsStudioInner
@@ -40,7 +31,6 @@ export function TestimonialsStudio({
       layout={layout}
       limit={limit}
       theme={theme}
-      {...rest}
     />
   );
 }
@@ -66,9 +56,6 @@ function TestimonialsStudioInner({
   layout,
   limit,
   theme,
-  siteUrl,
-  slug,
-  isPro,
 }: Props) {
   const router = useRouter();
   const [rows, setRows] = useState(initial);
@@ -118,19 +105,6 @@ function TestimonialsStudioInner({
           includedCount={includedCount}
           totalCount={rows.length}
         />
-        {/* Counted from the included rows against each layout's character cap,
-            so the numbers are about their records rather than about the layout
-            in the abstract. */}
-        <div className="mt-5">
-          <TestimonialsLayoutGallery
-            layout={layout}
-            includedCount={includedCount}
-            fitCounts={fitCountsFor(rows)}
-            siteUrl={siteUrl}
-            slug={slug}
-            isPro={isPro}
-          />
-        </div>
         <TestimonialsThemeControls theme={theme} />
         {warnings.length ? (
           <ul className="mt-3 space-y-1">
@@ -172,15 +146,4 @@ function TestimonialsStudioInner({
       )}
     </section>
   );
-}
-
-/** How many included records clear each layout's character cap. */
-function fitCountsFor(rows: TestimonialStudioEntry[]) {
-  const included = rows.filter((r) => r.included);
-  return Object.fromEntries(
-    TESTIMONIAL_LAYOUTS.map((l) => [
-      l,
-      included.filter((r) => testimonialFitsLayout(r.body, l)).length,
-    ]),
-  ) as Record<TestimonialLayout, number>;
 }
