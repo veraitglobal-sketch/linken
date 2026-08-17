@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -51,7 +50,15 @@ export function IntegrationCard({
           blockedReason && "opacity-40",
         )}
       >
-        <Image src={logo} alt="" width={26} height={26} aria-hidden />
+        {/* A plain `img`, not `next/image`, on purpose.
+            The optimizer refuses SVG unless `dangerouslyAllowSVG` is on — it
+            answers `400 "image type is not allowed"` — so every one of these
+            marks was a broken image, whatever the file contained. Turning that
+            flag on to fix a 26px icon would also permit any remote SVG from the
+            configured hosts, and an SVG can carry script. There is nothing to
+            optimise in a static two-kilobyte logo anyway. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={logo} alt="" width={26} height={26} aria-hidden loading="lazy" />
       </span>
 
       <p className="mt-3 text-[14px] font-semibold tracking-[-0.01em] text-ink">
