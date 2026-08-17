@@ -13,6 +13,7 @@ import {
   WorkspaceShellMenu,
   publicWorkspaceLabel,
 } from "@/components/dashboard/workspace-shell-bits";
+import { MapChromeSlotProvider } from "@/components/network/map-chrome-slot";
 import type { ActivationChecklist } from "@/features/activation/checklist";
 import type { WorkspaceSection } from "@/features/workspace/sections";
 import type { WorkspaceContext } from "@/features/workspace/types";
@@ -82,34 +83,28 @@ export function WorkspaceShell({
         {operatorBanner}
 
         {isGraph ? (
-          <>
-            <div className="pointer-events-none absolute top-3 right-3 z-40 flex items-center gap-2 sm:top-4 sm:right-4">
-              <div className="pointer-events-auto">
-                {signedIn ? (
-                  <WorkspaceShellMenu {...menu} />
-                ) : (
-                  <Link
-                    href="/login?next=/dashboard"
-                    className="inline-flex h-8 items-center rounded-full border border-line bg-surface px-3 text-[11px] font-semibold text-ink shadow-[0_8px_24px_rgba(8,20,18,0.06)]"
-                  >
-                    Sign in
-                  </Link>
-                )}
-              </div>
-              <div className="pointer-events-auto shrink-0">
+          <MapChromeSlotProvider
+            extras={
+              <>
+                <div className="pointer-events-auto">
+                  {signedIn ? (
+                    <WorkspaceShellMenu {...menu} />
+                  ) : (
+                    <Link
+                      href="/login?next=/dashboard"
+                      className="inline-flex h-8 items-center rounded-full border border-line bg-surface px-3 text-[11px] font-semibold text-ink"
+                    >
+                      Sign in
+                    </Link>
+                  )}
+                </div>
                 <WorkspaceShellChecklist
                   checklist={checklist}
                   signedIn={signedIn}
                 />
-              </div>
-              {publicHref ? (
-                <WorkspacePublicLink
-                  href={publicHref}
-                  label={publicLabel}
-                  floating
-                />
-              ) : null}
-            </div>
+              </>
+            }
+          >
             {signedIn ? (
               <WorkspaceMobileNav
                 pathname={pathname}
@@ -123,7 +118,7 @@ export function WorkspaceShell({
             >
               {children}
             </main>
-          </>
+          </MapChromeSlotProvider>
         ) : (
           <>
             <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-line/50 bg-surface/90 px-4 py-3 backdrop-blur-sm sm:h-14 sm:flex-nowrap sm:py-0 sm:px-7">

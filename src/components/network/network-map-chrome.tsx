@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { MapChromeSlot } from "@/components/network/map-chrome-slot";
 import { OwnerLoopBar } from "@/components/product/owner-loop-bar";
 import { cn } from "@/lib/cn";
 
@@ -51,7 +52,7 @@ export function NetworkMapChrome({
     <div className="pointer-events-none absolute inset-x-0 top-0 z-20 p-3 sm:p-4">
       <div
         className={cn(
-          "pointer-events-auto mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-2 gap-y-2 rounded-card px-2 py-2 sm:gap-x-3 sm:px-3",
+          "pointer-events-auto flex w-full flex-wrap items-center gap-x-2 gap-y-2 rounded-card px-2 py-2 sm:gap-x-3 sm:px-3",
           BAR,
         )}
       >
@@ -86,13 +87,9 @@ export function NetworkMapChrome({
           ) : null}
         </div>
 
-        {editable ? (
-          <>
-            <span
-              className="hidden h-7 w-px shrink-0 bg-line/80 sm:block"
-              aria-hidden
-            />
-            <div className="flex w-full shrink-0 flex-wrap items-center gap-0.5 sm:ml-auto sm:w-auto">
+        <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2">
+          {editable ? (
+            <>
               {showStructureTools ? (
                 <>
                   <ModeButton
@@ -109,7 +106,6 @@ export function NetworkMapChrome({
                   >
                     Shared
                   </ModeButton>
-                  <span className="mx-1 h-3.5 w-px bg-line" aria-hidden />
                 </>
               ) : null}
               <button
@@ -123,7 +119,7 @@ export function NetworkMapChrome({
               {addHref ? (
                 <Link
                   href={addHref}
-                  className="ml-0.5 inline-flex h-8 items-center rounded-xl bg-navy px-3 text-[11px] font-semibold text-white transition-colors hover:bg-accent-hover"
+                  className="inline-flex h-8 items-center rounded-xl bg-navy px-3 text-[11px] font-semibold text-white transition-colors hover:bg-accent-hover"
                 >
                   Add partners
                 </Link>
@@ -131,14 +127,15 @@ export function NetworkMapChrome({
                 <button
                   type="button"
                   onClick={onAdd}
-                  className="ml-0.5 inline-flex h-8 items-center rounded-xl bg-navy px-3 text-[11px] font-semibold text-white transition-colors hover:bg-accent-hover"
+                  className="inline-flex h-8 items-center rounded-xl bg-navy px-3 text-[11px] font-semibold text-white transition-colors hover:bg-accent-hover"
                 >
                   Add
                 </button>
               )}
-            </div>
-          </>
-        ) : null}
+            </>
+          ) : null}
+          <MapChromeSlot />
+        </div>
       </div>
     </div>
   );
