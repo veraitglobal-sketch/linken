@@ -15,7 +15,7 @@ type Props = {
 
 function buildSnippet(siteUrl: string, companySlug: string, caseSlug: string) {
   const src = `${siteUrl}/embed/${companySlug}/case/${caseSlug}`;
-  return `<iframe src="${src}" width="100%" height="72" style="border:0;width:100%;max-width:100%;background:transparent" title="Confirmed on Hansala" loading="lazy"></iframe>`;
+  return `<iframe src="${src}" width="100%" height="72" allowtransparency="true" style="border:0;width:100%;max-width:100%;background:transparent;color-scheme:normal" title="Confirmed on Hansala" loading="lazy"></iframe>`;
 }
 
 /** Dashboard: stamp snippet when confirmed; otherwise why + request action. */

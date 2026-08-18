@@ -587,6 +587,53 @@ a {
   }
 }
 
+/* Widget chrome on customer sites. Neutral frost — never our navy.
+   Iframe backdrop-filter cannot blur the parent page; the host still shows
+   through the translucent fill, which is what stops a white sticker. */
+.embed-glass {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(13, 18, 16, 0.08);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+
+.embed-glass-dark {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+
+.embed-glass-sheet {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(13, 18, 16, 0.09);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+
+.embed-glass-sheet-dark {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .embed-glass,
+  .embed-glass-sheet {
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .embed-glass-dark,
+  .embed-glass-sheet-dark {
+    background: rgba(9, 11, 10, 0.92);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 .link-pulse {
   transform-origin: center;
   animation: orbit 18s linear infinite;

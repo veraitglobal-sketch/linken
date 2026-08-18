@@ -4,37 +4,33 @@ export function parseEmbedTheme(raw: string | undefined): EmbedTheme {
   return raw === "dark" ? "dark" : "light";
 }
 
+function glass(theme: EmbedTheme, sheet = false): string {
+  if (sheet) {
+    return theme === "dark" ? "embed-glass-sheet-dark" : "embed-glass-sheet";
+  }
+  return theme === "dark" ? "embed-glass-dark" : "embed-glass";
+}
+
 /**
- * Universal embed chrome — fits any host site.
+ * Universal embed chrome — frost on the host, not a white sticker.
  * Hairline precision, no mint mesh, no hover lift (iframes shouldn't jump).
  * Hansala is recognized by the seal, not by a product card.
  */
 export function embedShellClass(theme: EmbedTheme): string {
-  const base =
-    "rounded-xl border transition-colors duration-150 ease-out";
-  return theme === "dark"
-    ? `${base} border-white/14 bg-[#0c1412]/92`
-    : `${base} border-black/[0.08] bg-white/92`;
+  return `rounded-xl border transition-colors duration-150 ease-out ${glass(theme)}`;
 }
 
-/** Quieter bar for free essentials — almost invisible on the host page. */
+/** Quieter bar for free essentials — frost, almost invisible on light hosts. */
 export function embedBarClass(theme: EmbedTheme): string {
-  const base =
-    "rounded-lg border transition-colors duration-150 ease-out";
-  return theme === "dark"
-    ? `${base} border-white/12 bg-white/[0.04]`
-    : `${base} border-black/[0.07] bg-white/80`;
+  return `rounded-lg border transition-colors duration-150 ease-out ${glass(theme)}`;
 }
 
 /**
- * Record shell — a sheet, not a UI card. Stock fill rather than pure white,
- * hairline edge, no elevation: the rules inside carry the structure.
+ * Record shell — a frosted sheet, not a UI card. Stronger fill than the bar
+ * so captions still read; still lets the host show through.
  */
 export function embedRecordShell(theme: EmbedTheme): string {
-  const base = "rounded-xl border transition-colors duration-150 ease-out";
-  return theme === "dark"
-    ? `${base} border-white/12 bg-[#0b100f]/92`
-    : `${base} border-black/[0.09] bg-[#fcfcfb]/94`;
+  return `rounded-xl border transition-colors duration-150 ease-out ${glass(theme, true)}`;
 }
 
 export function embedInkClass(theme: EmbedTheme): string {

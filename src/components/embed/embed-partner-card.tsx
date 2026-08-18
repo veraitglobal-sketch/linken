@@ -62,13 +62,11 @@ export function EmbedPartnerCard({
         Hansala
       </span>
 
-      {/* Premium Partner pill — light chrome, like Webflow */}
+      {/* Partner pill — frost on the host, not a white sticker */}
       <span
         className={cn(
           "mt-4 inline-flex items-center gap-2 rounded-full border px-3 py-1.5",
-          dark
-            ? "border-white/18 bg-white/[0.06]"
-            : "border-[#0e1f1c]/12 bg-white/90 shadow-[0_1px_2px_rgba(8,20,18,0.04)]",
+          dark ? "embed-glass-dark" : "embed-glass",
         )}
       >
         <span

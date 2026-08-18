@@ -33,8 +33,8 @@ export function WidgetConfigAside({
         label="Theme"
         value={theme}
         options={[
-          { id: "light", label: "Light" },
-          { id: "dark", label: "Dark" },
+          { id: "light", label: "On light" },
+          { id: "dark", label: "On dark" },
         ]}
         onChange={onTheme}
       />

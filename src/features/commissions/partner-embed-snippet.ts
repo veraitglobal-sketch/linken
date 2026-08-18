@@ -23,5 +23,5 @@ export function buildPartnerEmbedSnippet(input: {
     slug: input.slug,
     theme: input.theme,
   });
-  return `<iframe src="${src}" width="100%" height="168" style="border:0;width:100%;max-width:280px;background:transparent" title="Hansala Premium Partner" loading="lazy"></iframe>`;
+  return `<iframe src="${src}" width="100%" height="168" allowtransparency="true" style="border:0;width:100%;max-width:280px;background:transparent;color-scheme:normal" title="Hansala Premium Partner" loading="lazy"></iframe>`;
 }

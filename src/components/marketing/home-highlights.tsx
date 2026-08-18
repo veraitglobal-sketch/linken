@@ -46,13 +46,11 @@ export function HomeHighlights() {
             aria-hidden
           />
           <div className="absolute inset-x-0 bottom-0 p-7 sm:p-10 lg:p-12">
-            <div className="[&_span]:drop-shadow-[0_2px_10px_rgba(2,8,7,0.55)]">
-              <EmbedVerified
-                profileUrl={profileUrl}
-                theme="dark"
-                size="lg"
-              />
-            </div>
+            <EmbedVerified
+              profileUrl={profileUrl}
+              theme="dark"
+              size="lg"
+            />
             <p className="mt-5 max-w-md font-display text-xl leading-snug tracking-[-0.025em] text-white sm:text-2xl">
               Your network travels with every share.
             </p>

@@ -68,7 +68,7 @@ export function buildEmbedSnippet(input: {
   const styleWidth = isFluid ? "100%" : `${px}px`;
   const resizeAttr =
     input.variant === "testimonials" ? ' data-hansala-embed="1"' : "";
-  const iframe = `<iframe src="${src}" width="${widthAttr}" height="${height}"${resizeAttr} style="border:0;width:${styleWidth};max-width:100%;background:transparent" title="Verified on Hansala" loading="lazy"></iframe>`;
+  const iframe = `<iframe src="${src}" width="${widthAttr}" height="${height}"${resizeAttr} allowtransparency="true" style="border:0;width:${styleWidth};max-width:100%;background:transparent;color-scheme:normal" title="Verified on Hansala" loading="lazy"></iframe>`;
   if (input.variant !== "testimonials") return iframe;
   const scriptSrc = `${input.siteUrl}/embed-resize.js`;
   return `${iframe}\n<script src="${scriptSrc}" async></script>`;
@@ -85,5 +85,5 @@ export function buildCaseStampSnippet(input: {
     `${input.siteUrl}/embed/${input.slug}/case/${input.caseSlug}`,
   );
   if (input.theme === "dark") url.searchParams.set("theme", "dark");
-  return `<iframe src="${url}" width="100%" height="72" style="border:0;width:100%;max-width:100%;background:transparent" title="Confirmed on Hansala" loading="lazy"></iframe>`;
+  return `<iframe src="${url}" width="100%" height="72" allowtransparency="true" style="border:0;width:100%;max-width:100%;background:transparent;color-scheme:normal" title="Confirmed on Hansala" loading="lazy"></iframe>`;
 }

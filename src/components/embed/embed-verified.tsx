@@ -9,7 +9,7 @@ type Props = {
   size?: "sm" | "md" | "lg";
 };
 
-/** Free essential — clean Hansala Verified lockup, no chrome. */
+/** Free essential — lockup on host-fit frost, not a white sticker. */
 export function EmbedVerified({
   profileUrl,
   theme = "light",
@@ -22,8 +22,10 @@ export function EmbedVerified({
       rel="noopener noreferrer"
       title="Hansala verified badge"
       className={cn(
-        "inline-flex items-center px-1 py-0.5 no-underline",
+        "inline-flex items-center rounded-full border no-underline",
         "transition-opacity duration-150 hover:opacity-90",
+        size === "lg" ? "px-3 py-2" : "px-2.5 py-0.5",
+        theme === "dark" ? "embed-glass-dark" : "embed-glass",
       )}
     >
       <EmbedVerifiedLockup theme={theme} size={size} />
