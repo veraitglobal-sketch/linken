@@ -21,7 +21,6 @@ export function HomeBoard({
   return (
     <div className="space-y-5">
       <HomePrimaryCard action={model.primary} companyId={companyId} />
-
       <HomeStatsRow
         pendingOutgoing={model.pendingOutgoing}
         pendingIncoming={model.pendingIncoming}
@@ -30,24 +29,19 @@ export function HomeBoard({
         caseCount={model.caseCount}
         companySlug={companySlug}
       />
-
-      <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-5">
-          {model.checklist && !model.checklist.complete ? (
-            <GettingStartedCard checklist={model.checklist} />
-          ) : null}
-          <HomeCompleteness data={model.completeness} />
-          <HomeTips kind={model.kind} />
-        </div>
-        <div className="space-y-5">
-          <HomePerformance analytics={model.analytics} isPro={model.isPro} />
-          <HomeQuickLinks
-            companyId={companyId}
-            companySlug={companySlug}
-            showDeveloperLinks={model.showDeveloperLinks}
-            proofShared={model.proofShared}
-          />
-        </div>
+      {model.checklist && !model.checklist.complete ? (
+        <GettingStartedCard checklist={model.checklist} />
+      ) : null}
+      <div className="grid items-stretch gap-5 sm:grid-cols-2">
+        <HomeCompleteness data={model.completeness} />
+        <HomePerformance analytics={model.analytics} isPro={model.isPro} />
+        <HomeQuickLinks
+          companyId={companyId}
+          companySlug={companySlug}
+          showDeveloperLinks={model.showDeveloperLinks}
+          proofShared={model.proofShared}
+        />
+        <HomeTips kind={model.kind} />
       </div>
     </div>
   );

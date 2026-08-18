@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HomePanel } from "@/components/dashboard/home/home-panel";
 
 type Props = {
   analytics: {
@@ -12,66 +13,57 @@ type Props = {
 export function HomePerformance({ analytics, isPro }: Props) {
   if (!isPro) {
     return (
-      <section className="rounded-[20px] border border-line bg-paper px-5 py-5">
-        <h2 className="font-display text-[16px] font-medium text-ink">
-          Performance
-        </h2>
-        <p className="mt-2 text-[13px] text-ink-soft">
+      <HomePanel label="Performance">
+        <p className="text-[13px] text-ink-soft">
           Visits, embeds, and inquiries — on Pro.
         </p>
         <Link
           href="/dashboard/billing"
-          className="mt-3 inline-block text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
+          className="mt-4 inline-flex h-10 items-center text-[13px] font-semibold text-ink"
         >
-          See plans →
+          Plans
         </Link>
-      </section>
+      </HomePanel>
     );
   }
 
   if (!analytics) {
     return (
-      <section className="rounded-[20px] border border-line bg-surface px-5 py-5">
-        <h2 className="font-display text-[16px] font-medium text-ink">
-          Last 30 days
-        </h2>
-        <p className="mt-2 text-[13px] text-muted">No traffic yet.</p>
-        <Link
-          href="/dashboard/widgets"
-          className="mt-3 inline-block text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
-        >
-          Set up an embed →
-        </Link>
-      </section>
+      <HomePanel
+        label="Last 30 days"
+        meta={
+          <Link href="/dashboard/widgets" className="font-semibold text-ink">
+            Embed
+          </Link>
+        }
+      >
+        <p className="text-[13px] text-muted">No traffic yet.</p>
+      </HomePanel>
     );
   }
 
   return (
-    <section className="rounded-[20px] border border-line bg-surface px-5 py-5">
-      <div className="flex items-baseline justify-between">
-        <h2 className="font-display text-[16px] font-medium text-ink">
-          Last 30 days
-        </h2>
-        <Link
-          href="/dashboard/insights"
-          className="text-[12px] font-semibold text-ink underline-offset-2 hover:underline"
-        >
-          Insights →
+    <HomePanel
+      label="Last 30 days"
+      meta={
+        <Link href="/dashboard/insights" className="font-semibold text-ink">
+          Insights
         </Link>
-      </div>
-      <dl className="mt-4 grid grid-cols-3 gap-3">
+      }
+    >
+      <dl className="grid grid-cols-3 gap-3">
         <Stat label="Visits" value={analytics.profileViews} />
         <Stat label="Embeds" value={analytics.embedViews} />
         <Stat label="Inquiries" value={analytics.inquiries} />
       </dl>
-    </section>
+    </HomePanel>
   );
 }
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <dt className="text-[10px] font-semibold tracking-[0.1em] text-muted uppercase">
+      <dt className="text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
         {label}
       </dt>
       <dd className="mt-1 font-display text-[22px] font-medium tabular-nums text-ink">

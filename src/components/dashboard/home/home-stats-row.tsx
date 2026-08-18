@@ -22,7 +22,7 @@ export function HomeStatsRow({
 
   const items = [
     {
-      label: "Pending invites",
+      label: "Pending",
       value: pending,
       href: "/dashboard/inbox",
       empty: "None waiting",
@@ -37,7 +37,7 @@ export function HomeStatsRow({
       label: "Projects",
       value: caseCount,
       href: "/dashboard/cases",
-      empty: "Add a case study",
+      empty: "None yet",
     },
   ];
 
@@ -47,16 +47,16 @@ export function HomeStatsRow({
         <Link
           key={item.label}
           href={item.href}
-          className="rounded-[20px] border border-line bg-surface px-4 py-4 transition-colors hover:border-blue/30"
+          className="flex min-h-[6.75rem] flex-col rounded-tile border border-line bg-surface px-4 py-4 transition-colors hover:border-navy/20"
         >
-          <p className="text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
             {item.label}
           </p>
           <p className="mt-2 font-display text-[28px] font-medium tracking-[-0.03em] text-ink tabular-nums">
             {item.value}
           </p>
           {item.value === 0 ? (
-            <p className="mt-1 text-[12px] text-muted">{item.empty}</p>
+            <p className="mt-auto pt-1 text-[12px] text-muted">{item.empty}</p>
           ) : null}
         </Link>
       ))}

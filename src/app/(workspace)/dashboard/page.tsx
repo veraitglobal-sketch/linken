@@ -80,7 +80,7 @@ export default async function DashboardHomePage() {
   return (
     <WorkspacePage
       title="Home"
-      description={PRODUCT.home.job}
+      wide
       action={
         <Link
           href="/dashboard/map"

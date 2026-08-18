@@ -6,7 +6,6 @@ import type { ReactNode } from "react";
 import { SkipLink } from "@/components/a11y/skip-link";
 import { WorkspaceDesktopAside } from "@/components/dashboard/workspace-desktop-aside";
 import { WorkspaceMobileNav } from "@/components/dashboard/workspace-mobile-nav";
-import { WORKSPACE_PAGE_META } from "@/components/dashboard/workspace-page-meta";
 import {
   WorkspacePublicLink,
   WorkspaceShellChecklist,
@@ -43,15 +42,6 @@ export function WorkspaceShell({
 }: Props) {
   const pathname = usePathname();
   const isGraph = pathname === "/dashboard/map" && active?.type !== "group";
-  const meta =
-    WORKSPACE_PAGE_META[pathname] ??
-    Object.entries(WORKSPACE_PAGE_META).find(
-      ([href]) =>
-        href !== "/dashboard" &&
-        href !== "/dashboard/map" &&
-        pathname.startsWith(href),
-    )?.[1] ??
-    { title: "Workspace" };
 
   const publicHref =
     active?.type === "company"
@@ -121,43 +111,31 @@ export function WorkspaceShell({
           </MapChromeSlotProvider>
         ) : (
           <>
-            <header className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-line/50 bg-surface/90 px-4 py-3 backdrop-blur-sm sm:h-14 sm:flex-nowrap sm:py-0 sm:px-7">
-              <div className="flex min-w-0 flex-1 items-center gap-3">
-                <WorkspaceShellMenu {...menu} />
-                <div className="min-w-0 flex-1">
-                  <h1 className="truncate font-display text-[16px] font-medium tracking-[-0.04em] text-ink">
-                    {active?.type === "group" && pathname === "/dashboard"
-                      ? "Company group"
-                      : meta.title}
-                  </h1>
-                  {meta.description ? (
-                    <p className="hidden truncate text-[11px] text-muted sm:block">
-                      {meta.description}
-                    </p>
-                  ) : null}
-                </div>
+            <header className="flex h-14 shrink-0 items-center gap-3 border-b border-line bg-surface px-4 sm:px-7">
+              <WorkspaceShellMenu {...menu} />
+              <div className="ml-auto flex items-center gap-2">
                 <WorkspaceShellChecklist
                   checklist={checklist}
                   signedIn={signedIn}
                 />
+                {!signedIn ? (
+                  <Link
+                    href="/login?next=/dashboard"
+                    className="inline-flex h-8 shrink-0 items-center rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white"
+                  >
+                    Sign in
+                  </Link>
+                ) : publicHref ? (
+                  <WorkspacePublicLink href={publicHref} label={publicLabel} />
+                ) : (
+                  <Link
+                    href="/onboarding"
+                    className="inline-flex h-8 shrink-0 items-center rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white"
+                  >
+                    Create company
+                  </Link>
+                )}
               </div>
-              {!signedIn ? (
-                <Link
-                  href="/login?next=/dashboard"
-                  className="inline-flex h-8 shrink-0 items-center rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white"
-                >
-                  Sign in
-                </Link>
-              ) : publicHref ? (
-                <WorkspacePublicLink href={publicHref} label={publicLabel} />
-              ) : (
-                <Link
-                  href="/onboarding"
-                  className="inline-flex h-8 shrink-0 items-center rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white"
-                >
-                  Create company
-                </Link>
-              )}
             </header>
             {signedIn ? (
               <WorkspaceMobileNav

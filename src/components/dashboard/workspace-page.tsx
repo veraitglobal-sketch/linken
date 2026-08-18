@@ -27,7 +27,7 @@ export function WorkspacePage({
         className,
       )}
     >
-      <header className="mb-9 flex flex-wrap items-end justify-between gap-4 border-b border-line/50 pb-6">
+      <header className="mb-7 flex flex-wrap items-end justify-between gap-4 border-b border-line/50 pb-5">
         <div className="min-w-0 max-w-2xl">
           <h1 className="font-display text-[clamp(1.55rem,2.4vw,1.9rem)] font-medium tracking-[-0.045em] text-ink">
             {title}

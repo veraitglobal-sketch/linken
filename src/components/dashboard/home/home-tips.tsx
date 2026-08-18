@@ -1,3 +1,4 @@
+import { HomePanel } from "@/components/dashboard/home/home-panel";
 import type { DashboardHomeKind } from "@/features/dashboard/home-state";
 
 const TIPS: Partial<Record<DashboardHomeKind, string>> = {
@@ -15,8 +16,8 @@ export function HomeTips({ kind }: { kind: DashboardHomeKind }) {
   const tip = TIPS[kind];
   if (!tip) return null;
   return (
-    <aside className="rounded-tile border border-dashed border-line bg-paper px-5 py-4 text-[13px] text-ink-soft">
-      {tip}
-    </aside>
+    <HomePanel label="Note" muted>
+      <p className="text-[13px] leading-relaxed text-ink-soft">{tip}</p>
+    </HomePanel>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DashboardCtaLink } from "@/components/dashboard/home/dashboard-cta-link";
+import { HomePanel } from "@/components/dashboard/home/home-panel";
 
 type Props = {
   companyId: string;
@@ -29,11 +30,8 @@ export function HomeQuickLinks({
   ];
 
   return (
-    <section className="rounded-tile border border-line bg-surface px-5 py-5">
-      <h2 className="text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
-        Open
-      </h2>
-      <ul className="mt-3 divide-y divide-line/80">
+    <HomePanel label="Open">
+      <ul className="-mt-1 divide-y divide-line/80">
         {links.map((l) => (
           <li key={l.id}>
             <DashboardCtaLink
@@ -57,6 +55,6 @@ export function HomeQuickLinks({
           </li>
         ) : null}
       </ul>
-    </section>
+    </HomePanel>
   );
 }
