@@ -79,7 +79,7 @@ export function ApiKeysPanel({ keys }: Props) {
       title="Keys"
       description={
         active.length === 0
-          ? "Create a key for your agent. Confirmations always stay human."
+          ? "Create a key, then paste it into Cursor or your agent."
           : `${active.length} active · treat like a password`
       }
       action={
@@ -115,8 +115,8 @@ export function ApiKeysPanel({ keys }: Props) {
         {active.length === 0 ? (
           <div className="px-5 py-10 text-center sm:px-6">
             <p className="text-[14px] font-medium text-ink">No keys yet</p>
-            <p className="mx-auto mt-1 max-w-xs text-[12px] leading-relaxed text-muted">
-              Create a key, then paste it into your agent or integration.
+            <p className="mx-auto mt-1 max-w-xs text-[12px] text-muted">
+              Paste it into MCP as HANSALA_AGENT_API_KEY.
             </p>
           </div>
         ) : (

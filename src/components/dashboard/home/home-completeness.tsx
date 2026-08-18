@@ -8,7 +8,7 @@ export function HomeCompleteness({ data }: { data: ProfileCompleteness }) {
     <section className="rounded-[20px] border border-line bg-surface px-5 py-5">
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="font-display text-[16px] font-medium tracking-[-0.02em] text-ink">
-          Profile completeness
+          Profile
         </h2>
         <p className="text-[12px] tabular-nums text-muted">
           {data.score}/{data.total}

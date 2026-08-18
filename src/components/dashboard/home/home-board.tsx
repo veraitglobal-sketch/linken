@@ -3,7 +3,6 @@ import { HomeCompleteness } from "@/components/dashboard/home/home-completeness"
 import { HomePerformance } from "@/components/dashboard/home/home-performance";
 import { HomePrimaryCard } from "@/components/dashboard/home/home-primary-card";
 import { HomeQuickLinks } from "@/components/dashboard/home/home-quick-links";
-import { HomeSetupBanner } from "@/components/dashboard/home/home-setup-banner";
 import { HomeStatsRow } from "@/components/dashboard/home/home-stats-row";
 import { HomeTips } from "@/components/dashboard/home/home-tips";
 import type { DashboardHomeModel } from "@/features/dashboard/home-data";
@@ -12,24 +11,15 @@ type Props = {
   companyId: string;
   companySlug: string;
   model: DashboardHomeModel;
-  showSetupBanner: boolean;
 };
 
 export function HomeBoard({
   companyId,
   companySlug,
   model,
-  showSetupBanner,
 }: Props) {
   return (
     <div className="space-y-5">
-      {showSetupBanner && model.checklist && !model.checklist.complete ? (
-        <HomeSetupBanner
-          companyId={companyId}
-          nextLabel={model.checklist.next?.label ?? null}
-        />
-      ) : null}
-
       <HomePrimaryCard action={model.primary} companyId={companyId} />
 
       <HomeStatsRow

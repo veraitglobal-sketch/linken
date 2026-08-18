@@ -21,11 +21,8 @@ export function CreatedKeyBanner({
       <code className="mt-2 block break-all font-mono text-[12px] text-ink">
         {value}
       </code>
-      <p className="mt-2 text-[12px] leading-relaxed text-muted">
-        REST:{" "}
-        <code className="text-ink">Authorization: Bearer {value.slice(0, 11)}…</code>
-        {" · "}
-        Cursor MCP:{" "}
+      <p className="mt-2 text-[12px] text-muted">
+        REST Bearer · MCP env{" "}
         <code className="text-ink">HANSALA_AGENT_API_KEY</code>
       </p>
       <div className="mt-3 flex flex-wrap gap-2">

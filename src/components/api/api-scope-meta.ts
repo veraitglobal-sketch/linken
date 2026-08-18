@@ -75,7 +75,6 @@ export const KEY_PRESETS: {
   {
     id: "full_access",
     label: "AI agent",
-    description:
-      "Recommended for Cursor, Claude MCP, and automation — all scopes.",
+    description: "Cursor, Claude, automation — all scopes.",
   },
 ];

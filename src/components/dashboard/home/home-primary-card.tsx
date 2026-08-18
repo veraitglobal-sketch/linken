@@ -10,7 +10,7 @@ export function HomePrimaryCard({ action, companyId }: Props) {
   return (
     <section className="rounded-[24px] bg-navy px-6 py-7 text-white shadow-[0_20px_50px_rgba(8,20,18,0.18)] sm:px-8">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-blue-soft uppercase">
-        Next best action
+        Next
       </p>
       <h2 className="mt-3 font-display text-[clamp(1.4rem,2.5vw,1.85rem)] font-medium leading-[1.15] tracking-[-0.03em]">
         {action.title}

@@ -1,4 +1,8 @@
 import type { ReactNode } from "react";
+import {
+  IntegrationMark,
+  type IntegrationMarkName,
+} from "@/components/integrations/integration-mark";
 import { cn } from "@/lib/cn";
 
 /**
@@ -9,13 +13,14 @@ import { cn } from "@/lib/cn";
  * the thing you came to do was the last thing on each. A card says the same in
  * a glance and three sit in one row.
  *
- * The marks are the providers' own SVGs, already in `public/logos/integrations`
- * and until now unused. Drawing our own approximation of someone else's logo
- * would be both worse design and worse manners.
+ * The marks are the providers' own SVGs from `public/logos/integrations`,
+ * inlined by `IntegrationMark` rather than fetched as images. Drawing our own
+ * approximation of someone else's logo would be both worse design and worse
+ * manners.
  */
 
 type Props = {
-  logo: string;
+  mark: IntegrationMarkName;
   name: string;
   /** One line. What connecting it actually does for them. */
   purpose: string;
@@ -29,7 +34,7 @@ type Props = {
 };
 
 export function IntegrationCard({
-  logo,
+  mark,
   name,
   purpose,
   connected = false,
@@ -50,15 +55,7 @@ export function IntegrationCard({
           blockedReason && "opacity-40",
         )}
       >
-        {/* A plain `img`, not `next/image`, on purpose.
-            The optimizer refuses SVG unless `dangerouslyAllowSVG` is on — it
-            answers `400 "image type is not allowed"` — so every one of these
-            marks was a broken image, whatever the file contained. Turning that
-            flag on to fix a 26px icon would also permit any remote SVG from the
-            configured hosts, and an SVG can carry script. There is nothing to
-            optimise in a static two-kilobyte logo anyway. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={logo} alt="" width={26} height={26} aria-hidden loading="lazy" />
+        <IntegrationMark name={mark} />
       </span>
 
       <p className="mt-3 text-[14px] font-semibold tracking-[-0.01em] text-ink">

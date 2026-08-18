@@ -16,8 +16,8 @@ export function HomePerformance({ analytics, isPro }: Props) {
         <h2 className="font-display text-[16px] font-medium text-ink">
           Performance
         </h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
-          Full analytics unlock on Pro — profile visits, embeds, and inquiries.
+        <p className="mt-2 text-[13px] text-ink-soft">
+          Visits, embeds, and inquiries — on Pro.
         </p>
         <Link
           href="/dashboard/billing"
@@ -35,9 +35,7 @@ export function HomePerformance({ analytics, isPro }: Props) {
         <h2 className="font-display text-[16px] font-medium text-ink">
           Last 30 days
         </h2>
-        <p className="mt-2 text-[13px] text-muted">
-          No traffic yet. Share your profile or embed to start measuring.
-        </p>
+        <p className="mt-2 text-[13px] text-muted">No traffic yet.</p>
         <Link
           href="/dashboard/widgets"
           className="mt-3 inline-block text-[13px] font-semibold text-ink underline-offset-2 hover:underline"

@@ -41,7 +41,7 @@ export default async function DashboardIntegrationsPage({
     return (
       <WorkspacePage
         title="Integrations"
-        description="Connect booking tools and Slack for your company."
+        description="Bookings and Slack."
       >
         <p className="text-[14px] text-muted">
           <Link
@@ -60,7 +60,7 @@ export default async function DashboardIntegrationsPage({
     return (
       <WorkspacePage
         title="Integrations"
-        description="Connect booking tools and Slack for your company."
+        description="Bookings and Slack."
       >
         <p className="text-[14px] text-muted">
           <Link
@@ -99,7 +99,7 @@ export default async function DashboardIntegrationsPage({
   return (
     <WorkspacePage
       title="Integrations"
-      description="Bookings on your profile, and Slack alerts when something is confirmed."
+      description="Bookings and Slack."
     >
       <IntegrationsFlash
         error={params.error}

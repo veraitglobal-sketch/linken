@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { IntegrationCard } from "@/components/integrations/integration-card";
+import type { IntegrationMarkName } from "@/components/integrations/integration-mark";
 import { SchedulingLinkForm } from "@/components/integrations/scheduling-link-form";
 import { SlackConnectButton } from "@/components/integrations/slack-connect-button";
 import { disconnectScheduling } from "@/features/scheduling/actions";
@@ -44,7 +45,7 @@ export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
     <div className="space-y-6">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <IntegrationCard
-          logo="/logos/integrations/slack.svg"
+          mark="slack"
           name="Slack"
           purpose="A message when a partner, project or testimonial is confirmed."
           connected={Boolean(slack)}
@@ -71,7 +72,7 @@ export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
         />
 
         <SchedulingCard
-          logo="/logos/integrations/calendly.svg"
+          mark="calendly"
           name="Calendly"
           provider="calendly"
           startHref="/api/integrations/calendly/start"
@@ -81,7 +82,7 @@ export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
         />
 
         <SchedulingCard
-          logo="/logos/integrations/calcom.svg"
+          mark="calcom"
           name="Cal.com"
           provider="calcom"
           startHref="/api/integrations/calcom/start"
@@ -106,7 +107,7 @@ export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
 }
 
 function SchedulingCard({
-  logo,
+  mark,
   name,
   provider,
   startHref,
@@ -114,7 +115,7 @@ function SchedulingCard({
   connectedProvider,
   scheduling,
 }: {
-  logo: string;
+  mark: IntegrationMarkName;
   name: string;
   provider: SchedulingProvider;
   startHref: string;
@@ -130,7 +131,7 @@ function SchedulingCard({
 
   return (
     <IntegrationCard
-      logo={logo}
+      mark={mark}
       name={name}
       purpose="Visitors book a call from your profile. Hansala does not host the calendar."
       connected={isConnected}

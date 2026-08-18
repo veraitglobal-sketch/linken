@@ -11,11 +11,11 @@ export const PRODUCT = {
   },
   home: {
     label: "Home",
-    job: "Next actions — first verified reference, invites, and proof.",
+    job: "What to do next.",
   },
   map: {
     label: "Map",
-    job: "Confirmed partners and links for your workspaces. Lines draw themselves.",
+    job: "Confirmed partners. Lines draw themselves.",
   },
   inbox: {
     label: "Inbox",
@@ -29,11 +29,11 @@ export const PRODUCT = {
   /** @deprecated alias — use map */
   network: {
     label: "Map",
-    job: "Confirmed partners and links for your workspaces. Lines draw themselves.",
+    job: "Confirmed partners. Lines draw themselves.",
   },
   partners: {
     label: "Partners",
-    job: "Add on your Company page. They show on the Map after both confirm.",
+    job: "Add on Company. They appear on the Map when both confirm.",
   },
   structure: {
     label: "Branches",

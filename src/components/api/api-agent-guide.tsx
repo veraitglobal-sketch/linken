@@ -2,63 +2,40 @@ import Link from "next/link";
 import { ApiSection } from "@/components/api/api-section";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 
+const STEPS = [
+  { label: "Key", detail: "Create below · choose AI agent" },
+  { label: "Env", detail: "HANSALA_AGENT_API_KEY" },
+  { label: "Server", detail: "mcp/hansala/index.mjs" },
+] as const;
+
 export function ApiAgentGuide() {
   return (
     <ApiSection
-      title="Cursor & Claude (MCP)"
-      description="One Hansala API key — no separate MCP key."
+      title="Cursor & Claude"
+      description="Same hs_ key. No second secret."
+      action={
+        <Link
+          href="/developers#agent-mcp"
+          className="inline-flex h-8 items-center rounded-full border border-line bg-paper px-3 text-[11px] font-semibold text-ink transition-colors hover:bg-surface"
+        >
+          Setup
+        </Link>
+      }
     >
-      <WorkspaceCard padded={false} className="space-y-4 p-5 sm:p-6">
-        <dl className="grid gap-3 text-[13px] leading-relaxed text-ink-soft sm:grid-cols-2">
-          <div>
-            <dt className="font-semibold text-ink">Agent API key (`hs_…`)</dt>
-            <dd className="mt-1">
-              Your password for{" "}
-              <code className="text-[12px] text-ink">/api/v1/agent</code>. Use
-              in scripts, Zapier, or any HTTP client.
-            </dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-ink">MCP (Model Context Protocol)</dt>
-            <dd className="mt-1">
-              A bridge inside Cursor or Claude — not a second key. Paste the same{" "}
-              <code className="text-[12px] text-ink">hs_…</code> into MCP config as{" "}
-              <code className="text-[12px] text-ink">HANSALA_AGENT_API_KEY</code>.
-            </dd>
-          </div>
+      <WorkspaceCard padded={false}>
+        <dl className="divide-y divide-line">
+          {STEPS.map((step) => (
+            <div
+              key={step.label}
+              className="grid grid-cols-[5.5rem_1fr] items-baseline gap-3 px-5 py-3 sm:px-6"
+            >
+              <dt className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">
+                {step.label}
+              </dt>
+              <dd className="font-mono text-[12px] text-ink">{step.detail}</dd>
+            </div>
+          ))}
         </dl>
-
-        <ol className="list-decimal space-y-1.5 pl-4 text-[13px] text-ink-soft">
-          <li>
-            Create key below → choose{" "}
-            <span className="font-semibold text-ink">AI agent</span> (full access).
-          </li>
-          <li>Copy once — store in password manager or MCP env (never in chat).</li>
-          <li>
-            Point MCP at{" "}
-            <code className="text-[12px] text-ink">mcp/hansala/index.mjs</code>{" "}
-            (see developer docs).
-          </li>
-        </ol>
-        <p className="text-[12px] leading-relaxed text-muted">
-          New keys start with <code className="text-ink">hs_</code>. Legacy{" "}
-          <code className="text-ink">lk_</code> keys still work until revoked.
-        </p>
-
-        <div className="flex flex-wrap gap-2 pt-1">
-          <Link
-            href="/developers#agent-api"
-            className="inline-flex h-9 items-center rounded-full border border-line bg-paper px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-surface"
-          >
-            Agent API docs
-          </Link>
-          <Link
-            href="/developers#agent-mcp"
-            className="inline-flex h-9 items-center rounded-full border border-line bg-paper px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-surface"
-          >
-            MCP setup
-          </Link>
-        </div>
       </WorkspaceCard>
     </ApiSection>
   );

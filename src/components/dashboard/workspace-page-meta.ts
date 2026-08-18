@@ -18,11 +18,11 @@ export const WORKSPACE_PAGE_META: Record<
   },
   "/dashboard/verification": {
     title: "Verification",
-    description: "Prove your domain for the Verified badge.",
+    description: "Domain proof for the badge.",
   },
   "/dashboard/insights": {
     title: "Insights",
-    description: "Visits and inquiries on your Company page.",
+    description: "Visits and inquiries.",
   },
   "/dashboard/inbox": {
     title: PRODUCT.inbox.label,
@@ -34,7 +34,7 @@ export const WORKSPACE_PAGE_META: Record<
   },
   "/dashboard/cases": {
     title: "Case studies",
-    description: "Create a project and email the client for confirmation.",
+    description: "Write the project. The client confirms.",
   },
   "/dashboard/partners": {
     title: PRODUCT.partners.label,
@@ -50,26 +50,26 @@ export const WORKSPACE_PAGE_META: Record<
   },
   "/dashboard/team": {
     title: "Team access",
-    description: "Who can work in this workspace. Public team is on Company.",
+    description: "Who can work here. Public team is on Company.",
   },
   "/dashboard/widgets": {
     title: "Widgets",
-    description: "Embed Hansala on your website.",
+    description: "Embed on your site.",
   },
   "/dashboard/api": {
     title: "API",
-    description: "Agent keys for your company.",
+    description: "Keys act as your company.",
   },
   "/dashboard/integrations": {
     title: "Integrations",
-    description: "Connect Calendly or Cal.com for booking.",
+    description: "Calendly, Cal.com, Slack.",
   },
   "/dashboard/developer": {
     title: "Earnings",
-    description: "10% of paid invoices from companies you referred.",
+    description: "10% of paid invoices you referred.",
   },
   "/dashboard/billing": {
     title: "Billing",
-    description: "Manage your Hansala plan.",
+    description: "Your Hansala plan.",
   },
 };

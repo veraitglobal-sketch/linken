@@ -59,16 +59,16 @@ export function primaryActionFor(
     case "no_company":
       return {
         id: "create_company",
-        title: "Create your company profile",
-        body: "Your public page starts here — then invite someone to confirm.",
+        title: "Create your company",
+        body: "Then invite someone to confirm.",
         href: "/onboarding",
         cta: "Create company",
       };
     case "billing_problem":
       return {
         id: "fix_billing",
-        title: "There is a billing problem",
-        body: "Update payment so Pro features stay available after the grace period.",
+        title: "Billing needs attention",
+        body: "Update payment so Pro stays available.",
         href: "/dashboard/billing",
         cta: "Open billing",
       };
@@ -76,39 +76,39 @@ export function primaryActionFor(
       return {
         id: "verify_domain",
         title: "Verify your domain",
-        body: "Unlock official partnerships and the Verified badge. Pending invites stay private either way.",
+        body: "Unlocks official partnerships and the badge.",
         href: "/dashboard/verification",
         cta: "Verify domain",
       };
     case "no_projects":
       return {
         id: "add_relationship",
-        title: "Add your first project or relationship",
-        body: "A case study, service reference, or partner — then invite them to confirm.",
+        title: "Add a project",
+        body: "Then invite the other side to confirm.",
         href: "/dashboard/cases/new",
         cta: "Add project",
       };
     case "no_invitation":
       return {
         id: "send_invite",
-        title: "Send the first confirmation invite",
-        body: "Nothing is public until they confirm. They open a secure link — no maze.",
+        title: "Send the first invite",
+        body: "Nothing is public until they confirm.",
         href: `${profile}#references`,
         cta: "Send invite",
       };
     case "invitation_pending":
       return {
         id: "follow_up",
-        title: "Follow up on pending invitations",
-        body: "Remind the other side, or add another relationship while you wait.",
+        title: "Waiting on confirmation",
+        body: "Remind them, or add another project.",
         href: "/dashboard/inbox",
         cta: "View pending",
       };
     case "first_confirmed":
       return {
         id: "share_proof",
-        title: "Share your verified proof",
-        body: "Put the badge or a one-pager on your site and in proposals.",
+        title: "Share the record",
+        body: "Badge or one-pager — same confirmed facts.",
         href: "/dashboard/widgets",
         cta: "Set up embed",
       };
@@ -116,8 +116,8 @@ export function primaryActionFor(
     case "active":
       return {
         id: "add_another",
-        title: "Add another confirmed project",
-        body: "Each confirmation strengthens your public network.",
+        title: "Add another project",
+        body: "Each confirmation strengthens the network.",
         href: "/dashboard/cases/new",
         cta: "New case study",
       };

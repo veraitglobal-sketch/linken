@@ -34,16 +34,6 @@ export function GettingStartedCard({ checklist, className }: Props) {
           }}
         />
       </div>
-      {checklist.next ? (
-        <p className="mt-2 text-[13px] leading-relaxed text-ink">
-          Next:{" "}
-          <span className="font-semibold">{checklist.next.label}</span>
-        </p>
-      ) : (
-        <p className="mt-2 text-[13px] leading-relaxed text-muted">
-          Each step fills your network with confirmed evidence.
-        </p>
-      )}
       <div className="mt-3">
         <GettingStartedSteps steps={checklist.steps} />
       </div>

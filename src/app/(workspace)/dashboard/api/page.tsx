@@ -28,7 +28,7 @@ export default async function DashboardApiPage() {
 
   if (!user) {
     return (
-      <WorkspacePage title="API" description="Keys and agent activity.">
+      <WorkspacePage title="API" description="Keys act as your company.">
         <p className="text-[14px] text-muted">
           <Link
             href="/login?next=/dashboard/api"
@@ -44,7 +44,7 @@ export default async function DashboardApiPage() {
 
   if (!company) {
     return (
-      <WorkspacePage title="API" description="Keys and agent activity.">
+      <WorkspacePage title="API" description="Keys act as your company.">
         <p className="text-[14px] text-muted">
           <Link
             href="/onboarding"
@@ -64,14 +64,14 @@ export default async function DashboardApiPage() {
     return (
       <WorkspacePage
         title="API"
-        description="Keys act as your company. Confirmations always require a human."
+        description="Keys act as your company."
       >
         <div className="rounded-2xl border border-line bg-paper/50 px-5 py-8 text-center">
           <p className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
-            Agent API is a Pro feature
+            Agent API is Pro
           </p>
-          <p className="mx-auto mt-2 max-w-md text-[13px] leading-relaxed text-muted">
-            Create API keys and automate profile content after you upgrade.
+          <p className="mx-auto mt-2 max-w-md text-[13px] text-muted">
+            Keys and MCP after you upgrade.
           </p>
           <Link
             href="/dashboard/billing"
@@ -94,7 +94,7 @@ export default async function DashboardApiPage() {
   return (
     <WorkspacePage
       title="API"
-      description="Keys act as your company. Confirmations always require a human."
+      description="Keys act as your company."
       action={
         <Link
           href="/developers#agent-api"
