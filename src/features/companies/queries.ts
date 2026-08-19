@@ -85,8 +85,14 @@ export const getCompanyForPage = cache(async function getCompanyForPage(
       .maybeSingle();
 
     if (error) {
-      console.error("[getCompanyForPage]", error.message);
-      return null;
+      /* A query that failed is not an answer. Returning `null` here made the
+         page call `notFound()`, so an outage — or a misconfigured environment —
+         told the visitor the company does not exist. AGENTS.md is explicit that
+         absence must never read as a negative finding, and this was the loudest
+         way to break that: a real, confirmed company reported as missing on its
+         own profile. Let it throw; a 500 is honest, a 404 is a lie. */
+      console.error("[getCompanyForPage] query failed", error.message);
+      throw new Error(`Company lookup failed: ${error.message}`);
     }
     if (!data) return null;
 
@@ -102,8 +108,12 @@ export const getCompanyForPage = cache(async function getCompanyForPage(
     }
     return company;
   } catch (err) {
-    console.error("[getCompanyForPage]", err);
-    return null;
+    /* Same reasoning: a thrown error is a failure to answer, not an answer of
+       "no". Missing Supabase config lands here too, and swallowing it is why a
+       placeholder `.env.local` presented as "Company not found" rather than as
+       the configuration problem it is. */
+    console.error("[getCompanyForPage] unreachable", err);
+    throw err;
   }
 });
 
