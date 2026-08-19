@@ -38,7 +38,7 @@ export function HomeHighlights() {
             alt="A partner opening a confirmed company page on site"
             fill
             quality={80}
-            className="object-cover object-[center_28%]"
+            className="object-cover object-[center_42%] sm:object-[center_28%]"
             sizes="(max-width: 1024px) 100vw, 1120px"
           />
           <div

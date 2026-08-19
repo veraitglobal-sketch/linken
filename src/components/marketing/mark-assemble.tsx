@@ -19,7 +19,11 @@ export function MarkAssemble() {
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/90 via-35% to-transparent"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-deep from-[48%] via-navy-deep/45 to-transparent lg:hidden"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-navy-deep via-navy-deep/90 via-35% to-transparent lg:block"
           aria-hidden
         />
         <div
@@ -31,7 +35,7 @@ export function MarkAssemble() {
           aria-hidden
         />
 
-        <div className="relative flex min-h-[420px] flex-col justify-center px-8 py-12 sm:min-h-[480px] sm:px-12 sm:py-16 lg:max-w-[48%]">
+        <div className="relative flex min-h-[360px] flex-col justify-end px-8 py-12 sm:min-h-[420px] sm:px-12 sm:py-16 lg:min-h-[480px] lg:max-w-[48%] lg:justify-center">
           <p className="animate-rise text-[11px] font-semibold tracking-[0.16em] text-blue-soft/85 uppercase">
             Two sides
           </p>
