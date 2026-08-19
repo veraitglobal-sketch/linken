@@ -17,17 +17,19 @@ export function SiteFooter() {
 
   return (
     <footer className="border-t border-line bg-paper">
-      <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 lg:px-10">
-        <Link href="/" className="inline-flex no-underline">
-          <EmbedVerifiedLockup theme="light" size="md" />
-        </Link>
-        <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-muted">
-          Company profiles, case studies, and partners — public only after both
-          sides confirm.
-        </p>
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:px-10">
+        <div>
+          <Link href="/" className="inline-flex no-underline">
+            <EmbedVerifiedLockup theme="light" size="md" />
+          </Link>
+          <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-muted">
+            Company profiles, case studies, and partners — public only after both
+            sides confirm.
+          </p>
+        </div>
         <nav
           aria-label="Footer"
-          className="mt-8 flex flex-wrap gap-x-1 gap-y-0"
+          className="-mx-2.5 flex flex-wrap lg:max-w-xl lg:justify-end"
         >
           {FOOTER_PRIMARY.map((link) => (
             <Link
@@ -42,16 +44,16 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-line">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-5 text-[12px] text-plus sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-8 lg:px-10">
+        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-3 text-[12px] text-plus sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-8 lg:px-10">
           <p>
             © {year} {copyright}. All rights reserved.
           </p>
-          <nav aria-label="Legal" className="flex flex-wrap gap-x-1">
+          <nav aria-label="Legal" className="-mx-2 flex flex-wrap">
             {FOOTER_LEGAL.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="inline-flex min-h-11 items-center px-2 text-[12px] text-plus transition-colors hover:text-ink"
+                className="inline-flex min-h-11 items-center px-2 text-[12px] text-plus transition-colors hover:text-ink sm:min-h-8"
               >
                 {link.label}
               </Link>
