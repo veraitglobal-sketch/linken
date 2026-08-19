@@ -590,45 +590,54 @@ a {
 /* Widget chrome on customer sites. Neutral frost — never our navy.
    Iframe backdrop-filter cannot blur the parent page; the host still shows
    through the translucent fill, which is what stops a white sticker. */
+/* No fill. The host page is the background.
+ *
+ * These carried white at 50% (and 72% for the sheet), which is not glass on a
+ * dark page — it is a white plate. That is exactly how the badge landed on a
+ * near-black customer site: a pale rectangle stuck onto their hero.
+ *
+ * Only the hairline stays, so the mark still reads as a contained object
+ * without painting anything of its own. The blur goes with the fill: there is
+ * nothing left to frost, and `backdrop-filter` on a transparent element still
+ * costs a compositing layer on someone else's page.
+ *
+ * Text colour is the one thing that cannot be transparent, so the light and
+ * dark variants still differ there — the owner picks that once in the studio,
+ * and the snippet carries it. */
 .embed-glass {
-  background: rgba(255, 255, 255, 0.5);
-  border-color: rgba(13, 18, 16, 0.08);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
+  background: transparent;
+  border-color: rgba(13, 18, 16, 0.14);
 }
 
 .embed-glass-dark {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .embed-glass-sheet {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(13, 18, 16, 0.09);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
+  background: transparent;
+  border-color: rgba(13, 18, 16, 0.12);
 }
 
 .embed-glass-sheet-dark {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 @media (prefers-reduced-transparency: reduce) {
+  /* Nothing to reduce any more.
+     These used to repaint the embed chrome as a near-solid plate — white at 94%
+     in light, near-black at 92% in dark — for anyone who asks for less
+     transparency. With the fill removed entirely that would hand exactly those
+     people the plate this change exists to prevent, and on a host of the other
+     colour it would look worse than the original did. No translucency is left
+     in the embed chrome to be a problem for them.
+     `.glass-nav` is Hansala's own site and keeps its own fallback. */
   .embed-glass,
-  .embed-glass-sheet {
-    background: rgba(255, 255, 255, 0.94);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
+  .embed-glass-sheet,
   .embed-glass-dark,
   .embed-glass-sheet-dark {
-    background: rgba(9, 11, 10, 0.92);
+    background: transparent;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
