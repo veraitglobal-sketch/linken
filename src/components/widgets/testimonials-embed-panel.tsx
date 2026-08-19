@@ -176,6 +176,18 @@ export function TestimonialsEmbedPanel({
               </button>
             </div>
             <CodeBlock tokens={studio.tokens} />
+            {/* The mistake this prevents is not hypothetical: a light snippet
+                pasted on a dark site renders the badge chrome as white at 50%,
+                which reads as a plain white plate rather than glass. Nothing
+                anywhere told the person which theme they had just copied. */}
+            <p className="mt-2 text-[12px] leading-relaxed text-muted">
+              This is the{" "}
+              <span className="font-semibold text-ink">{studio.theme}</span>{" "}
+              snippet.{" "}
+              {studio.theme === "light"
+                ? "If your page background is dark, switch to Dark above and copy again — otherwise the widget lands as a pale panel on it."
+                : "If your page background is light, switch to Light above and copy again."}
+            </p>
             {!domainReady ? (
               /* Stated as a fact about setup, not as a warning about them. */
               <p className="mt-2 text-[12px] leading-relaxed text-muted">
