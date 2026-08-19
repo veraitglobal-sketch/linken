@@ -24,7 +24,7 @@ export function HomeAssurance() {
             src="/images/hero-plate.webp"
             alt=""
             fill
-            quality={72}
+            quality={75}
             className="object-cover object-center"
             sizes="(max-width: 1024px) 100vw, 1100px"
             aria-hidden

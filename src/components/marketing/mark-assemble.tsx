@@ -12,7 +12,7 @@ export function MarkAssemble() {
           src="/images/mark-facade.webp"
           alt=""
           fill
-          quality={78}
+          quality={75}
           draggable={false}
           className="pointer-events-none select-none object-cover object-[70%_center]"
           sizes="(max-width: 1152px) 100vw, 1152px"

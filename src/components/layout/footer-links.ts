@@ -1,37 +1,23 @@
 /** Static footer link groups — no auth/DB. */
 
-export const FOOTER_PRODUCT = [
+/** Primary navigation — one wrapping row, not four directories. */
+export const FOOTER_PRIMARY = [
   { label: "About", href: "/about" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Use cases", href: "/use-cases" },
   { label: "Developers", href: "/developers" },
-  { label: "Partner program", href: "/developers/partners" },
-  { label: "Changelog", href: "/changelog" },
-  { label: "Status", href: "/status" },
   { label: "Demo", href: "/demo" },
-] as const;
-
-export const FOOTER_TRUST = [
   { label: "Company", href: "/company" },
   { label: "Security", href: "/security" },
+  { label: "Contact", href: "/contact" },
+  { label: "Sign in", href: "/login" },
+] as const;
+
+/** Legal line — required pages stay reachable. */
+export const FOOTER_LEGAL = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
-  { label: "Contact", href: "/contact" },
+  { label: "Cookies", href: "/cookies" },
   { label: "Data deletion", href: "/data-deletion" },
   { label: "Subprocessors", href: "/subprocessors" },
   { label: "Disclosure", href: "/disclosure" },
-] as const;
-
-export const FOOTER_DEVELOPERS = [
-  { label: "Partner program", href: "/developers/partners" },
-  { label: "API docs", href: "/developers" },
-  { label: "OpenAPI", href: "/api/v1/openapi" },
-  { label: "Webhooks", href: "/developers/webhooks" },
-  { label: "API Terms", href: "/developers/api-terms" },
-] as const;
-
-export const FOOTER_ACCOUNT = [
-  { label: "Sign in", href: "/login" },
-  { label: "Create company", href: "/onboarding" },
-  { label: "Cookies", href: "/cookies" },
 ] as const;

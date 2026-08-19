@@ -37,7 +37,7 @@ export function HomeHighlights() {
             src="/images/highlight-share.jpg"
             alt="A partner opening a confirmed company page on site"
             fill
-            quality={80}
+            quality={75}
             className="object-cover object-[center_42%] sm:object-[center_28%]"
             sizes="(max-width: 1024px) 100vw, 1120px"
           />
