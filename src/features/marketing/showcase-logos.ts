@@ -7,10 +7,5 @@ import type { EmbedProofCompany } from "@/components/embed/embed-brand";
 export const HOME_SHOWCASE_LOGOS: EmbedProofCompany[] = [
   { name: "Vera", initials: "VR", logoUrl: "/logos/showcase/vera.png" },
   { name: "Fade", initials: "FD", logoUrl: "/logos/showcase/fade.png" },
-  {
-    name: "Dienstemarkt",
-    initials: "DM",
-    logoUrl: "/logos/showcase/dienstemarkt-mark.png",
-  },
   { name: "MeinAllrounder", initials: "MA" },
 ];

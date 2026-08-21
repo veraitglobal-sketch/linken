@@ -28,7 +28,7 @@ import type { ClientConfirmationView } from "@/types/client-confirmation";
  * stage, and the product does not ship them.
  */
 
-/** The relationship the repo documents as real: Vera IT ↔ Dienstemarkt. */
+/** The relationship the repo documents as real: Vera IT ↔ Fade. */
 const FLOW_VIEW: ClientConfirmationView = {
   id: "flow-confirmation",
   caseStudyId: "flow-case",
@@ -48,7 +48,7 @@ const FLOW_VIEW: ClientConfirmationView = {
   requesterName: FLOW_HUB.name,
   requesterSlug: "verait",
   confirmerName: FLOW_TARGET.name,
-  confirmerSlug: "dienstemarkt",
+  confirmerSlug: "fade",
   confirmerLogoUrl: FLOW_TARGET.logo,
 };
 

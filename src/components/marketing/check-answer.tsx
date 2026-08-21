@@ -21,10 +21,10 @@ function subscribeReduced(cb: () => void) {
  * it props here means the homepage and the widget can never drift, and the
  * visitor is looking at the product rather than a picture of it.
  *
- * The record is the one the repo documents as real: Dienstemarkt confirmed
- * Vera IT, the same relationship behind the owner-supplied testimonial in
- * `RecordStage`. One, and true — which is exactly what "we don't print logos
- * we don't have" commits us to.
+ * The record is one the repo documents as real: Fade confirmed Vera IT.
+ * True, and it travels — a booking app shipped worldwide reads to a US
+ * audience in a way a German local marketplace does not. Which is exactly what
+ * "we don't print logos we don't have" commits us to.
  *
  * The second state is `no_file`, set in mono the way a machine returns it.
  * AGENTS.md: absence is never "not verified", never a warning, and a new
@@ -95,9 +95,9 @@ export function CheckAnswer() {
               confirmedCount={1}
               proofCompanies={[
                 {
-                  name: "Dienstemarkt",
-                  initials: "DM",
-                  logoUrl: "/logos/showcase/dienstemarkt-mark.png",
+                  name: "Fade",
+                  initials: "FD",
+                  logoUrl: "/logos/showcase/fade.png",
                 },
               ]}
               profileUrl="/c/verait"

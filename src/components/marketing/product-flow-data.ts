@@ -7,11 +7,15 @@ export const FLOW_HUB = {
   logo: "/logos/showcase/vera.png",
 } as const;
 
+/* Fade, not Dienstemarkt. The flow is the screen the marketing site films, and
+   a German local marketplace means nothing to a US audience — Fade is a booking
+   app shipped worldwide, so the name carries. Vera IT's work on it is real and
+   the mark already ships in `public/logos/showcase`. */
 export const FLOW_TARGET = {
-  name: "Dienstemarkt",
-  domain: "dienstemarkt.de",
-  initials: "DM",
-  logo: "/logos/showcase/dienstemarkt-mark.png" as string | null,
+  name: "Fade",
+  domain: "getfadeapp.com",
+  initials: "FD",
+  logo: "/logos/showcase/fade.png" as string | null,
 } as const;
 
 export const FLOW_DOMAIN = FLOW_TARGET.domain;
