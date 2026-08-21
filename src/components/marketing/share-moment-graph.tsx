@@ -13,33 +13,34 @@ import {
   ShareMomentEdge,
   ShareMomentNode,
 } from "@/components/marketing/share-moment-parts";
-import { HOME_SHOWCASE_LOGOS } from "@/features/marketing/showcase-logos";
 
 type NodePos = {
   id: string;
-  name: string;
-  initials: string;
-  logoUrl?: string | null;
+  src: string;
   x: number;
   y: number;
 };
 
 const STAGE_H = 220;
 
-/* Real companies, not stock photographs. The nodes stood for the network a
-   link carries, and were three generic `story-*.jpg` faces — a section about
-   confirmed records showing people who confirmed nothing.
-   HOME_SHOWCASE_LOGOS has sat unused in the repo since it was written. */
-const INITIAL: NodePos[] = HOME_SHOWCASE_LOGOS.slice(0, 3).map(
-  (company, i) => ({
-    id: company.name,
-    name: company.name,
-    initials: company.initials,
-    logoUrl: company.logoUrl,
-    x: [0.18, 0.5, 0.82][i],
-    y: [0.42, 0.5, 0.4][i],
-  }),
-);
+/* Back to the photographs, at the owner's call.
+   These are Hansala's own images from `public/images` — real people, real work,
+   not stock — so nothing is fabricated by using them. They were swapped for
+   `HOME_SHOWCASE_LOGOS` on the argument that a graph about confirmed records
+   should show companies that actually confirmed; the counter-argument is that
+   the nodes read as the people a link travels to, not as a claim about them.
+   Kept as three plain sources so the swap is one edit either way. */
+const INITIAL: NodePos[] = [
+  /* Spread into an arc rather than a flat line across the middle.
+     Measured before: the three tiles occupied 124px of a 360px stage, so two
+     thirds of the box was empty and the section read as a headline with a void
+     under it. Dipping the centre node also gives the dashed edges something to
+     describe — a link travelling down and along, instead of three tiles in a
+     row. */
+  { id: "a", src: "/images/story-plans.jpg", x: 0.16, y: 0.30 },
+  { id: "b", src: "/images/story-partners.jpg", x: 0.5, y: 0.66 },
+  { id: "c", src: "/images/story-team.jpg", x: 0.84, y: 0.27 },
+];
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -108,7 +109,7 @@ export function ShareMomentGraph() {
   return (
     <div
       ref={stageRef}
-      className="relative h-[300px] w-full select-none sm:h-[360px]"
+      className="relative h-[260px] w-full select-none sm:h-[320px]"
       onPointerMove={onPointerMove}
       onPointerUp={() => setDragId(null)}
       onPointerLeave={() => setDragId(null)}
@@ -129,16 +130,16 @@ export function ShareMomentGraph() {
       {points.map((n) => (
         <ShareMomentNode
           key={n.id}
-          name={n.name}
-          initials={n.initials}
-          logoUrl={n.logoUrl}
+          name=""
+          initials=""
+          photoSrc={n.src}
           x={n.px}
           y={n.py}
           dragging={dragId === n.id}
           onPointerDown={(e) => onPointerDown(e, n.id)}
         />
       ))}
-      <p className="pointer-events-none absolute right-3 bottom-2 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">
+      <p className="pointer-events-none absolute right-1 bottom-0 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">
         Drag to rearrange
       </p>
     </div>

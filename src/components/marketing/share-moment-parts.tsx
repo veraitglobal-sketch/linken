@@ -1,8 +1,11 @@
 import type { PointerEventHandler } from "react";
+import Image from "next/image";
 import { EmbedBareLogo } from "@/components/embed/embed-bare-logo";
 import { cn } from "@/lib/cn";
 
-export const SHARE_NODE = 88;
+/* 104, not 88. At 815px of stage a 88px tile reads as a thumbnail lost in the
+   field; this is the section's only visual anchor and has to carry it. */
+export const SHARE_NODE = 104;
 
 type Pt = { id: string; px: number; py: number };
 
@@ -46,6 +49,7 @@ export function ShareMomentNode({
   name,
   initials,
   logoUrl,
+  photoSrc,
   x,
   y,
   dragging,
@@ -54,6 +58,9 @@ export function ShareMomentNode({
   name: string;
   initials: string;
   logoUrl?: string | null;
+  /** A photograph fills the tile edge to edge; the logo path is left intact so
+   *  switching the graph back to company marks stays a one-line change. */
+  photoSrc?: string;
   x: number;
   y: number;
   dragging: boolean;
@@ -62,7 +69,9 @@ export function ShareMomentNode({
   return (
     <button
       type="button"
-      aria-label={`${name} — drag to rearrange`}
+      /* Photograph nodes carry no name, so the label must not become a
+         dangling " — drag to rearrange" with a leading dash. */
+      aria-label={name ? `${name} — drag to rearrange` : "Drag to rearrange"}
       onPointerDown={onPointerDown}
       className={cn(
         "absolute touch-none overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow",
@@ -77,15 +86,26 @@ export function ShareMomentNode({
         transform: "translate(-50%, -50%)",
       }}
     >
-      <span className="pointer-events-none grid h-full w-full place-items-center px-3">
-        <EmbedBareLogo
-          name={name}
-          initials={initials}
-          logoUrl={logoUrl}
-          theme="light"
-          size="md"
+      {photoSrc ? (
+        <Image
+          src={photoSrc}
+          alt=""
+          fill
+          className="pointer-events-none object-cover"
+          sizes="104px"
+          draggable={false}
         />
-      </span>
+      ) : (
+        <span className="pointer-events-none grid h-full w-full place-items-center px-3">
+          <EmbedBareLogo
+            name={name}
+            initials={initials}
+            logoUrl={logoUrl}
+            theme="light"
+            size="md"
+          />
+        </span>
+      )}
     </button>
   );
 }
