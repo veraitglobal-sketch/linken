@@ -3,6 +3,7 @@ import {
   IconChart,
   IconGroup,
   IconKey,
+  IconPartners,
   IconRadar,
   IconShield,
   IconStructure,
@@ -28,8 +29,13 @@ export type { NavItem };
  *
  * Then the two things you actually create — Testimonials and Case studies —
  * because those are the records, and the embed code now lives on the
- * Testimonials page. Then Insights, which tells you whether any of it worked.
- * Org administration after that; it is set once and rarely touched.
+ * Testimonials page.
+ *
+ * Widgets and Integrations follow them, not the bottom of the list. AGENTS.md
+ * calls the embeds the distribution channel, and that channel was sitting
+ * below Radar — an entry that is locked and cannot be opened at all. Then
+ * Insights, which says whether any of it worked. Org administration after
+ * that: set once, rarely touched.
  */
 export function moreNav(opts?: { showDeveloper?: boolean }): NavItem[] {
   const items: NavItem[] = [
@@ -54,6 +60,20 @@ export function moreNav(opts?: { showDeveloper?: boolean }): NavItem[] {
       companyOnly: true,
     },
     {
+      href: "/dashboard/widgets",
+      label: "Widgets",
+      icon: IconWidgets,
+      companyOnly: true,
+      section: "widgets",
+    },
+    {
+      href: "/dashboard/integrations",
+      label: "Integrations",
+      icon: IconPartners,
+      companyOnly: true,
+      section: "settings",
+    },
+    {
       href: "/dashboard/insights",
       label: "Insights",
       icon: IconChart,
@@ -75,33 +95,9 @@ export function moreNav(opts?: { showDeveloper?: boolean }): NavItem[] {
     },
     { href: "/dashboard/group", label: "Group", icon: IconGroup },
     {
-      href: "/dashboard/radar",
-      label: "Radar",
-      icon: IconRadar,
-      companyOnly: true,
-      section: "radar",
-      locked: true,
-      lockedHint:
-        "Radar unlocks when enough companies are on Hansala to make matching useful.",
-    },
-    {
       href: "/dashboard/billing",
       label: "Billing",
       icon: IconBilling,
-      companyOnly: true,
-      section: "settings",
-    },
-    {
-      href: "/dashboard/widgets",
-      label: "Widgets",
-      icon: IconWidgets,
-      companyOnly: true,
-      section: "widgets",
-    },
-    {
-      href: "/dashboard/integrations",
-      label: "Integrations",
-      icon: IconWidgets,
       companyOnly: true,
       section: "settings",
     },
@@ -111,6 +107,19 @@ export function moreNav(opts?: { showDeveloper?: boolean }): NavItem[] {
       icon: IconKey,
       companyOnly: true,
       section: "api",
+    },
+    /* Last, because it is the only entry here that cannot be used yet. A locked
+       row above working ones spends attention on something that answers back
+       with a lock. */
+    {
+      href: "/dashboard/radar",
+      label: "Radar",
+      icon: IconRadar,
+      companyOnly: true,
+      section: "radar",
+      locked: true,
+      lockedHint:
+        "Radar unlocks when enough companies are on Hansala to make matching useful.",
     },
   ];
 
