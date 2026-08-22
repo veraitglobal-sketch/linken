@@ -43,10 +43,10 @@ const ENV_KEY: Record<SocialNetwork, string> = {
  * appears in the footer; leave it empty and nothing renders.
  */
 const DEFAULTS: Partial<Record<SocialNetwork, string>> = {
-  // linkedin: "https://www.linkedin.com/company/…",
-  // instagram: "https://www.instagram.com/…",
-  // youtube: "https://www.youtube.com/@…",
-  // tiktok: "https://www.tiktok.com/@…",
+  linkedin: "https://www.linkedin.com/company/hansala/",
+  instagram: "https://www.instagram.com/hansala.verified",
+  youtube: "https://www.youtube.com/@Hansala-verified",
+  tiktok: "https://www.tiktok.com/@hansala.verified",
 };
 
 /* Read at call time, not at module scope: a module-level constant is captured
