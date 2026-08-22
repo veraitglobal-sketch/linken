@@ -19,14 +19,26 @@ import { PRODUCT } from "@/lib/product-model";
 
 export type { NavItem };
 
-/** Advanced / rare — never in the main story. */
+/**
+ * Ordered by what gates what.
+ *
+ * Verification first: until the domain is verified the embed has no
+ * `frame-ancestors` to sit inside and the mark is not earned, so every other
+ * item here is blocked behind it. It sat fifth.
+ *
+ * Then the two things you actually create — Testimonials and Case studies —
+ * because those are the records, and the embed code now lives on the
+ * Testimonials page. Then Insights, which tells you whether any of it worked.
+ * Org administration after that; it is set once and rarely touched.
+ */
 export function moreNav(opts?: { showDeveloper?: boolean }): NavItem[] {
   const items: NavItem[] = [
     {
-      href: "/dashboard/cases",
-      label: "Case studies",
-      icon: IconCases,
+      href: "/dashboard/verification",
+      label: "Verification",
+      icon: IconShield,
       companyOnly: true,
+      section: "verification",
     },
     {
       href: "/dashboard/testimonials",
@@ -36,11 +48,17 @@ export function moreNav(opts?: { showDeveloper?: boolean }): NavItem[] {
       section: "widgets",
     },
     {
-      href: "/dashboard/verification",
-      label: "Verification",
-      icon: IconShield,
+      href: "/dashboard/cases",
+      label: "Case studies",
+      icon: IconCases,
       companyOnly: true,
-      section: "verification",
+    },
+    {
+      href: "/dashboard/insights",
+      label: "Insights",
+      icon: IconChart,
+      companyOnly: true,
+      section: "insights",
     },
     {
       href: "/dashboard/team",
@@ -56,13 +74,6 @@ export function moreNav(opts?: { showDeveloper?: boolean }): NavItem[] {
       section: "structure",
     },
     { href: "/dashboard/group", label: "Group", icon: IconGroup },
-    {
-      href: "/dashboard/insights",
-      label: "Insights",
-      icon: IconChart,
-      companyOnly: true,
-      section: "insights",
-    },
     {
       href: "/dashboard/radar",
       label: "Radar",
