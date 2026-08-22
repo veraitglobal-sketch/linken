@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { HomeHeroSearch } from "@/components/marketing/home-hero-search";
 import { NetworkMark } from "@/components/marketing/network-mark";
 
 /**
@@ -62,6 +63,7 @@ export function HomeHero() {
             </div>
 
             <div className="animate-rise-late space-y-5">
+              <HomeHeroSearch />
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 {/* Light, not primary: with `--signal` folded into the brand
                     teal the filled button sits at 2.1:1 against the hero

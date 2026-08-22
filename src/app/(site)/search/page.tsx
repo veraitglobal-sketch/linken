@@ -8,7 +8,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/search" },
 };
 
-export default function SearchPage() {
+type Props = {
+  searchParams: Promise<{ q?: string }>;
+};
+
+export default async function SearchPage({ searchParams }: Props) {
+  const { q } = await searchParams;
+  const initialQuery = q?.trim() ?? "";
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
       <p className="font-label text-[11px] font-semibold tracking-[0.16em] text-blue uppercase">
@@ -22,7 +29,11 @@ export default function SearchPage() {
         confirmed partners only.
       </p>
       <div className="mt-10 max-w-2xl">
-        <SearchPanel includeUnclaimed searchOnEmpty={false} />
+        <SearchPanel
+          includeUnclaimed
+          searchOnEmpty={false}
+          initialQuery={initialQuery}
+        />
       </div>
     </div>
   );

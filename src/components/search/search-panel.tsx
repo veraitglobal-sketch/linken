@@ -16,6 +16,7 @@ type Props = {
   excludeSlug?: string;
   includeUnclaimed?: boolean;
   searchOnEmpty?: boolean;
+  initialQuery?: string;
 };
 
 function hitToCompany(hit: CompanySearchHit): Company {
@@ -51,8 +52,9 @@ export function SearchPanel({
   excludeSlug,
   includeUnclaimed = false,
   searchOnEmpty = true,
+  initialQuery = "",
 }: Props) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<CompanySearchHit[]>([]);
   const [pending, startTransition] = useTransition();
 
