@@ -5,6 +5,7 @@ import { HomeContrast } from "@/components/marketing/home-contrast";
 import { FAQ_ITEMS, HomeFaq } from "@/components/marketing/home-faq";
 import { HomeHero } from "@/components/marketing/home-hero";
 import { HomeHighlights } from "@/components/marketing/home-highlights";
+import { HomeLookUp } from "@/components/marketing/home-look-up";
 import { HomeIntegrations } from "@/components/marketing/home-integrations";
 import { HomeOutcomes } from "@/components/marketing/home-outcomes";
 import { HomePlans } from "@/components/marketing/home-plans";
@@ -66,6 +67,7 @@ export default function HomePage() {
       <HomePlans />
       <HomeAssurance />
       <HomeFaq />
+      <HomeLookUp />
       <HomeClose />
     </>
   );
