@@ -19,7 +19,7 @@ export function ConfirmPage({
 }: Props) {
   return (
     <section className={`mx-auto w-full ${compact ? "max-w-lg" : "max-w-xl"}`}>
-      <p className="text-[10px] font-semibold tracking-[0.14em] text-ember uppercase">
+      <p className="text-[10px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
         {eyebrow}
       </p>
       <h1

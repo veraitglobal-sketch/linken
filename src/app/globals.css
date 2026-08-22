@@ -39,6 +39,14 @@
   --signal-hover: #14483f;
   --success: #1a5c51;
   --ember: #b8895a;
+  /* The same warm hue, one value down, for type and for anything that has to
+     survive a contrast check.
+     `--ember` measures 3.1:1 on paper — fine as a fill or a border, under the
+     4.5:1 that 11px text needs, and it was already failing that on the
+     homepage's "Client confirmation" label. This is not a new accent: both sit
+     at hue 30, exactly the way `--blue` and `--blue-soft` are one green at two
+     values. Measured 5.9:1 on paper. */
+  --ember-deep: #8a5a2b;
   /* On-navy text — hero / close / dark chapters */
   --on-navy: #f2f5f3;
   --on-navy-soft: #c5cdc8;
@@ -92,6 +100,7 @@
   --color-signal-hover: var(--signal-hover);
   --color-success: var(--success);
   --color-ember: var(--ember);
+  --color-ember-deep: var(--ember-deep);
   --color-plus: var(--plus);
   --color-on-navy: var(--on-navy);
   --color-on-navy-soft: var(--on-navy-soft);

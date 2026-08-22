@@ -14,7 +14,7 @@ type Props = {
 export function ConfirmDecision({ view, companyName }: Props) {
   return (
     <div className="rounded-[20px] border border-line/80 bg-surface px-4 py-5 shadow-[0_10px_28px_rgba(8,20,18,0.045)] sm:px-5">
-      <p className="text-[10px] font-semibold tracking-[0.14em] text-ember uppercase">
+      <p className="text-[10px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
         Client confirmation
       </p>
       <h2 className="mt-1.5 font-display text-[clamp(1.2rem,2.4vw,1.45rem)] font-medium tracking-[-0.03em] text-ink">

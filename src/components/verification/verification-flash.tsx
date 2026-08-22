@@ -29,15 +29,19 @@ export function VerificationNoWebsite({
   companySlug: string;
 }) {
   return (
-    <div className="rounded-xl border border-line bg-paper/60 px-3.5 py-3 text-[13px] text-muted">
-      Add a company website in{" "}
-      <Link
-        href={`/c/${companySlug}/edit`}
-        className="font-semibold text-ink underline-offset-2 hover:underline"
-      >
-        Edit profile
-      </Link>
-      , then return here to verify.
+    <div className="rounded-xl border border-line bg-paper/60 px-3.5 py-3 text-[13px] leading-relaxed text-muted">
+      <p className="font-medium text-ink">Add a company website first.</p>
+      <p className="mt-1">
+        Verification looks up the domain from{" "}
+        <Link
+          href={`/c/${companySlug}/edit`}
+          className="font-semibold text-ink underline-offset-2 hover:underline"
+        >
+          Edit profile
+        </Link>
+        . A TXT record on its own is not enough — save the site URL (the same
+        host as the DNS zone), then come back and verify.
+      </p>
     </div>
   );
 }

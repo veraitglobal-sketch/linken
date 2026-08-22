@@ -60,7 +60,16 @@ export function HomeHeroSearch() {
       <label htmlFor="hero-company-search" className="sr-only">
         Search companies or categories
       </label>
-      <div className="flex h-12 items-center rounded-full border border-white/28 bg-white/[0.08] pr-1 pl-4 focus-within:border-white/48 focus-within:bg-white/[0.12]">
+      {/* The ring belongs to the pill, not to the field inside it.
+          `globals.css` sets `:focus-visible { outline: 2px solid ... }` on
+          everything focusable, so the bare `<input>` was drawing its own square
+          ring two pixels inside a rounded pill — two nested rectangles of
+          different shapes, which reads as a rendering fault rather than as
+          focus. The input's outline is suppressed below and the cue moves out
+          here, where it follows the radius the eye already sees.
+          `focus-within`, not `:has()`: this must indicate the field being
+          focused, and it has to hold while the results list below is open. */}
+      <div className="flex h-12 items-center rounded-full border border-white/28 bg-white/[0.08] pr-1 pl-4 outline-offset-2 focus-within:border-white/48 focus-within:bg-white/[0.12] focus-within:outline-2 focus-within:outline-[var(--blue-soft)]">
         <input
           id="hero-company-search"
           type="search"
@@ -75,7 +84,12 @@ export function HomeHeroSearch() {
           onFocus={() => {
             if (query.trim()) setOpen(true);
           }}
-          className="min-w-0 flex-1 bg-transparent text-[14px] text-on-navy outline-none placeholder:text-on-navy-muted"
+          /* `focus-visible:outline-none` rather than plain `outline-none`: the
+             global rule is `:focus-visible`, and a bare `.outline-none` ties it
+             on specificity and loses on source order. Matching the pseudo-class
+             wins it outright. Nothing is lost for keyboard users — the ring is
+             on the pill above. */
+          className="min-w-0 flex-1 bg-transparent text-[14px] text-on-navy outline-none focus-visible:outline-none placeholder:text-on-navy-muted"
         />
         <button
           type="submit"

@@ -16,7 +16,7 @@ export function AdminShell({ email, role, children }: Props) {
       <header className="border-b border-line bg-surface px-4 py-3">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <div>
-            <p className="text-[10px] font-semibold tracking-[0.14em] text-ember uppercase">
+            <p className="text-[10px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
               Hansala · Platform
             </p>
             <h1 className="font-display text-lg font-semibold tracking-[-0.03em]">

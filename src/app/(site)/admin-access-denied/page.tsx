@@ -20,7 +20,7 @@ export default async function AdminAccessDeniedPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-4 py-16 text-ink">
-      <p className="text-[10px] font-semibold tracking-[0.14em] text-ember uppercase">
+      <p className="text-[10px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
         Hansala · Platform
       </p>
       <h1 className="mt-2 font-display text-2xl font-semibold tracking-[-0.03em]">

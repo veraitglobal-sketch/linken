@@ -113,64 +113,67 @@ export function VerificationCard({
             <VerificationSuccess message={successMessage} />
           ) : null}
           {flash?.error ? <VerificationError message={flash.error} /> : null}
+
           {!domain ? (
             <VerificationNoWebsite companySlug={companySlug} />
-          ) : null}
+          ) : (
+            <>
+              <div>
+                <p className="text-[10px] font-semibold tracking-[0.12em] text-plus uppercase">
+                  Method
+                </p>
+                <div className="mt-2 grid grid-cols-3 gap-1 rounded-2xl border border-line bg-paper/50 p-1">
+                  {METHODS.map(({ id, label, hint }) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setMethod(id)}
+                      className={cn(
+                        "rounded-xl px-2 py-2 text-center transition-colors",
+                        method === id
+                          ? "bg-navy text-white shadow-sm"
+                          : "text-muted hover:bg-surface hover:text-ink",
+                      )}
+                    >
+                      <span className="block text-[12px] font-semibold sm:text-[13px]">
+                        {label}
+                      </span>
+                      <span
+                        className={cn(
+                          "mt-0.5 hidden text-[10px] sm:block",
+                          method === id ? "text-white/65" : "text-plus",
+                        )}
+                      >
+                        {hint}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          <div>
-            <p className="text-[10px] font-semibold tracking-[0.12em] text-plus uppercase">
-              Method
-            </p>
-            <div className="mt-2 grid grid-cols-3 gap-1 rounded-2xl border border-line bg-paper/50 p-1">
-              {METHODS.map(({ id, label, hint }) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setMethod(id)}
-                  className={cn(
-                    "rounded-xl px-2 py-2 text-center transition-colors",
-                    method === id
-                      ? "bg-navy text-white shadow-sm"
-                      : "text-muted hover:bg-surface hover:text-ink",
-                  )}
-                >
-                  <span className="block text-[12px] font-semibold sm:text-[13px]">
-                    {label}
-                  </span>
-                  <span
-                    className={cn(
-                      "mt-0.5 hidden text-[10px] sm:block",
-                      method === id ? "text-white/65" : "text-plus",
-                    )}
-                  >
-                    {hint}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-line bg-paper/30 px-4 py-4 sm:px-5">
-            {method === "email" ? (
-              <EmailVerifyPanel
-                domain={domain}
-                mail={mail}
-                website={website}
-                ownerEmail={ownerEmail}
-                lockDomain={lockDomain}
-                roleOnly={roleOnly}
-                sentTo={sentTo}
-                initialAddresses={initialAddresses}
-                discoveryError={discoveryError}
-              />
-            ) : null}
-            {method === "dns" ? (
-              <DnsVerifyPanel domain={domain} token={token} />
-            ) : null}
-            {method === "meta" ? (
-              <MetaVerifyPanel domain={domain} token={token} />
-            ) : null}
-          </div>
+              <div className="rounded-xl border border-line bg-paper/30 px-4 py-4 sm:px-5">
+                {method === "email" ? (
+                  <EmailVerifyPanel
+                    domain={domain}
+                    mail={mail}
+                    website={website}
+                    ownerEmail={ownerEmail}
+                    lockDomain={lockDomain}
+                    roleOnly={roleOnly}
+                    sentTo={sentTo}
+                    initialAddresses={initialAddresses}
+                    discoveryError={discoveryError}
+                  />
+                ) : null}
+                {method === "dns" ? (
+                  <DnsVerifyPanel domain={domain} token={token} />
+                ) : null}
+                {method === "meta" ? (
+                  <MetaVerifyPanel domain={domain} token={token} />
+                ) : null}
+              </div>
+            </>
+          )}
 
           <p className="text-[11px] text-muted">
             Logo in{" "}

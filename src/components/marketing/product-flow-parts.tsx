@@ -102,7 +102,10 @@ export function FlowNodeCard({
       className={cn(
         "relative bg-surface px-3 py-2.5",
         hub ? "w-[164px] rounded-tile border border-navy/20" : "w-[150px] rounded-tile border",
-        pending ? "border-dashed border-line" : "border-line",
+        /* Same warm hue as the pill, so a reader learns the state once rather
+           than twice. Dashed stays — it is what says "not settled yet"; the
+           colour only tells you which kind of unsettled. */
+        pending ? "border-dashed border-ember/45" : "border-line",
         active && "border-blue/40 shadow-card",
       )}
     >
@@ -117,7 +120,12 @@ export function FlowNodeCard({
           <p className="truncate font-display text-[12px] font-medium tracking-[-0.03em] text-ink">
             {name}
           </p>
-          <p className="mt-0.5 text-[10px] font-semibold tracking-[0.14em] text-muted uppercase">
+          <p
+            className={cn(
+              "mt-0.5 text-[10px] font-semibold tracking-[0.14em] uppercase",
+              pending ? "text-ember-deep" : "text-muted",
+            )}
+          >
             {role}
           </p>
         </div>
@@ -142,7 +150,16 @@ export function FlowRequestPill({
       className={cn(
         "shrink-0 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition-colors duration-500",
         state === "idle" && "bg-navy text-white",
-        state === "pending" && "border border-line bg-paper text-muted",
+        /* Warm, because it is waiting on somebody. The three states are the
+           product in miniature — asked, waiting, confirmed — and this middle
+           one, the one that depends on the other side, was the only one with no
+           colour at all: grey text on grey paper, indistinguishable from a
+           disabled control.
+           `text-ember-deep` rather than `text-ember`: at 11px this needs 4.5:1
+           and the lighter value gives 3.1. The fill and the border keep the
+           lighter one, where the check does not apply. */
+        state === "pending" &&
+          "border border-ember/40 bg-ember/10 text-ember-deep",
         state === "official" &&
           "border border-blue/25 bg-accent-soft text-blue",
       )}

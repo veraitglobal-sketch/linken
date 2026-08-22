@@ -38,14 +38,18 @@ export function HomePlanCard({
 }) {
   return (
     <article
-      /* Free had `bg-surface` on a `--paper` that is also #ffffff, so a white
-         card sat on white with only a hairline: beside a solid navy block it
-         read as unfinished rather than as the smaller plan. A faint ink tint
-         gives it a body of its own. */
+      /* Free is white, and now it reads.
+         It used to be `bg-surface` on a `--paper` that was also #ffffff — white
+         on white with only a hairline, which beside a solid navy block looked
+         unfinished rather than smaller. The fix then was a faint ink tint. The
+         section is a `--mute` band now, so white gives it the body that tint
+         was standing in for, and the tint had become a second grey stacked on
+         the first: it composited to `rgb(233,235,233)` and pulled `--muted`
+         inside the card down to 4.28:1, under AA. */
       className={`flex flex-col rounded-card p-7 sm:p-9 ${
         dark
           ? "bg-navy text-on-navy shadow-chapter"
-          : "border border-line bg-ink/[0.028] shadow-[0_1px_2px_rgba(8,20,18,0.03)]"
+          : "border border-line bg-surface shadow-[0_1px_2px_rgba(8,20,18,0.03)]"
       }`}
     >
       <div className="flex items-start justify-between gap-4">

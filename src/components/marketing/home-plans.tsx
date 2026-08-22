@@ -44,7 +44,15 @@ export function HomePlans() {
           </div>
 
           <div className="lg:justify-self-end">
-            <div className="flex items-center gap-5 rounded-card border border-line bg-ink/[0.028] px-6 py-5">
+            {/* White on the band, not ink over it.
+                This was `bg-ink/[0.028]` — a tint designed to read as a
+                panel against white paper. The section is now a `--mute`
+                band, so the tint stacked on top of it and composited to
+                `rgb(233,235,233)`, which dropped `--muted` inside from
+                5.13:1 to 4.28:1 — under AA. A plain white card is the right
+                figure on a grey band anyway, and it puts the type back on
+                paper. */}
+            <div className="flex items-center gap-5 rounded-card border border-line bg-surface px-6 py-5">
               <EmbedVerifiedLockup size="lg" />
               <span className="h-11 w-px shrink-0 bg-line" aria-hidden />
               <div className="min-w-0">
