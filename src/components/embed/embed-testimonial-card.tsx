@@ -73,30 +73,6 @@ export function EmbedTestimonialCard({
         color: "var(--hs-tm-text)",
       }}
     >
-      {/* The evidence, stamped at the head of the card.
-          It sat under the attribution and made that block three lines deep under
-          a 35px circle — bottom-heavy, and the reference it is being measured
-          against has exactly two. Up here the bottom clears to name + company,
-          and the line that actually distinguishes this from a review site is the
-          first thing read rather than the smallest thing on the card. */}
-      {quiet && item.provenanceLine ? (
-        <p
-          className="hs-tm-attribution hs-tm-seal m-0 mb-3 leading-none opacity-70"
-          style={{
-            color: "var(--hs-tm-muted)",
-            fontSize: "max(11px, 0.62em)",
-            letterSpacing: "0.01em",
-          }}
-        >
-          <VerifiedBadge
-            size={12}
-            title="Confirmed on Hansala"
-            className="mr-1 inline-block align-[-0.2em]"
-          />
-          {item.provenanceLine}
-        </p>
-      ) : null}
-
       {!compact && !quiet ? (
         <span
           aria-hidden
@@ -227,9 +203,32 @@ export function EmbedTestimonialCard({
               which turned a two-line attribution into a four-line one. Out here
               it has the whole card and sets on one.
 
+              It also belongs below the words, not above them. It briefly led the
+              card, to get the attribution down to the two lines the reference
+              card has — wrong target, since that card carries no provenance at
+              all. Every card then opened with grey fine print instead of with
+              the quote, and the quote is the record.
+
               The date is gone with it. `provenanceLine` is the evidence and is
               non-negotiable; the month a record was published is neither, and it
               was the thing tipping the line over the edge. */}
+          {item.provenanceLine ? (
+            <p
+              className="hs-tm-attribution hs-tm-seal m-0 mt-3 leading-[1.45] opacity-75"
+              style={{
+                color: "var(--hs-tm-muted)",
+                textWrap: "pretty",
+                fontSize: "max(11px, 0.64em)",
+              }}
+            >
+              <VerifiedBadge
+                size={12}
+                title="Confirmed on Hansala"
+                className="mr-1 inline-block align-[-0.15em]"
+              />
+              {item.provenanceLine}
+            </p>
+          ) : null}
         </footer>
       ) : (
       <footer className={cn("hs-tm-attribution mt-4", compact && "mt-2.5")}>
