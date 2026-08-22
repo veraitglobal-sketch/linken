@@ -2,6 +2,7 @@
 
 /** Primary navigation — one wrapping row, not four directories. */
 export const FOOTER_PRIMARY = [
+  { label: "Search companies", href: "/search" },
   { label: "About", href: "/about" },
   { label: "Pricing", href: "/pricing" },
   { label: "Developers", href: "/developers" },

@@ -14,6 +14,8 @@ import Link from "next/link";
 type Props = {
   mode?: "browse" | "invite";
   excludeSlug?: string;
+  includeUnclaimed?: boolean;
+  searchOnEmpty?: boolean;
 };
 
 function hitToCompany(hit: CompanySearchHit): Company {
@@ -44,16 +46,25 @@ function hitToCompany(hit: CompanySearchHit): Company {
   };
 }
 
-export function SearchPanel({ mode = "browse", excludeSlug }: Props) {
+export function SearchPanel({
+  mode = "browse",
+  excludeSlug,
+  includeUnclaimed = false,
+  searchOnEmpty = true,
+}: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<CompanySearchHit[]>([]);
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
+    if (!query.trim() && !searchOnEmpty) {
+      setResults([]);
+      return;
+    }
     let cancelled = false;
     const t = window.setTimeout(() => {
       startTransition(async () => {
-        const rows = await searchCompaniesForGraph(query);
+        const rows = await searchCompaniesForGraph(query, { includeUnclaimed });
         if (cancelled) return;
         setResults(
           rows.filter((r) => !excludeSlug || r.slug !== excludeSlug),
@@ -64,7 +75,7 @@ export function SearchPanel({ mode = "browse", excludeSlug }: Props) {
       cancelled = true;
       window.clearTimeout(t);
     };
-  }, [query, excludeSlug]);
+  }, [query, excludeSlug, includeUnclaimed, searchOnEmpty]);
 
   return (
     <div className="space-y-4">
@@ -99,7 +110,9 @@ export function SearchPanel({ mode = "browse", excludeSlug }: Props) {
             <p className="text-sm text-muted">
               {query.trim()
                 ? "No companies match this search."
-                : "No companies registered yet."}
+                : searchOnEmpty
+                  ? "No companies registered yet."
+                  : "Type a company name, category, or city."}
             </p>
             <Link
               href="/onboarding"

@@ -13,11 +13,14 @@ export type CompanySearchHit = {
   claimed: boolean;
 };
 
-/** Lightweight search for the graph add drawer. */
+/** Lightweight search for the graph add drawer and public directory. */
 export async function searchCompaniesForGraph(
   query: string,
+  options?: { includeUnclaimed?: boolean },
 ): Promise<CompanySearchHit[]> {
-  const rows = await searchCompanies(query);
+  const rows = await searchCompanies(query, {
+    includeUnclaimed: options?.includeUnclaimed,
+  });
   return rows.slice(0, 20).map((c) => ({
     id: c.id,
     slug: c.slug,

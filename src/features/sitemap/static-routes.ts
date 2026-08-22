@@ -10,6 +10,7 @@ type StaticRoute = {
 
 const BASE: StaticRoute[] = [
   { path: "", changeFrequency: "weekly", priority: 1 },
+  { path: "/search", changeFrequency: "daily", priority: 0.8 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/pricing", changeFrequency: "weekly", priority: 0.85 },
   { path: "/use-cases", changeFrequency: "monthly", priority: 0.8 },
