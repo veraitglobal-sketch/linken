@@ -4,6 +4,8 @@ import {
   FOOTER_LEGAL,
   FOOTER_PRIMARY,
 } from "@/components/layout/footer-links";
+import { getSocialLinks } from "@/components/layout/social-links";
+import { SOCIAL_LABEL, SocialMark } from "@/components/layout/social-mark";
 import {
   getLegalCompany,
   legalCopyrightName,
@@ -14,6 +16,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
   const company = getLegalCompany();
   const copyright = legalCopyrightName(company);
+  const social = getSocialLinks();
 
   return (
     <footer className="border-t border-line bg-paper">
@@ -26,6 +29,30 @@ export function SiteFooter() {
             Company profiles, case studies, and partners — public only after both
             sides confirm.
           </p>
+
+          {/* The one row of colour on a monochrome page. These are other
+              people's brands at their own values, not an accent of ours — see
+              the note in `social-mark.tsx`. Rendered only for accounts that
+              actually exist; an empty list produces no row and no gap. */}
+          {social.length > 0 ? (
+            <ul className="mt-5 flex flex-wrap items-center gap-1">
+              {social.map((link) => (
+                <li key={link.network}>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="me noopener noreferrer"
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                  >
+                    <SocialMark network={link.network} />
+                    <span className="sr-only">
+                      {SOCIAL_LABEL[link.network]}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
         <nav
           aria-label="Footer"
