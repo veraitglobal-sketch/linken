@@ -6,13 +6,12 @@ import test from "node:test";
  * npm run test:seo
  */
 
-function companyIndexability(input) {
-  if (input.claimed === false) return { index: false, follow: true };
+function companyIndexability() {
   return { index: true, follow: true };
 }
 
-function sitemapIncludesClaimed(claimed) {
-  return claimed === true;
+function sitemapIncludesClaimed() {
+  return true;
 }
 
 function isPublicRelationshipStatus(status) {
@@ -104,13 +103,36 @@ function publicReferencesOnly(refs) {
   return refs.filter((r) => r.status === "confirmed");
 }
 
-test("private/unclaimed profiles are not indexed", () => {
-  assert.deepEqual(companyIndexability({ claimed: false }), {
-    index: false,
-    follow: true,
-  });
+test("every profile is indexable, claimed or not", () => {
+  // Owner's call: discovery beats the thin-content risk. If claimed profiles
+  // ever lose rankings, this is the first switch to revisit.
+  assert.equal(companyIndexability({ claimed: false }).index, true);
   assert.equal(companyIndexability({ claimed: true }).index, true);
   assert.equal(companyIndexability({}).index, true);
+  assert.equal(companyIndexability({ claimed: false }).follow, true);
+});
+
+test("the mirrors above still match the real source", async () => {
+  // This file hand-copies src/features/seo/indexability.ts instead of importing
+  // it, because the suite runs plain .mjs and cannot load TypeScript. That copy
+  // reported "unclaimed profiles are not indexed" as passing on the very commit
+  // that made them indexed — a green test for behaviour that had been inverted.
+  // Until the suite can import the real module, this at least fails loudly when
+  // the two drift apart.
+  const { readFile } = await import("node:fs/promises");
+  const src = await readFile(
+    new URL("../src/features/seo/indexability.ts", import.meta.url),
+    "utf8",
+  );
+  const body = src.replace(/\/\*[\s\S]*?\*\//g, "");
+  assert.ok(
+    !/claimed\s*===\s*false/.test(body),
+    "indexability.ts branches on `claimed === false` again — this file still assumes it does not",
+  );
+  assert.ok(
+    /return\s*\{\s*index:\s*true/.test(body),
+    "indexability.ts no longer returns index: true unconditionally",
+  );
 });
 
 test("pending relationships are not public", () => {
@@ -150,9 +172,9 @@ test("canonical URLs are /c/{slug}", () => {
   assert.notEqual(companyPath("acme"), "/acme");
 });
 
-test("sitemaps exclude unclaimed companies", () => {
+test("sitemaps include every company", () => {
   assert.equal(sitemapIncludesClaimed(true), true);
-  assert.equal(sitemapIncludesClaimed(false), false);
+  assert.equal(sitemapIncludesClaimed(false), true);
 });
 
 test("structured data shapes are valid", () => {

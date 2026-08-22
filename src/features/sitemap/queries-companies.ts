@@ -14,8 +14,9 @@ export async function countSitemapCompanies(): Promise<number> {
 
   const { count, error } = await supabase
     .from("companies")
-    .select("id", { count: "exact", head: true })
-    .eq("claimed", true);
+    /* No `claimed` filter: unclaimed profiles are indexable now, and a page
+       Google is never told about is a page Google does not index. */
+    .select("id", { count: "exact", head: true });
 
   if (error) {
     console.error("[sitemap] count companies", error.message);
@@ -36,7 +37,6 @@ export async function listSitemapCompanies(
     .select(
       "slug, verified, updated_at, logo_url, website, scheduling_url",
     )
-    .eq("claimed", true)
     .order("verified", { ascending: false })
     .order("updated_at", { ascending: false })
     .range(offset, offset + limit - 1);
