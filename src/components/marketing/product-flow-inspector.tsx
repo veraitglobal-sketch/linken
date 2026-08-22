@@ -153,7 +153,7 @@ export function FlowInspector({
                     {FLOW_TARGET.name}
                   </p>
                   <p className="truncate text-[10.5px] text-muted">
-                    {FLOW_TARGET.domain} ·{" "}
+                    {FLOW_TARGET.tagline} · {FLOW_TARGET.domain} ·{" "}
                     <span className="font-semibold text-success">Verified</span>
                   </p>
                 </div>

@@ -37,7 +37,14 @@ export function HomeStories() {
 
       <div
         className="mx-auto max-w-6xl"
-        style={{ paddingBottom: `calc(32svh + ${LAST * PEEK}px)` }}
+        /* Runway for the last card to sit pinned before the section releases.
+           Was 32svh — 288px on a 900px viewport — and since the card is only
+           404px tall, that scroll was spent looking at white beneath it. Now
+           8svh: about 72px, enough that the last card is not yanked away the
+           instant it lands, and little enough that the gap no longer reads as
+           a mistake. Below roughly 6svh the stack stops resolving and the last
+           card releases before it has been seen. */
+        style={{ paddingBottom: `calc(8svh + ${LAST * PEEK}px)` }}
       >
         {HOME_STORIES.map((story, index) => (
           <div

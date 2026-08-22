@@ -13,6 +13,10 @@ export const FLOW_HUB = {
    the mark already ships in `public/logos/showcase`. */
 export const FLOW_TARGET = {
   name: "Fade",
+  /* What the company actually is, in its own words. The panel showed a bare
+     domain, which tells a viewer nothing — a search result that says what was
+     found reads like software, not like a placeholder. */
+  tagline: "Barber booking & rewards",
   domain: "getfadeapp.com",
   initials: "FD",
   logo: "/logos/showcase/fade.png" as string | null,
