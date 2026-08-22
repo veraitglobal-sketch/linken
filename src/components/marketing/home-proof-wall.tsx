@@ -63,20 +63,14 @@ const FEATURE_THEME: TestimonialThemeTokens = {
 
 export function HomeProofWall({ feature, wall, profileUrl }: Props) {
   return (
-    /* The ground, stated locally.
+    /* The ground the cards need: a near-white band under pure-white cards.
      *
-     * `tone="mute"` resolves to `--mute`, and `--mute` and `--paper` are both
-     * `#ffffff` in the live `globals.css` — so the band does not exist and white
-     * cards sit on white with a hairline between them. No shadow rescues that;
-     * the reason a wall of cards reads as expensive elsewhere is a near-white
-     * ground under pure-white cards, and we had one surface doing both jobs.
-     *
-     * `#f4f6f4` is the design language's own ground, not a new colour: the
-     * reference records `--paper: #f0f2f0` and `--mute: #e8ebe8`, which the
-     * tokens have since drifted away from. Set here rather than globally because
-     * changing `--mute` would restyle every banded section on the site at once —
-     * that is a decision about the whole page, not about this one. */
-    <HomeSection tone="mute" className="!bg-[#f4f6f4]">
+     * This used to force `#f4f6f4` locally, because `--mute` and `--paper` were
+     * both `#ffffff` and the band did not exist. `--mute` is now `#f0f2f0` — the
+     * design language's own paper — so the tone carries it and the local
+     * override is gone. Two greys four units apart on one site read as a
+     * mistake, not as a rhythm. */
+    <HomeSection tone="mute">
       <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)] lg:gap-20">
         <div className="reveal">
           <HomeEyebrow>Written by the other side</HomeEyebrow>
@@ -132,11 +126,9 @@ export function HomeProofWall({ feature, wall, profileUrl }: Props) {
           </div>
         </div>
 
-        {/* The ground the wall stands on.
-            `--paper` and `--mute` are both `#ffffff` now, so `tone="mute"` no
-            longer draws a band and white cards were sitting on white with only
-            their hairline to separate them. The grid gives the section a floor
-            without inventing a colour: it is ink at 8%, on the same 20px rhythm
+        {/* The texture the wall stands on, over and above the band.
+            The grid gives the section a floor without inventing a colour: it is
+            ink at 8%, on the same 20px rhythm
             as the card radius, and it dissolves at all four edges so it reads as
             texture rather than as a panel with a border. */}
         <div className="reveal-late relative min-w-0">

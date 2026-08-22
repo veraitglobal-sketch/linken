@@ -16,7 +16,7 @@ import {
 /** Homepage §7 — Free vs Pro; same source as /pricing. Badge is never sold. */
 export function HomePlans() {
   return (
-    <HomeSection>
+    <HomeSection tone="mute">
       <div className="mx-auto max-w-6xl">
         {/* The mark leads. Every competitor sells a badge; the one sentence
             none of them can print was sitting at the foot of this section as a

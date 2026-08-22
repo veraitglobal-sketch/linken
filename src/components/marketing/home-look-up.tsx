@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { HomeLookUpFrame } from "@/components/marketing/home-look-up-frame";
 import { HomeSection } from "@/components/marketing/home-section";
 
 /**
@@ -18,25 +18,52 @@ import { HomeSection } from "@/components/marketing/home-section";
  * forbids. Looking a company up costs nothing and is true to the frame: this is
  * a file you check, not a wall you post on.
  *
- * Photographs, not illustration — Hansala's own, from `public/images`. Real
- * people and real work is what AGENTS.md calls for, and it is what makes the
- * band read as human rather than as another product panel.
+ * Photographs, not illustration. Real people and real work is what AGENTS.md
+ * calls for, and it is what makes the band read as human rather than as another
+ * product panel. Nobody in them faces the camera: "unposed" is the written rule,
+ * and a frontal portrait is also the thing that most gives a generated image
+ * away.
  */
 
-/* Measured, not assumed: `public/images` holds exactly two portrait photographs
-   (0.75) and everything else is landscape (1.50). A row of three portrait tiles
-   like the reference would mean cropping ~45% off the width of two landscape
-   shots, which is how faces end up outside the frame. So the composition bends
-   to the assets instead: the tall one stands alone, the two wide ones stack
-   beside it, and nothing is cropped at all. */
-const TALL = "/images/story-collaboration-v2.jpg";
-const WIDE = ["/images/story-team.jpg", "/images/story-projects.jpg"];
+/* Three frames, six photographs, two per frame — shot and exported to the ratio
+   each frame actually renders, so nothing is cropped and no face drifts out of
+   the picture. The tall frame is 3:4, the two wide ones 3:2, matching the files
+   in `public/images`.
+
+   Each frame wipes in its own direction and they are staggered around the
+   cycle, so exactly one photograph is moving at any moment. `PERIOD` is per
+   frame; with three frames offset by a third of it, something changes roughly
+   every three seconds while the band itself stays calm. */
+const PERIOD = 9000;
+
+const FRAMES = [
+  {
+    srcs: ["/images/lookup-tall-a.jpg", "/images/lookup-tall-b.jpg"],
+    direction: "down" as const,
+    ratioClass: "aspect-[3/4]",
+    delayMs: 0,
+  },
+  {
+    srcs: ["/images/lookup-wide-a1.jpg", "/images/lookup-wide-a2.jpg"],
+    direction: "across" as const,
+    ratioClass: "aspect-[3/2]",
+    delayMs: PERIOD / 3,
+  },
+  {
+    srcs: ["/images/lookup-wide-b1.jpg", "/images/lookup-wide-b2.jpg"],
+    direction: "up" as const,
+    ratioClass: "aspect-[3/2]",
+    delayMs: (PERIOD / 3) * 2,
+  },
+];
+
+const SIZES = "(max-width: 1024px) 45vw, 280px";
 
 export function HomeLookUp() {
   return (
-    <HomeSection className="!py-14">
+    <HomeSection tone="mute" className="!py-14">
       <div className="mx-auto max-w-6xl">
-        <div className="grid items-center gap-10 rounded-hero bg-[#f4f6f4] px-8 py-10 sm:px-10 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
+        <div className="grid items-center gap-10 rounded-hero px-0 py-0 sm:px-0 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
           <div>
             <h2 className="font-display text-[clamp(1.7rem,3vw,2.2rem)] leading-[1.1] font-medium tracking-[-0.035em] text-ink text-balance">
               See if a company already has a file.
@@ -54,29 +81,26 @@ export function HomeLookUp() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-[20px]">
-              <Image
-                src={TALL}
-                alt=""
-                fill
-                sizes="(max-width: 1024px) 45vw, 280px"
-                className="object-cover"
-              />
-            </div>
+            <HomeLookUpFrame
+              srcs={FRAMES[0]!.srcs}
+              direction={FRAMES[0]!.direction}
+              ratioClass={FRAMES[0]!.ratioClass}
+              delayMs={FRAMES[0]!.delayMs}
+              periodMs={PERIOD}
+              sizes={SIZES}
+              priority
+            />
             <div className="grid gap-3">
-              {WIDE.map((src) => (
-                <div
-                  key={src}
-                  className="relative aspect-[3/2] overflow-hidden rounded-[20px]"
-                >
-                  <Image
-                    src={src}
-                    alt=""
-                    fill
-                    sizes="(max-width: 1024px) 45vw, 280px"
-                    className="object-cover"
-                  />
-                </div>
+              {FRAMES.slice(1).map((frame) => (
+                <HomeLookUpFrame
+                  key={frame.srcs[0]}
+                  srcs={frame.srcs}
+                  direction={frame.direction}
+                  ratioClass={frame.ratioClass}
+                  delayMs={frame.delayMs}
+                  periodMs={PERIOD}
+                  sizes={SIZES}
+                />
               ))}
             </div>
           </div>

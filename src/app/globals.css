@@ -8,7 +8,16 @@
   --line: #dde2df;
   /* White ground — full-site paper. */
   --paper: #ffffff;
-  --mute: #ffffff;
+  /* The band under a chapter, not a second white.
+     `--paper`, `--mute`, `--surface` and `--raised` were all `#ffffff`, so
+     `tone="mute"` drew a band that could not be seen: measured across the
+     homepage, all fifteen sections resolved to the same ground. `#f0f2f0` is
+     the design language's own paper, not a new colour.
+     Changed here rather than on `--paper`: `bg-mute` has 7 call sites, while
+     `bg-paper` has 278 and `bg-surface` 300 — moving those would restyle the
+     dashboard, the profiles and the embed shells along with the marketing
+     pages, which is a different decision than this one. */
+  --mute: #f0f2f0;
   --surface: #ffffff;
   --raised: #ffffff;
   --navy: #0e1f1c;
@@ -891,5 +900,40 @@ a {
     opacity: 1 !important;
     stroke-dashoffset: 0 !important;
     transform: none !important;
+  }
+}
+
+/* Look-up band — one photograph wiping over the one before it.
+   Three frames, three directions, staggered so only one is ever moving:
+   the tall frame comes down, the upper wide one comes across, the lower wide
+   one comes up. Full opacity throughout — this is a wipe, not a dissolve, and
+   the incoming photograph ends up covering the frame, so the one underneath
+   needs no fade of its own.
+   `will-change` is deliberately absent: three promoted layers sitting on the
+   homepage all the time costs more than the 900ms they would save. */
+@keyframes lookup-wipe-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes lookup-wipe-across {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes lookup-wipe-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
   }
 }
