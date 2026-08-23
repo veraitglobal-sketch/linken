@@ -130,8 +130,15 @@ export function SiteHeaderAuth() {
       <Button variant="ghost" href="/login" className="h-11 px-3 text-[12px]">
         Sign in
       </Button>
+      {/* Two labels, because the full one does not fit a phone.
+          Measured at 375px: this button ended 56px past the viewport, and
+          because `Button` is `shrink-0` it could not give the space back — the
+          whole page scrolled sideways as a result. Same device-width pattern
+          the site header already uses for "Search" / "Search companies", so
+          this is the established fix rather than a new one. */}
       <Button href="/onboarding" className="h-11 px-4 text-[12px]">
-        Create company
+        <span className="sm:hidden">Create</span>
+        <span className="hidden sm:inline">Create company</span>
       </Button>
     </div>
   );

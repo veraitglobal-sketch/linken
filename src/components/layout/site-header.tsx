@@ -12,7 +12,22 @@ export function SiteHeader() {
           href="/"
           className="inline-flex items-center gap-2.5 text-ink transition-opacity hover:opacity-80"
         >
-          <NetworkMark size={24} className="text-navy" animate={false} />
+          {/* The same mark the footer shows, not a second one.
+              The header drew a bare navy glyph while `EmbedVerifiedLockup` in
+              the footer draws it as a mint mark on a navy tile — two different
+              logos on one site. This is the footer's treatment at the height a
+              48px bar allows, minus the "Verified" subtitle, which needs two
+              lines it does not have.
+              Mint here rather than on paper is the palette's own rule: deep on
+              paper, mint on navy. It is also the one accent AGENTS.md reserves
+              for the mark, and until now the mark was the only monochrome thing
+              in a header that sits above a footer full of colour. */}
+          <span
+            aria-hidden
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-navy text-[#7eb8a4] ring-1 ring-black/10"
+          >
+            <NetworkMark size={13} animate={false} />
+          </span>
           <span className="font-display text-[1.18rem] leading-none font-semibold tracking-[-0.035em]">
             Hansala
           </span>

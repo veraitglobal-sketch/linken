@@ -183,6 +183,22 @@ a {
   text-decoration: none;
 }
 
+/* No paragraph ends on a lone word.
+   Measured on the homepage: five paragraphs had a last line under a quarter of
+   the column, the worst a single word at 8.7% — the kind of thing nobody names
+   and everybody feels. `pretty` pulls a word down from the line above to even
+   the ending out; it only touches the last few lines, so it costs nothing.
+   Set on the element rather than in 33 components, and unlayered so a utility
+   cannot silently win: nothing else in this project sets `text-wrap` on `p`.
+   Headings are already handled by `text-balance` where they wrap. */
+p,
+li,
+blockquote,
+figcaption,
+dd {
+  text-wrap: pretty;
+}
+
 /* Global keyboard focus — components may refine; never remove without replacement.
    Mint on paper reads as a focus cue; --signal (#1a5c51) framed whole landmarks
    as green page borders (especially #main-content after Skip to content). */

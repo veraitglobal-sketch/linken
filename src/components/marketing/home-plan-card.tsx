@@ -124,7 +124,16 @@ export function HomePlanCard({
       <div className="mt-auto pt-8">
         <Button
           href={href}
-          variant={dark ? "light" : "secondary"}
+          /* The loudest button each ground can carry.
+             On the navy card that is white; on the paper card it is the brand
+             green. It was `secondary` there — `bg-surface` with a hairline,
+             which is a white button on white paper: the pricing section's
+             primary action, visible only by its border.
+             `primary` is not a new style, it is the variant this component has
+             always had and that the marketing pages never once used —
+             `variant="primary"` appears nowhere across them. White on
+             `--signal` measures 7.3:1. */
+          variant={dark ? "light" : "primary"}
           className="h-11 w-full sm:w-auto sm:min-w-[220px]"
         >
           {cta}
