@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { GettingStartedPill } from "@/components/activation/getting-started-pill";
 import { WorkspaceMobileMenu } from "@/components/dashboard/workspace-mobile-menu";
@@ -27,6 +28,9 @@ export function WorkspaceShellMenu(props: MenuProps) {
   );
 }
 
+/** Where the full checklist card already renders, so the pill would repeat it. */
+const CHECKLIST_CARD_ROUTE = "/dashboard";
+
 export function WorkspaceShellChecklist({
   checklist,
   signedIn,
@@ -34,7 +38,13 @@ export function WorkspaceShellChecklist({
   checklist?: ActivationChecklist | null;
   signedIn: boolean;
 }) {
+  const pathname = usePathname();
   if (!signedIn || !checklist || checklist.complete) return null;
+  /* The pill exists so the checklist is reachable from Inbox, Widgets and the
+     rest, where the card is not rendered. On Home the card is right there, and
+     showing both put "Getting started 2/6" on the screen twice — the same
+     sentence and the same number, in two different chromes. */
+  if (pathname === CHECKLIST_CARD_ROUTE) return null;
   return <GettingStartedPill checklist={checklist} />;
 }
 

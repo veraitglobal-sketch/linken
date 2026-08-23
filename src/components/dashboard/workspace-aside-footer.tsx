@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { WorkspaceAccountMenu } from "@/components/dashboard/workspace-account-menu";
 import {
-  IconHome,
+  IconExternal,
   IconSettings,
 } from "@/components/dashboard/workspace-icons";
 import type { WorkspaceContext } from "@/features/workspace/types";
@@ -11,6 +11,14 @@ type Props = {
   signedIn: boolean;
 };
 
+/**
+ * The sidebar's foot: leaving the workspace, and the account.
+ *
+ * Both links here point at `/`, and both were labelled "Home" with the house
+ * icon — the same word and the same glyph the MAIN nav already uses for
+ * `/dashboard`. Two different destinations, indistinguishable. "Back to site"
+ * with the leaving-the-app icon says which one this is.
+ */
 export function WorkspaceAsideFooter({ active, signedIn }: Props) {
   if (!signedIn) {
     return (
@@ -19,8 +27,8 @@ export function WorkspaceAsideFooter({ active, signedIn }: Props) {
           href="/"
           className="group flex h-9 items-center gap-2.5 rounded-xl px-2.5 text-[12px] font-medium text-ink-soft transition-colors hover:bg-navy/[0.035] hover:text-ink"
         >
-          <IconHome className="text-plus group-hover:text-ink-soft" />
-          Home
+          <IconExternal className="text-plus group-hover:text-ink-soft" />
+          Back to site
         </Link>
         <Link
           href="/login?next=/dashboard"
@@ -48,8 +56,8 @@ export function WorkspaceAsideFooter({ active, signedIn }: Props) {
           href="/"
           className="group flex h-9 items-center gap-2.5 rounded-xl px-2.5 text-[12px] font-medium text-ink-soft transition-colors hover:bg-navy/[0.035] hover:text-ink"
         >
-          <IconHome className="text-plus group-hover:text-ink-soft" />
-          Home
+          <IconExternal className="text-plus group-hover:text-ink-soft" />
+          Back to site
         </Link>
       </div>
 
