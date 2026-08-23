@@ -38,7 +38,14 @@ export function PartnerSidebar({
   if (partners.length === 0 && !editable) return null;
 
   return (
-    <aside id="partners" className="scroll-mt-24 lg:sticky lg:top-20 lg:self-start">
+    /* `w-full`, not `lg:self-start`.
+       The column is `flex flex-col`, and in a column flex container
+       `align-self` governs the cross axis — the width. `self-start` therefore
+       stopped this card stretching and shrank it to its content: 282px inside a
+       320px column, 38 narrower than the "Why this level" card directly above
+       it in the same column. It was there for `position: sticky`, which in a
+       column does not depend on `align-self` at all. */
+    <aside id="partners" className="w-full scroll-mt-24 lg:sticky lg:top-20">
       <div className="overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
         <div className="mesh-stage relative px-5 py-6 text-white">
           <div className="stage-grain absolute inset-0 opacity-60" />

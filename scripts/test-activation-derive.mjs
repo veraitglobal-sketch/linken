@@ -173,3 +173,39 @@ test("the mirror still matches src/features/activation/derive.ts", async () => {
   const realOrder = real.indexOf("const hasConfirmation") < real.indexOf("const hasInvitationSent");
   assert.equal(realOrder, true, "hasConfirmation must still be computed before hasInvitationSent");
 });
+
+/* The partner path records no email, so this flag is the only way an outgoing
+   partner request reaches the checklist. It was declared in `derive.ts` from
+   the start and never passed by `checklist.ts`, so it sat false forever. */
+test("an outgoing partner request counts as an invitation before any answer", () => {
+  const signals = signalsFromRows({
+    companySlug: "vera-it",
+    verified: true,
+    refs: [],
+    caseCount: 1,
+    confReqs: [],
+    partnerships: [{ status: "pending" }],
+    hasPartnerInviteSent: true,
+    hasConfirmedCasePartner: false,
+    websiteLinked: false,
+    hasEmbedView: false,
+  });
+  assert.equal(signals.hasConfirmation, false, "nothing is confirmed yet");
+  assert.equal(signals.hasInvitationSent, true, "but the request was sent");
+});
+
+/* `checklist.ts` must keep selecting the column and passing the flag —
+   the query and the mapping are two places this has to stay joined up. */
+test("checklist.ts still feeds hasPartnerInviteSent", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const src = await readFile("src/features/activation/checklist.ts", "utf8");
+  assert.ok(
+    src.includes("id, status, requester_id"),
+    "the partnerships query must still select requester_id",
+  );
+  assert.ok(
+    src.includes("hasPartnerInviteSent:"),
+    "checklist.ts must still pass hasPartnerInviteSent",
+  );
+});
+

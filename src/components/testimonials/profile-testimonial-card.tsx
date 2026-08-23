@@ -18,7 +18,14 @@ export function ProfileTestimonialCard({ item }: Props) {
       >
         “
       </span>
-      <blockquote className="mt-1 font-display text-[clamp(1.1rem,2.2vw,1.35rem)] font-medium leading-[1.35] tracking-[-0.035em] text-ink">
+      {/* A reading measure, not the container's width.
+          With the profile's sidebar gone this section spans 1120px, and the
+          quotes went with it: measured at 1046px and 22px type, about 97
+          characters a line, against the 65–75 a reader tracks comfortably. The
+          eye loses the return sweep and long quotes stop being read.
+          `max-w-[62ch]` is the cap; the extra width now goes to the card's
+          structure rather than to the line. */}
+      <blockquote className="mt-1 max-w-[62ch] font-display text-[clamp(1.1rem,2.2vw,1.35rem)] font-medium leading-[1.35] tracking-[-0.035em] text-ink">
         {item.body}
       </blockquote>
       <figcaption className="mt-5 flex flex-wrap items-end justify-between gap-3">

@@ -17,11 +17,11 @@ export function ProfileTestimonialsSection({
   if (visible.length === 0 && !editable) return null;
 
   return (
-    <section id="testimonials" className="scroll-mt-24 py-2">
+    <section id="testimonials" className="scroll-mt-24 rounded-chapter border border-line bg-surface px-6 py-8 sm:px-9 sm:py-9">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-blue uppercase">
         Testimonials
       </p>
-      <h2 className="mt-2 font-display text-[clamp(1.5rem,2.5vw,1.95rem)] font-medium tracking-[-0.04em] text-ink">
+      <h2 className="mt-2 font-display text-section text-ink">
         In their own words
       </h2>
       <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-ink-soft">

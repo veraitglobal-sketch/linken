@@ -25,7 +25,7 @@ export function TrustWhyCard({ trust }: Props) {
 
   return (
     <aside className="rounded-[28px] border border-line bg-surface px-5 py-5 shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
         Why this level
       </p>
       <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">

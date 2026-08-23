@@ -66,7 +66,9 @@ export async function getActivationChecklist(
         .eq("requested_by_company_id", companyId),
       supabase
         .from("partnerships")
-        .select("id, status")
+        /* `requester_id` is what makes an outgoing partner request visible to
+           the checklist at all — see `hasPartnerInviteSent` below. */
+        .select("id, status, requester_id")
         .or(`requester_id.eq.${companyId},recipient_id.eq.${companyId}`),
       supabase
         .from("profile_events")
@@ -100,6 +102,21 @@ export async function getActivationChecklist(
       partnerships: (partnershipsRes.data ?? []).map((r) => ({
         status: r.status as string,
       })),
+      /**
+       * The one invitation path that records no email anywhere.
+       *
+       * A partner request is matched company to company, so none of the email
+       * signals can ever see it. `signalsFromRows` has accepted this flag since
+       * it was written and no caller has ever passed it, which left it
+       * permanently false: send a partner request, wait for an answer, and the
+       * checklist still says the first invitation has not gone out.
+       *
+       * Being the requester is the invitation. Status is deliberately not
+       * checked — a request that was declined was still sent.
+       */
+      hasPartnerInviteSent: (partnershipsRes.data ?? []).some(
+        (r) => r.requester_id === companyId,
+      ),
       hasConfirmedCasePartner,
       websiteLinked: Boolean(verRes.data?.website_linked),
       hasEmbedView: (embedRes.data ?? []).length > 0,

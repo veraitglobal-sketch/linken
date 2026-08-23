@@ -1,5 +1,3 @@
-import { cn } from "@/lib/cn";
-
 type Props = {
   partnerCount: number;
   caseStudyCount: number;
@@ -8,77 +6,88 @@ type Props = {
   category: string;
 };
 
-/** Only renders proof cells that exist — no empty “0” theatre. */
+/**
+ * The page's second moment: what this company can prove, at the size it
+ * deserves. Only renders cells that exist — no empty "0" theatre.
+ *
+ * This was a white card with the figures at 28px, sitting among six other white
+ * cards. Two problems, both measured on the page.
+ *
+ * The figures were *smaller than the word "Team"* — section headings render at
+ * 33px. A confirmed count is the one fact about this company that no other site
+ * on the internet can show, and it was set below the furniture.
+ *
+ * And it was a card. Every section here is a card, so being one more made it
+ * furniture too. It is not a card now: the figures sit straight on the canvas,
+ * divided by hairlines. That is what makes it read as the page speaking rather
+ * than as another widget, and it costs nothing — the distinction is the absence
+ * of a box, not the addition of an ornament.
+ *
+ * `Registered as` is gone. It carried the category and city, which the hero
+ * already states one screen above as "IT - SOFTWARE · HAMBURG, GERMANY". It
+ * also diluted the row: a trade name sitting in the same slot as a count stops
+ * the eye reading the row as counts at all.
+ */
 export function CompanySignal({
   partnerCount,
   caseStudyCount,
   referenceCount,
-  city,
-  category,
 }: Props) {
   const items = [
     partnerCount > 0
       ? {
           label: "Confirmed partners",
-          value: String(partnerCount),
-          note: "Mutual yes only",
-        }
-      : null,
-    caseStudyCount > 0
-      ? {
-          label: "Case studies",
-          value: String(caseStudyCount),
-          note: "With attribution",
+          value: partnerCount,
+          note: "Both sides said yes",
         }
       : null,
     referenceCount > 0
       ? {
           label: "Confirmed clients",
-          value: String(referenceCount),
-          note: "Service references",
+          value: referenceCount,
+          note: "Each verified by the client",
         }
       : null,
-    category
+    caseStudyCount > 0
       ? {
-          label: "Registered as",
-          value: category,
-          note: city || "—",
+          label: "Case studies",
+          value: caseStudyCount,
+          note: "Published with attribution",
         }
       : null,
-  ].filter(Boolean) as { label: string; value: string; note: string }[];
+  ].filter(Boolean) as { label: string; value: number; note: string }[];
 
   if (items.length === 0) return null;
 
   return (
-    <section className="mx-auto mt-4 max-w-6xl px-4">
-      <div
-        className={cn(
-          "grid overflow-hidden rounded-[28px] border border-line bg-surface",
-          items.length === 1 && "grid-cols-1",
-          items.length === 2 && "grid-cols-1 sm:grid-cols-2",
-          items.length === 3 && "grid-cols-1 sm:grid-cols-3",
-          items.length >= 4 && "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
-        )}
-      >
+    <section className="mx-auto mt-8 max-w-6xl px-4">
+      <ul className="grid gap-y-8 sm:grid-cols-3 sm:gap-y-0">
         {items.map((item, i) => (
-          <div
+          <li
             key={item.label}
+            /* A hairline between, never around. The rule belongs to the gap
+               the figures already leave, so the row stays open at both ends
+               instead of closing into a box. */
             className={
               i === 0
-                ? "px-6 py-6 sm:px-7"
-                : "border-t border-line px-6 py-6 sm:border-t-0 sm:border-l sm:px-7"
+                ? "sm:pr-8"
+                : "border-line sm:border-l sm:pr-8 sm:pl-8 sm:last:pr-0"
             }
           >
-            <p className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">
+            <p className="font-label text-[11px] font-semibold tracking-[0.16em] text-plus uppercase">
               {item.label}
             </p>
-            <p className="mt-3 font-display text-[clamp(1.35rem,2.2vw,1.75rem)] font-medium tracking-[-0.035em] text-ink">
+            {/* Display scale, tabular figures. This is the number the whole
+                page exists to state. */}
+            <p className="mt-3 font-display text-[clamp(3rem,5.5vw,4.25rem)] leading-[0.92] font-medium tracking-[-0.045em] text-ink tabular-nums">
               {item.value}
             </p>
-            <p className="mt-1.5 text-[13px] text-ink-soft">{item.note}</p>
-          </div>
+            <p className="mt-3 text-[13px] leading-relaxed text-muted">
+              {item.note}
+            </p>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }

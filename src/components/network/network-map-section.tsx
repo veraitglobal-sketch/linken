@@ -33,7 +33,7 @@ export async function NetworkMapSection({
           <p className="text-[11px] font-semibold tracking-[0.16em] text-plus uppercase">
             {PRODUCT.map.label}
           </p>
-          <h2 className="mt-1.5 font-display text-[clamp(1.4rem,2.2vw,1.75rem)] font-medium tracking-[-0.04em] text-ink">
+          <h2 className="mt-1.5 font-display text-section text-ink">
             {title}
           </h2>
           <p className="mt-2 max-w-[40rem] text-[13px] leading-relaxed text-muted">

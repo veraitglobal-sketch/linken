@@ -24,24 +24,42 @@ export function PartnerCard({
     editable && Boolean(partner.partnershipId) && Boolean(manageBack);
 
   return (
-    <div className="rounded-2xl bg-[#f7f8fa] px-3.5 py-3.5 transition-colors hover:bg-paper">
-      <div className="flex items-center gap-3.5">
+    <div className="rounded-xl bg-[#f7f8fa] px-3 py-2.5 transition-colors hover:bg-paper">
+      {/* The mark leads.
+          It used to sit at the far right of the row — 196px into a 254px card —
+          which made the company's own logo the last thing read and the first
+          thing cropped. A partner row is an identification: the mark, then who
+          it is, then what they do. */}
+      <div className="flex items-center gap-2.5">
+        <PartnerMark
+          name={partner.name}
+          initials={partner.logoInitials}
+          logoUrl={partner.logoUrl}
+        />
         <Link
           href={`/c/${partner.slug}?src=partner`}
-          className="min-w-0 flex-1"
+          /* 44px minimum. Tightening the row for density left the tappable
+             area at 41px — under the floor, and density is never worth a
+             target a thumb misses. The row grows three pixels; it is still
+             eleven shorter than before. */
+          className="flex min-h-11 min-w-0 flex-1 flex-col justify-center"
         >
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
             <p className="truncate text-sm font-semibold text-ink">
               {partner.name}
             </p>
+            {/* Only when the partner actually is. Never inferred, never shown
+                for a company that has not proved its domain or identity. */}
             {partner.verified ? (
-              <span className="rounded-lg border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-2 py-0.5 text-[9px] font-semibold tracking-[0.08em] text-[#1a5c51] uppercase">
+              <span className="inline-flex shrink-0 items-center rounded-md border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.06em] text-[#1a5c51] uppercase">
                 Verified
               </span>
             ) : null}
           </div>
-          <p className="mt-1 truncate text-[13px] text-muted">
-            {partner.category} company
+          {/* The industry, not "the industry company". `category` already reads
+              as a trade — "Cleaning services company" was a word too many. */}
+          <p className="mt-0.5 truncate text-[13px] text-muted">
+            {partner.category}
           </p>
           {partner.sharedProjects > 0 ? (
             <p className="mt-1 text-[12px] text-muted">{casesLabel}</p>
@@ -53,11 +71,6 @@ export function PartnerCard({
             back={manageBack}
           />
         ) : null}
-        <PartnerMark
-          name={partner.name}
-          initials={partner.logoInitials}
-          logoUrl={partner.logoUrl}
-        />
       </div>
     </div>
   );

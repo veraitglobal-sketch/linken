@@ -9,13 +9,13 @@ export function CompanyAbout({ company }: Props) {
   const website = company.website?.trim();
 
   return (
-    <section className="rounded-[28px] border border-line bg-surface px-6 py-8 sm:px-9 sm:py-10">
+    <section className="rounded-chapter border border-line bg-surface px-6 py-8 sm:px-9 sm:py-9">
       <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-start">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
             Overview
           </p>
-          <h2 className="mt-3 font-display text-[clamp(1.7rem,2.8vw,2.25rem)] font-medium tracking-[-0.035em] text-ink">
+          <h2 className="mt-3 font-display text-section text-ink">
             What this firm
             <span className="mt-1 block text-ink/35">stands behind.</span>
           </h2>

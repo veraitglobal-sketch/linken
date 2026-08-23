@@ -89,7 +89,16 @@ export function CompanyProfile({
   const confirmedRefs = references.filter((r) => r.status === "confirmed").length;
 
   return (
-    <div className="pb-10">
+    /* A tinted ground, so the profile's cards can be white and sit on it.
+       Measured on the live page: every section card was `bg-surface` behind a
+       hairline, on a page that is also `#ffffff`. White on white leaves the
+       border doing all the work, which is why the profile read as a stack of
+       outlined boxes rather than as documents on a desk.
+       Same correction as the workspace board, and in the same direction: the
+       tint belongs to the canvas. Tinting the cards instead was tried there and
+       measured — `#f0f2f0` against `#ffffff` is a six per cent step and it did
+       not read at all. */
+    <div className="bg-mute pb-10">
       <CompanyHeroBand
         company={company}
         trustLevel={trust.level}

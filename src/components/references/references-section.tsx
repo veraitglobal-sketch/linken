@@ -18,12 +18,12 @@ export function ReferencesSection({
   return (
     <section
       id="references"
-      className="scroll-mt-24 rounded-[28px] border border-line bg-surface px-5 py-6 sm:px-7 sm:py-7"
+      className="scroll-mt-24 rounded-chapter border border-line bg-surface px-6 py-8 sm:px-9 sm:py-9"
     >
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
         References
       </p>
-      <h2 className="mt-2 font-display text-[clamp(1.45rem,2.4vw,1.85rem)] font-medium tracking-[-0.035em] text-ink">
+      <h2 className="mt-2 font-display text-section text-ink">
         Clients we work for
       </h2>
       <p className="mt-2 max-w-xl text-[13px] text-ink-soft">
