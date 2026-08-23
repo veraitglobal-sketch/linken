@@ -13,8 +13,17 @@ export function DossierClientSeal({ caseStudy }: Props) {
     <section className="mb-12 flex items-center gap-4 border-b border-[var(--cf-line)] pb-10">
       <Link href={`/c/${client.slug}`} className="flex items-center gap-3 group">
         <span className="flex h-12 w-12 items-center justify-center overflow-hidden bg-white">
+          {/* `contain` on the mark below: a client's logo is a mark, and
+              `object-cover` in a 48px square keeps only the middle of a wide
+              wordmark. */}
           {client.logoUrl ? (
-            <Image src={client.logoUrl} alt="" width={48} height={48} className="object-cover" />
+            <Image
+              src={client.logoUrl}
+              alt=""
+              width={48}
+              height={48}
+              className="object-contain"
+            />
           ) : (
             <span className="text-[12px] font-semibold">{client.logoInitials}</span>
           )}

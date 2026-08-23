@@ -33,7 +33,7 @@ export function CaseStudyGalleryBento({ urls, title }: Props) {
             src={hero}
             alt={title}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="(max-width: 1024px) 100vw, 720px"
             priority
           />
@@ -51,7 +51,7 @@ export function CaseStudyGalleryBento({ urls, title }: Props) {
                     : "ring-transparent opacity-90 hover:opacity-100"
                 }`}
               >
-                <Image src={url} alt="" fill className="object-cover" sizes="200px" />
+                <Image src={url} alt="" fill className="object-contain" sizes="200px" />
               </button>
             ))}
           </div>

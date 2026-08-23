@@ -30,12 +30,20 @@ export function CaseStudyCard({
   if (featured) {
     return (
       <article className="group">
-        <Link href={href} className="relative block aspect-[16/10] overflow-hidden bg-[#0a1210] sm:aspect-[2/1]">
+        {/* One ratio at every width, and not a wide one.
+            The cover went to `2/1` from `sm` up. `object-cover` fills the box
+            and discards the rest, so a portrait screenshot — a phone app, a
+            tall dashboard — lost roughly three quarters of its height and what
+            survived was a horizontal band through the middle of the picture.
+            16:10 still crops a tall image, but it keeps far more of it, and the
+            same shape at every width means a cover cannot look right on a
+            phone and wrong on a laptop. */}
+        <Link href={href} className="relative block aspect-[16/10] overflow-hidden bg-[#0a1210]">
           <Image
             src={cover}
             alt=""
             fill
-            className={`object-cover transition-transform duration-[1.2s] group-hover:scale-[1.03] ${caseStudyCoverFocus(index)}`}
+            className={`object-cover transition-transform duration-[1.2s] group-hover:scale-[1.03] ${caseStudyCoverFocus()}`}
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#060a09]/90 via-transparent to-transparent" />

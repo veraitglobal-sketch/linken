@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CaseStudyCoverMedia } from "@/components/case-studies/case-study-cover-media";
 import Link from "next/link";
 import { ClientConfirmedBadge } from "@/components/case-studies/client-confirmed-badge";
 import { caseStudyCoverFocus, caseStudyCoverUrl } from "@/lib/case-study-cover";
@@ -19,13 +19,10 @@ export function CaseStudyHero({ company, caseStudy, index = 0 }: Props) {
   return (
     <header className="relative mx-auto max-w-6xl px-4 pt-3">
       <div className="relative min-h-[min(88svh,760px)] overflow-hidden rounded-[32px] bg-navy shadow-[0_28px_90px_rgba(8,20,18,0.28)]">
-        <Image
+        <CaseStudyCoverMedia
           src={cover}
-          alt=""
-          fill
+          focusClass={caseStudyCoverFocus()}
           priority
-          className={`media-zoom object-cover ${caseStudyCoverFocus(index)}`}
-          sizes="(max-width: 768px) 100vw, 1152px"
         />
         <div className="stage-grain absolute inset-0 z-[1]" />
         <div

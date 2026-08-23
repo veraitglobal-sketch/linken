@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CaseStudyCoverMedia } from "@/components/case-studies/case-study-cover-media";
 import Link from "next/link";
 import { caseStudyCoverFocus, caseStudyCoverUrl } from "@/lib/case-study-cover";
 import type { CaseStudy } from "@/types/case-study";
@@ -26,13 +26,13 @@ export function DossierOpener({
 
   return (
     <header className="case-file-hero">
-      <Image
+      {/* The cover decides its own treatment — a square app icon is not a
+          photograph and must not be enlarged to fill a full-bleed opener. */}
+      <CaseStudyCoverMedia
         src={cover}
-        alt=""
-        fill
-        priority
-        className={`object-cover ${caseStudyCoverFocus(index)}`}
+        focusClass={caseStudyCoverFocus()}
         sizes="100vw"
+        priority
       />
       <div
         className="absolute inset-0 bg-gradient-to-t from-[#060a09]/95 via-[#060a09]/35 to-[#060a09]/15"

@@ -21,7 +21,7 @@ export function CasesPortfolioCard({ companySlug, caseStudy, index }: Props) {
             src={cover}
             alt=""
             fill
-            className={`object-cover transition-transform duration-700 group-hover:scale-[1.02] ${caseStudyCoverFocus(index)}`}
+            className={`object-cover transition-transform duration-700 group-hover:scale-[1.02] ${caseStudyCoverFocus()}`}
             sizes="360px"
           />
         </div>

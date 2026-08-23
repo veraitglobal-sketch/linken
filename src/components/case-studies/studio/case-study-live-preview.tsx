@@ -37,7 +37,7 @@ export function CaseStudyLivePreview({ draft, companyName }: Props) {
             src={cover}
             alt=""
             fill
-            className={`object-cover ${caseStudyCoverFocus(0)}`}
+            className={`object-cover ${caseStudyCoverFocus()}`}
             sizes="400px"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#081412]/90 via-[#081412]/40 to-transparent" />

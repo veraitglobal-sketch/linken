@@ -31,7 +31,7 @@ export function CaseStudyGallery({ urls, title }: Props) {
             src={urls[safeActive]!}
             alt={`${title} — photo ${safeActive + 1}`}
             fill
-            className="media-zoom object-cover"
+            className="media-zoom object-contain"
             sizes="(max-width: 768px) 100vw, 1152px"
             priority={safeActive === 0}
           />
@@ -54,7 +54,7 @@ export function CaseStudyGallery({ urls, title }: Props) {
                   src={url}
                   alt=""
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain transition-transform duration-500 group-hover:scale-105"
                   sizes="120px"
                 />
               </button>
