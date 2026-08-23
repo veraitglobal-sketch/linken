@@ -48,11 +48,22 @@ export function HomePlanCard({
          inside the card down to 4.28:1, under AA. */
       className={`flex flex-col rounded-card p-7 sm:p-9 ${
         dark
-          ? "bg-navy text-on-navy shadow-chapter"
+          /* A transparent border, to match Free's real one.
+             Free carries `border border-line`; Pro carried none, so its content
+             box started one pixel higher and the two prices stayed 1px out of
+             line even after the header rows were pinned. Same box, same start. */
+          ? "border border-transparent bg-navy text-on-navy shadow-chapter"
           : "border border-line bg-surface shadow-[0_1px_2px_rgba(8,20,18,0.03)]"
       }`}
     >
-      <div className="flex items-start justify-between gap-4">
+      {/* Fixed height, because only one card carries the badge.
+          The row sized to its tallest child: 15.9px on Free, 24.5px on Pro
+          where the pill sits. That pushed Pro's price down, and the two prices
+          — same size, same section, cards side by side — sat 7.6px out of line
+          with each other. Measured, not eyeballed.
+          26px clears the pill on both, and `items-center` puts a short label
+          and a pill on one axis instead of hanging them from the top. */}
+      <div className="flex min-h-[26px] items-center justify-between gap-4">
         <p
           className={`text-[11px] font-semibold tracking-[0.16em] uppercase ${
             dark ? "text-blue-soft" : "text-blue"

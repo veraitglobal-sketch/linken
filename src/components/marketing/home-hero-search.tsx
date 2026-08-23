@@ -89,7 +89,14 @@ export function HomeHeroSearch() {
              on specificity and loses on source order. Matching the pseudo-class
              wins it outright. Nothing is lost for keyboard users — the ring is
              on the pill above. */
-          className="min-w-0 flex-1 bg-transparent text-[14px] text-on-navy outline-none focus-visible:outline-none placeholder:text-on-navy-muted"
+          /* `appearance-none` because this is `type="search"`.
+             WebKit gives search fields native chrome — an inner field box and
+             its own focus ring — that `outline: none` does not remove, which is
+             how a square outline appears inside a rounded pill on Safari while
+             Chromium shows nothing. Measured here in Chromium the input draws
+             no ring either way, so this is the remedy for the browser that does
+             rather than a confirmed reproduction. */
+          className="min-w-0 flex-1 appearance-none bg-transparent text-[14px] text-on-navy outline-none focus-visible:outline-none placeholder:text-on-navy-muted [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
         />
         <button
           type="submit"
