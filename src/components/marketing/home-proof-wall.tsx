@@ -5,6 +5,7 @@ import { EmbedTestimonialThemeShell } from "@/components/embed/embed-testimonial
 import { HomeEyebrow, HomeSection } from "@/components/marketing/home-section";
 import { PRESET_TOKENS, type TestimonialThemeTokens } from "@/features/testimonials/theme/presets";
 import type { PublicTestimonial } from "@/features/testimonials/types";
+import { DotGrid } from "@/components/marketing/dot-grid";
 
 /**
  * The many, and the one.
@@ -132,44 +133,7 @@ export function HomeProofWall({ feature, wall, profileUrl }: Props) {
             as the card radius, and it dissolves at all four edges so it reads as
             texture rather than as a panel with a border. */}
         <div className="reveal-late relative min-w-0">
-          <span
-            aria-hidden
-            /* The bleed is desktop-only. At 390 the column is the full page
-               width, so 32px each side overflowed the page padding by 8 and the
-               body scrolled sideways. */
-            className="pointer-events-none absolute inset-x-0 -inset-y-6 lg:-inset-x-8"
-            style={{
-              /* Three layers on one 20px grid. The tinted sizes are multiples of
-                 it and the offsets are too, so a mint or teal dot always lands
-                 exactly on a node — it reads as some of the grid being coloured
-                 rather than as a second pattern laid over the first.
-                 Both tints are ours: `--blue-soft` and `--blue`. Clerk's grid is
-                 violet and cyan because that is Clerk's palette; borrowing it
-                 would put a colour on the page that exists nowhere else in the
-                 product. Worth a second opinion that mint is spread this thin —
-                 AGENTS.md keeps it for the mark and one accent, and this is
-                 texture rather than an accent, which is a reading, not a rule. */
-              /* Finer and denser, but more saturated — a smaller dot at a higher
-                 alpha reads as sharper rather than heavier, where a bigger dot
-                 at a low alpha just reads as smudge. The grid drops to 12px so
-                 the texture runs through every gap between cards instead of
-                 only the wide ones.
-                 The tinted layers stay exact multiples of 12 with offsets that
-                 are multiples of 12, so every coloured dot still lands on a node
-                 of the base grid: one grid, some of it in colour. */
-              backgroundImage: [
-                "radial-gradient(circle at 1px 1px, rgba(126,184,164,0.95) 0.75px, transparent 0)",
-                "radial-gradient(circle at 1px 1px, rgba(26,92,81,0.6) 0.7px, transparent 0)",
-                "radial-gradient(circle at 1px 1px, rgba(13,18,16,0.16) 0.6px, transparent 0)",
-              ].join(","),
-              backgroundSize: "60px 48px, 84px 72px, 12px 12px",
-              backgroundPosition: "24px 12px, 48px 36px, 0 0",
-              maskImage:
-                "radial-gradient(120% 80% at 50% 50%, #000 35%, transparent 100%)",
-              WebkitMaskImage:
-                "radial-gradient(120% 80% at 50% 50%, #000 35%, transparent 100%)",
-            }}
-          />
+          <DotGrid className="inset-x-0 -inset-y-6 lg:-inset-x-8" />
           <div className="relative">
             <EmbedTestimonialThemeShell theme={WALL_THEME}>
               <EmbedTestimonialsWall

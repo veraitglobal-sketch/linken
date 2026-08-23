@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ProfileTestimonialCard } from "@/components/testimonials/profile-testimonial-card";
 import type { PublicTestimonial } from "@/features/testimonials/types";
+import { DotGrid } from "@/components/marketing/dot-grid";
 
 type Props = {
   testimonials: PublicTestimonial[];
@@ -30,9 +31,14 @@ export function ProfileTestimonialsSection({
       </p>
 
       {visible.length > 0 ? (
-        <ul className="mt-8 flex flex-col gap-8">
+        <ul className="relative mt-8 flex flex-col gap-8">
+          {/* The same ground the marketing wall stands on.
+              Using our own widget's look on our own profile is the point: if
+              this page does not show what the embed looks like, nobody has a
+              reason to paste the embed. */}
+          <DotGrid className="-inset-x-6 -inset-y-8" />
           {visible.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} className="relative">
               <ProfileTestimonialCard item={item} />
             </li>
           ))}
