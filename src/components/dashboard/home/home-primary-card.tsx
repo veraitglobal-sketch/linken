@@ -8,7 +8,11 @@ type Props = {
 
 export function HomePrimaryCard({ action, companyId }: Props) {
   return (
-    <section className="rounded-card bg-navy px-6 py-7 text-on-navy shadow-card sm:px-8">
+    /* `rounded-chapter` (28) rather than `rounded-card` (24). The board's
+       panels sit at `rounded-tile` (20), and 20 against 24 is four pixels —
+       a difference that measures but does not read. The radius scale has four
+       steps and this screen was using two adjacent ones. */
+    <section className="rounded-chapter bg-navy px-6 py-7 text-on-navy shadow-card sm:px-8">
       <p className="text-[11px] font-semibold tracking-[0.16em] text-blue-soft uppercase">
         Next
       </p>

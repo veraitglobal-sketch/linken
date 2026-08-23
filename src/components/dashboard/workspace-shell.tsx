@@ -69,7 +69,16 @@ export function WorkspaceShell({
         signedIn={signedIn}
       />
 
-      <div className="relative flex min-w-0 flex-1 flex-col bg-paper">
+      {/* A tinted canvas, so the content can be white and float on it.
+          This was `bg-paper` (#ffffff) with white cards on top — one value for
+          the ground and everything standing on it, which is why the board read
+          as a stack of outlines rather than as objects on a surface.
+          The first attempt tinted the *cards* instead and left the canvas
+          white. Measured, #f0f2f0 against #ffffff is 15/255 — about six per
+          cent — and it simply did not read. Inverted, the same two values do
+          all the work: white gains elevation against a ground, which is the
+          direction the eye already expects. */}
+      <div className="relative flex min-w-0 flex-1 flex-col bg-mute">
         {operatorBanner}
 
         {isGraph ? (

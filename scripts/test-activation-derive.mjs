@@ -10,15 +10,17 @@ function signalsFromRows(input) {
   const hasPartnership = input.partnerships.length > 0;
   const hasEvidence = input.refs.length > 0 || input.caseCount > 0;
   const hasRelationship = hasPartnership || hasEvidence;
-  const hasInvitationSent =
-    input.refs.some((r) => Boolean(r.invite_email?.trim())) ||
-    input.confReqs.some((r) => Boolean(r.email?.trim())) ||
-    Boolean(input.hasPartnerInviteSent);
   const hasConfirmation =
     input.refs.some((r) => r.status === "confirmed") ||
     input.partnerships.some((r) => r.status === "accepted") ||
     input.confReqs.some((r) => r.status === "confirmed") ||
     input.hasConfirmedCasePartner;
+  // A confirmation implies an invitation — see derive.ts.
+  const hasInvitationSent =
+    input.refs.some((r) => Boolean(r.invite_email?.trim())) ||
+    input.confReqs.some((r) => Boolean(r.email?.trim())) ||
+    Boolean(input.hasPartnerInviteSent) ||
+    hasConfirmation;
   return {
     companySlug: input.companySlug,
     verified: input.verified,
@@ -95,4 +97,79 @@ test("relationship without invite email is not invitation_sent", () => {
 test("proof shared via embed_view", () => {
   const s = signalsFromRows({ ...empty, hasEmbedView: true });
   assert.equal(s.hasProofShared, true);
+});
+
+/* The bug this file exists to keep fixed: an accepted partnership records no
+   email anywhere, so the explicit invite signals stayed false while the
+   confirmation signal went true. The checklist then showed "First reference
+   confirmed" ticked above an open "First invitation sent" — a state the
+   product cannot produce — and the owner was stuck at 5/6. */
+test("an accepted partnership implies the invitation was sent", () => {
+  const signals = signalsFromRows({
+    companySlug: "vera-it",
+    verified: true,
+    refs: [],
+    caseCount: 1,
+    confReqs: [],
+    partnerships: [{ status: "accepted" }],
+    hasConfirmedCasePartner: false,
+    websiteLinked: true,
+    hasEmbedView: false,
+  });
+  assert.equal(signals.hasConfirmation, true);
+  assert.equal(signals.hasInvitationSent, true);
+
+  const steps = deriveActivationSteps(signals);
+  const invite = steps.find((s) => s.id === "first_invitation_sent");
+  const confirmed = steps.find((s) => s.id === "first_confirmed");
+  assert.equal(invite.done, true, "invitation must not stay open under a confirmation");
+  assert.equal(confirmed.done, true);
+  assert.equal(steps.every((s) => s.done), true, "this company is fully activated");
+});
+
+test("a confirmed case partner also implies the invitation", () => {
+  const signals = signalsFromRows({
+    companySlug: "vera-it",
+    verified: true,
+    refs: [],
+    caseCount: 1,
+    confReqs: [],
+    partnerships: [],
+    hasConfirmedCasePartner: true,
+    websiteLinked: false,
+    hasEmbedView: false,
+  });
+  assert.equal(signals.hasInvitationSent, true);
+});
+
+test("no confirmation and no email still leaves the invitation open", () => {
+  const signals = signalsFromRows({
+    companySlug: "vera-it",
+    verified: true,
+    refs: [{ status: "pending", invite_email: null }],
+    caseCount: 0,
+    confReqs: [],
+    partnerships: [],
+    hasConfirmedCasePartner: false,
+    websiteLinked: false,
+    hasEmbedView: false,
+  });
+  assert.equal(signals.hasInvitationSent, false, "the implication must not fire without a confirmation");
+});
+
+/* This file hand-copies `signalsFromRows`, and a copied test once passed green
+   in this project while the real function had been inverted. Compare the two
+   texts so drift fails here instead of on somebody's dashboard. */
+test("the mirror still matches src/features/activation/derive.ts", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const real = await readFile("src/features/activation/derive.ts", "utf8");
+  for (const line of [
+    "input.hasConfirmedCasePartner;",
+    "Boolean(input.hasPartnerInviteSent) ||",
+    "hasConfirmation;",
+  ]) {
+    assert.ok(real.includes(line), `derive.ts no longer contains: ${line}`);
+  }
+  const realOrder = real.indexOf("const hasConfirmation") < real.indexOf("const hasInvitationSent");
+  assert.equal(realOrder, true, "hasConfirmation must still be computed before hasInvitationSent");
 });

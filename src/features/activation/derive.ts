@@ -98,16 +98,31 @@ export function signalsFromRows(input: {
   const hasEvidence = input.refs.length > 0 || input.caseCount > 0;
   const hasRelationship = hasPartnership || hasEvidence;
 
-  const hasInvitationSent =
-    input.refs.some((r) => Boolean(r.invite_email?.trim())) ||
-    input.confReqs.some((r) => Boolean(r.email?.trim())) ||
-    Boolean(input.hasPartnerInviteSent);
-
   const hasConfirmation =
     input.refs.some((r) => r.status === "confirmed") ||
     input.partnerships.some((r) => r.status === "accepted") ||
     input.confReqs.some((r) => r.status === "confirmed") ||
     input.hasConfirmedCasePartner;
+
+  /**
+   * A confirmation cannot exist without an invitation.
+   *
+   * The explicit signals all look for a recorded email address, but a
+   * partnership is matched company to company and never records one — so an
+   * accepted partnership, or a confirmed case partner, ticked "First reference
+   * confirmed" while leaving "First invitation sent" open above it. The
+   * checklist then showed a state that cannot happen: somebody confirmed an
+   * invitation nobody sent, and the owner sat on 5/6 with no way to reach 6.
+   *
+   * Implied rather than inferred from another table: whatever path produced the
+   * confirmation, an invitation preceded it. That is true by definition of the
+   * product, not by how any one row happens to be stored.
+   */
+  const hasInvitationSent =
+    input.refs.some((r) => Boolean(r.invite_email?.trim())) ||
+    input.confReqs.some((r) => Boolean(r.email?.trim())) ||
+    Boolean(input.hasPartnerInviteSent) ||
+    hasConfirmation;
 
   return {
     companySlug: input.companySlug,

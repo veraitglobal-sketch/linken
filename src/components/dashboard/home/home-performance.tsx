@@ -51,7 +51,14 @@ export function HomePerformance({ analytics, isPro }: Props) {
         </Link>
       }
     >
-      <dl className="grid grid-cols-3 gap-3">
+      {/* Fills the panel rather than sitting on top of it.
+          Paired with "Open", which has four rows, this card stretched to match
+          and left roughly half its height empty below three numbers — the
+          equal-height trap. There is no time series in `analytics` to draw
+          here and inventing one is out of the question, so the fix is to spread
+          the space instead of filling it: the figures take the optical centre
+          and the card reads as composed rather than as cut short. */}
+      <dl className="grid h-full grid-cols-3 items-center gap-3">
         <Stat label="Visits" value={analytics.profileViews} />
         <Stat label="Embeds" value={analytics.embedViews} />
         <Stat label="Inquiries" value={analytics.inquiries} />
