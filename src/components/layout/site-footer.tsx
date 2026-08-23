@@ -1,27 +1,28 @@
 import Link from "next/link";
 import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
-import {
-  FOOTER_LEGAL,
-  FOOTER_PRIMARY,
-} from "@/components/layout/footer-links";
+import { FOOTER_GROUPS } from "@/components/layout/footer-links";
 import { getSocialLinks } from "@/components/layout/social-links";
 import { SOCIAL_LABEL, SocialMark } from "@/components/layout/social-mark";
 import { HansalaMark } from "@/components/ui/hansala-mark";
-import {
-  getLegalCompany,
-  legalCopyrightName,
-} from "@/lib/legal/company";
+import { getLegalCompany } from "@/lib/legal/company";
 
-/** Quiet paper footer. Close is the last navy chapter; this is the sitemap. */
+/**
+ * Quiet paper footer. Close is the last navy chapter; this is the sitemap.
+ *
+ * Laid out as a masthead beside four named columns. Before, nine links sat in
+ * one right-aligned wrapping row that broke 7 + 2 at 1440, and the six legal
+ * links were packed into the bottom bar next to the copyright and the contact
+ * address — three jobs on one 12px line. Grouping is what turns twenty-two
+ * links into something a reader can scan instead of parse.
+ */
 export function SiteFooter() {
   const year = new Date().getFullYear();
   const company = getLegalCompany();
-  const copyright = legalCopyrightName(company);
   const social = getSocialLinks();
 
   return (
     <footer className="border-t border-line bg-paper">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:px-10">
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-14 lg:px-10">
         <div>
           <Link href="/" className="inline-flex no-underline">
             <EmbedVerifiedLockup theme="light" size="md" />
@@ -72,42 +73,75 @@ export function SiteFooter() {
             ))}
           </ul>
         </div>
-        <nav
-          aria-label="Footer"
-          className="-mx-2.5 flex flex-wrap lg:max-w-xl lg:justify-end"
-        >
-          {FOOTER_PRIMARY.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="inline-flex min-h-11 items-center px-2.5 text-[14px] text-ink transition-colors hover:text-blue"
-            >
-              {link.label}
-            </Link>
+
+        {/* Two on a phone, four from `sm`. Four columns at 375 leaves about
+            80px each and "Search companies" wraps in every row; two gives it
+            the width to sit on one line. */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-9 sm:grid-cols-4 lg:gap-x-8">
+          {FOOTER_GROUPS.map((group) => (
+            <nav key={group.heading} aria-label={group.heading}>
+              {/* Same micro-label as the marketing sections, minus the mark —
+                  a column heading is a label, not a section opening. */}
+              <p className="font-label text-[11px] font-semibold tracking-[0.16em] text-plus uppercase">
+                {group.heading}
+              </p>
+              <ul className="mt-3 space-y-0.5">
+                {group.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="inline-flex min-h-9 items-center text-[14px] text-ink transition-colors hover:text-blue"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           ))}
-        </nav>
+        </div>
       </div>
 
+      {/* Two jobs now, not three: who owns this, and how to reach them. */}
       <div className="border-t border-line">
-        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-3 text-[12px] text-plus sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <p>
-            © {year} {copyright}. All rights reserved.
+        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-4 text-[12px] text-plus sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
+          {/* The brand holds the line, the operator is named beside it.
+              This read "© Vera IT. All rights reserved." — the legal entity
+              where a reader expects the product. Naming the brand is the normal
+              form (© Slack, not © Slack Technologies LLC) and it costs no
+              disclosure: Vera IT is named and linked on the same line, and the
+              full Impressum stays one click away under Company information. */}
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-0">
+            <span>
+              © {year} {company.brand}. All rights reserved.
+            </span>
+            {company.entityName ? (
+              <span className="inline-flex items-center gap-2">
+                <span aria-hidden className="text-line">
+                  ·
+                </span>
+                {/* A real backlink: followed, not `nofollow`, because it is a
+                    genuine relationship rather than an ad. `noopener` only —
+                    dropping `noreferrer` keeps the referrer, which is how the
+                    other end can see the link working at all. */}
+                <a
+                  href="https://verait.de"
+                  target="_blank"
+                  rel="noopener"
+                  className="inline-flex min-h-11 items-center text-plus transition-colors hover:text-ink sm:min-h-9"
+                >
+                  A {company.entityName} product
+                </a>
+              </span>
+            ) : null}
           </p>
-          <nav aria-label="Legal" className="-mx-2 flex flex-wrap">
-            {FOOTER_LEGAL.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="inline-flex min-h-11 items-center px-2 text-[12px] text-plus transition-colors hover:text-ink sm:min-h-8"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
           <p>
+            {/* A real tap target. This measured 16px tall — the only link in
+                the footer under the 24px minimum, and a third of the 44px the
+                house rule asks for. It was that way before the columns too. */}
             <Link
               href="/contact"
-              className="text-plus transition-colors hover:text-ink"
+              className="inline-flex min-h-11 items-center text-plus transition-colors hover:text-ink sm:min-h-9"
             >
               {company.contactEmail}
             </Link>

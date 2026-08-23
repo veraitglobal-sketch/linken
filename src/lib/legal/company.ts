@@ -78,7 +78,3 @@ export function missingLegalFields(company = getLegalCompany()): LegalFieldKey[]
 export function isLegalComplete(company = getLegalCompany()): boolean {
   return missingLegalFields(company).length === 0;
 }
-
-export function legalCopyrightName(company = getLegalCompany()): string {
-  return company.entityName ?? company.brand;
-}
