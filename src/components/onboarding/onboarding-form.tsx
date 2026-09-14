@@ -67,8 +67,8 @@ export function OnboardingForm({
             name="name"
             placeholder="Official name"
             required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={values.name}
+            onChange={(e) => onField("name", e.target.value)}
           />
         </label>
 
@@ -80,7 +80,8 @@ export function OnboardingForm({
             name="website"
             placeholder="https://example.org"
             required
-            defaultValue={draft?.website ?? ""}
+            value={values.website}
+            onChange={(e) => onField("website", e.target.value)}
           />
           <p className="mt-1.5 text-[12px] leading-relaxed text-muted">
             Used for domain verification and shown on your profile. After setup,
@@ -97,9 +98,10 @@ export function OnboardingForm({
             </span>
             <Input
               name="category"
-              placeholder="Health, construction…"
+              placeholder="Architecture, software…"
               required
-              defaultValue={draft?.category ?? ""}
+              value={values.category}
+              onChange={(e) => onField("category", e.target.value)}
             />
           </label>
           <label className="block">
@@ -110,7 +112,8 @@ export function OnboardingForm({
               name="city"
               placeholder="Berlin"
               required
-              defaultValue={draft?.city ?? ""}
+              value={values.city}
+              onChange={(e) => onField("city", e.target.value)}
             />
           </label>
         </div>
@@ -130,10 +133,11 @@ export function OnboardingForm({
         </label>
 
         <Button type="submit" className="mt-1 h-12 w-full">
-          {partnerMode
-            ? "Create partner workspace"
-            : "Create organization profile"}
+          {partnerMode ? "Create partner workspace" : "Create company profile"}
         </Button>
+        <p className="text-center text-[12.5px] text-muted">
+          Free · No card needed · Nothing goes public until confirmed
+        </p>
         <LegalConsent action="create" />
       </form>
     </div>

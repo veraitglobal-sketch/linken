@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { OnboardingForm } from "@/components/onboarding/onboarding-form";
-import { OnboardingStage } from "@/components/onboarding/onboarding-stage";
+import { OnboardingWorkspace } from "@/components/onboarding/onboarding-workspace";
 import { readOnboardingDraft } from "@/features/company/onboarding-draft";
 import { captureReferralFromRefParam } from "@/features/growth/capture-referral";
 
@@ -32,14 +31,11 @@ export default async function OnboardingPage({ searchParams }: Props) {
 
   return (
     <section className="flex flex-1 items-center px-4 py-6">
-      <div className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-[32px] lg:min-h-[min(72vh,720px)] lg:grid-cols-[0.95fr_1.05fr]">
-        <OnboardingStage partnerMode={kindHint === "developer_partner"} />
-        <OnboardingForm
-          error={error}
-          draft={mergedDraft}
-          partnerMode={kindHint === "developer_partner"}
-        />
-      </div>
+      <OnboardingWorkspace
+        error={error}
+        draft={mergedDraft}
+        partnerMode={kindHint === "developer_partner"}
+      />
     </section>
   );
 }

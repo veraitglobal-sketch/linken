@@ -50,7 +50,7 @@ export function OnboardingStage({ partnerMode = false, preview }: Props) {
         sizes="(max-width: 1024px) 100vw, 560px"
         className="object-cover object-[72%_50%]"
       />
-      <div className="pointer-events-none absolute inset-0 bg-navy-deep/70" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 bg-navy-deep/50" aria-hidden />
       <div
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,20,18,0.35)_0%,rgba(8,20,18,0)_40%,rgba(8,20,18,0.55)_100%)]"
         aria-hidden
