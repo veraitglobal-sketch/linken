@@ -104,11 +104,7 @@ export function EmbedBareLogo({
         <span
           className={cn(
             "text-[11px] font-semibold tracking-[0.08em]",
-            mono
-              ? theme === "dark"
-                ? "text-white"
-                : "text-[#0d1210]"
-              : "text-ink",
+            theme === "dark" ? "text-white" : "text-[#0d1210]",
           )}
         >
           {mark}

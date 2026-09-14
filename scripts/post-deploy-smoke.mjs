@@ -19,6 +19,7 @@ const PATHS = [
   "/",
   "/login",
   "/pricing",
+  "/offer",
   "/developers",
   "/privacy",
   "/api/v1/companies/__no-such-company-qa__",

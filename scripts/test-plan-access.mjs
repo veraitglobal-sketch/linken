@@ -97,3 +97,32 @@ test("pricing display defaults are set (no invented annual)", () => {
   assert.match(price, /€79/);
   assert.equal(false, false); // ANNUAL_BILLING_AVAILABLE
 });
+
+test("the mark is free; logos and testimonials on the host site are Pro", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const src = await readFile(
+    new URL("../src/features/widgets/catalog-items.ts", import.meta.url),
+    "utf8",
+  );
+  function block(id) {
+    const i = src.indexOf(`id: "${id}"`);
+    assert.ok(i >= 0, `missing widget ${id}`);
+    const next = src.indexOf(`id: "`, i + 5);
+    return src.slice(i, next === -1 ? undefined : next);
+  }
+  for (const id of ["verified", "micro", "horizontal", "case-stamp"]) {
+    assert.equal(
+      /pro:\s*true/.test(block(id)),
+      false,
+      `${id} should stay free`,
+    );
+  }
+  for (const id of [
+    "testimonials",
+    "logo-wall",
+    "partners-rotate",
+    "footer-strip",
+  ]) {
+    assert.ok(/pro:\s*true/.test(block(id)), `${id} should be Pro`);
+  }
+});

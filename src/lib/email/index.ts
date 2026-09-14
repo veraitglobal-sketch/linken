@@ -24,3 +24,4 @@ export {
   sendIntroNotifyEmail,
   sendProjectResponseBuyerEmail,
 } from "@/lib/email/radar-notify";
+export { sendPartnerIntroEmail } from "@/lib/email/partner-intro";

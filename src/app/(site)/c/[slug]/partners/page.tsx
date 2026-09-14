@@ -3,6 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { PartnerNetwork } from "@/components/partners/partner-network";
 import { JsonLd } from "@/components/seo/json-ld";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
+import { withLiveOnSite } from "@/features/credits/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { getPartnersForCompany } from "@/features/partners/public-queries";
 import { companyIndexability } from "@/features/seo/indexability";
@@ -51,7 +52,10 @@ export default async function CompanyPartnersPage({ params }: Props) {
     notFound();
   }
 
-  const partners = await getPartnersForCompany(company.id);
+  const partners = await withLiveOnSite(
+    company.id,
+    await getPartnersForCompany(company.id),
+  );
   const siteUrl = getSiteUrl();
   const crumbLd = {
     "@context": "https://schema.org",

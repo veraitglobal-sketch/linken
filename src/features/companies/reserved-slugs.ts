@@ -28,6 +28,7 @@ const RESERVED = [
   "login",
   "logo-wall",
   "onboarding",
+  "offer",
   "pricing",
   "privacy",
   "report",

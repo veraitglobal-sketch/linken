@@ -3,16 +3,14 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { CompanyProfile } from "@/components/company/company-profile";
 import { RelationshipConfirmBanner } from "@/components/company/relationship-confirm-banner";
 import { NetworkMapSection } from "@/components/network/network-map-section";
+import { CommonPartnersSlot } from "@/components/partners/common-partners-slot";
 import { CompanyMapTeaser } from "@/components/product/company-map-teaser";
-import { JsonLd } from "@/components/seo/json-ld";
+import { CompanyPageLd } from "@/components/seo/company-page-ld";
 import { trackProfileArrival } from "@/features/analytics/track-arrival";
 import { loadPublicCompanyProfile } from "@/features/companies/load-public-profile";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
-import {
-  buildCompanyBreadcrumbLd,
-  buildCompanyOrganizationLd,
-} from "@/features/seo/company-json-ld";
+import { getPartnersForCompany } from "@/features/partners/public-queries";
 import { buildCompanyMetadata } from "@/features/seo/company-metadata";
 import { PRODUCT } from "@/lib/product-model";
 import { getSiteUrl } from "@/lib/site";
@@ -46,6 +44,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       robots: { index: false, follow: false },
     };
   }
+  const partners =
+    company.claimed === false
+      ? []
+      : await getPartnersForCompany(company.id);
   return buildCompanyMetadata({
     name: company.name,
     slug: company.slug,
@@ -57,6 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     claimed: company.claimed,
     verified: company.verified,
     siteUrl: getSiteUrl(),
+    partnerNames: partners.map((p) => p.name),
   });
 }
 
@@ -122,29 +125,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <JsonLd
-        data={[
-          buildCompanyOrganizationLd({
-            name: company.name,
-            slug: company.slug,
-            description: company.description,
-            tagline: company.tagline,
-            website: company.website,
-            logoUrl: company.logoUrl,
-            city: company.city,
-            country: company.country,
-            category: company.category,
-            services: company.services,
-            verified: company.verified,
-            siteUrl,
-          }),
-          buildCompanyBreadcrumbLd({
-            name: company.name,
-            slug: company.slug,
-            siteUrl,
-          }),
-        ]}
-      />
+      <CompanyPageLd company={company} partners={partners} siteUrl={siteUrl} />
       {relationship ? (
         <RelationshipConfirmBanner
           profileName={company.name}
@@ -152,6 +133,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
           relationship={relationship}
         />
       ) : null}
+      <CommonPartnersSlot companyId={company.id} theirs={partners} />
       <CompanyProfile
         company={company}
         partners={partners}

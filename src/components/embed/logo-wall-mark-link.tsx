@@ -44,7 +44,7 @@ export function LogoWallMarkLink({
           logoUrl={e.logoUrl}
           website={e.website}
           theme={theme}
-          mono
+          mono={false}
           size={size}
           scale={e.scale}
           padding={e.padding}

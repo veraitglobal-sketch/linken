@@ -14,6 +14,7 @@ const BASE: StaticRoute[] = [
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/pricing", changeFrequency: "weekly", priority: 0.85 },
   { path: "/use-cases", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/offer", changeFrequency: "weekly", priority: 0.55 },
   { path: "/company", changeFrequency: "monthly", priority: 0.55 },
   { path: "/contact", changeFrequency: "monthly", priority: 0.55 },
   { path: "/developers", changeFrequency: "weekly", priority: 0.9 },

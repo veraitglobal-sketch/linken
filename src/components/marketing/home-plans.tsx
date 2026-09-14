@@ -83,7 +83,7 @@ export function HomePlans() {
           <HomePlanCard
             name={PRO_PLAN_LABEL}
             price={PRO_PLAN_PRICE}
-            note="Everything in Free, plus distribution and team seats."
+            note="Everything in Free, plus testimonials and partner logos on your site."
             features={PRO_HIGHLIGHTS}
             cta="Start with Pro"
             href="/onboarding?plan=pro"

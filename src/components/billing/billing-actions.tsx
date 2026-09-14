@@ -81,7 +81,7 @@ export function BillingActions({
             action={endManualAction}
             label="Remove Pro"
             pendingLabel="Removing…"
-            confirm="Remove Pro from this company now? Premium embeds, analytics, Agent API, and team seats will lock immediately."
+            confirm="Remove Pro from this company now? Testimonials and logo widgets on their site, analytics, Agent API, and team seats will lock immediately."
           />
         ) : null}
       </div>

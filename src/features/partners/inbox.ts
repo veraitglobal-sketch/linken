@@ -13,6 +13,7 @@ export type PartnershipRow = {
     city: string;
     verified: boolean;
     claimed: boolean;
+    website: string;
   };
 };
 
@@ -40,10 +41,11 @@ export async function getPartnershipInbox(
         id,
         status,
         created_at,
+        responded_at,
         requester_id,
         recipient_id,
-        requester:companies!requester_id(id, slug, name, category, city, verified, claimed),
-        recipient:companies!recipient_id(id, slug, name, category, city, verified, claimed)
+        requester:companies!requester_id(id, slug, name, category, city, verified, claimed, website),
+        recipient:companies!recipient_id(id, slug, name, category, city, verified, claimed, website)
       `,
       )
       .or(`requester_id.eq.${companyId},recipient_id.eq.${companyId}`)
@@ -66,7 +68,9 @@ export async function getPartnershipInbox(
         id: row.id as string,
         status: row.status as PartnershipRow["status"],
         direction: outgoing ? "outgoing" : "incoming",
-        createdAt: (row.created_at as string | undefined) ?? undefined,
+        createdAt:
+          ((row.responded_at as string | null) ||
+            (row.created_at as string | undefined)) ?? undefined,
         other: {
           id: other.id as string,
           slug: other.slug as string,
@@ -75,6 +79,7 @@ export async function getPartnershipInbox(
           city: (other.city as string) ?? "",
           verified: Boolean(other.verified),
           claimed: other.claimed !== false,
+          website: String(other.website ?? ""),
         },
       };
 

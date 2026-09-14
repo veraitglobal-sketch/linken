@@ -360,6 +360,11 @@ export const VERIFY_FIELDS: FieldRow[] = [
     type: "string | null",
     description: "Canonical Public API company URL.",
   },
+  {
+    name: "partners",
+    type: "ApiPartner[]",
+    description: "Confirmed partners only, capped at 8. Empty when not found.",
+  },
 ];
 
 export const ERROR_FIELDS: FieldRow[] = [

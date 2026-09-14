@@ -4,11 +4,14 @@ import {
   companyBookPriority,
   companyPartnersPriority,
   companyProfilePriority,
+  partnershipRecordPriority,
 } from "@/features/sitemap/priorities";
 import type {
   SitemapCaseStudyRow,
   SitemapCompanyRow,
+  SitemapPartnershipRow,
 } from "@/features/sitemap/types";
+import { canonicalCompanyWithPath } from "@/features/seo/paths";
 import { absoluteAssetUrl, sitemapUrl } from "@/features/sitemap/url";
 
 type Entry = MetadataRoute.Sitemap[number];
@@ -87,4 +90,24 @@ export function caseStudySitemapEntries(
       cs.coverImageUrl,
     ),
   );
+}
+
+export function partnershipSitemapEntries(
+  siteUrl: string,
+  rows: SitemapPartnershipRow[],
+): MetadataRoute.Sitemap {
+  const seen = new Set<string>();
+  const out: MetadataRoute.Sitemap = [];
+  for (const row of rows) {
+    const path = canonicalCompanyWithPath(row.leftSlug, row.rightSlug);
+    if (seen.has(path)) continue;
+    seen.add(path);
+    out.push({
+      url: sitemapUrl(siteUrl, path),
+      lastModified: new Date(row.confirmedAt),
+      changeFrequency: "monthly",
+      priority: partnershipRecordPriority(),
+    });
+  }
+  return out;
 }

@@ -8,6 +8,17 @@ export function companyPartnersPath(slug: string): string {
   return `/c/${slug}/partners`;
 }
 
+export function companyWithPath(slug: string, partnerSlug: string): string {
+  return `/c/${slug}/with/${partnerSlug}`;
+}
+
+/** Stable order so A↔B is one indexable URL. */
+export function canonicalCompanyWithPath(a: string, b: string): string {
+  return a.localeCompare(b) <= 0
+    ? companyWithPath(a, b)
+    : companyWithPath(b, a);
+}
+
 export function companyBookPath(slug: string): string {
   return `/c/${slug}/book`;
 }

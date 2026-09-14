@@ -173,12 +173,16 @@ test("contract: testimonials shape and no secret leak", () => {
           body: "They delivered on scope.",
           author_name: "Elena Vogt",
           author_role: "Project Director",
-          author_company: { name: "Nordwerk Holding", slug: "nordwerk-holding" },
+          author_company: {
+            name: "Nordwerk Holding",
+            slug: "nordwerk-holding",
+          },
           source: "case_study",
           published_at: "2025-09-12T14:30:00.000Z",
           provenance_line:
             "Confirmed by the client · nordwerk-holding.com · domain verified",
-          profile_url: "https://hansala.com/c/example-architecture?src=testimonial",
+          profile_url:
+            "https://hansala.com/c/example-architecture?src=testimonial",
         },
       ],
     }),
@@ -203,4 +207,36 @@ test("contract: testimonials shape and no secret leak", () => {
       ],
     }).length > 0,
   );
+});
+
+test("verify oracle keeps existing keys and adds partners", () => {
+  const body = {
+    found: false,
+    company: null,
+    verified: false,
+    verification_method: null,
+    verified_since: null,
+    trust_level: null,
+    stats: null,
+    assessment: null,
+    llm_md_url: null,
+    api_url: null,
+    partners: [{ name: "North Studio", slug: "north-studio", verified: true }],
+    generated_at: new Date().toISOString(),
+  };
+  for (const key of [
+    "found",
+    "company",
+    "verified",
+    "trust_level",
+    "stats",
+    "llm_md_url",
+    "api_url",
+    "partners",
+    "generated_at",
+  ]) {
+    assert.ok(key in body, `missing ${key}`);
+  }
+  assert.ok(Array.isArray(body.partners));
+  assert.equal("status" in body.partners[0], false);
 });

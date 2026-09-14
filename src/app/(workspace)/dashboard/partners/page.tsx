@@ -3,8 +3,11 @@ import Link from "next/link";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { PartnerPageFlashes } from "@/components/partners/partner-page-flashes";
+import { PartnerInboundNote } from "@/components/partners/partner-inbound-note";
 import { PartnershipInbox } from "@/components/partners/partnership-inbox";
+import { decorateAcceptedCredits } from "@/features/credits/queries";
 import { getPartnershipInbox } from "@/features/partners/inbox";
+import { buildRfpPartnerText } from "@/features/partners/rfp-export";
 import { dissolveSameOwnerPartnerLinks } from "@/features/partners/same-owner-guard";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { PRODUCT } from "@/lib/product-model";
@@ -24,6 +27,8 @@ type Props = {
     resent?: string;
     verified?: string;
     tm?: string;
+    published?: string;
+    introAsked?: string;
   }>;
 };
 
@@ -67,6 +72,7 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
   }
 
   const inbox = await getPartnershipInbox(mine.id);
+  const credits = await decorateAcceptedCredits(mine.id, inbox.accepted);
 
   return (
     <WorkspacePage
@@ -92,10 +98,13 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
           accepted={params.accepted}
           declined={params.declined}
           resent={params.resent}
+          published={params.published}
+          introAsked={params.introAsked}
           tmPath={
             params.tm?.startsWith("/testimonial/") ? params.tm : null
           }
         />
+        <PartnerInboundNote companyId={mine.id} />
         <p className="text-[13px] text-muted">
           {PRODUCT.partners.job}{" "}
           <Link
@@ -108,7 +117,10 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
         <PartnershipInbox
           incomingPending={inbox.incomingPending}
           outgoingPending={inbox.outgoingPending}
-          accepted={inbox.accepted}
+          accepted={credits.rows}
+          allSnippet={credits.allSnippet}
+          companySlug={mine.slug}
+          rfpText={buildRfpPartnerText(mine.name, mine.slug, inbox.accepted)}
         />
       </div>
     </WorkspacePage>

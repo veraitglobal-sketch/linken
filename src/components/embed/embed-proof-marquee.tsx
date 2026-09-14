@@ -53,7 +53,7 @@ export function EmbedProofMarquee({
               logoUrl={c.logoUrl}
               website={c.website}
               theme={theme}
-              mono
+              mono={false}
               size="sm"
             />
           </li>

@@ -8,12 +8,14 @@ type Props = {
   /** Owner profile — show manage menu when partnershipId is set. */
   editable?: boolean;
   manageBack?: string;
+  recordHref?: string;
 };
 
 export function PartnerCard({
   partner,
   editable = false,
   manageBack,
+  recordHref,
 }: Props) {
   const casesLabel =
     partner.sharedProjects === 1
@@ -55,6 +57,11 @@ export function PartnerCard({
                 Verified
               </span>
             ) : null}
+            {partner.liveOnSite ? (
+              <span className="inline-flex shrink-0 items-center rounded-md border border-line bg-white px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.06em] text-muted uppercase">
+                Live on their site
+              </span>
+            ) : null}
           </div>
           {/* The industry, not "the industry company". `category` already reads
               as a trade — "Cleaning services company" was a word too many. */}
@@ -65,6 +72,14 @@ export function PartnerCard({
             <p className="mt-1 text-[12px] text-muted">{casesLabel}</p>
           ) : null}
         </Link>
+        {recordHref ? (
+          <Link
+            href={recordHref}
+            className="shrink-0 text-[11px] font-semibold text-ink underline-offset-2 hover:underline"
+          >
+            Record
+          </Link>
+        ) : null}
         {showManage && partner.partnershipId && manageBack ? (
           <PartnerManageMenu
             partnershipId={partner.partnershipId}

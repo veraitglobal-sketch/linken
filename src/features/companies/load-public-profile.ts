@@ -12,6 +12,7 @@ import {
 } from "@/features/companies/queries";
 import { getConfirmedGroupForCompany } from "@/features/groups/queries";
 import { getPartnershipInbox } from "@/features/partners/inbox";
+import { withLiveOnSite } from "@/features/credits/queries";
 import {
   getPartnerRailSettings,
   getPartnersForCompany,
@@ -65,7 +66,9 @@ export async function loadPublicCompanyProfile(
     inbox,
     searchHits,
   ] = await Promise.all([
-    getPartnersForCompany(company.id),
+    getPartnersForCompany(company.id).then((p) =>
+      withLiveOnSite(company.id, p),
+    ),
     getPartnerRailSettings(company.id),
     getCaseStudiesForCompany(company.id, { confirmedOnly: !isOwner }),
     getReferencesForCompany(company.id, { includePending: isOwner }),

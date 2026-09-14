@@ -20,9 +20,13 @@ export function CopyChip({
   const [copied, setCopied] = useState(false);
 
   async function copy() {
-    await navigator.clipboard.writeText(value);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
   }
 
   return (
@@ -30,7 +34,7 @@ export function CopyChip({
       type="button"
       onClick={copy}
       className={cn(
-        "shrink-0 rounded-xl px-3 py-2 text-[12px] font-semibold transition-colors",
+        "inline-flex shrink-0 items-center rounded-xl px-3 py-2 text-[12px] font-semibold transition-colors",
         onDark
           ? "border border-white/20 bg-white/10 text-white hover:border-white/40 hover:bg-white/15"
           : "border border-line bg-white text-ink hover:border-ink/25",

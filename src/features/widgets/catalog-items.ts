@@ -2,6 +2,11 @@ import { logoWallHeight } from "@/features/widgets/logo-motion";
 import { testimonialHeight } from "@/features/testimonials/testimonial-height";
 import type { WidgetDefinition } from "@/features/widgets/catalog-types";
 
+/**
+ * Paywall: the mark is free. Partner logos and client quotes on the host
+ * site are Pro. Logo-free bars (verified, micro, horizontal) and the case
+ * stamp stay free.
+ */
 export const WIDGET_CATALOG: WidgetDefinition[] = [
   {
     id: "footer-strip",
@@ -11,6 +16,7 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     section: "placement",
     placement: "footer",
     recommended: true,
+    pro: true,
     height: 48,
     requirementHint: "Works with Verified alone; logos appear when confirmed.",
   },

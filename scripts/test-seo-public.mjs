@@ -35,6 +35,7 @@ function buildCompanyCanonical(siteUrl, slug) {
 const RESERVED = new Set([
   "about",
   "pricing",
+  "offer",
   "use-cases",
   "report",
   "search",
@@ -62,9 +63,7 @@ function validateOrganizationLd(data) {
   if (!data || typeof data !== "object") {
     return [{ path: "", message: "expected object" }];
   }
-  const types = Array.isArray(data["@type"])
-    ? data["@type"]
-    : [data["@type"]];
+  const types = Array.isArray(data["@type"]) ? data["@type"] : [data["@type"]];
   if (
     !types.includes("Organization") &&
     !types.includes("ProfessionalService")
@@ -94,7 +93,10 @@ function validateArticleLd(data) {
   return issues;
 }
 
-function hasForbiddenSchemaKeys(data, forbidden = ["client_confirmed", "pending", "claim_token"]) {
+function hasForbiddenSchemaKeys(
+  data,
+  forbidden = ["client_confirmed", "pending", "claim_token"],
+) {
   if (!data || typeof data !== "object") return false;
   return forbidden.some((k) => k in data);
 }
@@ -212,6 +214,54 @@ test("structured data shapes are valid", () => {
 test("reserved slugs cannot collide with product routes", () => {
   assert.equal(isReservedCompanySlug("use-cases"), true);
   assert.equal(isReservedCompanySlug("pricing"), true);
+  assert.equal(isReservedCompanySlug("offer"), true);
   assert.equal(isReservedCompanySlug("acme-gmbh"), false);
   assert.equal(isReservedCompanySlug("foo.bar"), true);
+});
+
+function canonicalCompanyWithPath(a, b) {
+  return a.localeCompare(b) <= 0 ? `/c/${a}/with/${b}` : `/c/${b}/with/${a}`;
+}
+
+test("A↔B partnership URLs collapse to one canonical path", () => {
+  assert.equal(
+    canonicalCompanyWithPath("vera", "biovera"),
+    "/c/biovera/with/vera",
+  );
+  assert.equal(
+    canonicalCompanyWithPath("biovera", "vera"),
+    "/c/biovera/with/vera",
+  );
+});
+
+test("paths.ts still exports the same canonical pair helper", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const src = await readFile(
+    new URL("../src/features/seo/paths.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(src, /export function canonicalCompanyWithPath/);
+  assert.match(src, /a\.localeCompare\(b\) <= 0/);
+});
+
+test("announcement copy is a fact, not an endorsement", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const src = await readFile(
+    new URL("../src/features/certificate/copy.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(src, /confirmed on Hansala that they work together/);
+  assert.match(src, /Both companies accepted/);
+  assert.equal(/endorsement|rating|rank/i.test(src), false);
+});
+
+test("profile snippet names the first three confirmed partners", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const src = await readFile(
+    new URL("../src/features/seo/company-metadata.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(src, /partnerNames/);
+  assert.match(src, /Confirmed with \$\{names\.join/);
+  assert.match(src, /slice\(0, 3\)/);
 });

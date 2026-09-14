@@ -64,3 +64,19 @@ test("no migration drops companies table wholesale", () => {
     );
   }
 });
+
+test("partner site credits are public-read and have no client writes", () => {
+  const files = listMigrations();
+  const hit = files.find((f) => f.includes("partner_site_credits"));
+  assert.ok(hit, "missing partner_site_credits migration");
+  const sql = readFileSync(join(DIR, hit), "utf8");
+  assert.match(sql, /enable row level security/);
+  assert.match(sql, /partner_site_credits_public_select/);
+  assert.match(sql, /record_partner_credit_attempt/);
+  assert.match(sql, /revoke all on table public\.partner_site_credits/);
+  assert.equal(
+    /create policy [\s\S]*\bfor insert\b/i.test(sql),
+    false,
+    "credits must not allow client INSERT",
+  );
+});

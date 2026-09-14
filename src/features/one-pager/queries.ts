@@ -1,10 +1,12 @@
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { publicReferenceClient } from "@/features/confirmations/public-client";
+import { getPartnersForCompany } from "@/features/partners/public-queries";
 import { getReferencesForCompany } from "@/features/references/queries";
 import { getTrustProfile } from "@/features/trust/queries";
 import { createClient } from "@/lib/supabase/server";
 import type { Company } from "@/types/company";
+import type { Partner } from "@/types/partner";
 import type { ServiceReference } from "@/types/service-reference";
 import type { TrustLevel } from "@/features/trust/score";
 import type { ClientAssessmentSummary } from "@/features/assessments/queries";
@@ -19,6 +21,7 @@ export type OnePagerData = {
   company: Company;
   trustLevel: TrustLevel;
   confirmedPartners: number;
+  partners: Partner[];
   confirmedReferences: number;
   ongoingReferences: number;
   assessment: ClientAssessmentSummary;
@@ -79,11 +82,12 @@ export async function getOnePagerData(
   const company = await getCompanyForPage(slug);
   if (!company) return null;
 
-  const [trust, assessment, allRefs, caseStudies] = await Promise.all([
+  const [trust, assessment, allRefs, caseStudies, partners] = await Promise.all([
     getTrustProfile(company.id, company.slug),
     getClientAssessmentSummary(company.id),
     getReferencesForCompany(company.id),
     getConfirmedCaseStudies(company.id),
+    getPartnersForCompany(company.id),
   ]);
 
   const confirmed = allRefs.filter((r) => r.status === "confirmed");
@@ -100,6 +104,7 @@ export async function getOnePagerData(
     company,
     trustLevel: trust.level,
     confirmedPartners: trust.breakdown.confirmedPartners,
+    partners: partners.slice(0, 8),
     confirmedReferences: trust.breakdown.confirmedReferences,
     ongoingReferences: trust.breakdown.ongoingReferences,
     assessment,

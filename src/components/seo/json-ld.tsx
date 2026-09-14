@@ -4,7 +4,9 @@ type Props = {
 
 /** Emits one or more JSON-LD script tags. */
 export function JsonLd({ data }: Props) {
-  const items = Array.isArray(data) ? data : [data];
+  const items = (Array.isArray(data) ? data : [data]).filter(
+    (item) => item != null,
+  );
   return (
     <>
       {items.map((item, i) => (

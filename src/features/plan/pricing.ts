@@ -59,8 +59,9 @@ export const PRICING_COMPARE: PricingCompareRow[] = [
   },
   {
     feature: "Website embeds",
-    free: "Standard embeds",
-    pro: "Premium embeds + widget studio",
+    free: "Verified mark, Micro, Horizontal",
+    pro: "Testimonials, logo widgets, all layouts",
+    note: "The mark is never sold. Partner logos and client quotes on your site are Pro.",
   },
   {
     feature: "One-pager / proposal pack",
@@ -90,12 +91,14 @@ export const PRICING_COMPARE: PricingCompareRow[] = [
 export const FREE_HIGHLIGHTS = [
   "Company profile with domain verification badge",
   "Unlimited mutual confirmations (partners, references, projects)",
-  "Standard website embeds",
+  "Verified mark and logo-free trust bars on your site",
   `${freeE.maxTeamMembers} team seat (owner)`,
 ] as const;
 
 export const PRO_HIGHLIGHTS = [
-  "Premium embeds and widget studio",
+  "Testimonials widget on your website",
+  "Partner logo widgets (logo wall, rotate, footer)",
+  "Widget studio — layouts, theme, placements",
   "Full profile analytics",
   "Agent API and webhooks",
   "Branded one-pager for proposals",

@@ -233,6 +233,7 @@ export async function getPublicVerifyByDomain(
     assessment: null,
     llm_md_url: null,
     api_url: null,
+    partners: [],
     generated_at,
   };
 
@@ -297,6 +298,13 @@ export async function getPublicVerifyByDomain(
     assessment: api.assessment,
     llm_md_url: `${siteUrl}/c/${slug}/llm.md`,
     api_url: `${siteUrl}/api/v1/companies/${slug}`,
+    partners: (await getPartnersForCompany(hit.id as string))
+      .slice(0, 8)
+      .map((p) => ({
+        name: p.name,
+        slug: p.slug,
+        verified: Boolean(p.verified),
+      })),
     generated_at,
   };
 }

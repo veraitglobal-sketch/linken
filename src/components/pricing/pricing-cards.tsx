@@ -56,7 +56,8 @@ export function PricingCards({ stripeReady }: Props) {
           {PRO_PLAN_PRICE}
         </p>
         <p className="mt-2 text-[13px] text-white/55">
-          Everything in Free, plus distribution and team seats.
+          Testimonials and partner logos on your site, plus analytics and the
+          API.
           {!stripeReady
             ? " Checkout is not live yet — contact us to join Pro."
             : " Upgrade anytime from Workspace → Billing."}

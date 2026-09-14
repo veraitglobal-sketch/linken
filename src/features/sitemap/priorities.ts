@@ -14,6 +14,10 @@ export function companyBookPriority(row: SitemapCompanyRow): number {
   return row.verified ? 0.72 : 0.64;
 }
 
+export function partnershipRecordPriority(): number {
+  return 0.7;
+}
+
 export function caseStudyPriority(hasCover: boolean, clientConfirmed: boolean): number {
   let p = 0.72;
   if (hasCover) p += 0.04;

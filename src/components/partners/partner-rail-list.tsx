@@ -141,6 +141,7 @@ export function PartnerRailList({
                 partner={partner}
                 editable={editable}
                 manageBack={editable ? `/c/${companySlug}` : undefined}
+                recordHref={`/c/${companySlug}/with/${partner.slug}`}
               />
             </div>
           </div>

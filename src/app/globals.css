@@ -825,10 +825,26 @@ dd {
   }
 }
 
+.certificate-sheet {
+  position: relative;
+  border: 1.5px solid var(--navy);
+  box-shadow: 0 28px 80px rgba(8, 20, 18, 0.14);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.certificate-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px solid color-mix(in srgb, var(--navy) 40%, transparent);
+  pointer-events: none;
+}
+
 @media print {
   @page {
     size: A4;
-    margin: 12mm;
+    margin: 10mm;
   }
 
   body {
@@ -842,6 +858,12 @@ dd {
   .one-pager {
     max-width: none !important;
     padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .certificate-sheet {
+    max-width: none !important;
+    min-height: calc(297mm - 20mm) !important;
     box-shadow: none !important;
   }
 }

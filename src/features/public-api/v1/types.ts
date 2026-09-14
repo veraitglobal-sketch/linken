@@ -170,6 +170,8 @@ export type ApiVerifyResponse = {
   llm_md_url: string | null;
   /** Absolute URL to GET /api/v1/companies/{slug}. */
   api_url: string | null;
+  /** Confirmed partners only — capped. Empty when not found. */
+  partners: ApiPartner[];
   generated_at: string;
 };
 

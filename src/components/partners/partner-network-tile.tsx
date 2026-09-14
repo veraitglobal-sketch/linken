@@ -46,6 +46,11 @@ export function PartnerNetworkTile({ partner }: Props) {
 
       <div className="mt-auto border-t border-line pt-3.5">
         <p className="text-[12px] text-muted">{casesLabel}</p>
+        {partner.liveOnSite ? (
+          <p className="mt-1 text-[11px] font-semibold tracking-[0.06em] text-[#1a5c51] uppercase">
+            Live on their site
+          </p>
+        ) : null}
         <p className="mt-1 text-[13px] font-semibold text-ink underline-offset-4 group-hover:underline">
           Open profile
         </p>

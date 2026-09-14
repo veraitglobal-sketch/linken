@@ -1,13 +1,31 @@
-import Link from "next/link";
 import type { PartnershipRow } from "@/features/partners/inbox";
-import { EndPartnershipButton } from "@/components/partners/end-partnership-button";
+import type { PartnerCreditFlags } from "@/features/credits/types";
+import { CheckCreditForm } from "@/components/partners/check-credit-form";
+import { CopyCreditButton } from "@/components/partners/copy-credit-button";
+import { AcceptedPartnerRow } from "@/components/partners/accepted-partner-row";
+import { RfpCopyButton } from "@/components/partners/rfp-copy-button";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 
-type Props = {
-  accepted: PartnershipRow[];
+export type AcceptedCreditRow = PartnershipRow & {
+  snippet: string | null;
+  flags: PartnerCreditFlags;
 };
 
-export function PartnershipAcceptedList({ accepted }: Props) {
+type Props = {
+  accepted: AcceptedCreditRow[];
+  allSnippet: string;
+  checkBack?: string;
+  companySlug: string;
+  rfpText?: string;
+};
+
+export function PartnershipAcceptedList({
+  accepted,
+  allSnippet,
+  checkBack = "/dashboard/partners",
+  companySlug,
+  rfpText = "",
+}: Props) {
   if (accepted.length === 0) return null;
 
   return (
@@ -18,45 +36,29 @@ export function PartnershipAcceptedList({ accepted }: Props) {
             Official partners
           </h2>
           <p className="mt-1 text-[12px] leading-relaxed text-muted">
-            Accepted — shown on Network as a partner link.
+            Record, intro, and RFP list — both sides already confirmed.
           </p>
         </div>
-        <p className="text-[12px] font-medium text-plus">
-          {accepted.length} official
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <RfpCopyButton text={rfpText} />
+          {allSnippet ? (
+            <CopyCreditButton snippet={allSnippet} label="Copy all credits" />
+          ) : null}
+          <CheckCreditForm label="Check my site" back={checkBack} />
+          <p className="text-[12px] font-medium text-plus">
+            {accepted.length} official
+          </p>
+        </div>
       </header>
       <WorkspaceCard padded={false}>
         <ul className="divide-y divide-line">
           {accepted.map((row) => (
-            <li
+            <AcceptedPartnerRow
               key={row.id}
-              className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 sm:px-6"
-            >
-              <div className="min-w-0">
-                <Link
-                  href={`/c/${row.other.slug}`}
-                  className="text-[14px] font-semibold text-ink underline-offset-2 hover:underline"
-                >
-                  {row.other.name}
-                </Link>
-                <p className="mt-0.5 text-[12px] text-muted">
-                  Official
-                  {!row.other.verified ? " · Needs domain verify" : ""}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <EndPartnershipButton
-                  partnershipId={row.id}
-                  back="/dashboard/partners"
-                />
-                <Link
-                  href="/dashboard"
-                  className="text-[12px] font-semibold text-ink underline-offset-2 hover:underline"
-                >
-                  Open graph
-                </Link>
-              </div>
-            </li>
+              row={row}
+              checkBack={checkBack}
+              companySlug={companySlug}
+            />
           ))}
         </ul>
       </WorkspaceCard>

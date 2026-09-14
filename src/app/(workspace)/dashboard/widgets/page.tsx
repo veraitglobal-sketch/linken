@@ -110,7 +110,7 @@ export default async function DashboardWidgetsPage() {
   return (
     <WorkspacePage
       title="Widgets"
-      description="Embeds by placement — footer, partners, cases, and proof bars."
+      description="The mark is free. Testimonials and partner logos on your site are Pro."
       wide
       action={
         <Link

@@ -120,10 +120,10 @@ standalone + domain-verified `0.25` · free-provider author `0`.
 | Variant | Height | Tier |
 |---|---|---|
 | `verified` | 44 | free |
-| `footer-strip` | 48 | free |
 | `micro` | 52 | free |
 | `horizontal` | 56 | free |
 | `case-stamp` | 72 | free |
+| `footer-strip` | 48 | pro |
 | `credentials` | 76 | pro |
 | `score` | 88 | pro |
 | `starter`, `assessment` | 120 | pro |

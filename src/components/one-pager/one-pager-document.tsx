@@ -1,7 +1,8 @@
+import { OnePagerFoot } from "@/components/one-pager/one-pager-foot";
+import { OnePagerPartners } from "@/components/one-pager/one-pager-partners";
 import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
 import { LogoMark } from "@/components/ui/logo-mark";
 import type { OnePagerData } from "@/features/one-pager/queries";
-import { COMPANY_SHARE_PREFIX } from "@/lib/site";
 
 type Props = {
   data: OnePagerData;
@@ -102,6 +103,8 @@ export function OnePagerDocument({
         ) : null}
       </section>
 
+      <OnePagerPartners partners={data.partners} />
+
       {data.references.length > 0 ? (
         <section className="mt-10">
           <h2 className="font-display text-xl font-medium tracking-[-0.03em]">
@@ -151,37 +154,12 @@ export function OnePagerDocument({
         </section>
       ) : null}
 
-      <footer className="mt-12 flex flex-wrap items-end justify-between gap-6 border-t border-line pt-8">
-        <div className="max-w-md">
-          <p className="font-display text-lg tracking-[-0.03em] text-ink">
-            {COMPANY_SHARE_PREFIX}/
-            <span className="text-[#1a5c51]">{company.slug}</span>
-          </p>
-          <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
-            Scan to verify — every item on this page is confirmed by the other
-            party on Hansala.
-          </p>
-          <p className="mt-2 text-[12px] text-muted">{profileUrl}</p>
-        </div>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={qrDataUri}
-          alt="QR code to verify this company on Hansala"
-          width={140}
-          height={140}
-          className="rounded-xl border border-line"
-        />
-      </footer>
-
-      {!branded ? (
-        <p className="mt-8 border-t border-line pt-4 text-center text-[11px] tracking-[0.08em] text-muted uppercase">
-          Generated with Hansala
-        </p>
-      ) : (
-        <p className="mt-8 border-t border-line pt-4 text-center text-[11px] text-muted">
-          Confirmed on Hansala
-        </p>
-      )}
+      <OnePagerFoot
+        slug={company.slug}
+        profileUrl={profileUrl}
+        qrDataUri={qrDataUri}
+        branded={branded}
+      />
     </article>
   );
 }

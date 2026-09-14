@@ -7,6 +7,7 @@ import { DashboardInquiries } from "@/components/inquiries/dashboard-inquiries";
 import { DashboardIntros } from "@/components/intros/dashboard-intros";
 import { PartnershipInbox } from "@/components/partners/partnership-inbox";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
+import { decorateAcceptedCredits } from "@/features/credits/queries";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { OwnerLoopBar } from "@/components/product/owner-loop-bar";
 import { getPendingCaseStudyConfirmations } from "@/features/case-studies/pending-confirmations";
@@ -18,6 +19,7 @@ import { getInquiriesForOwnerCompany } from "@/features/inquiries/queries";
 import { listReceivedIntros } from "@/features/intros/queries";
 import { getPendingCoOwnerProposals } from "@/features/network/co-ownership-queries";
 import { getPartnershipInbox } from "@/features/partners/inbox";
+import { buildRfpPartnerText } from "@/features/partners/rfp-export";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { PRODUCT } from "@/lib/product-model";
 import { createClient } from "@/lib/supabase/server";
@@ -98,6 +100,10 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
   ]);
   const partnersPendingCount =
     partnerInbox.incomingPending.length + partnerInbox.outgoingPending.length;
+  const partnerCredits = await decorateAcceptedCredits(
+    company.id,
+    partnerInbox.accepted,
+  );
   const requestsPendingCount =
     groupInvites.length +
     parentProposals.length +
@@ -142,7 +148,14 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
             <PartnershipInbox
               incomingPending={partnerInbox.incomingPending}
               outgoingPending={partnerInbox.outgoingPending}
-              accepted={partnerInbox.accepted}
+              accepted={partnerCredits.rows}
+              allSnippet={partnerCredits.allSnippet}
+              companySlug={company.slug}
+              rfpText={buildRfpPartnerText(
+                company.name,
+                company.slug,
+                partnerInbox.accepted,
+              )}
             />
           ) : (
             <p className="rounded-2xl border border-dashed border-line bg-surface/60 px-5 py-8 text-center text-[13px] text-muted">

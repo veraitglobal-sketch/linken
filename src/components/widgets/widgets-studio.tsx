@@ -29,7 +29,7 @@ const SECTIONS: {
   {
     id: "placement",
     title: "Where it lives",
-    blurb: "Pick by spot on your site — footer, partners, or cases.",
+    blurb: "Footer and partner placements that show logos are Pro.",
     columns: "three",
   },
   {

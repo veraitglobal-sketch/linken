@@ -114,3 +114,25 @@ export function buildCompanyBreadcrumbLd(input: {
     ],
   };
 }
+
+export function buildCompanyPartnersLd(input: {
+  siteUrl: string;
+  partners: { name: string; slug: string }[];
+}) {
+  if (input.partners.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Confirmed partners",
+    numberOfItems: input.partners.length,
+    itemListElement: input.partners.slice(0, 20).map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Organization",
+        name: p.name,
+        url: absoluteUrl(input.siteUrl, companyPath(p.slug)),
+      },
+    })),
+  };
+}

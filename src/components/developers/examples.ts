@@ -169,6 +169,9 @@ export function verifyExample(siteUrl: string) {
   },
   "llm_md_url": "${siteUrl}/c/example-architecture/llm.md",
   "api_url": "${siteUrl}/api/v1/companies/example-architecture",
+  "partners": [
+    { "name": "North Studio", "slug": "north-studio", "verified": true }
+  ],
   "generated_at": "2026-07-19T18:00:00.000Z"
 }`;
 }

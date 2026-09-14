@@ -12,6 +12,8 @@ type Props = {
   accepted?: string;
   declined?: string;
   resent?: string;
+  published?: string;
+  introAsked?: string;
   /** Relative /testimonial/{token} path from accept redirect. */
   tmPath?: string | null;
 };
@@ -26,6 +28,8 @@ export function PartnerPageFlashes({
   accepted,
   declined,
   resent,
+  published,
+  introAsked,
   tmPath,
 }: Props) {
   return (
@@ -75,14 +79,9 @@ export function PartnerPageFlashes({
       ) : null}
       {accepted ? (
         <PartnerFlash>
-          Partnership accepted — open{" "}
-          <Link
-            href="/dashboard"
-            className="font-semibold underline-offset-2 hover:underline"
-          >
-            {PRODUCT.map.label}
-          </Link>{" "}
-          to see the partner link
+          You are official partners. They are on your public profile and on
+          your widget if it is live. Record and RFP list are under Official
+          partners below
           {tmPath ? (
             <>
               . Optional:{" "}
@@ -96,6 +95,14 @@ export function PartnerPageFlashes({
           ) : (
             "."
           )}
+        </PartnerFlash>
+      ) : null}
+      {introAsked ? (
+        <PartnerFlash>Intro request sent to your partner.</PartnerFlash>
+      ) : null}
+      {published ? (
+        <PartnerFlash>
+          Partner credit is live on your website.
         </PartnerFlash>
       ) : null}
       {declined ? <PartnerFlash>Request declined.</PartnerFlash> : null}

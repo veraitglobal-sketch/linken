@@ -13,6 +13,8 @@ type Input = {
   claimed?: boolean | null;
   verified?: boolean;
   siteUrl: string;
+  /** Confirmed partner names — first few, public only. */
+  partnerNames?: string[];
 };
 
 function metaDescription(input: Input): string {
@@ -24,7 +26,10 @@ function metaDescription(input: Input): string {
   const bits = [base];
   if (input.category) bits.push(input.category);
   if (place) bits.push(place);
-  if (input.verified) {
+  const names = (input.partnerNames ?? []).filter(Boolean).slice(0, 3);
+  if (names.length > 0) {
+    bits.push(`Confirmed with ${names.join(", ")}`);
+  } else if (input.verified) {
     bits.push("Domain verified. Confirmed relationships only.");
   } else {
     bits.push("Mutually confirmed relationships.");

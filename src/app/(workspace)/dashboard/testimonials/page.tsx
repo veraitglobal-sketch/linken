@@ -6,6 +6,7 @@ import { TestimonialInviteForm } from "@/components/widgets/testimonial-invite-f
 import { TestimonialPendingList } from "@/components/widgets/testimonial-pending-list";
 import { TestimonialsWorkbench } from "@/components/widgets/testimonials-workbench";
 import { TestimonialsStudio } from "@/components/widgets/testimonials-studio";
+import { isPaidPlan } from "@/features/plan/entitlements";
 import { WIDGET_CATALOG } from "@/features/widgets/catalog";
 import { getSiteUrl } from "@/lib/site";
 import { getPendingTestimonialInvites } from "@/features/testimonials/pending-queries";
@@ -94,7 +95,7 @@ export default async function DashboardTestimonialsPage() {
   return (
     <WorkspacePage
       title="Testimonials"
-      description="Client-written words — you cannot edit their text. They appear on your profile and in embeds after clients publish."
+      description="Written by clients on Hansala. Putting them on your own site is Pro."
       wide
       action={
         <div className="flex flex-wrap gap-2">
@@ -126,7 +127,7 @@ export default async function DashboardTestimonialsPage() {
             widget={testimonialsWidget}
             siteUrl={getSiteUrl()}
             slug={company.slug}
-            isPro={company.plan === "pro"}
+            isPro={isPaidPlan(company.plan)}
             domainReady={domainReady}
             savedLayout={testimonialSettings.layout}
             includedCount={entries.filter((e) => e.included).length}

@@ -13,4 +13,6 @@ export type Partner = {
   status: PartnerStatus;
   /** partnerships.id — for owner manage actions; omit on public-only cards. */
   partnershipId?: string;
+  /** Partner published this company on their own website. */
+  liveOnSite?: boolean;
 };
