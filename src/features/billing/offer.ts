@@ -5,6 +5,8 @@ export type OfferSku = {
   name: string;
   priceLabel: string;
   note: string;
+  audience: string;
+  saving?: string;
   cta: string;
   recommended?: boolean;
 };
@@ -16,6 +18,7 @@ export const OFFER_SKUS: OfferSku[] = [
     name: "Six months",
     priceLabel: "$99",
     note: "Every 6 months in USD. $16.50 / month equivalent.",
+    audience: "To try it on your next few projects.",
     cta: "Buy six months",
   },
   {
@@ -23,6 +26,8 @@ export const OFFER_SKUS: OfferSku[] = [
     name: "One year",
     priceLabel: "$149",
     note: "Billed once a year in USD. $12.42 / month equivalent.",
+    audience: "For firms that win work all year.",
+    saving: "$49 less than two six-month terms",
     cta: "Buy one year",
     recommended: true,
   },
@@ -36,6 +41,12 @@ export const OFFER_INCLUDED = [
   "Testimonials widget on your website",
   "Partner logo widgets",
   "Analytics, Agent API, and team seats",
+] as const;
+
+export const OFFER_ASSURANCES = [
+  "Secure checkout by Stripe",
+  "Renews at this price",
+  "Cancel anytime from Workspace → Billing",
 ] as const;
 
 export const OFFER_FAQ = [

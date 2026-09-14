@@ -10,7 +10,7 @@ export function OfferCard({ sku, ready }: { sku: OfferSku; ready: boolean }) {
       className={cn(
         "flex flex-col rounded-card p-7 sm:p-9",
         dark
-          ? "border border-transparent bg-navy text-on-navy shadow-chapter"
+          ? "border border-white/10 bg-navy text-on-navy shadow-chapter"
           : "border border-line bg-surface shadow-[0_1px_2px_rgba(8,20,18,0.03)]",
       )}
     >
@@ -32,22 +32,58 @@ export function OfferCard({ sku, ready }: { sku: OfferSku; ready: boolean }) {
 
       <p
         className={cn(
-          "mt-4 font-display text-[44px] leading-none font-medium tracking-[-0.04em] tabular-nums",
+          "mt-3 text-[15px] leading-relaxed",
+          dark ? "text-on-navy-soft" : "text-ink-soft",
+        )}
+      >
+        {sku.audience}
+      </p>
+
+      <p
+        className={cn(
+          "mt-5 font-display text-[44px] leading-none font-medium tracking-[-0.04em] tabular-nums",
           dark ? "text-on-navy" : "text-ink",
         )}
       >
         {sku.priceLabel}
       </p>
+      {sku.saving ? (
+        <p
+          className={cn(
+            "mt-3 text-[13px] font-semibold",
+            dark ? "text-on-navy" : "text-ink",
+          )}
+        >
+          {sku.saving}
+        </p>
+      ) : null}
       <p
         className={cn(
-          "mt-4 text-[13px] leading-relaxed",
+          "mt-3 text-[13px]",
+          dark ? "text-on-navy-muted" : "text-muted",
+        )}
+      >
+        <span
+          className={cn(
+            "line-through",
+            dark ? "decoration-white/50" : "decoration-ink/40",
+          )}
+        >
+          €79 / month
+        </span>{" "}
+        standard Pro
+      </p>
+      <p
+        className={cn(
+          "mt-1.5",
+          "text-[13px] leading-relaxed",
           dark ? "text-on-navy-muted" : "text-muted",
         )}
       >
         {sku.note}
       </p>
 
-      <ul className="mt-6 list-none space-y-3 p-0">
+      <ul className="mt-5 list-none space-y-2.5 p-0">
         {OFFER_INCLUDED.map((f) => (
           <li
             key={f}
@@ -68,7 +104,7 @@ export function OfferCard({ sku, ready }: { sku: OfferSku; ready: boolean }) {
         ))}
       </ul>
 
-      <div className="mt-auto pt-8">
+      <div className="mt-auto pt-7">
         <OfferBuyForm sku={sku} ready={ready} />
       </div>
     </article>
