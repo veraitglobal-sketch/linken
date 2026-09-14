@@ -5,6 +5,7 @@ import type {
   NetworkNodeData,
 } from "@/features/network/types";
 import Link from "next/link";
+import { companyWithPath } from "@/features/seo/paths";
 
 const ROLE_LABEL = {
   group: "Group",
@@ -64,6 +65,16 @@ export function GraphPanelInspectProfile({ selected, context }: Props) {
             back="/dashboard"
           />
         </div>
+      ) : null}
+      {selected.kind === "partner" &&
+      context?.focusCompanySlug &&
+      selected.slug ? (
+        <Link
+          href={companyWithPath(context.focusCompanySlug, selected.slug)}
+          className="mt-3 flex min-h-11 items-center text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
+        >
+          Confirmed record
+        </Link>
       ) : null}
       {selected.kind !== "group" && selected.domainVerified === false ? (
         selected.companyId &&

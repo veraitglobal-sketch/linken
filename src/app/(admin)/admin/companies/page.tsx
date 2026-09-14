@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminCompaniesTable } from "@/components/admin/admin-companies-table";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAdminCompanies } from "@/features/admin/companies-list";
 
 export const metadata = { title: "Admin · Companies" };
@@ -15,20 +16,16 @@ export default async function AdminCompaniesPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-[-0.03em]">
-          Companies
-        </h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          Showing {offset + 1}–{offset + rows.length}.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Companies"
+        note={`Showing ${offset + 1}–${offset + rows.length}.`}
+      />
       <AdminCompaniesTable rows={rows} title="All companies" />
       <div className="flex justify-between text-[12px] font-semibold">
         {offset > 0 ? (
           <Link
             href={`/admin/companies?offset=${Math.max(0, offset - PAGE_SIZE)}`}
-            className="text-ember underline-offset-2 hover:underline"
+            className="text-ink underline-offset-2 hover:underline"
           >
             ← Newer
           </Link>
@@ -38,7 +35,7 @@ export default async function AdminCompaniesPage({ searchParams }: Props) {
         {hasMore ? (
           <Link
             href={`/admin/companies?offset=${offset + PAGE_SIZE}`}
-            className="text-ember underline-offset-2 hover:underline"
+            className="text-ink underline-offset-2 hover:underline"
           >
             Older →
           </Link>

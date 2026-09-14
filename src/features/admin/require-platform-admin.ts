@@ -17,8 +17,9 @@ export type PlatformStaffSession = {
   email: string;
 };
 
-function deny(reason: string) {
-  redirect(`/admin-access-denied?reason=${encodeURIComponent(reason)}`);
+function deny(reason: "env" | "service" | "table" | "staff") {
+  console.warn("[admin] access denied", reason);
+  redirect("/admin-access-denied");
 }
 
 /**

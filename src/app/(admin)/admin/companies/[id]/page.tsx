@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminCompanyCreditsPanel } from "@/components/admin/admin-company-credits-panel";
+import { AdminFactTiles } from "@/components/admin/admin-fact-tiles";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { getAdminCompanyDetail } from "@/features/admin/company-detail";
 import { requirePlatformStaff } from "@/features/admin/require-platform-admin";
 import { roleMeetsMinimum } from "@/features/admin/roles";
@@ -20,41 +22,39 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
   if (!detail) notFound();
 
   const canWrite = roleMeetsMinimum(role, "admin");
+  const lastCheck = detail.verification?.lastCheck
+    ? new Date(detail.verification.lastCheck).toLocaleDateString("en-GB")
+    : "—";
 
   return (
     <div className="space-y-8">
-      <div>
-        <Link
-          href="/admin/companies"
-          className="text-[12px] font-semibold text-ember underline-offset-2 hover:underline"
-        >
-          ← Companies
-        </Link>
-        <h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.03em]">
-          {detail.name}
-        </h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          /{detail.slug}
-          {detail.website ? ` · ${detail.website}` : ""}
-          {" · "}
-          <Link
-            href={`/c/${detail.slug}`}
-            className="font-semibold text-ember underline-offset-2 hover:underline"
-          >
-            Public profile
-          </Link>
-          {" · "}
-          <Link
-            href={`/admin/companies/${detail.id}/support`}
-            className="font-semibold text-ember underline-offset-2 hover:underline"
-          >
-            Support view
-          </Link>
-        </p>
-      </div>
+      <AdminPageHeader
+        title={detail.name}
+        back={{ href: "/admin/companies", label: "← Companies" }}
+        note={
+          <>
+            /{detail.slug}
+            {detail.website ? ` · ${detail.website}` : ""}
+            {" · "}
+            <Link
+              href={`/c/${detail.slug}`}
+              className="font-semibold text-ink underline-offset-2 hover:underline"
+            >
+              Public profile
+            </Link>
+            {" · "}
+            <Link
+              href={`/admin/companies/${detail.id}/support`}
+              className="font-semibold text-ink underline-offset-2 hover:underline"
+            >
+              Support view
+            </Link>
+          </>
+        }
+      />
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[
+      <AdminFactTiles
+        items={[
           ["Status", `${detail.claimed ? "Claimed" : "Unclaimed"}${detail.verified ? " · Verified" : ""}`],
           ["Plan", detail.plan ?? "free"],
           ["Credits", String(detail.creditsBalance)],
@@ -63,19 +63,12 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
           ["Partners", String(detail.partnersCount)],
           ["Testimonials", String(detail.testimonialsCount)],
           ["Case studies", String(detail.casesCount)],
-        ].map(([label, value]) => (
-          <div key={label} className="rounded-2xl border border-line bg-surface px-4 py-3">
-            <p className="text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">
-              {label}
-            </p>
-            <p className="mt-1 text-[14px] text-ink">{value}</p>
-          </div>
-        ))}
-      </div>
+        ]}
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-line bg-surface p-4">
-          <h3 className="text-[13px] font-semibold text-ink">Credits & plan</h3>
+        <section className="rounded-card border border-line bg-surface p-5">
+          <h2 className="text-[13px] font-semibold text-ink">Credits & plan</h2>
           <div className="mt-3">
             <AdminCompanyCreditsPanel
               companyId={detail.id}
@@ -88,8 +81,8 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
         </section>
 
         <section className="space-y-4">
-          <div className="rounded-2xl border border-line bg-surface p-4">
-            <h3 className="text-[13px] font-semibold text-ink">Billing</h3>
+          <section className="rounded-card border border-line bg-surface p-5">
+            <h2 className="text-[13px] font-semibold text-ink">Billing</h2>
             <p className="mt-2 text-[13px] text-ink-soft">
               {detail.billing
                 ? `${detail.billing.status ?? "—"} · sub ${detail.billing.subscriptionId ?? "none"}`
@@ -98,21 +91,17 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
             {detail.billing?.cancelAtPeriodEnd ? (
               <p className="mt-1 text-[12px] text-muted">Cancel at period end.</p>
             ) : null}
-          </div>
-          <div className="rounded-2xl border border-line bg-surface p-4">
-            <h3 className="text-[13px] font-semibold text-ink">Verification</h3>
+          </section>
+          <section className="rounded-card border border-line bg-surface p-5">
+            <h2 className="text-[13px] font-semibold text-ink">Verification</h2>
             <p className="mt-2 text-[13px] text-ink-soft">
               {detail.verification
-                ? `${detail.verification.method ?? "—"} · last check ${
-                    detail.verification.lastCheck
-                      ? new Date(detail.verification.lastCheck).toLocaleDateString("en-GB")
-                      : "—"
-                  }`
+                ? `${detail.verification.method ?? "—"} · last check ${lastCheck}`
                 : "No verification row."}
             </p>
-          </div>
-          <div className="rounded-2xl border border-line bg-surface p-4">
-            <h3 className="text-[13px] font-semibold text-ink">Credit ledger</h3>
+          </section>
+          <section className="rounded-card border border-line bg-surface p-5">
+            <h2 className="text-[13px] font-semibold text-ink">Credit ledger</h2>
             <ul className="mt-2 space-y-1 text-[12px] text-ink-soft">
               {detail.creditLedger.length === 0 ? (
                 <li>No ledger entries.</li>
@@ -126,7 +115,7 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
                 ))
               )}
             </ul>
-          </div>
+          </section>
         </section>
       </div>
     </div>

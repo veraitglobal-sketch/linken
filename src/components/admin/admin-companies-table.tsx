@@ -5,7 +5,7 @@ type Props = { rows: AdminCompanyRow[]; title?: string };
 
 export function AdminCompaniesTable({ rows, title = "Recent companies" }: Props) {
   return (
-    <section className="rounded-2xl border border-line bg-surface">
+    <section className="rounded-card border border-line bg-surface">
       <div className="border-b border-line px-4 py-3">
         <h2 className="text-[13px] font-semibold text-ink">{title}</h2>
       </div>

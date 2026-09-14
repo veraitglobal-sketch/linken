@@ -1,48 +1,41 @@
 import Link from "next/link";
+import { signOutTo } from "@/features/auth/actions";
 
-export const metadata = { title: "Admin · Access denied" };
-
-const REASONS: Record<string, string> = {
-  env: "Your email is not in PLATFORM_ADMIN_EMAILS on this deployment (or the env var is missing). Check Vercel → add jovica@verait.de → Redeploy.",
-  service:
-    "SUPABASE_SERVICE_ROLE_KEY is missing on this deployment — admin cannot read platform_staff.",
-  table:
-    "Could not read platform_staff (table missing or query error). Run the admin migrations.",
-  staff:
-    "No platform_staff row for this user (or role too low). Insert the owner row in Supabase SQL.",
+export const metadata = {
+  title: "Admin",
+  robots: { index: false, follow: false },
 };
 
-type Props = { searchParams: Promise<{ reason?: string }> };
-
-export default async function AdminAccessDeniedPage({ searchParams }: Props) {
-  const { reason } = await searchParams;
-  const detail = reason ? REASONS[reason] : null;
-
+/** Same copy for every failure. Do not explain which gate failed. */
+export default function AdminAccessDeniedPage() {
   return (
-    <div className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-4 py-16 text-ink">
-      <p className="text-[10px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
-        Hansala · Platform
+    <div className="mx-auto flex min-h-[70vh] max-w-lg flex-col justify-center px-4 py-16">
+      <p className="font-label text-[11px] font-semibold tracking-[0.16em] text-blue uppercase">
+        Staff
       </p>
-      <h1 className="mt-2 font-display text-2xl font-semibold tracking-[-0.03em]">
-        Admin access denied
+      <h1 className="mt-4 font-display text-chapter text-ink">
+        This account cannot open admin.
       </h1>
-      {detail ? (
-        <p className="mt-3 rounded-xl border border-line bg-surface px-4 py-3 text-[14px] text-ink">
-          <span className="font-semibold">Failed check:</span> {reason}
-          <br />
-          <span className="text-ink-soft">{detail}</span>
-        </p>
-      ) : (
-        <p className="mt-3 text-[14px] text-ink-soft">
-          This account is not on the platform staff list.
-        </p>
-      )}
-      <Link
-        href="/admin"
-        className="mt-8 text-[13px] font-semibold text-ember underline-offset-2 hover:underline"
-      >
-        Try /admin again →
-      </Link>
+      <p className="mt-5 max-w-[42ch] text-[15px] leading-relaxed text-ink-soft">
+        Platform admin is limited to staff accounts.
+      </p>
+      <div className="mt-8 flex flex-wrap items-center gap-4">
+        <Link
+          href="/"
+          className="text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
+        >
+          Back to Hansala
+        </Link>
+        <form action={signOutTo}>
+          <input type="hidden" name="next" value="/login?next=/admin" />
+          <button
+            type="submit"
+            className="text-[13px] font-semibold text-muted underline-offset-2 hover:text-ink hover:underline"
+          >
+            Sign in with a different account
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

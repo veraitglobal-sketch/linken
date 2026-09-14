@@ -23,7 +23,7 @@ import { getPublicTeam } from "@/features/team/queries";
 import { resolveConfirmedRelationship } from "@/features/trust/relationship-banner";
 import { getTrustProfile } from "@/features/trust/queries";
 import {
-  getPublishedTestimonials,
+  getSelectedTestimonials,
   toPublicTestimonials,
 } from "@/features/testimonials/queries";
 import type { Company } from "@/types/company";
@@ -80,7 +80,7 @@ export async function loadPublicCompanyProfile(
     getConfirmedGroupForCompany(company.id),
     getPublicTeam(company.id),
     resolveConfirmedRelationship(company.id, sp.rel),
-    getPublishedTestimonials(company.id).then((rows) =>
+    getSelectedTestimonials(company.id).then((rows) =>
       toPublicTestimonials(rows, company.slug),
     ),
     editable ? getActivationChecklist(company.id) : Promise.resolve(null),

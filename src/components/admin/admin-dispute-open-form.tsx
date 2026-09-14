@@ -29,7 +29,7 @@ export function AdminDisputeOpenForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-2 rounded-2xl border border-line bg-surface p-4">
+    <form onSubmit={onSubmit} className="space-y-2 rounded-card border border-line bg-surface p-5">
       <h3 className="text-[13px] font-semibold text-ink">Open a dispute</h3>
       <select
         name="recordType"

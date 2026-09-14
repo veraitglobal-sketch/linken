@@ -1,3 +1,4 @@
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminRateLimitForm } from "@/components/admin/admin-rate-limit-form";
 import { AdminSuppressionPanel } from "@/components/admin/admin-suppression-panel";
 import {
@@ -21,18 +22,16 @@ export default async function AdminEmailPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-[-0.03em]">Email</h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          Suppressions, deliverability signals, and rough per-company send volume.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Email"
+        note="Suppressions, deliverability signals, and rough per-company send volume."
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {canWrite ? (
           <AdminSuppressionPanel rows={suppressions} />
         ) : (
-          <section className="rounded-2xl border border-line bg-surface p-4">
+          <section className="rounded-card border border-line bg-surface p-4">
             <h3 className="text-[13px] font-semibold text-ink">Suppressions</h3>
             <p className="mt-2 text-[13px] text-ink-soft">
               {suppressions.length} entries. Managing suppressions requires admin role.
@@ -40,7 +39,7 @@ export default async function AdminEmailPage() {
           </section>
         )}
 
-        <section className="rounded-2xl border border-line bg-surface p-4">
+        <section className="rounded-card border border-line bg-surface p-4">
           <h3 className="text-[13px] font-semibold text-ink">Deliverability events</h3>
           <ul className="mt-2 max-h-72 space-y-1 overflow-y-auto text-[12px] text-ink-soft">
             {events.length === 0 ? (
@@ -58,7 +57,7 @@ export default async function AdminEmailPage() {
         </section>
       </div>
 
-      <section className="rounded-2xl border border-line bg-surface">
+      <section className="rounded-card border border-line bg-surface">
         <div className="border-b border-line px-4 py-3">
           <h3 className="text-[13px] font-semibold text-ink">
             Rough send volume by company

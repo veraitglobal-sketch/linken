@@ -7,7 +7,7 @@ export function AdminStatGrid({ stats }: Props) {
     { label: "Companies", value: stats.companiesTotal, note: `${stats.companiesNewWeek} new this week` },
     { label: "Claimed", value: stats.companiesClaimed, note: "Active workspaces" },
     { label: "Verified", value: stats.companiesVerified, note: "Domain verified" },
-    { label: "Testimonials published", value: stats.testimonialsPublished, note: `${stats.testimonialsPending} pending` },
+    { label: "Testimonials", value: stats.testimonialsPublished, note: `${stats.testimonialsPending} pending` },
     { label: "Partnerships pending", value: stats.partnershipsPending, note: "Awaiting accept" },
     { label: "Confirmations pending", value: stats.confirmationsPending, note: "Case study invites" },
   ];
@@ -17,15 +17,15 @@ export function AdminStatGrid({ stats }: Props) {
       {items.map((item) => (
         <div
           key={item.label}
-          className="rounded-2xl border border-line bg-surface px-4 py-4"
+          className="rounded-card border border-line bg-surface px-5 py-5 shadow-[0_1px_2px_rgba(8,20,18,0.03)]"
         >
-          <p className="text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">
+          <p className="font-label text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
             {item.label}
           </p>
-          <p className="mt-2 font-display text-3xl font-medium tracking-[-0.04em]">
+          <p className="mt-3 font-display text-[36px] leading-none font-medium tracking-[-0.04em] text-ink tabular-nums">
             {item.value}
           </p>
-          <p className="mt-1 text-[12px] text-ink-soft">{item.note}</p>
+          <p className="mt-3 text-[13px] leading-relaxed text-muted">{item.note}</p>
         </div>
       ))}
     </div>

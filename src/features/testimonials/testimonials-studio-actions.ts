@@ -17,7 +17,9 @@ async function requireStudio() {
 
 function revalidateTestimonials(slug: string) {
   revalidatePath("/dashboard/widgets");
+  revalidatePath("/dashboard/testimonials");
   revalidatePath(`/embed/${slug}`);
+  revalidatePath(`/c/${slug}`);
 }
 
 export async function saveTestimonialOrder(order: string[]) {

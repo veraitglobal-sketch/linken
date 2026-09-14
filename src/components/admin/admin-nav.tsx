@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/cn";
 
 const LINKS = [
   { href: "/admin", label: "Overview", exact: true },
@@ -14,11 +15,18 @@ const LINKS = [
   { href: "/admin/audit", label: "Audit" },
 ] as const;
 
-export function AdminNav() {
+export function AdminNav({ orientation = "row" }: { orientation?: "row" | "col" }) {
   const pathname = usePathname();
+  const col = orientation === "col";
 
   return (
-    <nav className="mx-auto mt-3 flex max-w-6xl gap-1 overflow-x-auto">
+    <nav
+      className={cn(
+        col
+          ? "flex flex-col gap-0.5"
+          : "flex gap-1 overflow-x-auto px-4 py-2 lg:hidden",
+      )}
+    >
       {LINKS.map((item) => {
         const on =
           "exact" in item && item.exact
@@ -28,10 +36,24 @@ export function AdminNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors ${
-              on ? "bg-navy text-paper" : "text-muted hover:text-ink"
-            }`}
+            className={cn(
+              "shrink-0 text-[13px] font-medium transition-colors",
+              col
+                ? "relative flex h-9 items-center rounded-xl px-2.5"
+                : "rounded-full px-3 py-1.5",
+              on
+                ? col
+                  ? "bg-navy/[0.06] font-semibold text-ink"
+                  : "bg-navy text-on-navy"
+                : "text-ink-soft hover:text-ink",
+            )}
           >
+            {col && on ? (
+              <span
+                className="absolute top-1.5 bottom-1.5 left-0 w-[2px] rounded-full bg-navy"
+                aria-hidden
+              />
+            ) : null}
             {item.label}
           </Link>
         );

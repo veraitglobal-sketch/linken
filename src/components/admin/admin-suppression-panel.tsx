@@ -36,7 +36,7 @@ export function AdminSuppressionPanel({ rows }: Props) {
   }
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-4">
+    <section className="rounded-card border border-line bg-surface p-5">
       <h3 className="text-[13px] font-semibold text-ink">Suppressions</h3>
       <p className="mt-1 text-[12px] text-muted">
         Addresses or domains that are never mailed.
@@ -83,7 +83,7 @@ export function AdminSuppressionPanel({ rows }: Props) {
                 type="button"
                 disabled={pending}
                 onClick={() => onRemove(r.id)}
-                className="shrink-0 text-[11px] font-semibold text-ember hover:underline disabled:opacity-50"
+                className="shrink-0 text-[11px] font-semibold text-ink underline-offset-2 hover:underline disabled:opacity-50"
               >
                 Remove
               </button>

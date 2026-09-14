@@ -1,3 +1,4 @@
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminVerificationTable } from "@/components/admin/admin-verification-table";
 import { requirePlatformStaff } from "@/features/admin/require-platform-admin";
 import { roleMeetsMinimum } from "@/features/admin/roles";
@@ -12,15 +13,10 @@ export default async function AdminVerificationPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-[-0.03em]">
-          Verification review
-        </h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          {rows.length} companies with a verification record · {staleCount} stale
-          (older than 90 days).
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Verification"
+        note={`${rows.length} companies with a verification record · ${staleCount} stale (older than 90 days).`}
+      />
       <AdminVerificationTable
         rows={rows}
         canRevoke={roleMeetsMinimum(role, "admin")}

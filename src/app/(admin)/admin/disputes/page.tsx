@@ -1,5 +1,6 @@
 import { AdminDisputeOpenForm } from "@/components/admin/admin-dispute-open-form";
 import { AdminDisputeResolve } from "@/components/admin/admin-dispute-resolve";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listOpenDisputes } from "@/features/admin/disputes";
 import { requirePlatformStaff } from "@/features/admin/require-platform-admin";
 import { roleMeetsMinimum } from "@/features/admin/roles";
@@ -13,18 +14,12 @@ export default async function AdminDisputesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-[-0.03em]">
-          Disputes
-        </h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          {disputes.length} open dispute{disputes.length === 1 ? "" : "s"}. Opening a
-          dispute hides the record immediately; the public never sees a
-          &quot;disputed&quot; marker.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Disputes"
+        note={`${disputes.length} open dispute${disputes.length === 1 ? "" : "s"}. Opening a dispute hides the record immediately; the public never sees a “disputed” marker.`}
+      />
 
-      <section className="rounded-2xl border border-line bg-surface">
+      <section className="rounded-card border border-line bg-surface">
         <div className="border-b border-line px-4 py-3">
           <h3 className="text-[13px] font-semibold text-ink">Open disputes</h3>
         </div>

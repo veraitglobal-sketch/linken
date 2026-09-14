@@ -2,6 +2,10 @@ import type { ReactNode } from "react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { requirePlatformStaff } from "@/features/admin/require-platform-admin";
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default async function AdminLayout({
   children,
 }: {

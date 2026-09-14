@@ -42,7 +42,7 @@ export function AcceptedPartnerRow({
             href={`/c/${companySlug}/with/${row.other.slug}`}
             className="inline-flex h-8 items-center rounded-xl bg-navy px-3 text-[11px] font-semibold text-white"
           >
-            Record
+            Confirmed record
           </Link>
           <EndPartnershipButton
             partnershipId={row.id}

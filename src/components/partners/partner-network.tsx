@@ -34,7 +34,7 @@ export function PartnerNetwork({ company, partners }: Props) {
             </h1>
             <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-white/68">
               Every firm listed here confirmed the relationship with{" "}
-              {company.name}. Open a profile to see their work and network.
+              {company.name}. Open a confirmed record or their profile.
             </p>
             <div className="mt-6 flex flex-wrap gap-4 text-[13px] text-white/55">
               <p>
@@ -69,7 +69,11 @@ export function PartnerNetwork({ company, partners }: Props) {
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {partners.map((partner) => (
-              <PartnerNetworkTile key={partner.id} partner={partner} />
+              <PartnerNetworkTile
+                key={partner.id}
+                partner={partner}
+                companySlug={company.slug}
+              />
             ))}
           </div>
         )}

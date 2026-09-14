@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminCompaniesTable } from "@/components/admin/admin-companies-table";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminStatGrid } from "@/components/admin/admin-stat-grid";
 import { AdminTestimonialsTable } from "@/components/admin/admin-testimonials-table";
 import {
@@ -27,14 +28,10 @@ export default async function AdminOverviewPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-[-0.03em]">
-          Platform overview
-        </h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          New companies, testimonials, and pending trust workflows.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Overview"
+        note="New companies, testimonials, and pending trust workflows."
+      />
 
       <AdminStatGrid stats={stats} />
 
@@ -43,18 +40,18 @@ export default async function AdminOverviewPage() {
           <AdminCompaniesTable rows={companies} title="Latest companies" />
           <Link
             href="/admin/companies"
-            className="text-[13px] font-semibold text-ember underline-offset-2 hover:underline"
+            className="text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
           >
-            View all companies →
+            All companies
           </Link>
         </div>
         <div className="space-y-3">
           <AdminTestimonialsTable rows={testimonials} title="Latest testimonials" />
           <Link
             href="/admin/testimonials"
-            className="text-[13px] font-semibold text-ember underline-offset-2 hover:underline"
+            className="text-[13px] font-semibold text-ink underline-offset-2 hover:underline"
           >
-            View all testimonials →
+            All testimonials
           </Link>
         </div>
       </div>

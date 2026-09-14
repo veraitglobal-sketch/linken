@@ -1,3 +1,4 @@
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminTestimonialsTable } from "@/components/admin/admin-testimonials-table";
 import { listAdminTestimonials } from "@/features/admin/queries";
 import { requirePlatformStaff } from "@/features/admin/require-platform-admin";
@@ -12,14 +13,10 @@ export default async function AdminTestimonialsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-[-0.03em]">
-          Testimonials
-        </h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          {rows.length} most recent quotes across all companies.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Testimonials"
+        note={`${rows.length} most recent quotes across all companies.`}
+      />
       <AdminTestimonialsTable rows={rows} title="All testimonials" canModerate={canModerate} />
     </div>
   );

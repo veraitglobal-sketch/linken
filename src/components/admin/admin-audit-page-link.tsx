@@ -10,7 +10,7 @@ export function AdminAuditPageLink({ page, disabled, children }: Props) {
   return (
     <Link
       href={`/admin/audit?page=${page}`}
-      className="text-[12px] font-semibold text-ember underline-offset-2 hover:underline"
+      className="text-[12px] font-semibold text-ink underline-offset-2 hover:underline"
     >
       {children}
     </Link>

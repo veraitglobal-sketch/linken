@@ -19,7 +19,7 @@ export function AdminVerificationGrantForm({ row, pending, start, setMessage }: 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-[11px] font-semibold text-ember underline-offset-2 hover:underline"
+        className="text-[11px] font-semibold text-ink underline-offset-2 hover:underline"
       >
         Grant manually…
       </button>

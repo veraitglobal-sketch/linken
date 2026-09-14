@@ -91,6 +91,7 @@ export type NetworkGraphContext = {
   /** The company whose profile page this graph is rendered on — gets the
    * visual hub/focus treatment even inside a larger group tree. */
   focusCompanyId?: string | null;
+  focusCompanySlug?: string | null;
 };
 
 export type NetworkGraph = {

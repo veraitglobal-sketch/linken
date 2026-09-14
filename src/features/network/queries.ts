@@ -694,6 +694,7 @@ async function buildLocalCompanyGraph(
     groupSlug: options.group?.slug ?? null,
     viewerCompanyId: company.id,
     focusCompanyId: company.id,
+    focusCompanySlug: company.slug,
   });
 }
 

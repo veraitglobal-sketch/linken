@@ -1,4 +1,5 @@
 import { AdminMergeForm } from "@/components/admin/admin-merge-form";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listDuplicateGroups } from "@/features/admin/duplicates";
 import { requirePlatformStaff } from "@/features/admin/require-platform-admin";
 import { roleMeetsMinimum } from "@/features/admin/roles";
@@ -12,18 +13,13 @@ export default async function AdminDuplicatesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-[-0.03em]">
-          Duplicates
-        </h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          {groups.length} candidate group{groups.length === 1 ? "" : "s"} sharing a
-          website domain across two or more companies.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Duplicates"
+        note={`${groups.length} candidate group${groups.length === 1 ? "" : "s"} sharing a website domain across two or more companies.`}
+      />
 
       {groups.length === 0 ? (
-        <p className="rounded-2xl border border-line bg-surface p-4 text-[13px] text-ink-soft">
+        <p className="rounded-card border border-line bg-surface p-5 text-[13px] text-ink-soft">
           No duplicate candidates found.
         </p>
       ) : (
@@ -31,7 +27,7 @@ export default async function AdminDuplicatesPage() {
           {groups.map((group) => (
             <section
               key={group.domain}
-              className="rounded-2xl border border-line bg-surface p-4"
+              className="rounded-card border border-line bg-surface p-5"
             >
               <h3 className="text-[13px] font-semibold text-ink">{group.domain}</h3>
               <ul className="mt-2 space-y-1 text-[12px] text-ink-soft">

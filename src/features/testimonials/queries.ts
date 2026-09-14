@@ -36,14 +36,24 @@ export async function getPublishedTestimonials(
   return filterUndisclosedTestimonials(rows, supabase);
 }
 
-/** Embed/widget path — applies widget_settings selection (exclusion-based). */
+/** Embed + Hansala profile — applies widget_settings (exclude / order / limit). */
 export async function getSelectedTestimonials(
   companyId: string,
-  widgetSettings: unknown,
+  widgetSettings?: unknown,
 ): Promise<TestimonialRow[]> {
+  let raw = widgetSettings;
+  if (raw === undefined) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("companies")
+      .select("widget_settings")
+      .eq("id", companyId)
+      .maybeSingle();
+    raw = data?.widget_settings;
+  }
   const cfg = parseTestimonialsSettings(
-    widgetSettings && typeof widgetSettings === "object"
-      ? (widgetSettings as Record<string, unknown>).testimonials
+    raw && typeof raw === "object"
+      ? (raw as Record<string, unknown>).testimonials
       : undefined,
   );
   const all = await getPublishedTestimonials(companyId);

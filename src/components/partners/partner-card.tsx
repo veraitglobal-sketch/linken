@@ -24,6 +24,7 @@ export function PartnerCard({
 
   const showManage =
     editable && Boolean(partner.partnershipId) && Boolean(manageBack);
+  const primaryHref = recordHref ?? `/c/${partner.slug}?src=partner`;
 
   return (
     <div className="rounded-xl bg-[#f7f8fa] px-3 py-2.5 transition-colors hover:bg-paper">
@@ -39,7 +40,7 @@ export function PartnerCard({
           logoUrl={partner.logoUrl}
         />
         <Link
-          href={`/c/${partner.slug}?src=partner`}
+          href={primaryHref}
           /* 44px minimum. Tightening the row for density left the tappable
              area at 41px — under the floor, and density is never worth a
              target a thumb misses. The row grows three pixels; it is still
@@ -71,13 +72,18 @@ export function PartnerCard({
           {partner.sharedProjects > 0 ? (
             <p className="mt-1 text-[12px] text-muted">{casesLabel}</p>
           ) : null}
+          {recordHref ? (
+            <p className="mt-1 text-[12px] font-semibold text-ink">
+              Confirmed record
+            </p>
+          ) : null}
         </Link>
         {recordHref ? (
           <Link
-            href={recordHref}
-            className="shrink-0 text-[11px] font-semibold text-ink underline-offset-2 hover:underline"
+            href={`/c/${partner.slug}?src=partner`}
+            className="flex min-h-11 shrink-0 items-center text-[12px] font-semibold text-muted underline-offset-2 hover:text-ink hover:underline"
           >
-            Record
+            Profile
           </Link>
         ) : null}
         {showManage && partner.partnershipId && manageBack ? (

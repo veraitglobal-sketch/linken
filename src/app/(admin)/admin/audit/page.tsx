@@ -1,4 +1,5 @@
 import { AdminAuditPageLink } from "@/components/admin/admin-audit-page-link";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAuditLog } from "@/features/admin/audit-queries";
 import { requirePlatformStaff } from "@/features/admin/require-platform-admin";
 
@@ -18,16 +19,12 @@ export default async function AdminAuditPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-[-0.03em]">
-          Audit log
-        </h2>
-        <p className="mt-1 text-[14px] text-ink-soft">
-          {total} staff actions recorded · page {page} of {totalPages}.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Audit log"
+        note={`${total} staff actions recorded · page ${page} of ${totalPages}.`}
+      />
 
-      <section className="rounded-2xl border border-line bg-surface">
+      <section className="rounded-card border border-line bg-surface">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] text-left text-[13px]">
             <thead>

@@ -24,7 +24,7 @@ export function AdminRateLimitForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border border-line bg-surface p-4">
+    <form onSubmit={onSubmit} className="rounded-card border border-line bg-surface p-5">
       <h3 className="text-[13px] font-semibold text-ink">Reset a rate limit</h3>
       <div className="mt-3 space-y-2">
         <select
