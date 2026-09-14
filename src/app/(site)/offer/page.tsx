@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
+import { HomeSection } from "@/components/marketing/home-section";
 import { OfferCards } from "@/components/offer/offer-cards";
 import { OfferFlash } from "@/components/offer/offer-flash";
+import { OfferHero } from "@/components/offer/offer-hero";
+import { OfferPlate } from "@/components/offer/offer-plate";
 import { PricingFaq } from "@/components/pricing/pricing-faq";
 import { isOfferCheckoutReady } from "@/features/billing/config";
 import { fulfillOfferSession } from "@/features/billing/offer-fulfill";
@@ -32,25 +34,25 @@ export default async function OfferPage({ searchParams }: Props) {
   const ready = isOfferCheckoutReady();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+    <>
       <PageViewBeacon event="pricing_viewed" page="/offer" />
-      <p className="text-[11px] font-semibold tracking-[0.16em] text-blue uppercase">
-        Introductory offer
-      </p>
-      <h1 className="mt-4 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.2rem)] font-medium leading-[1.08] tracking-[-0.042em] text-ink">
-        Pro in US dollars.
-      </h1>
-      <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-ink-soft">
-        Six months for $99, or one year for $149. Same Pro as monthly — testimonials
-        and partner logos on your site, analytics, API, and team seats.{" "}
-        <Link href="/pricing" className="font-medium text-ink underline-offset-2 hover:underline">
-          Standard monthly pricing
-        </Link>{" "}
-        is €79.
-      </p>
-      <OfferFlash success={success} canceled={canceled} error={error} />
-      <OfferCards ready={ready} />
-      <PricingFaq items={OFFER_FAQ} />
-    </div>
+      <HomeSection tone="mute" className="!pt-12 sm:!pt-16 !pb-16 sm:!pb-20">
+        <div className="mx-auto max-w-6xl">
+          <OfferFlash success={success} canceled={canceled} error={error} />
+          <OfferHero />
+          <OfferCards ready={ready} />
+          <p className="mt-6 max-w-[70ch] text-[13.5px] leading-relaxed text-muted">
+            The Verified mark is never sold. Subscriptions renew at this price
+            until you cancel from Workspace → Billing.
+          </p>
+        </div>
+      </HomeSection>
+      <HomeSection className="!py-16 sm:!py-20">
+        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start lg:gap-16">
+          <PricingFaq items={OFFER_FAQ} title="Questions" className="mt-0" />
+          <OfferPlate />
+        </div>
+      </HomeSection>
+    </>
   );
 }

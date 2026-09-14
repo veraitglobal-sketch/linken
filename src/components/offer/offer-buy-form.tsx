@@ -11,7 +11,7 @@ function Submit({ label, dark }: { label: string; dark?: boolean }) {
     <Button
       type="submit"
       variant={dark ? "light" : "primary"}
-      className="mt-8 h-11 w-full sm:w-auto sm:min-w-[220px]"
+      className="h-11 w-full sm:w-auto sm:min-w-[220px]"
       disabled={pending}
     >
       {pending ? "Redirecting to checkout…" : label}
@@ -31,7 +31,7 @@ export function OfferBuyForm({
       <Button
         href="/contact"
         variant={sku.recommended ? "light" : "secondary"}
-        className="mt-8 h-11 w-full sm:w-auto sm:min-w-[220px]"
+        className="h-11 w-full sm:w-auto sm:min-w-[220px]"
       >
         Contact us to buy
       </Button>

@@ -1,12 +1,16 @@
 type Item = { q: string; a: string };
 
-type Props = { items: readonly Item[] };
+type Props = { items: readonly Item[]; title?: string; className?: string };
 
-export function PricingFaq({ items }: Props) {
+export function PricingFaq({
+  items,
+  title = "Billing FAQ",
+  className = "mt-16",
+}: Props) {
   return (
-    <section className="mt-16 max-w-3xl">
+    <section className={`max-w-3xl ${className}`}>
       <h2 className="font-display text-[clamp(1.6rem,3vw,2.2rem)] font-medium tracking-[-0.035em] text-ink">
-        Billing FAQ
+        {title}
       </h2>
       <div className="mt-8 divide-y divide-line border-y border-line">
         {items.map((item) => (

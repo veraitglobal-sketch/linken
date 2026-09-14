@@ -4,9 +4,7 @@ export type OfferSku = {
   id: OfferId;
   name: string;
   priceLabel: string;
-  cadence: string;
-  effective: string;
-  compare: string;
+  note: string;
   cta: string;
   recommended?: boolean;
 };
@@ -17,18 +15,14 @@ export const OFFER_SKUS: OfferSku[] = [
     id: "six",
     name: "Six months",
     priceLabel: "$99",
-    cadence: "Billed every 6 months in USD",
-    effective: "$16.50 / month equivalent",
-    compare: "Standard Pro is €79 / month.",
+    note: "Every 6 months in USD. $16.50 / month equivalent.",
     cta: "Buy six months",
   },
   {
     id: "year",
     name: "One year",
     priceLabel: "$149",
-    cadence: "Billed once a year in USD",
-    effective: "$12.42 / month equivalent",
-    compare: "Standard Pro is €79 / month.",
+    note: "Billed once a year in USD. $12.42 / month equivalent.",
     cta: "Buy one year",
     recommended: true,
   },
@@ -37,6 +31,12 @@ export const OFFER_SKUS: OfferSku[] = [
 export function parseOfferId(raw: string): OfferId | null {
   return raw === "six" || raw === "year" ? raw : null;
 }
+
+export const OFFER_INCLUDED = [
+  "Testimonials widget on your website",
+  "Partner logo widgets",
+  "Analytics, Agent API, and team seats",
+] as const;
 
 export const OFFER_FAQ = [
   {
