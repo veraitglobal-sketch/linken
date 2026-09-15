@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -13,6 +14,7 @@ import {
   BackgroundVariant,
   ConnectionMode,
   Controls,
+  MiniMap,
   ReactFlow,
   addEdge,
   applyEdgeChanges,
@@ -38,6 +40,15 @@ import { NetworkMapLegend } from "@/components/network/network-map-legend";
 import type { OwnershipSlice } from "@/components/network/network-ownership-chart";
 import { NetworkMapChrome } from "@/components/network/network-map-chrome";
 import {
+  MapCanvasToolbar,
+  MapHeader,
+  MapPalette,
+  MapStatusBar,
+  MapZoomControls,
+  type MapDirection,
+  type MapTool,
+} from "@/components/network/network-map-workspace";
+import {
   GraphSidePanel,
   type PanelMode,
 } from "@/components/network/graph-side-panel";
@@ -46,7 +57,7 @@ import {
   disconnectGraphEdge,
   reconnectStructureLink,
 } from "@/features/network/graph-actions";
-import { layoutRadial, layoutTree } from "@/features/network/layout";
+import { layoutOrg, layoutTree } from "@/features/network/layout";
 import {
   clearGraphPositions,
   graphLayoutKey,
@@ -84,6 +95,17 @@ function graphSignature(graph: NetworkGraph) {
     ...graph.nodes.map((n) => n.id).sort(),
     ...graph.edges.map((e) => e.id).sort(),
   ].join("|");
+}
+
+function usesOwnershipTree(graph: NetworkGraph) {
+  return graph.edges.some((e) => e.type === "member_of" || e.type === "subsidiary");
+}
+
+/** Ownership structure → tree; a single company's links → flow. */
+function computeLayout(graph: NetworkGraph, direction: MapDirection) {
+  return usesOwnershipTree(graph)
+    ? layoutTree(graph.nodes, graph.edges)
+    : layoutOrg(graph.nodes, graph.edges, direction);
 }
 
 /** Every primary/co-owner edge pointing at this node, resolved to names. */
@@ -136,6 +158,22 @@ export function NetworkMap({
   const [connecting, setConnecting] = useState(false);
   const [nodes, setNodes] = useNodesState<Node>([]);
   const [edges, setEdges] = useEdgesState<Edge>([]);
+  const [direction, setDirection] = useState<MapDirection>("vertical");
+  const [tool, setTool] = useState<MapTool>("pan");
+  const [showDots, setShowDots] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const shellRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sync = () => setFullscreen(document.fullscreenElement === shellRef.current);
+    document.addEventListener("fullscreenchange", sync);
+    return () => document.removeEventListener("fullscreenchange", sync);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void shellRef.current?.requestFullscreen?.();
+  }, []);
 
   const closePanel = useCallback(() => {
     setPanelOpen(false);
@@ -166,6 +204,16 @@ export function NetworkMap({
   }, []);
 
   const signature = useMemo(() => graphSignature(graph), [graph]);
+  const isTree = useMemo(() => usesOwnershipTree(graph), [graph]);
+  const auto = useMemo(() => computeLayout(graph, direction), [graph, direction]);
+  const hubId = useMemo(
+    () => resolveHubId(auto.nodes, graph.context?.focusCompanyId) ?? null,
+    [auto, graph.context?.focusCompanyId],
+  );
+  const routing = useMemo(
+    () => ({ direction: isTree ? undefined : direction, hubId }),
+    [isTree, direction, hubId],
+  );
   const groupId = graph.context?.groupId ?? null;
   const layoutKey = useMemo(() => graphLayoutKey(graph), [graph]);
   const nodesById = useMemo(
@@ -182,10 +230,10 @@ export function NetworkMap({
         const hot =
           Boolean(activeId) &&
           (e.source === activeId || e.target === activeId);
-        return toFlowEdge(e, hot, editable, posMap, nodesById);
+        return toFlowEdge(e, hot, editable, posMap, nodesById, routing);
       });
     },
-    [graph.edges, editable, nodesById],
+    [graph.edges, editable, nodesById, routing],
   );
 
   useEffect(() => {
@@ -195,16 +243,8 @@ export function NetworkMap({
       return;
     }
 
-    const usesTree = graph.edges.some(
-      (e) => e.type === "member_of" || e.type === "subsidiary",
-    );
-    const auto = usesTree
-      ? layoutTree(graph.nodes, graph.edges)
-      : layoutRadial(graph.nodes, graph.edges);
-
     // Keep user-dragged positions across refresh / data updates
-    const saved = loadGraphPositions(layoutKey);
-    const hubId = resolveHubId(auto.nodes, graph.context?.focusCompanyId);
+    const saved = loadGraphPositions(`${layoutKey}:${isTree ? "tree" : direction}`);
     const companyNodes: Node[] = auto.nodes.map((n) => ({
       id: n.id,
       type: "company",
@@ -219,13 +259,14 @@ export function NetworkMap({
         nodeId: n.id,
         editable,
         isHub: n.id === hubId,
+        direction: isTree ? undefined : direction,
       } satisfies FlowNodeData,
     }));
 
     setNodes(companyNodes);
     setEdges(buildFlowEdges(companyNodes, null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signature, layoutKey, editable, onSelect, onAdd, setNodes, setEdges, buildFlowEdges]);
+  }, [signature, layoutKey, editable, onSelect, onAdd, direction, setNodes, setEdges]);
 
   useEffect(() => {
     setNodes((prev) => {
@@ -255,9 +296,9 @@ export function NetworkMap({
 
   const persistPositions = useCallback(
     (nds: Node[]) => {
-      saveGraphPositions(layoutKey, positionsFromNodes(nds));
+      saveGraphPositions(`${layoutKey}:${isTree ? "tree" : direction}`, positionsFromNodes(nds));
     },
-    [layoutKey],
+    [layoutKey, isTree, direction],
   );
 
   const onNodesChange = useCallback(
@@ -276,16 +317,9 @@ export function NetworkMap({
   }, [buildFlowEdges, persistPositions, selectedId, setEdges, setNodes]);
 
   const resetLayout = useCallback(() => {
-    clearGraphPositions(layoutKey);
-    const usesTree = graph.edges.some(
-      (e) => e.type === "member_of" || e.type === "subsidiary",
-    );
-    const auto = usesTree
-      ? layoutTree(graph.nodes, graph.edges)
-      : layoutRadial(graph.nodes, graph.edges);
-    const hubId = resolveHubId(auto.nodes, graph.context?.focusCompanyId);
+    clearGraphPositions(`${layoutKey}:${isTree ? "tree" : direction}`);
     setNodes((prev) => {
-      const companyNodes: Node[] = auto.nodes.map((n) => {
+      const next: Node[] = auto.nodes.map((n) => {
         const existing = prev.find((p) => p.id === n.id);
         return {
           id: n.id,
@@ -301,20 +335,25 @@ export function NetworkMap({
             nodeId: n.id,
             editable,
             isHub: n.id === hubId,
+            direction: isTree ? undefined : direction,
           } satisfies FlowNodeData,
         };
       });
-      return companyNodes;
+      setEdges(buildFlowEdges(next, selectedId));
+      return next;
     });
   }, [
+    auto,
+    buildFlowEdges,
+    direction,
     editable,
-    graph.context?.focusCompanyId,
-    graph.edges,
-    graph.nodes,
+    hubId,
+    isTree,
     layoutKey,
     onSelect,
     onAdd,
     selectedId,
+    setEdges,
     setNodes,
   ]);
 
@@ -452,9 +491,205 @@ export function NetworkMap({
 
   const showOwnershipLegend = graph.edges.some((e) => e.type === "subsidiary");
   const showCoOwnerLegend = graph.edges.some((e) => e.type === "co_owner");
-  const showPartnerLegend = graph.edges.some(
-    (e) => e.type === "partner" || e.type === "client",
+  const showPartnerLegend = graph.edges.some((e) => e.type === "partner");
+  const showClientLegend = graph.edges.some((e) => e.type === "client");
+
+  const legend = (inline: boolean) => (
+    <NetworkMapLegend
+      showOwnership={showOwnershipLegend}
+      showCoOwner={showCoOwnerLegend}
+      showPartner={showPartnerLegend}
+      showClient={showClientLegend}
+      inline={inline}
+    />
   );
+
+  const openAdd = () => {
+    setPanelMode("add");
+    setPanelOpen(true);
+    if (!selected) {
+      setSelectedId(null);
+      setSelected(null);
+    }
+  };
+  const addHref =
+    companySlug && !groupId ? `/c/${companySlug}?add=1#add-partner` : null;
+
+  const flow = (workspace: boolean) => (
+    <ReactFlow
+      key={signature}
+      nodes={nodes}
+      edges={edges}
+      nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={editable ? onConnect : undefined}
+      onConnectStart={editable ? () => setConnecting(true) : undefined}
+      onConnectEnd={editable ? () => setConnecting(false) : undefined}
+      onReconnect={editable ? onReconnect : undefined}
+      onNodeDragStop={onNodeDragStop}
+      connectionMode={ConnectionMode.Loose}
+      fitView
+      fitViewOptions={{ padding: 0.25, maxZoom: 1.2 }}
+      minZoom={0.3}
+      maxZoom={1.5}
+      nodesDraggable
+      nodesConnectable={editable}
+      edgesReconnectable={editable}
+      elementsSelectable
+      deleteKeyCode={editable ? ["Backspace", "Delete"] : null}
+      selectNodesOnDrag={false}
+      selectionOnDrag={workspace && tool === "select"}
+      panOnDrag={workspace && tool === "select" ? [1, 2] : true}
+      panOnScroll
+      zoomOnScroll
+      zoomOnDoubleClick
+      preventScrolling
+      proOptions={{ hideAttribution: true }}
+      defaultEdgeOptions={{ type: "smoothstep" }}
+      connectionLineStyle={{ stroke: "var(--blue)", strokeWidth: 1.25 }}
+      onPaneClick={closePanel}
+      className="linken-flow-canvas"
+    >
+      {!workspace || showDots ? (
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={20}
+          size={1.2}
+          color="#d9dfda"
+          bgColor="transparent"
+        />
+      ) : null}
+      {workspace ? (
+        <>
+          <MapCanvasToolbar
+            tool={tool}
+            onTool={setTool}
+            direction={isTree ? null : direction}
+            onDirection={setDirection}
+            onArrange={resetLayout}
+          />
+          <MapZoomControls startId={hubId} />
+          <MiniMap
+            position="bottom-right"
+            pannable
+            zoomable
+            className="!m-4 !h-[124px] !w-[190px] overflow-hidden !rounded-md !border-[6px] !border-navy !bg-surface"
+            maskColor="rgba(14,31,28,0.06)"
+            nodeBorderRadius={3}
+            nodeColor={(n) => {
+              const d = n.data as FlowNodeData;
+              if (d.isHub) return "#0e1f1c";
+              return d.kind === "partner" ? "#9fd24a" : d.kind === "client" ? "#8a948f" : "#2b3a36";
+            }}
+          />
+        </>
+      ) : (
+        <Controls showInteractive={false} position="bottom-left" className="!m-5" />
+      )}
+    </ReactFlow>
+  );
+
+  const sidePanel = (
+    <GraphSidePanel
+      open={panelOpen}
+      mode={panelMode}
+      selected={selected}
+      owners={selectedOwners}
+      context={graph.context}
+      editable={editable}
+      onClose={closePanel}
+      onOpenAdd={() => setPanelMode("add")}
+      onFlash={flash}
+    />
+  );
+
+  const errorToast = error ? (
+    <div className="absolute top-4 left-1/2 z-30 max-w-sm -translate-x-1/2 rounded-full border border-line bg-surface px-4 py-2 text-center text-[12px] font-medium text-ink shadow-card">
+      {error}
+    </div>
+  ) : null;
+
+  /* Dashboard: builder layout — header, then palette + canvas in one surface. */
+  if (companySlug) {
+    const mapTitle =
+      (graph.context?.focusCompanyId
+        ? graph.nodes.find((n) => n.id === `company:${graph.context?.focusCompanyId}`)?.data.name
+        : null) ??
+      graph.nodes.find((n) => n.data.kind === "group")?.data.name ??
+      graph.nodes[0]?.data.name ??
+      title;
+    return (
+      <div
+        ref={shellRef}
+        className={`linken-flow flex h-full w-full flex-col gap-3 bg-[#f4f6f1] p-3 sm:p-4${connecting ? " linken-flow-connecting" : ""}`}
+      >
+        <MapHeader
+          title={mapTitle}
+          eyebrow={title}
+          slug={companySlug}
+          editable={editable}
+          pendingInviteCount={pendingInviteCount}
+          onAdd={openAdd}
+          addHref={addHref}
+          showDots={showDots}
+          onToggleDots={() => setShowDots((v) => !v)}
+          fullscreen={fullscreen}
+          onToggleFullscreen={toggleFullscreen}
+          onReset={resetLayout}
+          structureTools={
+            groupId ? (
+              <div className="flex items-center gap-1 rounded-xl bg-white/[0.06] p-1 ring-1 ring-white/20">
+                {(
+                  [
+                    ["structure", "Ownership", "Drag parent → child"],
+                    ["co_owner", "Shared", "Propose shared ownership — the other side must confirm"],
+                  ] as const
+                ).map(([m, label, hint]) => (
+                  <button
+                    key={m}
+                    type="button"
+                    title={hint}
+                    onClick={() => setMode(m)}
+                    className={`h-8 rounded-lg px-3 text-[13px] font-semibold transition-colors ${
+                      mode === m ? "bg-lime text-navy" : "text-on-navy-soft hover:text-on-navy"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            ) : null
+          }
+        />
+        <div className="flex min-h-0 flex-1 overflow-hidden rounded-[20px] bg-surface ring-1 ring-line/70">
+          <MapPalette
+            nodes={graph.nodes}
+            selectedId={selectedId}
+            onSelect={onSelect}
+            onAdd={openAdd}
+            addHref={addHref}
+            isGroup={Boolean(groupId)}
+            editable={editable}
+          />
+          <div className="relative flex min-w-0 flex-1 flex-col">
+            <div className="linken-flow-stage relative min-h-0 flex-1 bg-surface">
+              <NetworkHint visible={editable && firmCount === 1 && !panelOpen} />
+              {errorToast}
+              {flow(true)}
+              {sidePanel}
+            </div>
+            <MapStatusBar
+              counts={countLabels}
+              pendingInviteCount={pendingInviteCount}
+              legend={legend(true)}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -467,99 +702,18 @@ export function NetworkMap({
         mode={mode}
         onMode={setMode}
         onReset={resetLayout}
-        onAdd={() => {
-          setPanelMode("add");
-          setPanelOpen(true);
-          if (!selected) {
-            setSelectedId(null);
-            setSelected(null);
-          }
-        }}
-        addHref={
-          companySlug && !groupId
-            ? `/c/${companySlug}?add=1#add-partner`
-            : null
-        }
+        onAdd={openAdd}
+        addHref={addHref}
         showStructureTools={Boolean(groupId)}
         pendingInviteCount={pendingInviteCount}
         companySlug={companySlug}
       />
 
       <NetworkHint visible={editable && firmCount === 1 && !panelOpen} />
-
-      {error ? (
-        <div className="absolute top-14 left-1/2 z-30 max-w-sm -translate-x-1/2 rounded-tile border border-line bg-surface px-3.5 py-2 text-center text-[12px] font-medium text-ink">
-          {error}
-        </div>
-      ) : null}
-
-      <ReactFlow
-        key={signature}
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={editable ? onConnect : undefined}
-        onConnectStart={editable ? () => setConnecting(true) : undefined}
-        onConnectEnd={editable ? () => setConnecting(false) : undefined}
-        onReconnect={editable ? onReconnect : undefined}
-        onNodeDragStop={onNodeDragStop}
-        connectionMode={ConnectionMode.Loose}
-        fitView
-        fitViewOptions={{ padding: 0.24, maxZoom: 1.25 }}
-        minZoom={0.3}
-        maxZoom={1.5}
-        nodesDraggable
-        nodesConnectable={editable}
-        edgesReconnectable={editable}
-        elementsSelectable
-        deleteKeyCode={editable ? ["Backspace", "Delete"] : null}
-        selectNodesOnDrag={false}
-        selectionOnDrag={false}
-        panOnDrag
-        panOnScroll
-        zoomOnScroll
-        zoomOnDoubleClick
-        preventScrolling
-        proOptions={{ hideAttribution: true }}
-        defaultEdgeOptions={{ type: "smoothstep" }}
-        connectionLineStyle={{ stroke: "var(--blue)", strokeWidth: 1.25 }}
-        onPaneClick={closePanel}
-        className="linken-flow-canvas"
-      >
-        <Background
-          variant={BackgroundVariant.Dots}
-          gap={22}
-          size={1}
-          color="var(--line)"
-          bgColor="transparent"
-        />
-        <Controls
-          showInteractive={false}
-          position="bottom-left"
-          className="!m-5"
-        />
-      </ReactFlow>
-
-      <NetworkMapLegend
-        showOwnership={showOwnershipLegend}
-        showCoOwner={showCoOwnerLegend}
-        showPartner={showPartnerLegend}
-      />
-
-      <GraphSidePanel
-        open={panelOpen}
-        mode={panelMode}
-        selected={selected}
-        owners={selectedOwners}
-        context={graph.context}
-        editable={editable}
-        onClose={closePanel}
-        onOpenAdd={() => setPanelMode("add")}
-        onFlash={flash}
-      />
+      {errorToast}
+      {flow(false)}
+      {legend(false)}
+      {sidePanel}
     </div>
   );
 }

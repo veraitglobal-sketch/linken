@@ -27,6 +27,17 @@ export async function updateSession(request: NextRequest) {
     .getAll()
     .some((c) => c.name.startsWith("sb-") && c.name.includes("auth-token"));
   if (!hasAuthCookie) {
+    /* The workspace is for signed-in owners. Without a session, send them to
+       sign in and bring them back to the page they asked for — instead of an
+       empty "Sign in to open your workspace" shell. */
+    if (request.nextUrl.pathname.startsWith("/dashboard")) {
+      const login = request.nextUrl.clone();
+      login.pathname = "/login";
+      login.search = `?next=${encodeURIComponent(
+        request.nextUrl.pathname + request.nextUrl.search,
+      )}`;
+      return NextResponse.redirect(login);
+    }
     return supabaseResponse;
   }
 

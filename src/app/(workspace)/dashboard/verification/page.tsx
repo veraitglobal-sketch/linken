@@ -11,6 +11,7 @@ import {
   methodLabel,
   VerificationError,
   VerificationSuccess,
+  verificationFlashOk,
 } from "@/components/verification/verification-flash";
 import { extractDomain, domainsMatch } from "@/features/verification/domain";
 import { getEmailVerificationContext } from "@/features/verification/email-verification-context";
@@ -32,6 +33,7 @@ type Props = {
     ok?: string;
     domainChanged?: string;
     sent?: string;
+    linkError?: string;
   }>;
 };
 
@@ -106,21 +108,18 @@ export default async function DashboardVerificationPage({
       })
     : null;
 
-  const flashOk =
-    params.verified === "email" ||
-    params.verified === "dns" ||
-    params.verified === "meta"
-      ? params.verified
-      : params.linked === "1"
-        ? "linked"
-        : params.ok === "logo"
-          ? "logo"
-          : undefined;
+  const flashOk = verificationFlashOk(params);
 
   return (
     <WorkspacePage
       title="Prove domain ownership"
       description="Verified companies earn stronger trust on the public profile. Subsidiaries verify their own domains separately."
+      wide
+      stats={[
+        { label: "Domain", value: domain ?? "—" },
+        { label: "Status", value: verified ? "Verified" : "Not yet", attention: !verified },
+        ...(verified && verification?.method ? [{ label: "Method", value: methodLabel(verification.method) }] : []),
+      ]}
       action={
         <Link
           href={`/c/${company.slug}/edit`}
@@ -151,9 +150,6 @@ export default async function DashboardVerificationPage({
             {flashOk ? (
               <VerificationSuccess message={flashSuccessMessage(flashOk)!} />
             ) : null}
-            {params.error ? (
-              <VerificationError message={params.error} />
-            ) : null}
             <VerificationDone
               domain={domain}
               method={verification?.method ?? null}
@@ -163,6 +159,11 @@ export default async function DashboardVerificationPage({
             <VerificationLinked
               companySlug={company.slug}
               linked={Boolean(verification?.websiteLinked)}
+              checkNote={
+                params.linked === "0"
+                  ? "No Hansala profile link found on the homepage yet. Domain Verified is unchanged."
+                  : params.linkError ?? null
+              }
             />
           </>
         ) : (

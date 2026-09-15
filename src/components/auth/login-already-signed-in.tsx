@@ -6,7 +6,7 @@ type Props = { email: string; next: string; staff?: boolean };
 
 export function LoginAlreadySignedIn({ email, next, staff }: Props) {
   return (
-    <div className="relative flex flex-col justify-center border-t border-line bg-[#fbfbfc] px-6 py-8 sm:px-9 sm:py-10 lg:border-t-0 lg:border-l lg:border-white/10">
+    <div className="relative flex flex-col justify-center bg-surface px-6 py-10 sm:px-10 lg:px-16">
       <p className="text-[11px] font-semibold tracking-[0.16em] text-[#1a5c51] uppercase">
         Already signed in
       </p>

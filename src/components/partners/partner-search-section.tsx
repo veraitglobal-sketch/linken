@@ -13,6 +13,8 @@ type Props = {
   /** Return path after invite (e.g. /c/slug#partners). */
   backPath?: string;
   fromSlug?: string;
+  searchAction?: string;
+  searchKind?: string;
 };
 
 export function PartnerSearchSection({
@@ -23,6 +25,8 @@ export function PartnerSearchSection({
   statusBySlug,
   backPath = "/dashboard/partners",
   fromSlug,
+  searchAction = "/dashboard/partners",
+  searchKind,
 }: Props) {
   return (
     <section>
@@ -36,10 +40,11 @@ export function PartnerSearchSection({
       </header>
 
       <WorkspaceCard className="mb-4">
-        <form action="/dashboard/partners" method="get">
+        <form action={searchAction} method="get">
           {fromSlug ? (
             <input type="hidden" name="from" value={fromSlug} />
           ) : null}
+          {searchKind ? <input type="hidden" name="kind" value={searchKind} /> : null}
           <Input
             name="q"
             defaultValue={q}

@@ -1,44 +1,54 @@
+import Link from "next/link";
+import { AuthNetworkField } from "@/components/auth/auth-network-field";
+import { NetworkMark } from "@/components/marketing/network-mark";
+
 type Props = { intent?: "company" | "staff" };
 
+/**
+ * Left half of the sign-in screen: the mark, large and centred, over a quiet
+ * drawing of a confirmed network on deep navy. The centre is kept clear so
+ * the network frames the mark rather than crossing it.
+ */
 export function LoginStage({ intent = "company" }: Props) {
   const staff = intent === "staff";
+  const year = new Date().getFullYear();
 
   return (
-    <div className="relative flex min-h-[280px] flex-col justify-between overflow-hidden px-7 py-8 text-white sm:px-10 sm:py-10 lg:min-h-full">
-      <div className="mesh-stage absolute inset-0" />
-      <div className="stage-grain absolute inset-0 z-[1]" />
+    <div className="relative flex min-h-[340px] flex-col overflow-hidden bg-navy px-6 py-6 text-on-navy sm:px-10 lg:min-h-dvh">
+      <AuthNetworkField />
 
-      <div className="relative z-10 animate-rise">
-        <div className="flex items-center gap-3">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#7eb8a4]" aria-hidden />
-          <p className="text-[11px] font-semibold tracking-[0.16em] text-[#c5cdc8] uppercase">
-            {staff ? "Staff" : "Company access"}
-          </p>
-        </div>
-      </div>
+      <Link
+        href="/"
+        className="relative z-10 inline-flex w-fit items-center gap-2 rounded-full px-3 py-2 text-[13px] font-semibold text-on-navy-soft transition-colors hover:bg-white/10 hover:text-on-navy"
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+          <path d="M13 8H3m4-4L3 8l4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Back to site
+      </Link>
 
-      <div className="relative z-10 animate-rise-delay max-w-md py-8">
-        <p className="font-display text-[clamp(2.4rem,4vw,3.4rem)] leading-[0.95] font-medium tracking-[-0.045em]">
-          Sign in to
-          <span className="mt-1 block text-[#c5cdc8]">
-            {staff ? "the platform." : "your workspace."}
-          </span>
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center py-10 text-center">
+        <span className="animate-rise grid size-28 place-items-center rounded-[32px] bg-lime text-navy ring-8 ring-white/[0.04] sm:size-36 sm:rounded-[40px]">
+          <NetworkMark size={112} animate={false} />
+        </span>
+        <p className="animate-rise-delay mt-8 font-display text-[44px] leading-none font-semibold tracking-[-0.04em] sm:text-[52px]">
+          Hansala
         </p>
-        <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-[#d4dbd6]">
+        <p className="animate-rise-delay mt-5 max-w-sm text-[17px] leading-relaxed text-on-navy">
           {staff
-            ? "Staff accounts only. A company login cannot open this."
-            : "One owner per company. Manage the profile, case studies, and partner confirmations from a single place."}
+            ? "Staff accounts only."
+            : "A record of who works with whom, confirmed by both sides."}
+        </p>
+        <p className="animate-rise-late mt-3 max-w-xs text-[14px] leading-relaxed text-on-navy-soft">
+          {staff
+            ? "A company login cannot open this."
+            : "Profile, partners and proof of work in one place."}
         </p>
       </div>
 
-      <div className="relative z-10 animate-rise-late border-t border-white/15 pt-6">
-        <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9ec9b8] uppercase">
-          After you enter
-        </p>
-        <p className="mt-3 font-display text-[clamp(1.25rem,2vw,1.55rem)] leading-snug tracking-[-0.03em] text-white">
-          {staff ? "Records. Moderation. Audit." : "Profile. Partners. Proof of work."}
-        </p>
-      </div>
+      <p className="relative z-10 text-center text-[12px] text-on-navy-muted">
+        © {year} Hansala
+      </p>
     </div>
   );
 }

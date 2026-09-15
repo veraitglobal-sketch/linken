@@ -32,6 +32,13 @@ export type LogoWallOverride = {
 /** Invalid values fall back to "light". */
 export type LogoWallBackground = "transparent" | "light" | "dark" | string;
 
+/** Colour of partner logos: auto follows the background (ink on light, white on dark). */
+export type LogoWallTone = "auto" | "original" | "ink" | "white";
+
+export function parseLogoWallTone(raw: unknown): LogoWallTone {
+  return raw === "original" || raw === "ink" || raw === "white" ? raw : "auto";
+}
+
 export type LogoWallSettings = {
   excludedCompanyIds: string[];
   order: string[];
@@ -40,6 +47,7 @@ export type LogoWallSettings = {
   limit: number;
   motion: LogoMotion;
   size: LogoSize;
+  tone: LogoWallTone;
   overrides: Record<string, LogoWallOverride>;
 };
 
@@ -135,6 +143,7 @@ export function parseWidgetSettings(raw: unknown): WidgetSettings {
       limit,
       motion,
       size,
+      tone: parseLogoWallTone(lw.tone),
       overrides,
     },
     placements: parsePlacements(obj.placements),

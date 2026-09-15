@@ -5,9 +5,14 @@ import { runBacklinkCheck } from "@/features/verification/actions";
 type Props = {
   companySlug: string;
   linked: boolean;
+  checkNote?: string | null;
 };
 
-export function VerificationLinked({ companySlug, linked }: Props) {
+export function VerificationLinked({
+  companySlug,
+  linked,
+  checkNote,
+}: Props) {
   return (
     <div className="rounded-2xl border border-line bg-surface px-4 py-4 shadow-[0_1px_0_rgba(8,20,18,0.03)] sm:px-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -39,6 +44,9 @@ export function VerificationLinked({ companySlug, linked }: Props) {
           </form>
         </div>
       </div>
+      {checkNote ? (
+        <p className="mt-3 text-[12px] leading-relaxed text-muted">{checkNote}</p>
+      ) : null}
     </div>
   );
 }

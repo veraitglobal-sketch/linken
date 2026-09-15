@@ -112,6 +112,12 @@ export default async function DashboardWidgetsPage() {
       title="Widgets"
       description="The mark is free. Testimonials and partner logos on your site are Pro."
       wide
+      stats={[
+        { label: "Plan", value: isPro ? "Pro" : "Free" },
+        { label: "Domain", value: domainReady ? "Verified" : "Not yet", attention: !domainReady },
+        { label: "Partner logos", value: wallCandidates.length },
+        { label: "Testimonials", value: publishedTestimonials },
+      ]}
       action={
         <Link
           href={`/c/${company.slug}`}
@@ -133,6 +139,7 @@ export default async function DashboardWidgetsPage() {
           limit={wallSettings.limit}
           motion={wallSettings.motion}
           size={wallSettings.size}
+          tone={wallSettings.tone}
         />
         <div className="rounded-2xl border border-line bg-surface px-5 py-4">
           <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">

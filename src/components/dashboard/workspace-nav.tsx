@@ -13,13 +13,21 @@ import type { WorkspaceContextType } from "@/features/workspace/types";
 import type { WorkspaceSection } from "@/features/workspace/sections";
 import { PRODUCT } from "@/lib/product-model";
 
-function NavList({ items, pathname }: { items: NavItem[]; pathname: string }) {
+function NavList({
+  items,
+  pathname,
+  compact,
+}: {
+  items: NavItem[];
+  pathname: string;
+  compact?: boolean;
+}) {
   if (items.length === 0) return null;
   return (
-    <ul className="space-y-0.5">
+    <ul className={compact ? "flex flex-col items-center gap-1.5" : "space-y-1"}>
       {items.map((item) => (
         <li key={item.href}>
-          <WorkspaceNavLink item={item} pathname={pathname} />
+          <WorkspaceNavLink item={item} pathname={pathname} compact={compact} />
         </li>
       ))}
     </ul>
@@ -33,6 +41,8 @@ type Props = {
   allowedSections?: WorkspaceSection[] | null;
   /** Company book with referrals / partner — Earnings under More. */
   showDeveloperNav?: boolean;
+  /** Icon rail (desktop shell). */
+  compact?: boolean;
 };
 
 export function WorkspaceNav({
@@ -41,6 +51,7 @@ export function WorkspaceNav({
   contextType,
   allowedSections = null,
   showDeveloperNav = false,
+  compact = false,
 }: Props) {
   const pathname = usePathname();
   const isGroup = contextType === "group";
@@ -56,10 +67,24 @@ export function WorkspaceNav({
   const main = filter(primaryNav(companySlug));
   const more = filter(moreNav({ showDeveloper: showDeveloperNav }));
 
+  if (compact) {
+    return (
+      <nav className="flex flex-col items-center gap-3" aria-label="Workspace">
+        <NavList items={main} pathname={pathname} compact />
+        {more.length > 0 ? (
+          <>
+            <span aria-hidden className="h-px w-8 bg-line" />
+            <NavList items={more} pathname={pathname} compact />
+          </>
+        ) : null}
+      </nav>
+    );
+  }
+
   return (
-    <nav className="flex flex-col gap-6" aria-label="Workspace">
+    <nav className="flex flex-col gap-5" aria-label="Workspace">
       <div>
-        <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
+        <p className="mb-2 px-3 font-label text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
           Main
         </p>
         <NavList items={main} pathname={pathname} />
@@ -67,7 +92,7 @@ export function WorkspaceNav({
 
       {more.length > 0 ? (
         <div>
-          <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
+          <p className="mb-2 px-3 font-label text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
             {PRODUCT.operate.label}
           </p>
           <NavList items={more} pathname={pathname} />
@@ -76,7 +101,7 @@ export function WorkspaceNav({
 
       {groupSlug && !companySlug ? (
         <div>
-          <p className="mb-1.5 px-2.5 text-[10px] font-semibold tracking-[0.14em] text-plus uppercase">
+          <p className="mb-2 px-3 font-label text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
             Open
           </p>
           <ul className="space-y-0.5">

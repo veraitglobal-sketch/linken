@@ -2,7 +2,9 @@ import type { NetworkGraph } from "@/features/network/types";
 
 export type StoredPosition = { x: number; y: number };
 
-const PREFIX = "linken:graph-layout:v3:";
+/* v4: org-chart layout — positions dragged in the old radial layout would
+   scatter the new tree, so they are not carried over. */
+const PREFIX = "linken:graph-layout:v4:";
 
 export function graphLayoutKey(graph: NetworkGraph): string {
   const ctx = graph.context;

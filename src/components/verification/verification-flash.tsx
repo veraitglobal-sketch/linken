@@ -63,3 +63,20 @@ export function methodLabel(method: string) {
   if (method === "meta_tag") return "Meta / file";
   return method;
 }
+
+export function verificationFlashOk(params: {
+  verified?: string;
+  linked?: string;
+  ok?: string;
+}): "email" | "dns" | "meta" | "linked" | "logo" | undefined {
+  if (
+    params.verified === "email" ||
+    params.verified === "dns" ||
+    params.verified === "meta"
+  ) {
+    return params.verified;
+  }
+  if (params.linked === "1") return "linked";
+  if (params.ok === "logo") return "logo";
+  return undefined;
+}

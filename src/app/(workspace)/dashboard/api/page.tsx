@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ApiAgentGuide } from "@/components/api/api-agent-guide";
+import { McpConnectCard } from "@/components/integrations/mcp-connect-card";
 import { ApiAuditList } from "@/components/api/api-audit-list";
 import { ApiKeysPanel } from "@/components/api/api-keys-panel";
 import { ApiWebhooksPanel } from "@/components/api/api-webhooks-panel";
@@ -95,6 +96,12 @@ export default async function DashboardApiPage() {
     <WorkspacePage
       title="API"
       description="Keys act as your company."
+      wide
+      stats={[
+        { label: "Keys", value: keys.length },
+        { label: "Webhooks", value: endpoints.length },
+        { label: "Recent calls", value: audit.length },
+      ]}
       action={
         <Link
           href="/developers#agent-api"
@@ -105,6 +112,7 @@ export default async function DashboardApiPage() {
       }
     >
       <div className="space-y-10">
+        <McpConnectCard hasApiAccess={canAgentApi} />
         <ApiAgentGuide />
         <ApiKeysPanel keys={keys} />
         <ApiWebhooksPanel endpoints={endpoints} deliveries={deliveries} />

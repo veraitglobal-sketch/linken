@@ -6,17 +6,11 @@ import {
 import { cn } from "@/lib/cn";
 
 /**
- * One connectable thing: mark, name, what it does, one action.
- *
- * The page was two full-width sections stacked, each a paragraph of prose with
- * a button at the bottom, so three integrations filled a screen and a half and
- * the thing you came to do was the last thing on each. A card says the same in
- * a glance and three sit in one row.
+ * One connectable thing as an app-directory row: the provider's own mark,
+ * name, what connecting it does, status and one action.
  *
  * The marks are the providers' own SVGs from `public/logos/integrations`,
- * inlined by `IntegrationMark` rather than fetched as images. Drawing our own
- * approximation of someone else's logo would be both worse design and worse
- * manners.
+ * inlined by `IntegrationMark` — never our approximation of their logo.
  */
 
 type Props = {
@@ -25,11 +19,11 @@ type Props = {
   /** One line. What connecting it actually does for them. */
   purpose: string;
   connected?: boolean;
-  /** Shown under the name when connected — the account, workspace or link. */
+  /** Shown under the purpose when connected — the account, workspace or link. */
   detail?: ReactNode;
-  /** Connect / disconnect control, or a note when the provider is unavailable. */
+  /** Connect / disconnect control. */
   action: ReactNode;
-  /** Greyed with a reason rather than a dead button. */
+  /** Why it cannot be connected here — shown instead of a dead button. */
   blockedReason?: string;
 };
 
@@ -45,48 +39,39 @@ export function IntegrationCard({
   return (
     <section
       className={cn(
-        "flex flex-col items-center rounded-2xl border bg-surface px-5 py-6 text-center",
-        connected ? "border-ink/25" : "border-line",
+        "flex flex-wrap items-center gap-4 rounded-2xl bg-surface p-4 sm:flex-nowrap sm:p-5",
+        connected ? "ring-1 ring-navy/25 shadow-[0_10px_24px_-18px_rgba(14,31,28,0.5)]" : "ring-1 ring-line/80",
       )}
     >
       <span
         className={cn(
-          "grid h-12 w-12 place-items-center rounded-xl border border-line bg-paper",
-          blockedReason && "opacity-40",
+          "grid size-14 shrink-0 place-items-center rounded-2xl bg-[#fafbf9] ring-1 ring-line",
+          blockedReason && !connected && "opacity-45",
         )}
       >
         <IntegrationMark name={mark} />
       </span>
 
-      <p className="mt-3 text-[14px] font-semibold tracking-[-0.01em] text-ink">
-        {name}
-      </p>
-      <p className="mt-1 max-w-[24ch] text-[12.5px] leading-snug text-muted">
-        {purpose}
-      </p>
+      <div className="min-w-0 flex-1">
+        <p className="text-[15px] font-semibold tracking-[-0.01em] text-ink">{name}</p>
+        <p className="mt-1 text-[13px] leading-snug text-muted">{purpose}</p>
+        {detail ? <div className="mt-1.5 min-w-0 truncate text-[13px] font-medium text-ink">{detail}</div> : null}
+        {blockedReason && !connected ? (
+          <p className="mt-1.5 text-[12.5px] leading-snug text-ink-soft">{blockedReason}</p>
+        ) : null}
+      </div>
 
-      {connected ? (
-        <p className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.1em] text-[#1f7a56] uppercase">
-          <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#1f7a56]" />
-          Connected
-        </p>
-      ) : null}
-
-      {detail ? (
-        <div className="mt-2 w-full text-[12px] break-words text-muted">
-          {detail}
-        </div>
-      ) : null}
-
-      {/* `mt-auto` so the actions line up across the row however long the
-          purpose lines wrap — three cards of different text heights otherwise
-          put three buttons at three different heights. */}
-      <div className="mt-auto w-full pt-4">
-        {blockedReason ? (
-          <p className="text-[12px] leading-snug text-muted">{blockedReason}</p>
-        ) : (
-          action
-        )}
+      <div className="flex w-full shrink-0 items-center justify-between gap-3 sm:w-auto sm:justify-end">
+        <span
+          className={cn(
+            "inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-semibold",
+            connected ? "bg-lime-soft text-navy" : "text-muted ring-1 ring-line",
+          )}
+        >
+          <span className={cn("size-1.5 rounded-full", connected ? "bg-navy" : "bg-line")} />
+          {connected ? "Connected" : "Not connected"}
+        </span>
+        {blockedReason && !connected ? null : action}
       </div>
     </section>
   );

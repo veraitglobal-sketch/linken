@@ -121,8 +121,19 @@ export default async function DashboardInboxPage({ searchParams }: Props) {
 
   return (
     <WorkspacePage
+      wide
       title={PRODUCT.inbox.label}
       description={PRODUCT.inbox.job}
+      stats={[
+        { label: "New inquiries", value: inquiryData.newCount, attention: inquiryData.newCount > 0 },
+        {
+          label: "Partner requests",
+          value: partnerInbox.incomingPending.length,
+          attention: partnerInbox.incomingPending.length > 0,
+        },
+        { label: "Confirmations", value: requestsPendingCount, attention: requestsPendingCount > 0 },
+        { label: "Intros", value: intros.length },
+      ]}
     >
       <div className="space-y-5">
         <OwnerLoopBar companySlug={company.slug} active="inbox" />

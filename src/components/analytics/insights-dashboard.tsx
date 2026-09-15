@@ -74,6 +74,12 @@ export function InsightsDashboard({ analytics, plan }: Props) {
       wide
       title="Insights"
       description="How your public profile performs — visits, inquiries, and traffic sources."
+      stats={[
+        { label: "Profile views", value: analytics.profileViews },
+        { label: "Widget views", value: analytics.embedViews },
+        { label: "Widget clicks", value: analytics.embedClicks },
+        { label: "Inquiries", value: analytics.inquiries, attention: analytics.inquiries > 0 },
+      ]}
       action={
         <span className="inline-flex h-9 items-center rounded-full border border-line bg-surface px-3.5 text-[11px] font-semibold text-ink">
           Last {analytics.days} days

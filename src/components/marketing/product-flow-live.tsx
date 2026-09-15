@@ -10,9 +10,15 @@ import { ProductFlowScreen } from "@/components/marketing/product-flow-screen";
 import { FlowStage } from "@/components/marketing/product-flow-stage";
 import { FlowAppWindow } from "@/components/marketing/product-flow-window";
 
-/** Left frame — live add → confirm → public loop (same as before the split). */
-export function ProductFlowLive() {
-  const [rawStep, setStep] = useState(0);
+/**
+ * The add → confirm → public loop, shared by the film screen and the hero.
+ * Pauses off-screen, holds the end state under reduced motion, and `jump`
+ * lets a tab restart the loop from a chosen step.
+ */
+/** `doneMs` lets a caller hold the finished, connected state longer than the
+ *  film timeline does — the hero opens on it. */
+export function useFlowLoop(startAt = 0, doneMs?: number) {
+  const [rawStep, setStep] = useState(startAt);
   const [still, setStill] = useState(false);
   const [onScreen, setOnScreen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -43,19 +49,29 @@ export function ProductFlowLive() {
     if (!running) return;
     const id = window.setTimeout(
       () => setStep((s) => (s >= FLOW_LAST_STEP ? 0 : s + 1)),
-      FLOW_DURATIONS[step],
+      step === FLOW_DONE_STEP && doneMs ? doneMs : FLOW_DURATIONS[step],
     );
     return () => window.clearTimeout(id);
-  }, [running, step]);
+  }, [running, step, doneMs]);
 
-  const scene = step >= 6 && step <= 7 ? "confirm" : "workspace";
-  const confirmed = step >= FLOW_DONE_STEP;
+  return {
+    ref,
+    step,
+    still,
+    jump: setStep,
+    scene: (step >= 6 && step <= 7 ? "confirm" : "workspace") as
+      | "confirm"
+      | "workspace",
+    confirmed: step >= FLOW_DONE_STEP,
+  };
+}
+
+/** Film frame — live add → confirm → public loop. */
+export function ProductFlowLive() {
+  const { ref, step, scene, confirmed } = useFlowLoop();
 
   return (
     <div ref={ref}>
-      {/* Covers the whole loop now that this is the only screen: the static
-          confirm panel that used to sit beside it is gone, and this one already
-          switches scene to confirm mid-cycle. */}
       <ProductFlowScreen caption="You add them. They confirm. Only then does the record go live.">
         <FlowStage>
           <FlowAppWindow

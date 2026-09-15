@@ -1,10 +1,15 @@
 import type { PricingCompareRow } from "@/features/plan/pricing";
 
-function Cell({ value }: { value: string | boolean }) {
+function Cell({ value, pro }: { value: string | boolean; pro?: boolean }) {
   if (value === true) {
     return (
-      <span className="font-medium text-[#1a5c51]" aria-label="Included">
-        Included
+      <span className="inline-flex items-center gap-2 font-semibold text-ink">
+        <span className={`grid size-5 place-items-center rounded-full ${pro ? "bg-lime" : "bg-lime-soft"} text-navy`}>
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+            <path d="m2.5 6.5 2.2 2.2L9.5 3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <span className="sr-only">Included</span>
       </span>
     );
   }
@@ -18,41 +23,43 @@ function Cell({ value }: { value: string | boolean }) {
   return <span className="text-ink-soft">{value}</span>;
 }
 
-/** Mobile-first comparison — stacked cards, not a wide table. */
+/** Feature table — Free and Pro side by side; scrolls sideways on a phone. */
 export function PricingCompare({ rows }: { rows: PricingCompareRow[] }) {
   return (
-    <div className="mt-10 space-y-3">
-      {rows.map((row) => (
-        <div
-          key={row.feature}
-          className="rounded-[20px] border border-line bg-surface px-4 py-4 sm:px-5"
-        >
-          <p className="font-display text-[15px] font-medium tracking-[-0.015em] text-ink">
-            {row.feature}
-          </p>
-          {row.note ? (
-            <p className="mt-1 text-[12px] text-muted">{row.note}</p>
-          ) : null}
-          <dl className="mt-3 grid gap-2 sm:grid-cols-2">
-            <div className="rounded-xl bg-paper px-3 py-2.5">
-              <dt className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
-                Free
-              </dt>
-              <dd className="mt-1 text-[13.5px]">
+    <div className="relative overflow-x-auto rounded-[28px] bg-surface ring-1 ring-line/80">
+      <table className="w-full min-w-[640px] border-collapse text-left text-[15px]">
+        <thead>
+          <tr>
+            <th className="w-[40%] px-6 py-5 text-[13px] font-semibold tracking-[0.12em] text-muted uppercase sm:px-8">
+              Feature
+            </th>
+            <th className="px-6 py-5 font-display text-[20px] font-semibold tracking-[-0.02em] text-ink">
+              Free
+            </th>
+            <th className="bg-lime-soft/60 px-6 py-5 font-display text-[20px] font-semibold tracking-[-0.02em] text-ink">
+              Pro
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.feature} className="border-t border-line/70">
+              <td className="px-6 py-4 align-top sm:px-8">
+                <p className="font-semibold text-ink">{row.feature}</p>
+                {row.note ? (
+                  <p className="mt-1 text-[13px] leading-snug text-muted">{row.note}</p>
+                ) : null}
+              </td>
+              <td className="px-6 py-4 align-top">
                 <Cell value={row.free} />
-              </dd>
-            </div>
-            <div className="rounded-xl bg-[#eef5f2] px-3 py-2.5">
-              <dt className="text-[10px] font-semibold tracking-[0.12em] text-blue uppercase">
-                Pro
-              </dt>
-              <dd className="mt-1 text-[13.5px]">
-                <Cell value={row.pro} />
-              </dd>
-            </div>
-          </dl>
-        </div>
-      ))}
+              </td>
+              <td className="bg-lime-soft/60 px-6 py-4 align-top">
+                <Cell value={row.pro} pro />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import type {
   WorkspaceContext,
   WorkspaceRole,
 } from "@/features/workspace/types";
+import { loadUnclaimedOperatorContexts } from "@/features/workspace/unclaimed-operator-contexts";
 import { createClient } from "@/lib/supabase/server";
 
 function initials(name: string) {
@@ -55,7 +56,6 @@ export async function getWorkspaceContexts(
     });
   }
 
-  // Unclaimed group branches only (subsidiaries) — never partner/client ghosts.
   const { data: adminOf } = await supabase
     .from("company_members")
     .select("company_id, role")
@@ -63,49 +63,9 @@ export async function getWorkspaceContexts(
     .in("role", ["owner", "admin"]);
 
   const creatorIds = (adminOf ?? []).map((r) => r.company_id as string);
-  if (creatorIds.length > 0) {
-    const { data: branches } = await supabase
-      .from("companies")
-      .select(
-        "id, name, slug, logo_url, website, claimed, created_at, created_by_company_id",
-      )
-      .eq("claimed", false)
-      .in("created_by_company_id", creatorIds);
-
-    const branchIds = (branches ?? []).map((c) => c.id as string);
-    const inGroup = new Set<string>();
-    if (branchIds.length > 0) {
-      const { data: memberships } = await supabase
-        .from("company_group_members")
-        .select("company_id")
-        .in("company_id", branchIds)
-        .eq("status", "confirmed");
-      for (const m of memberships ?? []) {
-        inGroup.add(m.company_id as string);
-      }
-    }
-
-    for (const c of branches ?? []) {
-      if (seen.has(c.id as string)) continue;
-      if (!inGroup.has(c.id as string)) continue;
-      seen.add(c.id as string);
-      out.push({
-        type: "company",
-        id: c.id as string,
-        name: c.name as string,
-        slug: c.slug as string,
-        logoUrl: companyDisplayLogoUrl({
-          logoUrl: c.logo_url as string | null,
-          website: c.website as string | null,
-        }),
-        website: (c.website as string | null) ?? null,
-        initials: initials(c.name as string),
-        role: "operator",
-        createdAt: (c.created_at as string) ?? new Date(0).toISOString(),
-        claimed: false,
-      });
-    }
-  }
+  out.push(
+    ...(await loadUnclaimedOperatorContexts(supabase, creatorIds, seen)),
+  );
 
   const { data: groups } = await supabase
     .from("company_groups")

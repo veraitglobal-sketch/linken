@@ -134,8 +134,17 @@ export default async function BillingPage({ searchParams }: Props) {
     <WorkspacePage
       title="Billing"
       description="Upgrade for premium embeds, full analytics, Agent API, and team seats."
+      wide
+      stats={[
+        { label: "Plan", value: isPro ? "Pro" : "Free" },
+        {
+          label: "Status",
+          value: isPro ? (cancelAtPeriodEnd ? "Ends at period end" : "Active") : "No subscription",
+          attention: cancelAtPeriodEnd,
+        },
+      ]}
     >
-      <div className="mx-auto max-w-5xl space-y-6">
+      <div className="space-y-6">
         {flash ? (
           <WidgetsFlash tone={error ? "error" : undefined}>{flash}</WidgetsFlash>
         ) : null}

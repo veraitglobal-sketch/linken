@@ -29,7 +29,7 @@ export function SlackConnectButton({ mode }: Props) {
     <Button
       type="button"
       variant="ghost"
-      className="h-10 px-4"
+      className="h-10 rounded-xl px-4 ring-1 ring-line"
       disabled={pending}
       onClick={() => {
         startTransition(async () => {

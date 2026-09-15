@@ -42,6 +42,6 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.redirect(
-    `${siteUrl}/login?error=${encodeURIComponent("Could not sign in")}`,
+    `${siteUrl}/login?error=${encodeURIComponent("Could not sign in")}&next=${encodeURIComponent(next)}`,
   );
 }

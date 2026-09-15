@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { SkipLink } from "@/components/a11y/skip-link";
 import { WorkspaceDesktopAside } from "@/components/dashboard/workspace-desktop-aside";
 import { WorkspaceMobileNav } from "@/components/dashboard/workspace-mobile-nav";
+import { WorkspaceTopbar } from "@/components/dashboard/workspace-topbar";
 import {
-  WorkspacePublicLink,
   WorkspaceShellChecklist,
   WorkspaceShellMenu,
   publicWorkspaceLabel,
@@ -57,101 +56,54 @@ export function WorkspaceShell({
     signedIn,
   };
 
+  const topbar = (
+    <WorkspaceTopbar
+      active={active}
+      contexts={contexts}
+      verified={verified}
+      signedIn={signedIn}
+      menu={<WorkspaceShellMenu {...menu} />}
+      checklist={
+        <WorkspaceShellChecklist checklist={checklist} signedIn={signedIn} />
+      }
+      publicHref={publicHref}
+      publicLabel={publicLabel}
+    />
+  );
+
   return (
-    <div className="flex min-h-0 flex-1">
+    <div className="flex min-h-0 flex-1 flex-col">
       <SkipLink />
-      <WorkspaceDesktopAside
-        active={active}
-        contexts={contexts}
-        verified={verified}
-        allowedSections={allowedSections}
-        showDeveloperNav={showDeveloperNav}
-        signedIn={signedIn}
-      />
+      {topbar}
+      <div className="flex min-h-0 flex-1">
+        <WorkspaceDesktopAside
+          active={active}
+          contexts={contexts}
+          verified={verified}
+          allowedSections={allowedSections}
+          showDeveloperNav={showDeveloperNav}
+          signedIn={signedIn}
+        />
 
-      {/* A tinted canvas, so the content can be white and float on it.
-          This was `bg-paper` (#ffffff) with white cards on top — one value for
-          the ground and everything standing on it, which is why the board read
-          as a stack of outlines rather than as objects on a surface.
-          The first attempt tinted the *cards* instead and left the canvas
-          white. Measured, #f0f2f0 against #ffffff is 15/255 — about six per
-          cent — and it simply did not read. Inverted, the same two values do
-          all the work: white gains elevation against a ground, which is the
-          direction the eye already expects. */}
-      <div className="relative flex min-w-0 flex-1 flex-col bg-mute">
-        {operatorBanner}
-
-        {isGraph ? (
-          <MapChromeSlotProvider
-            extras={
-              <>
-                <div className="pointer-events-auto">
-                  {signedIn ? (
-                    <WorkspaceShellMenu {...menu} />
-                  ) : (
-                    <Link
-                      href="/login?next=/dashboard"
-                      className="inline-flex h-8 items-center rounded-full border border-line bg-surface px-3 text-[11px] font-semibold text-ink"
-                    >
-                      Sign in
-                    </Link>
-                  )}
-                </div>
-                <WorkspaceShellChecklist
-                  checklist={checklist}
-                  signedIn={signedIn}
-                />
-              </>
-            }
-          >
-            {signedIn ? (
-              <WorkspaceMobileNav
-                pathname={pathname}
-                companySlug={active?.type === "company" ? active.slug : null}
-              />
-            ) : null}
-            <main
-              id="main-content"
-              tabIndex={-1}
-              className="min-h-0 flex-1 overflow-hidden"
-            >
-              {children}
-            </main>
-          </MapChromeSlotProvider>
-        ) : (
-          <>
-            <header className="flex h-14 shrink-0 items-center gap-3 border-b border-line bg-surface px-4 sm:px-7">
-              <WorkspaceShellMenu {...menu} />
-              <div className="ml-auto flex items-center gap-2">
-                <WorkspaceShellChecklist
-                  checklist={checklist}
-                  signedIn={signedIn}
-                />
-                {!signedIn ? (
-                  <Link
-                    href="/login?next=/dashboard"
-                    className="inline-flex h-8 shrink-0 items-center rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white"
-                  >
-                    Sign in
-                  </Link>
-                ) : publicHref ? (
-                  <WorkspacePublicLink href={publicHref} label={publicLabel} />
-                ) : (
-                  <Link
-                    href="/onboarding"
-                    className="inline-flex h-8 shrink-0 items-center rounded-full bg-navy px-3.5 text-[11px] font-semibold text-white"
-                  >
-                    Create company
-                  </Link>
-                )}
-              </div>
-            </header>
-            {signedIn ? (
-              <WorkspaceMobileNav
-                pathname={pathname}
-                companySlug={active?.type === "company" ? active.slug : null}
-              />
-            ) : null}
+        <div className="relative flex min-w-0 flex-1 flex-col bg-[#f4f6f1]">
+          {operatorBanner}
+          {signedIn ? (
+            <WorkspaceMobileNav
+              pathname={pathname}
+              companySlug={active?.type === "company" ? active.slug : null}
+            />
+          ) : null}
+          {isGraph ? (
+            <MapChromeSlotProvider extras={null}>
+              <main
+                id="main-content"
+                tabIndex={-1}
+                className="min-h-0 flex-1 overflow-hidden"
+              >
+                {children}
+              </main>
+            </MapChromeSlotProvider>
+          ) : (
             <main
               id="main-content"
               tabIndex={-1}
@@ -159,8 +111,8 @@ export function WorkspaceShell({
             >
               {children}
             </main>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

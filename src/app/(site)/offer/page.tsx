@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
-import { HomeSection } from "@/components/marketing/home-section";
+import { EmbedVerifiedLockup } from "@/components/embed/embed-verified-lockup";
 import { OfferCards } from "@/components/offer/offer-cards";
 import { OfferFlash } from "@/components/offer/offer-flash";
-import { OfferHero } from "@/components/offer/offer-hero";
-import { OfferPlate } from "@/components/offer/offer-plate";
-import { PricingFaq } from "@/components/pricing/pricing-faq";
+import { PricingPhotoBand } from "@/components/pricing/pricing-photo-band";
+import { PricingFaqSplit } from "@/components/pricing/pricing-faq-split";
 import { isOfferCheckoutReady } from "@/features/billing/config";
 import { fulfillOfferSession } from "@/features/billing/offer-fulfill";
 import { OFFER_ASSURANCES, OFFER_FAQ } from "@/features/billing/offer";
@@ -27,6 +27,12 @@ type Props = {
   }>;
 };
 
+const ASSURANCE_ICONS = [
+  "M7.5 11V8a4.5 4.5 0 0 1 9 0v3M5.5 11h13v9.5h-13z",
+  "M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4",
+  "M5 12.5l4.5 4.5L19 7.5",
+];
+
 export default async function OfferPage({ searchParams }: Props) {
   const { success, canceled, error, session_id } = await searchParams;
   if (success && session_id) {
@@ -35,57 +41,111 @@ export default async function OfferPage({ searchParams }: Props) {
   const ready = isOfferCheckoutReady();
 
   return (
-    <>
+    <div className="bg-wash">
       <PageViewBeacon event="pricing_viewed" page="/offer" />
-      <HomeSection tone="mute" className="!pt-4 sm:!pt-6 !pb-16 sm:!pb-20">
-        <div className="mx-auto max-w-6xl">
+
+      <section className="px-4 pt-14 text-center sm:px-[18px] sm:pt-20">
+        <div className="mx-auto max-w-[1180px]">
           <OfferFlash success={success} canceled={canceled} error={error} />
-          <div className="relative mt-2 overflow-hidden rounded-hero bg-navy shadow-hero">
+        </div>
+        <p className="mt-6 inline-flex h-9 items-center gap-2 rounded-full bg-lime px-4 text-[13px] font-semibold text-navy">
+          <span className="size-1.5 rounded-full bg-navy" />
+          Special introductory offer
+        </p>
+        <h1 className="mx-auto mt-6 max-w-3xl font-display text-[clamp(2.5rem,5vw,4rem)] leading-[1.04] font-semibold tracking-[-0.045em] text-ink text-balance">
+          Your work already speaks for you.
+        </h1>
+        <p className="mx-auto mt-6 max-w-[54ch] text-[18px] leading-relaxed text-ink-soft">
+          Pro puts your confirmed partners and their words on your own site.
+          Same Pro as monthly, billed in USD.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <span className="inline-flex h-12 items-baseline gap-2 rounded-full bg-surface px-6 pt-2.5 ring-1 ring-line">
+            <span className="text-[14px] text-muted">From</span>
+            <span className="font-display text-[26px] leading-none font-semibold tracking-[-0.03em] text-ink tabular-nums">
+              $12.42
+            </span>
+            <span className="text-[14px] text-muted">/ month</span>
+          </span>
+          <Link
+            href="/pricing"
+            className="inline-flex h-12 items-center rounded-full px-5 text-[15px] font-semibold text-ink underline-offset-4 hover:underline"
+          >
+            See standard pricing
+          </Link>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-[1180px] px-4 pt-12 sm:px-[18px]">
+        <OfferCards ready={ready} className="lg:grid-cols-2" />
+
+        <ul className="mt-6 grid list-none gap-3 p-0 sm:grid-cols-3">
+          {OFFER_ASSURANCES.map((item, i) => (
+            <li
+              key={item}
+              className="flex items-center gap-3 rounded-2xl bg-surface px-5 py-4 text-[15px] font-medium text-ink ring-1 ring-line/80"
+            >
+              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-lime-soft text-navy">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d={ASSURANCE_ICONS[i] ?? ASSURANCE_ICONS[2]} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <PricingPhotoBand
+        title="Put the work you have done in front of the next client"
+        src="/images/lookup-wide-b1.jpg"
+        alt="Two people going through a notebook together at a table"
+        lead="Testimonials and partner logos on your own site, confirmed by the companies behind them."
+        href="/demo"
+        cta="See a live example"
+      />
+
+      {/* The mark, embossed — "earned, not bought" as a navy chapter. */}
+      <section className="px-4 pt-24 sm:px-[18px]">
+        <div className="mx-auto grid max-w-[1180px] items-center gap-10 overflow-hidden rounded-[32px] bg-navy p-4 text-on-navy sm:rounded-[48px] sm:p-6 lg:grid-cols-2 lg:gap-14">
+          <div className="relative aspect-[5/4] overflow-hidden rounded-[24px] sm:rounded-[36px]">
             <Image
-              src="/images/offer-studio.webp"
-              alt=""
+              src="/images/offer-emboss.webp"
+              alt="The Hansala mark blind-embossed on a sheet of cotton paper"
               fill
-              priority
               quality={75}
-              sizes="(max-width: 1152px) 100vw, 1152px"
-              className="object-cover object-[68%_50%]"
+              loading="lazy"
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 560px"
             />
-            <div
-              className="pointer-events-none absolute inset-0 bg-navy-deep/55 lg:bg-transparent"
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(8,20,18,0.86)_0%,rgba(8,20,18,0.6)_38%,rgba(8,20,18,0.1)_68%,rgba(8,20,18,0)_100%)]"
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(0deg,rgba(8,20,18,0.55),rgba(8,20,18,0))]"
-              aria-hidden
-            />
-            <div className="relative px-7 pt-12 pb-36 sm:px-12 sm:pt-14 sm:pb-48 lg:pb-52">
-              <OfferHero />
+          </div>
+          <div className="px-3 pb-8 sm:px-6 lg:px-4 lg:pb-0">
+            <span className="inline-flex h-9 items-center rounded-full bg-lime px-4 text-[13px] font-semibold text-navy">
+              Earned, not bought
+            </span>
+            <h2 className="mt-6 max-w-[18ch] font-display text-[clamp(2rem,3.4vw,3rem)] leading-[1.1] font-semibold tracking-[-0.035em] text-balance">
+              The Verified mark is never sold.
+            </h2>
+            <p className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-on-navy-soft">
+              This offer is Pro — widgets, analytics, API and team seats. The
+              mark means domain proof and mutual confirmation, and it is the
+              same on every plan.
+            </p>
+            <div className="mt-8 inline-flex rounded-2xl bg-white px-5 py-4">
+              <EmbedVerifiedLockup size="lg" />
             </div>
           </div>
-          <OfferCards
-            ready={ready}
-            className="relative -mt-28 px-3 sm:-mt-36 sm:px-6 lg:-mt-44 lg:px-10"
-          />
-          <ul className="mt-10 flex list-none flex-wrap items-center gap-x-7 gap-y-3 border-t border-line p-0 pt-6 text-[13.5px] text-ink-soft">
-            {OFFER_ASSURANCES.map((item) => (
-              <li key={item} className="flex items-center gap-2.5">
-                <span className="h-1 w-1 rounded-full bg-muted" aria-hidden />
-                {item}
-              </li>
-            ))}
-          </ul>
         </div>
-      </HomeSection>
-      <HomeSection className="!py-16 sm:!py-20">
-        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start lg:gap-16">
-          <PricingFaq items={OFFER_FAQ} title="Questions" className="mt-0" />
-          <OfferPlate />
+      </section>
+
+      <section className="mx-auto max-w-[1180px] px-4 pt-24 pb-24 sm:px-[18px] sm:pb-32">
+        <h2 className="text-center font-display text-[clamp(2rem,3.4vw,3rem)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink">
+          Questions
+        </h2>
+        <div className="mt-12">
+          <PricingFaqSplit items={OFFER_FAQ} />
         </div>
-      </HomeSection>
-    </>
+      </section>
+    </div>
   );
 }

@@ -40,8 +40,13 @@ export function DeveloperDashboard({
       title="Earnings"
       description="10% of every paid invoice from companies you referred."
       wide
+      stats={[
+        { label: "Referred", value: clients.length },
+        { label: "Paying", value: paying.length },
+        { label: "On free plan", value: free.length },
+      ]}
     >
-      <div className="mx-auto max-w-3xl space-y-8">
+      <div className="space-y-8">
         <DeveloperEarnings totals={totals} />
         <DeveloperProgress
           series={series}

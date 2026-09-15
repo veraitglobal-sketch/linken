@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
-import { HomeAssurance } from "@/components/marketing/home-assurance";
+import { HomeBento } from "@/components/marketing/home-bento";
 import { HomeClose } from "@/components/marketing/home-close";
-import { HomeContrast } from "@/components/marketing/home-contrast";
 import { FAQ_ITEMS, HomeFaq } from "@/components/marketing/home-faq";
+import { HomeFreeBanner } from "@/components/marketing/home-free-banner";
+import { HomeFreeChapter } from "@/components/marketing/home-free-chapter";
 import { HomeHero } from "@/components/marketing/home-hero";
-import { HomeHighlights } from "@/components/marketing/home-highlights";
-import { HomeLookUp } from "@/components/marketing/home-look-up";
-import { HomeIntegrations } from "@/components/marketing/home-integrations";
-import { HomeOutcomes } from "@/components/marketing/home-outcomes";
-import { HomePlans } from "@/components/marketing/home-plans";
-import { HomeStories } from "@/components/marketing/home-stories";
+import { HomeMoments } from "@/components/marketing/home-moments";
+import { HomeRecordTrust } from "@/components/marketing/home-record-trust";
+import { HomeRuleChapter } from "@/components/marketing/home-rule-chapter";
+import { HomeSectors } from "@/components/marketing/home-sectors";
 import { HomeSurfaces } from "@/components/marketing/home-surfaces";
-import { HomeProductFlow } from "@/components/marketing/product-flow";
-import { HomeTalks } from "@/components/marketing/home-talks";
 import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
 
 export const revalidate = 3600;
@@ -30,8 +27,13 @@ export const metadata: Metadata = {
     title: homeTitle,
     description: homeDescription,
     url: "/",
+    siteName: "Hansala",
+    type: "website",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Hansala — mutual confirmation" }],
   },
   twitter: {
+    card: "summary_large_image",
+    images: ["/opengraph-image"],
     title: homeTitle,
     description: homeDescription,
   },
@@ -56,18 +58,15 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <HomeHero />
+      <HomeRuleChapter />
+      <HomeSectors />
       <HomeSurfaces />
-      <HomeProductFlow />
-      <HomeIntegrations />
-      <HomeOutcomes />
-      <HomeContrast />
-      <HomeStories />
-      <HomeTalks />
-      <HomeHighlights />
-      <HomePlans />
-      <HomeAssurance />
+      <HomeFreeBanner />
+      <HomeMoments />
+      <HomeFreeChapter />
+      <HomeBento />
+      <HomeRecordTrust />
       <HomeFaq />
-      <HomeLookUp />
       <HomeClose />
     </>
   );

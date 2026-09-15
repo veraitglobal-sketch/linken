@@ -1,11 +1,11 @@
 import {
-  HomeEyebrow,
-  HomeSection,
+  HomePill,
+  HomeTitle,
 } from "@/components/marketing/home-section";
 import {
-  SurfaceCarousel,
+  SurfaceAccordion,
   type Surface,
-} from "@/components/marketing/surface-carousel";
+} from "@/components/marketing/surface-accordion";
 
 /**
  * Every card names something that exists in this repo — a route, an embed or
@@ -51,26 +51,21 @@ const SURFACES: readonly Surface[] = [
   },
 ];
 
-/** Homepage — the surfaces a confirmed record renders on. */
+/** Homepage §4 — accordion left, a tinted stage bleeding off the right edge. */
 export function HomeSurfaces() {
   return (
-    <HomeSection>
-      <div className="mx-auto max-w-6xl">
-        <HomeEyebrow>One record, every surface</HomeEyebrow>
-        <div className="mt-5 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-14">
-          <h2 className="max-w-[18ch] font-display text-chapter text-ink text-balance">
-            Written once. Rendered everywhere it is needed.
-          </h2>
-          <p className="max-w-[36ch] text-[15px] leading-relaxed text-muted lg:justify-self-end lg:pb-1 lg:text-right">
-            Embed once and configure from the dashboard. Every surface below is
-            a route you can open today.
-          </p>
-        </div>
-
-        <div className="mt-12">
-          <SurfaceCarousel surfaces={SURFACES} />
-        </div>
+    <section className="py-14 sm:py-[75px]">
+      <div className="px-4 text-center sm:px-[18px]">
+        <HomeTitle>One record. Every surface it needs.</HomeTitle>
       </div>
-    </HomeSection>
+
+      <div className="mt-12 sm:mt-14">
+        <SurfaceAccordion surfaces={SURFACES} />
+      </div>
+
+      <div className="mt-12 flex justify-center px-4">
+        <HomePill href="/developers">Explore the embeds</HomePill>
+      </div>
+    </section>
   );
 }

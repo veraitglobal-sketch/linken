@@ -10,8 +10,10 @@ import type {
 } from "@/features/companies/search-action";
 import { cn } from "@/lib/cn";
 
-/** Typeahead on the hero. Failure is an empty list — the page still renders. */
-export function HomeHeroSearch() {
+/** Company typeahead. Failure is an empty list — the page still renders.
+ *  `light` is the look-up band on the washed homepage; `dark` the navy stage. */
+export function HomeHeroSearch({ tone = "dark" }: { tone?: "dark" | "light" }) {
+  const light = tone === "light";
   const [query, setQuery] = useState("");
   const [companies, setCompanies] = useState<CompanySearchHit[]>([]);
   const [categories, setCategories] = useState<CategorySearchHit[]>([]);
@@ -69,7 +71,14 @@ export function HomeHeroSearch() {
           here, where it follows the radius the eye already sees.
           `focus-within`, not `:has()`: this must indicate the field being
           focused, and it has to hold while the results list below is open. */}
-      <div className="flex h-12 items-center rounded-full border border-white/28 bg-white/[0.08] pr-1 pl-4 outline-offset-2 focus-within:border-white/48 focus-within:bg-white/[0.12] focus-within:outline-2 focus-within:outline-[var(--blue-soft)]">
+      <div
+        className={cn(
+          "flex h-12 items-center rounded-full border pr-1 pl-4 outline-offset-2 focus-within:outline-2 focus-within:outline-[var(--blue-soft)]",
+          light
+            ? "border-line bg-surface focus-within:border-ink/30"
+            : "border-white/28 bg-white/[0.08] focus-within:border-white/48 focus-within:bg-white/[0.12]",
+        )}
+      >
         <input
           id="hero-company-search"
           type="search"
@@ -96,12 +105,24 @@ export function HomeHeroSearch() {
              Chromium shows nothing. Measured here in Chromium the input draws
              no ring either way, so this is the remedy for the browser that does
              rather than a confirmed reproduction. */
-          className="min-w-0 flex-1 appearance-none bg-transparent text-[14px] text-on-navy outline-none focus-visible:outline-none placeholder:text-on-navy-muted [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
+          /* Inline, because the unlayered `:focus-visible` rule in
+             globals.css beats any Tailwind utility — the class alone left a
+             square ring inside the pill. The ring lives on the pill instead. */
+          style={{ outline: "none", boxShadow: "none" }}
+          className={cn(
+            "min-w-0 flex-1 appearance-none border-0 bg-transparent text-[14px] outline-none focus-visible:outline-none [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none",
+            light
+              ? "text-ink placeholder:text-muted"
+              : "text-on-navy placeholder:text-on-navy-muted",
+          )}
         />
         <button
           type="submit"
           className={cn(
-            "inline-flex h-10 shrink-0 items-center rounded-full bg-white px-4 text-[13px] font-semibold text-ink transition-colors hover:bg-[#f2f4f2]",
+            "inline-flex h-10 shrink-0 items-center rounded-full px-4 text-[13px] font-semibold transition-colors",
+            light
+              ? "bg-navy text-on-navy hover:bg-navy-deep"
+              : "bg-white text-ink hover:bg-[#f2f4f2]",
             focusRingClass,
           )}
         >
@@ -114,6 +135,7 @@ export function HomeHeroSearch() {
           categories={categories}
           query={query}
           onPickCategory={(label) => setQuery(label)}
+          tone={tone}
         />
       ) : null}
     </form>

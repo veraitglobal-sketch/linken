@@ -24,8 +24,8 @@ export function ProfileProvenance({ company, editable = false }: Props) {
   const isUnclaimed = company.claimed === false;
 
   return (
-    <section className="mx-auto mt-8 max-w-6xl px-4">
-      <div className="rounded-none border border-line bg-surface/80 px-5 py-4 text-[13px] text-ink-soft sm:flex sm:items-center sm:justify-between sm:gap-6">
+    <section className="mx-auto mt-10 max-w-[1280px] px-4 sm:px-[18px] lg:px-10">
+      <div className="border-t border-ink/10 px-1 pt-6 text-[14px] text-ink-soft sm:flex sm:items-center sm:justify-between sm:gap-6">
         <div className="space-y-1">
           {updated ? (
             <p>
@@ -35,37 +35,37 @@ export function ProfileProvenance({ company, editable = false }: Props) {
           ) : (
             <p>Public facts only — pending claims are never shown here.</p>
           )}
-          <p className="text-[12px] text-muted">
+          <p className="text-[13px] text-muted">
             Confirmed relationships appear after both companies accept. Hansala
             does not invent clients, quotes, or logos.
           </p>
         </div>
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 sm:mt-0 sm:justify-end">
+        <div className="mt-4 flex flex-wrap gap-2 sm:mt-0 sm:justify-end">
           {isUnclaimed ? (
             <Link
               href={`/c/${company.slug}#claim`}
-              className="font-medium text-ink underline-offset-2 hover:underline"
+              className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-ink/15 transition-colors hover:bg-surface"
             >
               Claim this profile
             </Link>
           ) : editable ? (
             <Link
               href={`/c/${company.slug}/edit`}
-              className="font-medium text-ink underline-offset-2 hover:underline"
+              className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-ink/15 transition-colors hover:bg-surface"
             >
               Edit profile
             </Link>
           ) : (
             <Link
               href="/login"
-              className="font-medium text-ink underline-offset-2 hover:underline"
+              className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-ink/15 transition-colors hover:bg-surface"
             >
               Sign in to edit
             </Link>
           )}
           <Link
             href={companyReportPath(company.slug)}
-            className="font-medium text-ink underline-offset-2 hover:underline"
+            className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-ink/15 transition-colors hover:bg-surface"
           >
             Report incorrect information
           </Link>

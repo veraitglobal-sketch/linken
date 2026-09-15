@@ -40,136 +40,138 @@ export async function CompanyHeroBand({
       ? await getSchedulingForCompanyId(company.id)
       : null;
 
+  /* New site style: a rounded navy chapter with the lime lip beneath it (the
+     homepage's "Two companies" shape), cover photo inset on the right.
+     Every fact shown is the company's own record — nothing added. */
   return (
-    <section className="px-4 pt-3">
-      <div className="relative mx-auto grid max-w-6xl overflow-hidden rounded-none bg-[#0e1f1c] lg:min-h-[560px] lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="relative z-10 flex flex-col justify-between px-6 py-8 text-white sm:px-10 sm:py-11">
-          <div className="animate-rise flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${
-                claimed && accepting ? "bg-[#7eb8a4]" : "bg-white/40"
-              }`}
-            />
-            <p className="text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase">
-              {company.category} · {company.city}, {company.country}
-            </p>
-            {company.claimed === false ? (
-              <span className="rounded-full border border-[#7eb8a4]/40 bg-[#7eb8a4]/15 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-[#7eb8a4] uppercase">
-                Unclaimed profile
-              </span>
-            ) : (
-              <span
-                className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] uppercase ${
-                  accepting
-                    ? "border-[#7eb8a4]/40 bg-[#7eb8a4]/15 text-[#7eb8a4]"
-                    : "border-white/20 bg-white/5 text-white/55"
-                }`}
-              >
-                {accepting ? "Accepting new clients" : "Fully booked"}
-              </span>
-            )}
-            {groupBadge ? (
-              <Link
-                href={`/g/${groupBadge.slug}`}
-                className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-white uppercase transition-colors hover:border-[#7eb8a4]/50 hover:bg-[#7eb8a4]/15 hover:text-[#7eb8a4]"
-              >
-                Part of {groupBadge.name}
-              </Link>
-            ) : null}
-          </div>
-
-          <div className="animate-rise-delay max-w-xl py-10">
-            <p className="font-display text-[clamp(0.95rem,1.4vw,1.1rem)] tracking-[0.04em] text-white/40 uppercase">
-              Public company page
-            </p>
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              <LogoMark
-                initials={company.logoInitials}
-                logoUrl={company.logoUrl}
-                size="lg"
-                className={
-                  company.logoUrl
-                    ? "rounded-none border-white/20"
-                    : "rounded-none border-white/20 bg-white/10 text-white"
-                }
-              />
-              <h1 className="font-display text-[clamp(2.4rem,5.5vw,4rem)] leading-[0.94] font-medium tracking-[-0.045em]">
-                {company.name}
-              </h1>
-              {company.claimed !== false && company.verified ? (
-                <VerifiedBadge
-                  title={
-                    company.verifiedAt
-                      ? `Verified company · ${new Date(company.verifiedAt).getFullYear()}`
-                      : "Verified company"
-                  }
-                  size={26}
+    <section className="px-4 pt-4 sm:px-[18px]">
+      <div className="relative mx-auto max-w-[1404px]">
+        <div
+          aria-hidden
+          className="absolute inset-x-[-6px] top-1/3 bottom-[-14px] rounded-[40px] bg-lime sm:inset-x-[-8px] sm:bottom-[-18px] sm:rounded-[64px]"
+        />
+        <div className="relative grid overflow-hidden rounded-[32px] bg-navy sm:rounded-[60px] lg:min-h-[600px] lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="relative z-10 flex flex-col justify-between gap-10 px-6 py-9 text-on-navy sm:px-12 sm:py-12 lg:pr-8 lg:pl-20 lg:py-16">
+            <div className="animate-rise flex flex-wrap items-center gap-2">
+              <span className="inline-flex h-8 items-center gap-2 rounded-full bg-white/[0.08] px-3.5 text-[12px] font-semibold text-on-navy ring-1 ring-white/15">
+                <span
+                  className={`size-1.5 rounded-full ${
+                    claimed && accepting ? "bg-lime" : "bg-white/40"
+                  }`}
                 />
-              ) : null}
-              {company.claimed !== false ? (
-                <TrustLevelBadge level={trustLevel} onDark />
+                {company.category} · {company.city}, {company.country}
+              </span>
+              {company.claimed === false ? (
+                <span className="inline-flex h-8 items-center rounded-full bg-white/[0.08] px-3.5 text-[12px] font-semibold text-on-navy-soft ring-1 ring-white/15">
+                  Unclaimed profile
+                </span>
+              ) : (
+                <span
+                  className={`inline-flex h-8 items-center rounded-full px-3.5 text-[12px] font-semibold ${
+                    accepting
+                      ? "bg-lime text-navy"
+                      : "bg-white/[0.08] text-on-navy-soft ring-1 ring-white/15"
+                  }`}
+                >
+                  {accepting ? "Accepting new clients" : "Fully booked"}
+                </span>
+              )}
+              {groupBadge ? (
+                <Link
+                  href={`/g/${groupBadge.slug}`}
+                  className="inline-flex h-8 items-center rounded-full bg-white/[0.08] px-3.5 text-[12px] font-semibold text-on-navy ring-1 ring-white/15 transition-colors hover:bg-white/15"
+                >
+                  Part of {groupBadge.name}
+                </Link>
               ) : null}
             </div>
-            <VerifiedStatusNote
-              verified={Boolean(company.verified)}
-              verifiedAt={company.verifiedAt}
-              claimed={company.claimed !== false}
-            />
-            <p className="mt-5 max-w-md text-[16px] leading-relaxed text-white/70">
-              {company.tagline}
-            </p>
-            <SocialIcons
-              linkedinUrl={company.linkedinUrl}
-              facebookUrl={company.facebookUrl}
-              tone="dark"
-              className="mt-5"
-            />
-          </div>
 
-          <div className="animate-rise-late space-y-4">
-            <div className="rounded-none border border-white/12 bg-black/25 px-4 py-3 backdrop-blur-md">
-              <p className="text-[10px] font-semibold tracking-[0.14em] text-white/40 uppercase">
-                Shareable address
-              </p>
-              <p className="mt-1 font-display text-lg tracking-[-0.03em] text-white sm:text-xl">
-                {COMPANY_SHARE_PREFIX}/
-                <span className="text-[#7eb8a4]">{company.slug}</span>
-              </p>
+            <div className="animate-rise-delay max-w-xl">
+              <div className="flex flex-wrap items-center gap-4">
+                <LogoMark
+                  initials={company.logoInitials}
+                  logoUrl={company.logoUrl}
+                  size="lg"
+                  className={
+                    company.logoUrl
+                      ? "rounded-2xl border-white/20"
+                      : "rounded-2xl border-white/20 bg-white/10 text-white"
+                  }
+                />
+                <h1 className="font-display text-[clamp(2.6rem,5.2vw,4.25rem)] leading-[0.95] font-semibold tracking-[-0.045em] text-on-navy">
+                  {company.name}
+                </h1>
+                {company.claimed !== false && company.verified ? (
+                  <VerifiedBadge
+                    title={
+                      company.verifiedAt
+                        ? `Verified company · ${new Date(company.verifiedAt).getFullYear()}`
+                        : "Verified company"
+                    }
+                    size={28}
+                  />
+                ) : null}
+                {company.claimed !== false ? (
+                  <TrustLevelBadge level={trustLevel} onDark />
+                ) : null}
+              </div>
+              <VerifiedStatusNote
+                verified={Boolean(company.verified)}
+                verifiedAt={company.verifiedAt}
+                claimed={company.claimed !== false}
+              />
+              {company.tagline ? (
+                <p className="mt-6 max-w-md text-[18px] leading-relaxed text-on-navy">
+                  {company.tagline}
+                </p>
+              ) : null}
+              <SocialIcons
+                linkedinUrl={company.linkedinUrl}
+                facebookUrl={company.facebookUrl}
+                tone="dark"
+                className="mt-5"
+              />
             </div>
-            <CompanyHeroActions
-              slug={company.slug}
-              name={company.name}
-              website={company.website}
-              websiteLinked={Boolean(company.websiteLinked)}
-              accepting={accepting}
-              showContact={showContact}
-              showOnePager={showOnePager}
-              showEmbed={showEmbed}
-              showEditProfile={showEditProfile}
-              siteUrl={siteUrl}
-              bookingUrl={scheduling?.url}
-              bookingLabel={scheduling?.label}
-            />
-          </div>
-        </div>
 
-        <div className="group relative min-h-[220px] overflow-hidden lg:min-h-full">
-          <Image
-            src={company.coverImageUrl || "/images/hero-network.jpg"}
-            alt={`${company.name} cover photo`}
-            fill
-            priority
-            className="media-zoom object-cover"
-            sizes="(max-width: 1024px) 100vw, 42vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10 lg:bg-gradient-to-l lg:from-transparent lg:via-transparent lg:to-[rgba(10,20,18,0.5)]" />
-          <div className="absolute inset-x-5 bottom-5 rounded-none border border-white/15 bg-black/40 px-4 py-3.5 backdrop-blur-md">
-            <p className="text-[11px] font-semibold tracking-[0.12em] text-[#7eb8a4] uppercase">
-              Hansala
-            </p>
-            <p className="mt-1 text-sm font-medium text-white">
-              Profile · Case studies · Mutual partners
-            </p>
+            <div className="animate-rise-late space-y-5">
+              <p className="inline-flex max-w-full items-center gap-3 rounded-full bg-white/[0.06] py-2 pr-5 pl-2 ring-1 ring-white/12">
+                <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold tracking-[0.14em] text-on-navy-muted uppercase">
+                  Share
+                </span>
+                <span className="truncate font-display text-[16px] tracking-[-0.02em] text-on-navy sm:text-[18px]">
+                  {COMPANY_SHARE_PREFIX}/
+                  <span className="text-lime">{company.slug}</span>
+                </span>
+              </p>
+              <CompanyHeroActions
+                slug={company.slug}
+                name={company.name}
+                website={company.website}
+                websiteLinked={Boolean(company.websiteLinked)}
+                accepting={accepting}
+                showContact={showContact}
+                showOnePager={showOnePager}
+                showEmbed={showEmbed}
+                showEditProfile={showEditProfile}
+                siteUrl={siteUrl}
+                bookingUrl={scheduling?.url}
+                bookingLabel={scheduling?.label}
+              />
+            </div>
+          </div>
+
+          <div className="relative p-3 pt-0 sm:p-4 sm:pt-0 lg:p-5">
+            <div className="group relative h-full min-h-[260px] overflow-hidden rounded-[24px] sm:rounded-[44px]">
+              <Image
+                src={company.coverImageUrl || "/images/hero-network.jpg"}
+                alt={`${company.name} cover photo`}
+                fill
+                priority
+                className="media-zoom object-cover"
+                sizes="(max-width: 1024px) 100vw, 45vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+            </div>
           </div>
         </div>
       </div>

@@ -105,7 +105,7 @@ export function CompanyProfile({
        tint belongs to the canvas. Tinting the cards instead was tried there and
        measured — `#f0f2f0` against `#ffffff` is a six per cent step and it did
        not read at all. */
-    <div className="profile-flat-corners bg-mute pb-10">
+    <div className="bg-wash pb-16">
       <CompanyHeroBand
         company={company}
         trustLevel={trust.level}

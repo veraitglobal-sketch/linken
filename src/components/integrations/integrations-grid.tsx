@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { IntegrationCard } from "@/components/integrations/integration-card";
+import { McpConnectCard } from "@/components/integrations/mcp-connect-card";
 import type { IntegrationMarkName } from "@/components/integrations/integration-mark";
 import { SchedulingLinkForm } from "@/components/integrations/scheduling-link-form";
 import { SlackConnectButton } from "@/components/integrations/slack-connect-button";
@@ -28,22 +29,28 @@ import type { CompanySlackPublic } from "@/features/slack/queries";
  */
 
 const CONNECT_CLASS =
-  "inline-flex h-10 w-full items-center justify-center rounded-xl bg-navy px-4 text-[12.5px] font-semibold text-on-navy transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
+  "inline-flex h-10 items-center justify-center rounded-xl bg-navy px-4 text-[13px] font-semibold text-on-navy transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
 type Props = {
   companyName: string;
+  /** Plan includes Agent API keys. */
+  hasApiAccess?: boolean;
   slack: CompanySlackPublic | null;
   scheduling: CompanyScheduling;
 };
 
-export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
+export function IntegrationsGrid({ companyName, hasApiAccess = false, slack, scheduling }: Props) {
   const slackReady = slackOAuthConfigured();
   const connectedProvider =
     scheduling.provider && scheduling.url ? scheduling.provider : null;
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="min-w-0 space-y-3">
+        <p className="text-[12px] font-semibold tracking-[0.12em] text-muted uppercase">AI assistants</p>
+        <McpConnectCard hasApiAccess={hasApiAccess} />
+
+        <p className="pt-4 text-[12px] font-semibold tracking-[0.12em] text-muted uppercase">Notifications</p>
         <IntegrationCard
           mark="slack"
           name="Slack"
@@ -71,6 +78,7 @@ export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
           }
         />
 
+        <p className="pt-4 text-[12px] font-semibold tracking-[0.12em] text-muted uppercase">Scheduling</p>
         <SchedulingCard
           mark="calendly"
           name="Calendly"
@@ -80,7 +88,6 @@ export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
           connectedProvider={connectedProvider}
           scheduling={scheduling}
         />
-
         <SchedulingCard
           mark="calcom"
           name="Cal.com"
@@ -92,16 +99,19 @@ export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
         />
       </div>
 
-      {/* The escape hatch, kept: OAuth needs credentials this environment may
-          not have, and a public booking link always works. */}
-      <SchedulingLinkForm scheduling={scheduling} />
-
-      <p className="text-[12px] leading-relaxed text-muted">
-        Alerts and bookings apply to{" "}
-        <span className="font-semibold text-ink">{companyName}</span> — the
-        active company. Switch companies in the workspace switcher first if you
-        manage more than one.
-      </p>
+      <aside className="space-y-4">
+        {/* The escape hatch, kept: OAuth needs credentials this environment may
+            not have, and a public booking link always works. */}
+        <SchedulingLinkForm scheduling={scheduling} />
+        <div className="rounded-2xl bg-[#fafbf9] p-5 ring-1 ring-line/80">
+          <p className="text-[12px] font-semibold tracking-[0.12em] text-muted uppercase">Applies to</p>
+          <p className="mt-1.5 text-[15px] font-semibold text-ink">{companyName}</p>
+          <p className="mt-1 text-[13px] leading-relaxed text-muted">
+            Alerts and bookings belong to the active company. Switch companies in
+            the workspace switcher first if you manage more than one.
+          </p>
+        </div>
+      </aside>
     </div>
   );
 }
@@ -141,7 +151,7 @@ function SchedulingCard({
             href={scheduling.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="block truncate text-blue underline-offset-2 hover:underline"
+            className="block truncate underline-offset-2 hover:underline"
           >
             {scheduling.url}
           </a>
@@ -159,7 +169,7 @@ function SchedulingCard({
           <form action={disconnectScheduling}>
             <button
               type="submit"
-              className="h-10 w-full rounded-xl border border-line text-[12.5px] font-semibold text-ink transition-colors hover:bg-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              className="h-10 rounded-xl px-4 text-[13px] font-semibold text-ink ring-1 ring-line transition-colors hover:bg-mute focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             >
               Disconnect
             </button>

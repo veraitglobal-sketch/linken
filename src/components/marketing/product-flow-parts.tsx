@@ -62,7 +62,7 @@ export function FlowCheckMark({ onDark }: { onDark?: boolean }) {
     <span
       className={cn(
         "grid h-5 w-5 place-items-center rounded-full",
-        onDark ? "bg-white/20" : "bg-blue-soft",
+        onDark ? "bg-white/20" : "bg-lime ring-2 ring-white",
       )}
     >
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -100,13 +100,15 @@ export function FlowNodeCard({
   return (
     <div
       className={cn(
-        "relative bg-surface px-3 py-2.5",
-        hub ? "w-[164px] rounded-tile border border-navy/20" : "w-[150px] rounded-tile border",
+        "relative bg-surface px-3 py-2.5 shadow-[0_2px_4px_rgba(14,31,28,0.04),0_14px_30px_-14px_rgba(14,31,28,0.28)]",
+        hub
+          ? "w-[164px] rounded-2xl border border-navy/15 ring-4 ring-lime/70"
+          : "w-[150px] rounded-2xl border",
         /* Same warm hue as the pill, so a reader learns the state once rather
            than twice. Dashed stays — it is what says "not settled yet"; the
            colour only tells you which kind of unsettled. */
         pending ? "border-dashed border-ember/45" : "border-line",
-        active && "border-blue/40 shadow-card",
+        active && "border-navy/25",
       )}
     >
       {confirmed ? (
@@ -141,7 +143,7 @@ export function FlowRequestPill({
 }) {
   const label =
     state === "official"
-      ? "Official"
+      ? "✓ Official"
       : state === "pending"
         ? "Pending"
         : "Request";
@@ -160,8 +162,7 @@ export function FlowRequestPill({
            lighter one, where the check does not apply. */
         state === "pending" &&
           "border border-ember/40 bg-ember/10 text-ember-deep",
-        state === "official" &&
-          "border border-blue/25 bg-accent-soft text-blue",
+        state === "official" && "bg-lime text-navy",
       )}
     >
       {label}
@@ -174,11 +175,11 @@ export function FlowGrid() {
     <>
       <div
         aria-hidden
-        className="absolute inset-0 opacity-60"
+        className="absolute inset-0 opacity-70"
         style={{
           backgroundImage:
-            "radial-gradient(circle, var(--line) 1px, transparent 1px)",
-          backgroundSize: "18px 18px",
+            "radial-gradient(circle, #dfe4dd 1.1px, transparent 1.2px)",
+          backgroundSize: "20px 20px",
         }}
       />
       <div
@@ -186,7 +187,7 @@ export function FlowGrid() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(120% 90% at 30% 45%, transparent 40%, rgba(255,255,255,0.92) 100%)",
+            "radial-gradient(38% 34% at 52% 58%, rgba(205,239,132,0.35), transparent 70%), radial-gradient(120% 90% at 30% 45%, transparent 40%, rgba(255,255,255,0.92) 100%)",
         }}
       />
     </>

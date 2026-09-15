@@ -26,6 +26,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${page.group.name} · Hansala`,
       description: page.group.description || "Company group on Hansala",
       url,
+      siteName: "Hansala",
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Hansala — mutual confirmation" }],
     },
   };
 }

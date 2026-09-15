@@ -19,22 +19,26 @@ export function HomeBoard({
   model,
 }: Props) {
   return (
-    <div className="space-y-5">
-      <HomePrimaryCard action={model.primary} companyId={companyId} />
-      <HomeStatsRow
-        pendingOutgoing={model.pendingOutgoing}
-        pendingIncoming={model.pendingIncoming}
-        confirmedRefs={model.confirmedRefs}
-        confirmedPartners={model.confirmedPartners}
-        caseCount={model.caseCount}
-        companySlug={companySlug}
-      />
-      {model.checklist && !model.checklist.complete ? (
-        <GettingStartedCard checklist={model.checklist} />
-      ) : null}
-      <div className="grid items-stretch gap-5 sm:grid-cols-2">
-        <HomeCompleteness data={model.completeness} />
-        <HomePerformance analytics={model.analytics} isPro={model.isPro} />
+    <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="min-w-0 space-y-5">
+        <HomePrimaryCard action={model.primary} companyId={companyId} />
+        <HomeStatsRow
+          pendingOutgoing={model.pendingOutgoing}
+          pendingIncoming={model.pendingIncoming}
+          confirmedRefs={model.confirmedRefs}
+          confirmedPartners={model.confirmedPartners}
+          caseCount={model.caseCount}
+          companySlug={companySlug}
+        />
+        {model.checklist && !model.checklist.complete ? (
+          <GettingStartedCard checklist={model.checklist} />
+        ) : null}
+        <div className="grid items-stretch gap-5 md:grid-cols-2">
+          <HomeCompleteness data={model.completeness} />
+          <HomePerformance analytics={model.analytics} isPro={model.isPro} />
+        </div>
+      </div>
+      <aside className="space-y-5">
         <HomeQuickLinks
           companyId={companyId}
           companySlug={companySlug}
@@ -42,7 +46,7 @@ export function HomeBoard({
           proofShared={model.proofShared}
         />
         <HomeTips kind={model.kind} />
-      </div>
+      </aside>
     </div>
   );
 }

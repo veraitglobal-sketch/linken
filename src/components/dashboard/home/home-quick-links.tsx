@@ -16,6 +16,7 @@ export function HomeQuickLinks({
   proofShared,
 }: Props) {
   const links = [
+    { id: "add_record", href: "/dashboard/add", label: "Add a record" },
     { id: "open_map", href: "/dashboard/map", label: "Map" },
     {
       id: "open_one_pager",

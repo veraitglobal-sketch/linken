@@ -17,16 +17,16 @@ export function InviteTeamForm({ companyId }: Props) {
 
   return (
     <section>
-      <header className="mb-3">
-        <h2 className="font-display text-[17px] font-semibold tracking-[-0.03em] text-ink">
-          Invite a teammate
-        </h2>
-        <p className="mt-1 text-[12px] leading-relaxed text-muted">
-          They join after accepting the email link. Public stays off until they
-          opt in.
-        </p>
-      </header>
       <WorkspaceCard>
+        <header className="mb-5">
+          <h2 className="font-display text-[18px] font-semibold tracking-[-0.02em] text-ink">
+            Invite a teammate
+          </h2>
+          <p className="mt-1 text-[13px] leading-relaxed text-muted">
+            They join after accepting the email link. Public stays off until they
+            opt in.
+          </p>
+        </header>
         <form action={inviteTeamMember} className="grid gap-3 sm:grid-cols-2">
           <input type="hidden" name="company_id" value={companyId} />
           <input

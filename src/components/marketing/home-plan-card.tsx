@@ -134,7 +134,7 @@ export function HomePlanCard({
              `variant="primary"` appears nowhere across them. White on
              `--signal` measures 7.3:1. */
           variant={dark ? "light" : "primary"}
-          className="h-11 w-full sm:w-auto sm:min-w-[220px]"
+          className="h-11 w-full !rounded-full sm:w-auto sm:min-w-[220px]"
         >
           {cta}
         </Button>

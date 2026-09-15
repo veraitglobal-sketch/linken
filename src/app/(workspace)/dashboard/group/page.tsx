@@ -38,6 +38,15 @@ export default async function DashboardGroupPage({ searchParams }: Props) {
     <WorkspacePage
       title="Company group"
       description="Country branches under one group. Evidence stays on each company."
+      wide
+      stats={
+        data
+          ? [
+              { label: "Companies", value: data.confirmed.length },
+              { label: "Pending", value: data.pending.length, attention: data.pending.length > 0 },
+            ]
+          : undefined
+      }
       action={
         <Link
           href="/dashboard/structure"

@@ -2,7 +2,9 @@ import {
   parseLogoWallBackground,
   parseLogoWallLimit,
   parseLogoWallOverride,
+  parseLogoWallTone,
   type LogoWallBackground,
+  type LogoWallTone,
   type LogoWallOverride,
 } from "@/features/widgets/settings";
 import {
@@ -124,6 +126,7 @@ export function mergeLogoWallPatch(
     limit?: unknown;
     motion?: unknown;
     size?: unknown;
+    tone?: unknown;
     overrides?: Record<string, Partial<LogoWallOverride> | null>;
   },
 ): Record<string, unknown> {
@@ -149,10 +152,24 @@ export function mergeLogoWallPatch(
   if ("size" in patch && typeof patch.size === "string") {
     next = mergeLogoWallSize(next, parseLogoSize(patch.size));
   }
+  if ("tone" in patch && typeof patch.tone === "string") {
+    next = mergeLogoWallTone(next, parseLogoWallTone(patch.tone));
+  }
   if (patch.overrides) {
     for (const [id, ov] of Object.entries(patch.overrides)) {
       next = mergeLogoWallOverride(next, id, ov);
     }
   }
   return next as Record<string, unknown>;
+}
+
+export function mergeLogoWallTone(
+  current: unknown,
+  tone: LogoWallTone,
+): Record<string, unknown> {
+  const { base, prevLw } = baseLogoWall(current);
+  return {
+    ...base,
+    logoWall: { ...prevLw, tone: parseLogoWallTone(tone) },
+  };
 }

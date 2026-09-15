@@ -6,6 +6,7 @@ import {
 } from "@/components/marketing/product-flow-data";
 import { FlowInspector } from "@/components/marketing/product-flow-inspector";
 import {
+  FlowGlyph,
   FlowGrid,
   FlowNodeCard,
 } from "@/components/marketing/product-flow-parts";
@@ -32,7 +33,7 @@ export function FlowWorkspaceScene({
       <FlowSidebar />
       <section className="relative min-w-0 flex-1 bg-surface">
         <div className="absolute inset-x-0 top-0 z-10 flex items-center gap-4 px-5 py-4">
-          <div className="flex items-center gap-1 rounded-card border border-line bg-surface p-1">
+          <div className="flex items-center gap-1 rounded-full bg-surface p-1 shadow-[0_6px_16px_-10px_rgba(14,31,28,0.3)] ring-1 ring-line/70">
             {["Company", "Map", "Inbox"].map((t) => (
               <span
                 key={t}
@@ -53,6 +54,15 @@ export function FlowWorkspaceScene({
               1 company · {confirmed ? "1 partner" : "0 partners"}
             </p>
           </div>
+          <span
+            className={cn(
+              "ml-auto inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[12px] font-semibold transition-colors duration-300",
+              adding ? "bg-lime text-navy" : "bg-navy text-white",
+            )}
+          >
+            <FlowGlyph d="M12 5v14M5 12h14" />
+            Add partner
+          </span>
         </div>
         <div className="relative h-full w-full overflow-hidden">
           <FlowGrid />
@@ -77,10 +87,24 @@ export function FlowWorkspaceScene({
             aria-hidden
             fill="none"
           >
+            {/* Lime halo under the confirmed link, then the link, then a
+                bead that travels it — confirmation reads as something moving
+                between the two companies. Pending stays a quiet dashed line. */}
             <path
               d="M 364 360 C 396 360, 400 300, 430 300"
-              stroke={confirmed ? "var(--blue)" : "var(--muted)"}
-              strokeWidth={confirmed ? 2 : 1.5}
+              stroke="var(--lime)"
+              strokeWidth={7}
+              strokeLinecap="round"
+              className={cn(
+                "transition-opacity duration-700 ease-out",
+                confirmed ? "opacity-90" : "opacity-0",
+              )}
+            />
+            <path
+              id="flow-link"
+              d="M 364 360 C 396 360, 400 300, 430 300"
+              stroke={confirmed ? "var(--navy)" : "var(--muted)"}
+              strokeWidth={confirmed ? 2.2 : 1.5}
               strokeDasharray={confirmed ? "0" : "5 5"}
               strokeLinecap="round"
               className={cn(
@@ -88,6 +112,11 @@ export function FlowWorkspaceScene({
                 requested ? "opacity-100" : "opacity-0",
               )}
             />
+            {confirmed ? (
+              <circle r="3" fill="var(--navy)" className="motion-reduce:hidden">
+                <animateMotion dur="2.4s" repeatCount="indefinite" path="M 364 360 C 396 360, 400 300, 430 300" />
+              </circle>
+            ) : null}
           </svg>
           <div className="absolute" style={{ left: 200, top: 330 }}>
             <FlowNodeCard

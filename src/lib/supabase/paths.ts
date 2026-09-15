@@ -14,6 +14,7 @@ export function needsSessionRefresh(pathname: string): boolean {
   if (pathname.startsWith("/dashboard")) return true;
   if (pathname.startsWith("/admin")) return true;
   if (pathname.startsWith("/auth/")) return true;
+  if (pathname.startsWith("/oauth")) return true;
   if (pathname.startsWith("/c/")) return true;
   if (isAuthGatedPublicPath(pathname)) return true;
   if (pathname.startsWith("/api/") && !isPublicApi(pathname)) return true;
@@ -38,6 +39,8 @@ function isPublicApi(pathname: string): boolean {
     pathname.startsWith("/api/v1/openapi") ||
     pathname.startsWith("/api/health") ||
     pathname.startsWith("/api/webhooks/") ||
-    pathname.startsWith("/api/badge/")
+    pathname.startsWith("/api/badge/") ||
+    pathname.startsWith("/api/oauth/") ||
+    pathname.startsWith("/api/mcp")
   );
 }

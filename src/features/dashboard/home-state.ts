@@ -52,9 +52,8 @@ export function deriveHomeKind(s: HomeSignals): DashboardHomeKind {
 
 export function primaryActionFor(
   kind: DashboardHomeKind,
-  companySlug: string,
+  _companySlug: string,
 ): HomePrimaryAction {
-  const profile = `/c/${companySlug}`;
   switch (kind) {
     case "no_company":
       return {
@@ -83,17 +82,17 @@ export function primaryActionFor(
     case "no_projects":
       return {
         id: "add_relationship",
-        title: "Add a project",
-        body: "Then invite the other side to confirm.",
-        href: "/dashboard/cases/new",
-        cta: "Add project",
+        title: "Add a record",
+        body: "Partner, client, branch, or joint company. Public after they confirm — except a branch you own.",
+        href: "/dashboard/add",
+        cta: "Add a record",
       };
     case "no_invitation":
       return {
         id: "send_invite",
         title: "Send the first invite",
         body: "Nothing is public until they confirm.",
-        href: `${profile}#references`,
+        href: "/dashboard/add",
         cta: "Send invite",
       };
     case "invitation_pending":
@@ -116,10 +115,10 @@ export function primaryActionFor(
     case "active":
       return {
         id: "add_another",
-        title: "Add another project",
-        body: "Each confirmation strengthens the network.",
-        href: "/dashboard/cases/new",
-        cta: "New case study",
+        title: "Add another record",
+        body: "Partner, client, branch, or joint company.",
+        href: "/dashboard/add",
+        cta: "Add a record",
       };
   }
 }

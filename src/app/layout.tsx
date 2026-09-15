@@ -24,13 +24,11 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "Hansala",
     type: "website",
-    images: ["/images/highlight-share.jpg"],
   },
   twitter: {
     card: "summary_large_image",
     title,
     description,
-    images: ["/images/highlight-share.jpg"],
   },
 };
 

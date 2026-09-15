@@ -34,7 +34,7 @@ export const WIDGET_TOOLS = [
   {
     name: "hansala_update_widget_settings",
     description:
-      "Partial PATCH for widget presentation. Omitted fields stay unchanged (merge, never wipe). Logo wall: exclusion-based — default shows every confirmed partner. logo_wall.background: \"transparent\" | \"light\" | \"dark\" | \"#RRGGBB\". logo_wall.limit: 1–30. logo_wall.motion: \"row\" | \"stack\" | \"fade\" | \"grid\" | \"swap-batch\" | \"swap-random\". logo_wall.size: \"sm\" | \"md\" | \"lg\" | \"xl\". logo_wall.order / excluded_company_ids / overrides. Testimonials: testimonials.excluded_ids, testimonials.order, testimonials.layout (single|carousel|grid|masonry|marquee|editorial|featured|strip), testimonials.limit 1–30. New published testimonials appear automatically unless excluded.",
+      "Partial PATCH for widget presentation. Omitted fields stay unchanged (merge, never wipe). Logo wall: exclusion-based — default shows every confirmed partner. logo_wall.background: \"transparent\" | \"light\" | \"dark\" | \"#RRGGBB\". logo_wall.limit: 1–30. logo_wall.motion: \"tiles\" | \"bar\" | \"bar-slide\" | \"row\" | \"stack\" | \"fade\" | \"grid\" | \"swap-batch\" | \"swap-random\". logo_wall.size: \"sm\" | \"md\" | \"lg\" | \"xl\". logo_wall.tone: \"auto\" | \"original\" | \"ink\" | \"white\" (logos are cut out and sized server-side; auto = dark on light, white on dark). logo_wall.order / excluded_company_ids / overrides. Testimonials: testimonials.excluded_ids, testimonials.order, testimonials.layout (single|carousel|grid|masonry|marquee|editorial|featured|strip), testimonials.limit 1–30. New published testimonials appear automatically unless excluded.",
     inputSchema: {
       type: "object",
       properties: {
@@ -57,11 +57,15 @@ export const WIDGET_TOOLS = [
             motion: {
               type: "string",
               description:
-                'Exactly: "row" | "stack" | "fade" | "grid" | "swap-batch" | "swap-random"',
+                'Exactly: "tiles" | "bar" | "bar-slide" | "row" | "stack" | "fade" | "grid" | "swap-batch" | "swap-random"',
             },
             size: {
               type: "string",
               description: 'Exactly: "sm" | "md" | "lg" | "xl"',
+            },
+            tone: {
+              type: "string",
+              description: 'Logo colour. Exactly: "auto" | "original" | "ink" | "white"',
             },
             order: { type: "array", items: { type: "string" } },
             excluded_company_ids: {

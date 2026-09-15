@@ -60,29 +60,30 @@ export function CompanySignal({
   if (items.length === 0) return null;
 
   return (
-    <section className="mx-auto mt-8 max-w-6xl px-4">
-      <ul className="grid gap-y-8 sm:grid-cols-3 sm:gap-y-0">
+    <section className="mx-auto mt-14 max-w-[1280px] px-4 sm:px-[18px] lg:px-10">
+      <ul
+        className={`grid gap-4 ${
+          items.length === 3
+            ? "sm:grid-cols-3"
+            : items.length === 2
+              ? "sm:grid-cols-2"
+              : ""
+        }`}
+      >
         {items.map((item, i) => (
           <li
             key={item.label}
-            /* A hairline between, never around. The rule belongs to the gap
-               the figures already leave, so the row stays open at both ends
-               instead of closing into a box. */
-            className={
-              i === 0
-                ? "sm:pr-8"
-                : "border-line sm:border-l sm:pr-8 sm:pl-8 sm:last:pr-0"
-            }
+            className={`rounded-3xl p-7 sm:p-8 ${
+              i === 0 ? "bg-lime" : "bg-surface ring-1 ring-line/70"
+            }`}
           >
-            <p className="font-label text-[11px] font-semibold tracking-[0.16em] text-plus uppercase">
+            <p className="text-[12px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
               {item.label}
             </p>
-            {/* Display scale, tabular figures. This is the number the whole
-                page exists to state. */}
-            <p className="mt-3 font-display text-[clamp(3rem,5.5vw,4.25rem)] leading-[0.92] font-medium tracking-[-0.045em] text-ink tabular-nums">
+            <p className="mt-4 font-display text-[clamp(3rem,5.5vw,4.5rem)] leading-[0.9] font-semibold tracking-[-0.045em] text-ink tabular-nums">
               {item.value}
             </p>
-            <p className="mt-3 text-[13px] leading-relaxed text-muted">
+            <p className="mt-4 text-[14px] leading-relaxed text-ink-soft">
               {item.note}
             </p>
           </li>

@@ -28,6 +28,10 @@ export const WORKSPACE_PAGE_META: Record<
     title: PRODUCT.inbox.label,
     description: PRODUCT.inbox.job,
   },
+  "/dashboard/add": {
+    title: "Add a record",
+    description: "Partner, client, branch, or joint company.",
+  },
   "/dashboard/radar": {
     title: "Radar",
     description: "Project requests in your market.",

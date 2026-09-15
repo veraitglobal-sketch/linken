@@ -1,6 +1,7 @@
 import { SkipLink } from "@/components/a11y/skip-link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { OfferReminder } from "@/components/offer/offer-reminder";
 
 type Props = {
   children: React.ReactNode;
@@ -15,6 +16,7 @@ export function PageShell({ children }: Props) {
         {children}
       </main>
       <SiteFooter />
+      <OfferReminder />
     </div>
   );
 }

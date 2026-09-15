@@ -53,6 +53,15 @@
   --on-navy-muted: #a8b2ad;
   /* Body/UI text must use --muted or darker; --plus meets AA on paper/surface */
   --plus: #5f6964;
+  /* Lime — the homepage colour, chosen by the owner (#cdef84), used the way
+     the reference uses its lavender: the whole hero, the banner and tinted
+     cards; on navy it is the accent. Ink and `--ink-soft` only on lime —
+     `--muted` measures ~4:1 there. */
+  --lime: #cdef84;
+  --lime-soft: #e6f7c4;
+  --wash: #f5fbe8;
+  --wash-deep: #e6f7c4;
+  --wash-strong: #cdef84;
   --font-sans: var(--font-ui);
   /* Was `var(--font-display)` — a self-reference, which CSS treats as a cycle
      and resolves to nothing, so every headline silently fell back to
@@ -96,6 +105,11 @@
   --color-line: var(--line);
   --color-paper: var(--paper);
   --color-mute: var(--mute);
+  --color-lime: var(--lime);
+  --color-lime-soft: var(--lime-soft);
+  --color-wash: var(--wash);
+  --color-wash-deep: var(--wash-deep);
+  --color-wash-strong: var(--wash-strong);
   --color-raised: var(--raised);
   --color-surface: var(--surface);
   --color-navy: var(--navy);
@@ -162,6 +176,42 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* Homepage ground. On `body` rather than a wrapper so the strip behind the
+   floating header and the gap above the footer take the wash too. */
+body:has(.home-wash) {
+  background: var(--wash);
+}
+
+/* Homepage colour — one green, run from its mint to its deep value.
+   `.grad-mint` is light enough for ink; `.grad-teal` carries white type. */
+.grad-mint {
+  background:
+    radial-gradient(ellipse 70% 90% at 0% 0%, rgba(255, 255, 255, 0.55), transparent 60%),
+    linear-gradient(150deg, oklch(0.94 0.045 168) 0%, oklch(0.84 0.09 168) 100%);
+}
+
+.grad-teal {
+  background:
+    radial-gradient(ellipse 60% 80% at 100% 0%, rgba(126, 184, 164, 0.32), transparent 60%),
+    linear-gradient(155deg, oklch(0.47 0.085 170) 0%, var(--blue) 45%, var(--navy) 100%);
+}
+
+/* Cards that answer the pointer. Transform only — the row never reflows. */
+.lift {
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 300ms ease;
+}
+
+.lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px -24px rgba(8, 20, 18, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lift:hover {
+    transform: none;
   }
 }
 
@@ -607,8 +657,8 @@ dd {
 /* Site header — frosted glass. Near-invisible on paper; tint + blur reads
    clearly when content scrolls underneath (hero navy, dark stages). */
 .glass-nav {
-  background: rgba(255, 255, 255, 0.58);
-  border: 1px solid rgba(14, 31, 28, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(14, 31, 28, 0.08);
   box-shadow: 0 10px 36px rgba(8, 20, 18, 0.08);
   -webkit-backdrop-filter: blur(18px) saturate(1.25);
   backdrop-filter: blur(18px) saturate(1.25);
@@ -696,7 +746,7 @@ dd {
   animation: fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Network map — flat field, hairline edges, quiet depth */
+/* Network map — builder canvas: white field, small cards, soft curves */
 .linken-flow-stage {
   background: var(--surface);
 }
@@ -725,8 +775,8 @@ dd {
 
 .linken-flow .react-flow__edge.selected .react-flow__edge-path,
 .linken-flow .react-flow__edge:focus .react-flow__edge-path {
-  stroke: var(--blue) !important;
-  stroke-width: 1.75 !important;
+  stroke: var(--navy) !important;
+  stroke-width: 2 !important;
   opacity: 1 !important;
 }
 
@@ -993,3 +1043,45 @@ dd {
     transform: translateY(0);
   }
 }
+
+/* Sign-in network — pending links drift, confirmed nodes breathe.
+   Pure CSS so it costs nothing; held still under reduced motion. */
+@keyframes net-dash-flow {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+
+@keyframes net-pulse {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.55;
+  }
+}
+
+.net-dash {
+  animation: net-dash-flow 4s linear infinite;
+}
+
+.net-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: net-pulse 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .net-dash,
+  .net-pulse {
+    animation: none;
+  }
+
+  .net-bead {
+    display: none;
+  }
+}
+

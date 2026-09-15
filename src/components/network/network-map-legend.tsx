@@ -4,6 +4,9 @@ type Props = {
   showOwnership: boolean;
   showCoOwner: boolean;
   showPartner: boolean;
+  showClient?: boolean;
+  /** In-flow (status bar) instead of floating over the canvas. */
+  inline?: boolean;
 };
 
 function Swatch({ dashed, dark }: { dashed?: boolean; dark?: boolean }) {
@@ -27,11 +30,14 @@ export function NetworkMapLegend({
   showOwnership,
   showCoOwner,
   showPartner,
+  showClient = false,
+  inline = false,
 }: Props) {
   const items = [
     showOwnership && { label: "Owns", dark: true },
     showCoOwner && { label: "Shared", dark: true, dashed: true },
-    showPartner && { label: "Partner", dashed: true },
+    showPartner && { label: "Partner" },
+    showClient && { label: "Client", dashed: true },
   ].filter(Boolean) as {
     label: string;
     dark?: boolean;
@@ -43,8 +49,9 @@ export function NetworkMapLegend({
   return (
     <div
       className={cn(
-        "pointer-events-none absolute right-4 bottom-4 z-20 flex items-center gap-4 rounded-tile px-3.5 py-2",
-        "border border-line bg-surface",
+        inline
+          ? "flex items-center gap-4"
+          : "pointer-events-none absolute right-4 bottom-4 z-20 flex items-center gap-4 rounded-tile border border-line bg-surface px-3.5 py-2",
       )}
     >
       {items.map((item) => (

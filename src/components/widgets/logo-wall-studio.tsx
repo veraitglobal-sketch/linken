@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { LogoWallEntry } from "@/features/widgets/logo-wall";
 import type { LogoMotion, LogoSize } from "@/features/widgets/logo-motion";
+import type { LogoWallTone } from "@/features/widgets/settings";
 import { LogoWallStudioRow } from "@/components/widgets/logo-wall-studio-row";
 import { LogoWallBackgroundPicker } from "@/components/widgets/logo-wall-background-picker";
 import { LogoWallLayoutControls } from "@/components/widgets/logo-wall-layout-controls";
@@ -15,6 +16,7 @@ type Props = {
   limit: number;
   motion: LogoMotion;
   size: LogoSize;
+  tone: LogoWallTone;
 };
 
 export function LogoWallStudio(props: Props) {
@@ -32,6 +34,7 @@ function studioKey(p: Props) {
     p.limit,
     p.motion,
     p.size,
+    p.tone,
     ...p.entries.map(
       (e) =>
         `${e.id}:${e.included ? 1 : 0}:${e.belowCut ? 1 : 0}:${e.logoState}:${e.logoUrl ?? ""}`,
@@ -45,6 +48,7 @@ function LogoWallStudioInner({
   limit,
   motion,
   size,
+  tone,
 }: Props) {
   const router = useRouter();
   const [rows, setRows] = useState(initial);
@@ -96,6 +100,7 @@ function LogoWallStudioInner({
           limit={limit}
           motion={motion}
           size={size}
+          tone={tone}
           includedCount={includedCount}
         />
       </div>

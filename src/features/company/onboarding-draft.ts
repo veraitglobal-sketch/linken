@@ -9,6 +9,9 @@ export type OnboardingDraft = {
   city: string;
   website: string;
   description: string;
+  /** The person registering — stored on their company membership. */
+  displayName?: string;
+  displayTitle?: string;
 };
 
 export async function saveOnboardingDraft(draft: OnboardingDraft) {
@@ -36,6 +39,8 @@ export async function readOnboardingDraft(): Promise<OnboardingDraft | null> {
       city: parsed.city ?? "",
       website: parsed.website ?? "",
       description: parsed.description ?? "",
+      displayName: parsed.displayName ?? "",
+      displayTitle: parsed.displayTitle ?? "",
     };
   } catch {
     return null;

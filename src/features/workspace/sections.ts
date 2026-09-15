@@ -33,6 +33,7 @@ export const SECTION_BY_HREF: Record<string, WorkspaceSection> = {
   "/dashboard": "network",
   "/dashboard/structure": "structure",
   "/dashboard/partners": "partners",
+  "/dashboard/add": "network",
   "/dashboard/team": "team",
   "/dashboard/verification": "verification",
   "/dashboard/widgets": "widgets",

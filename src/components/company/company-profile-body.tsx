@@ -84,8 +84,14 @@ export function CompanyProfileBody({
   const showSidebar = showWhyPublic || showOwnerProgress || showPartners;
 
   return (
-    <div className="mx-auto mt-4 grid max-w-6xl gap-4 px-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-5">
-      <div className="flex flex-col gap-4">
+    /* Full width when there is no rail — a fixed 320px column with nothing in
+       it left the cards two-thirds wide beside an empty strip. */
+    <div
+      className={`mx-auto mt-12 grid max-w-[1280px] gap-5 px-4 sm:px-[18px] lg:px-10 ${
+        showSidebar ? "lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-6" : ""
+      }`}
+    >
+      <div className="flex flex-col gap-5">
         <CompanyAbout company={company} />
         {showTeam ? (
           <CompanyTeamSection
@@ -123,7 +129,7 @@ export function CompanyProfileBody({
       </div>
 
       {showSidebar ? (
-        <div className="flex flex-col gap-4 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        <div className="flex flex-col gap-5 lg:col-start-2 lg:row-span-2 lg:row-start-1">
           {showWhyPublic ? <TrustWhyCard trust={trust} /> : null}
           {showOwnerProgress ? <TrustProgressCard trust={trust} /> : null}
           {showPartners ? (

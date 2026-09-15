@@ -68,6 +68,7 @@ export async function renderPlacementEmbed(input: {
           siteUrl={siteUrl}
           motion={settings.motion}
           size={settings.size}
+          tone={settings.tone}
         />
         {resolved.locked ? (
           <EmbedProLockedNote

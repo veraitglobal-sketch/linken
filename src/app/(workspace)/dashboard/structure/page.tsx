@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StructureFlashes } from "@/components/dashboard/structure-flashes";
-import { StructureHowItWorks } from "@/components/dashboard/structure-how-it-works";
+import { StructurePreview } from "@/components/dashboard/structure-preview";
 import { StructureTabs } from "@/components/dashboard/structure-tabs";
 import { StructureTreePanel } from "@/components/dashboard/structure-tree-panel";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
@@ -106,8 +106,18 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
 
   return (
     <WorkspacePage
+      wide
       title={PRODUCT.structure.label}
       description={PRODUCT.structure.job}
+      stats={
+        hasGroup
+          ? [
+              { label: "Companies", value: confirmed },
+              { label: "Subsidiaries", value: subsidiaries },
+              { label: "Pending", value: pending, attention: pending > 0 },
+            ]
+          : undefined
+      }
       action={
         <Link
           href="/dashboard"
@@ -117,14 +127,13 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="space-y-6">
         <StructureFlashes
           error={error}
           created={created}
           invited={invited}
           subsidiary={subsidiary}
         />
-        <StructureHowItWorks />
         <StructureTabs
           active={tab}
           hasGroup={hasGroup}
@@ -157,12 +166,21 @@ export default async function DashboardStructurePage({ searchParams }: Props) {
               />
             ) : null}
           </>
-        ) : (
+        ) : hasGroup ? (
           <DashboardGroupPanel
             data={data}
             backPath="/dashboard/structure?tab=grow"
             omitMembers
           />
+        ) : (
+          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <DashboardGroupPanel
+              data={data}
+              backPath="/dashboard/structure?tab=grow"
+              omitMembers
+            />
+            <StructurePreview companyName={rootName} />
+          </div>
         )}
       </div>
     </WorkspacePage>

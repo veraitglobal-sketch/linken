@@ -9,8 +9,9 @@ import {
   mergeLogoWallOrder,
   mergeLogoWallOverride,
   mergeLogoWallSize,
+  mergeLogoWallTone,
 } from "@/features/widgets/settings-merge";
-import { parseWidgetSettings } from "@/features/widgets/settings";
+import { parseWidgetSettings, type LogoWallTone } from "@/features/widgets/settings";
 import type { LogoMotion, LogoSize } from "@/features/widgets/logo-motion";
 import { getLogoWallConfirmedCandidates } from "@/features/widgets/logo-wall";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
@@ -104,6 +105,19 @@ export async function saveLogoWallSize(size: LogoSize) {
   const { supabase, user, company } = await requireStudio();
   if (!user || !company) return { ok: false as const, error: "Not signed in." };
   const next = mergeLogoWallSize(company.widget_settings, size);
+  const { error } = await supabase
+    .from("companies")
+    .update({ widget_settings: next })
+    .eq("id", company.id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateWall(company.slug);
+  return { ok: true as const };
+}
+
+export async function saveLogoWallTone(tone: LogoWallTone) {
+  const { supabase, user, company } = await requireStudio();
+  if (!user || !company) return { ok: false as const, error: "Not signed in." };
+  const next = mergeLogoWallTone(company.widget_settings, tone);
   const { error } = await supabase
     .from("companies")
     .update({ widget_settings: next })

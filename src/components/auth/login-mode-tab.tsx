@@ -16,9 +16,9 @@ export function LoginModeTab({ id, active, onClick, label }: Props) {
       aria-selected={active}
       onClick={onClick}
       className={cn(
-        "h-11 rounded-xl text-[13px] font-semibold transition-colors",
+        "h-11 rounded-full text-[14px] font-semibold transition-colors",
         active
-          ? "bg-[#0e1f1c] text-white"
+          ? "bg-surface text-ink shadow-[0_4px_12px_-6px_rgba(14,31,28,0.3)]"
           : "bg-transparent text-ink-soft hover:text-ink",
       )}
     >

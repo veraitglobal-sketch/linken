@@ -12,7 +12,7 @@ export function OfferCards({
   return (
     <div
       className={cn(
-        "grid items-stretch gap-4 lg:grid-cols-[1fr_1.06fr]",
+        "grid items-stretch gap-5",
         className,
       )}
     >

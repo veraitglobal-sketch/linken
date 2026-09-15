@@ -50,18 +50,15 @@ function NavRow({
   return (
     <span
       className={cn(
-        "relative flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[12.5px]",
+        "relative flex items-center gap-2.5 rounded-full px-3 py-[7px] text-[12.5px]",
         active
-          ? "bg-paper font-semibold text-blue"
+          ? "bg-lime font-semibold text-navy"
           : locked
             ? "text-plus"
             : "text-ink-soft",
       )}
     >
-      {active ? (
-        <span className="absolute top-1.5 bottom-1.5 -left-3.5 w-[3px] rounded-full bg-blue" />
-      ) : null}
-      <span className={active ? "text-blue" : "text-plus"}>
+      <span className={active ? "text-navy" : "text-plus"}>
         <FlowGlyph d={d} />
       </span>
       <span className="flex-1 truncate">{label}</span>
@@ -71,14 +68,14 @@ function NavRow({
 
 export function FlowSidebar() {
   return (
-    <nav className="flex w-[232px] shrink-0 flex-col border-r border-line/70 bg-surface px-3.5 py-3.5">
+    <nav className="flex w-[232px] shrink-0 flex-col border-r border-line/60 bg-[#fafbf6] px-3.5 py-4">
       <span className="flex items-center gap-2 px-1.5">
         <NetworkMark size={16} animate={false} />
         <span className="font-display text-[15px] font-semibold tracking-[-0.03em] text-ink">
           Hansala
         </span>
       </span>
-      <span className="mt-3 flex items-center gap-2.5 rounded-tile border border-line bg-paper px-2.5 py-1.5">
+      <span className="mt-3.5 flex items-center gap-2.5 rounded-2xl bg-surface px-2.5 py-2 shadow-[0_1px_2px_rgba(14,31,28,0.06),0_6px_16px_-8px_rgba(14,31,28,0.18)] ring-1 ring-line/60">
         <FlowMark
           name={FLOW_HUB.name}
           initials={FLOW_HUB.initials}
@@ -89,7 +86,8 @@ export function FlowSidebar() {
           <span className="block truncate font-display text-[13px] font-medium tracking-[-0.03em] text-ink">
             {FLOW_HUB.name}
           </span>
-          <span className="block truncate text-[11px] text-muted">
+          <span className="flex items-center gap-1 truncate text-[11px] text-muted">
+            <span className="size-1.5 rounded-full bg-[#7cc43f]" />
             Verified workspace
           </span>
         </span>
@@ -127,12 +125,12 @@ export function FlowSidebar() {
 
 export function FlowMapControls() {
   return (
-    <div className="absolute bottom-5 left-5 flex flex-col overflow-hidden rounded-tile border border-line bg-surface">
+    <div className="absolute bottom-5 left-5 flex flex-col overflow-hidden rounded-full bg-surface shadow-[0_8px_20px_-10px_rgba(14,31,28,0.3)] ring-1 ring-line/70">
       {["M12 5v14M5 12h14", "M5 12h14", "M4 9V4h5M20 15v5h-5"].map((d, i) => (
         <span
           key={d}
           className={cn(
-            "grid h-8 w-8 place-items-center text-muted",
+            "grid h-8 w-8 place-items-center text-ink-soft",
             i > 0 && "border-t border-line/70",
           )}
         >

@@ -60,7 +60,7 @@ export function FlowInspector({
         <span className="text-[14px] font-semibold tracking-[-0.02em] text-ink">
           {FLOW_HUB.name}
         </span>
-        <span className="ml-auto rounded-full border border-line px-2.5 py-1 text-[11px] font-medium text-blue">
+        <span className="ml-auto rounded-full bg-lime-soft px-2.5 py-1 text-[11px] font-semibold text-navy">
           Company
         </span>
       </div>
@@ -83,25 +83,46 @@ export function FlowInspector({
             </p>
           </div>
         </div>
-        <p className="mt-3 text-[11.5px] text-muted">
-          {confirmed ? "1 partner" : "0 partners"} · Domain verified
-        </p>
+        <div className="mt-3.5 grid grid-cols-2 gap-2">
+          <span className="rounded-xl bg-[#fafbf6] px-3 py-2 ring-1 ring-line/60">
+            <span className="block text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
+              Partners
+            </span>
+            <span className="mt-0.5 block font-display text-[18px] font-semibold tracking-[-0.03em] text-ink tabular-nums">
+              {confirmed ? 1 : 0}
+            </span>
+          </span>
+          <span className="rounded-xl bg-[#fafbf6] px-3 py-2 ring-1 ring-line/60">
+            <span className="block text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
+              Domain
+            </span>
+            <span className="mt-1 flex items-center gap-1.5 text-[12.5px] font-semibold text-ink">
+              <span className="size-2 rounded-full bg-[#7cc43f]" />
+              Verified
+            </span>
+          </span>
+        </div>
       </div>
       <div className="px-4 py-3.5">
         <span
           className={cn(
             "flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-300",
-            adding ? "bg-accent-soft" : "bg-transparent",
+            adding ? "bg-lime-soft" : "bg-transparent",
           )}
         >
-          <span className={adding ? "text-blue" : "text-muted"}>
+          <span
+            className={cn(
+              "grid size-7 place-items-center rounded-full",
+              adding ? "bg-navy text-lime" : "bg-mute text-ink-soft",
+            )}
+          >
             <FlowGlyph d="M12 5v14M5 12h14" />
           </span>
           <span className="min-w-0 flex-1">
             <span
               className={cn(
                 "block text-[13px] font-semibold",
-                adding ? "text-blue" : "text-ink",
+                "text-ink",
               )}
             >
               Add partners on Company
@@ -118,7 +139,10 @@ export function FlowInspector({
           )}
         >
           <div className="overflow-hidden">
-            <div className="mt-2 flex h-10 items-center rounded-xl border border-line bg-paper px-3">
+            <div className="mt-2 flex h-10 items-center gap-2 rounded-full border border-line bg-surface px-3.5 shadow-[inset_0_1px_2px_rgba(14,31,28,0.04)]">
+              <span className="text-muted">
+                <FlowGlyph d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5-2 4 4" />
+              </span>
               {step >= 3 && step < 6 ? (
                 <SearchField typing={step === 3} />
               ) : (
@@ -141,7 +165,12 @@ export function FlowInspector({
                   : "translate-y-1.5 opacity-0",
               )}
             >
-              <div className="flex items-center gap-2.5 rounded-xl border border-line/80 bg-surface px-3 py-2.5">
+              <div
+                className={cn(
+                  "flex items-center gap-2.5 rounded-2xl border bg-surface px-3 py-2.5 shadow-[0_10px_24px_-16px_rgba(14,31,28,0.35)] transition-colors duration-500",
+                  confirmed ? "border-lime" : "border-line/80",
+                )}
+              >
                 <FlowMark
                   name={FLOW_TARGET.name}
                   initials={FLOW_TARGET.initials}
@@ -153,7 +182,10 @@ export function FlowInspector({
                     {FLOW_TARGET.name}
                   </p>
                   <p className="truncate text-[10.5px] text-muted">
-                    {FLOW_TARGET.tagline} · {FLOW_TARGET.domain} ·{" "}
+                    {FLOW_TARGET.tagline}
+                  </p>
+                  <p className="truncate text-[10.5px] text-muted">
+                    {FLOW_TARGET.domain} ·{" "}
                     <span className="font-semibold text-success">Verified</span>
                   </p>
                 </div>

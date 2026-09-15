@@ -78,6 +78,12 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
     <WorkspacePage
       title="Partner requests"
       description="Accept or decline incoming requests. To invite someone, use Company."
+      wide
+      stats={[
+        { label: "Waiting on you", value: inbox.incomingPending.length, attention: inbox.incomingPending.length > 0 },
+        { label: "Sent", value: inbox.outgoingPending.length },
+        { label: "Confirmed", value: inbox.accepted.length },
+      ]}
       action={
         <Link
           href={`/c/${mine.slug}?add=1#add-partner`}

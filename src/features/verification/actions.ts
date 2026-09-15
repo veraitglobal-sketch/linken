@@ -280,7 +280,11 @@ export async function runBacklinkCheck() {
   const embedPath = `/embed/${company.slug}`;
 
   const home = await fetchCompanySite(domain, "/");
-  if (!home.ok) redirect(dash(home.error));
+  if (!home.ok) {
+    redirect(
+      `/dashboard/verification?linkError=${encodeURIComponent(home.error)}`,
+    );
+  }
 
   const body = home.body;
   const linked =
@@ -302,8 +306,6 @@ export async function runBacklinkCheck() {
   redirect(
     linked
       ? "/dashboard/verification?linked=1"
-      : dash(
-          `No Hansala link found. Add a link to ${siteUrl}${profilePath} or an embed iframe.`,
-        ),
+      : "/dashboard/verification?linked=0",
   );
 }

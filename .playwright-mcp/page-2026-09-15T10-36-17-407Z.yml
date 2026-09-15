@@ -1,0 +1,571 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#main-content"
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Hansala" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e13]:
+          - link "Search companies" [ref=e14] [cursor=pointer]:
+            - /url: /search
+          - status [ref=e16]:
+            - generic [ref=e17]: Loading account
+    - main [ref=e18]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - paragraph [ref=e22]: Mutual confirmation
+          - heading "Turn your past work into verified proof." [level=1] [ref=e28]
+          - paragraph [ref=e29]: Invite clients and partners to confirm. Use the same records on your profile, website, and proposals — public only after both sides agree.
+          - generic [ref=e30]:
+            - link "Create your free profile" [ref=e31] [cursor=pointer]:
+              - /url: /onboarding
+              - text: Create your free profile
+              - generic [aria-hidden] [ref=e32]: →
+            - button "Watch how it works" [ref=e33]
+          - paragraph [ref=e37]:
+            - text: For AEC, specialist contractors, agencies, and consulting.
+            - link "Browse the labelled demo" [ref=e38] [cursor=pointer]:
+              - /url: /demo
+            - text: .
+        - generic [ref=e40]:
+          - tablist "How a record is made" [ref=e41]:
+            - tab "You add them" [selected] [ref=e42]:
+              - generic [aria-hidden] [ref=e43]: "1"
+              - text: You add them
+            - tab "They confirm" [ref=e44]:
+              - generic [aria-hidden] [ref=e45]: "2"
+              - text: They confirm
+            - tab "It becomes public" [ref=e46]:
+              - generic [aria-hidden] [ref=e47]: "3"
+              - text: It becomes public
+          - paragraph [ref=e48]: Search a domain. They land on your map as pending — only you see it.
+          - figure [ref=e49]:
+            - generic [ref=e54]:
+              - generic [ref=e55]:
+                - navigation [ref=e56]:
+                  - generic [ref=e57]: Hansala
+                  - generic [ref=e63]:
+                    - img "Vera IT" [ref=e65]
+                    - generic [ref=e66]:
+                      - generic [ref=e67]: Vera IT
+                      - generic [ref=e68]: Verified workspace
+                  - paragraph [ref=e69]: Main
+                  - list [ref=e70]:
+                    - listitem [ref=e71]:
+                      - generic [ref=e72]: Company
+                    - listitem [ref=e77]:
+                      - generic [ref=e78]: Map
+                    - listitem [ref=e84]:
+                      - generic [ref=e85]: Inbox
+                  - paragraph [ref=e90]: More
+                  - list [ref=e91]:
+                    - listitem [ref=e92]:
+                      - generic [ref=e93]: Case studies
+                    - listitem [ref=e98]:
+                      - generic [ref=e99]: Testimonials
+                    - listitem [ref=e104]:
+                      - generic [ref=e105]: Verification
+                    - listitem [ref=e110]:
+                      - generic [ref=e111]: Team access
+                    - listitem [ref=e116]:
+                      - generic [ref=e117]: Branches
+                    - listitem [ref=e122]:
+                      - generic [ref=e123]: Group
+                    - listitem [ref=e128]:
+                      - generic [ref=e129]: Insights
+                  - list [ref=e134]:
+                    - listitem [ref=e135]:
+                      - generic [ref=e136]: Edit company
+                    - listitem [ref=e141]:
+                      - generic [ref=e142]: Home
+                - generic [ref=e147]:
+                  - generic [ref=e148]:
+                    - generic [ref=e149]:
+                      - generic [ref=e150]: Company
+                      - generic [ref=e151]: Map
+                      - generic [ref=e152]: Inbox
+                    - generic [ref=e153]:
+                      - paragraph [ref=e154]: Your map
+                      - paragraph [ref=e155]: 1 company · 0 partners
+                  - generic [ref=e159]:
+                    - generic [ref=e164]:
+                      - img "Vera IT" [ref=e166]
+                      - generic [ref=e167]:
+                        - paragraph [ref=e168]: Vera IT
+                        - paragraph [ref=e169]: Company
+                    - generic [ref=e172]:
+                      - img "Fade" [ref=e174]
+                      - generic [ref=e175]:
+                        - paragraph [ref=e176]: Fade
+                        - paragraph [ref=e177]: Pending
+                - complementary [ref=e187]:
+                  - generic [ref=e188]:
+                    - generic [ref=e189]: Vera IT
+                    - generic [ref=e190]: Company
+                  - generic [ref=e191]:
+                    - paragraph [ref=e192]: Company
+                    - generic [ref=e193]:
+                      - img "Vera IT" [ref=e195]
+                      - generic [ref=e196]:
+                        - paragraph [ref=e197]: Vera IT
+                        - paragraph [ref=e198]: verait.de
+                    - paragraph [ref=e199]: 0 partners · Domain verified
+                  - generic [ref=e200]:
+                    - generic [ref=e205]:
+                      - generic [ref=e206]: Add partners on Company
+                      - generic [ref=e207]: Confirmed partners appear on the map automatically
+                    - generic:
+                      - generic:
+                        - generic [ref=e208]: Search registered companies
+                        - generic [ref=e212]:
+                          - img "Fade" [ref=e214]
+                          - generic [ref=e215]:
+                            - paragraph [ref=e216]: Fade
+                            - paragraph [ref=e217]: Barber booking & rewards · getfadeapp.com · Verified
+                          - generic [ref=e218]: Request
+              - generic [aria-hidden]:
+                - generic:
+                  - generic: hansala.com/confirm/…
+                  - generic:
+                    - generic: Hansala
+                    - generic: Confirmation request
+                  - generic:
+                    - generic [aria-hidden]:
+                      - generic:
+                        - paragraph: Client confirmation
+                        - heading [level=2]: Vera IT says they delivered this project for you.
+                        - paragraph: Confirm as Fade that “Platform delivery and ongoing support” (2026 · Germany) was work done for your company.
+                        - paragraph: Built and shipped the platform, then stayed on for delivery — confirmed by both sides on Hansala.
+                        - generic:
+                          - generic:
+                            - group:
+                              - generic: Optional depth
+                              - generic:
+                                - checkbox
+                                - generic: Scope and timeline look accurate (Scope)
+                              - generic:
+                                - checkbox
+                                - generic: Results described are accurate (Outcome)
+                            - group:
+                              - generic: How your company appears
+                              - generic:
+                                - radio [checked]
+                                - generic: Show my company name publicly
+                              - generic:
+                                - radio
+                                - generic: Keep my company undisclosed (still counts as confirmed)
+                          - button:
+                            - generic: Confirm project
+                        - generic:
+                          - button:
+                            - generic: Decline
+                        - paragraph: Something wrong in the project description? Decline and ask Vera IT to send an updated confirmation.
+      - region "Hansala confirmation mark" [ref=e219]:
+        - generic [ref=e223]:
+          - paragraph [ref=e224]: Two sides
+          - heading "Two companies. One confirmation." [level=2] [ref=e225]: Two companies.One confirmation.
+          - paragraph [ref=e226]: A company cannot state who it worked for — only the other side can confirm it.
+          - paragraph [ref=e227]: Until they do, the record stays private. Once they do, it shows on both profiles.
+          - link "See a live example" [ref=e228] [cursor=pointer]:
+            - /url: /demo
+            - text: See a live example
+            - generic [aria-hidden] [ref=e229]: →
+      - generic [ref=e231]:
+        - generic [ref=e232]:
+          - paragraph [ref=e233]: Where it pays off
+          - heading "Made for the moments project work is won." [level=2] [ref=e237]
+        - list [ref=e238]:
+          - listitem [ref=e239]: Architecture & engineering
+          - listitem [ref=e240]: Construction & contracting
+          - listitem [ref=e241]: Specialist contractors
+          - listitem [ref=e242]: Agencies & consultancies
+        - list [ref=e243]:
+          - listitem [ref=e244]:
+            - generic [ref=e253]:
+              - heading "Proposals" [level=3] [ref=e254]
+              - paragraph [ref=e255]: Attach a confirmed reference list or one-pager. The client checks every record before the first meeting.
+              - paragraph [ref=e257]: Checked by The client
+          - listitem [ref=e259]:
+            - generic [ref=e267]:
+              - heading "Tenders" [level=3] [ref=e268]
+              - paragraph [ref=e269]: Answer reference requirements with records the other side confirmed — not a list you wrote yourself.
+              - paragraph [ref=e271]: Checked by The awarding body
+          - listitem [ref=e273]:
+            - generic [ref=e284]:
+              - heading "Sales" [level=3] [ref=e285]
+              - paragraph [ref=e286]: Prospects see who you have actually delivered for on your public profile — before the first call.
+              - paragraph [ref=e288]: Checked by The prospect
+          - listitem [ref=e290]:
+            - generic [ref=e298]:
+              - heading "Procurement" [level=3] [ref=e299]
+              - paragraph [ref=e300]: "A vendor check resolves to a plain answer: a confirmed record, or no file. Never a paid badge."
+              - paragraph [ref=e302]: Checked by Vendor management
+      - generic [ref=e305]:
+        - generic [ref=e306]:
+          - paragraph [ref=e307]: One record, every surface
+          - heading "Written once. Rendered everywhere it is needed." [level=2] [ref=e311]
+          - paragraph [ref=e312]: Embed once and configure from the dashboard. Every surface below is a route you can open today.
+        - generic [ref=e314]:
+          - list [ref=e315]:
+            - listitem [ref=e316]:
+              - heading [level=3] [ref=e317]:
+                - button "Testimonials on your own site" [expanded] [ref=e318]
+              - region "Testimonials on your own site" [ref=e321]:
+                - paragraph [ref=e322]: The words the author wrote, rendered on your page. You cannot edit them — nor can we.
+                - paragraph [ref=e323]: /api/v1/companies/[slug]/testimonials
+            - listitem [ref=e324]:
+              - heading [level=3] [ref=e325]:
+                - button "Partners and the logo wall" [ref=e326]
+            - listitem [ref=e329]:
+              - heading [level=3] [ref=e330]:
+                - button "The verification mark" [ref=e331]
+            - listitem [ref=e334]:
+              - heading [level=3] [ref=e335]:
+                - button "Your public profile" [ref=e336]
+            - listitem [ref=e339]:
+              - heading [level=3] [ref=e340]:
+                - button "A one-pager for proposals" [ref=e341]
+            - listitem [ref=e344]:
+              - heading [level=3] [ref=e345]:
+                - button "The public API" [ref=e346]
+          - generic [ref=e350]:
+            - generic [ref=e351]: hansala.com/api/v1/companies/[slug]/testimonials
+            - paragraph [ref=e365]: Testimonials on your own site
+        - link "Explore the embeds and API" [ref=e367] [cursor=pointer]:
+          - /url: /developers
+          - generic [aria-hidden] [ref=e368]: →
+          - text: Explore the embeds and API
+      - generic [ref=e370]:
+        - generic [ref=e371]:
+          - paragraph [ref=e372]: Integrations
+          - heading "The same record, in the tools you already use." [level=2] [ref=e373]
+          - paragraph [ref=e374]: Bookings via Calendly or Cal.com on your profile. Alerts in your Slack — partnership requests can be accepted from the channel. Drive the same record from Cursor or Claude over MCP.
+          - link "Open integrations" [ref=e375] [cursor=pointer]:
+            - /url: /dashboard/integrations
+            - generic [aria-hidden] [ref=e376]: →
+            - text: Open integrations
+        - list [ref=e378]:
+          - listitem [ref=e379]:
+            - link "Calendly" [ref=e380] [cursor=pointer]:
+              - /url: https://calendly.com
+          - listitem [ref=e388]:
+            - link "Cal.com" [ref=e389] [cursor=pointer]:
+              - /url: https://cal.com
+          - listitem [ref=e397]:
+            - link "Slack" [ref=e398] [cursor=pointer]:
+              - /url: /dashboard/integrations
+          - listitem [ref=e409]:
+            - link "Claude" [ref=e410] [cursor=pointer]:
+              - /url: /developers
+          - listitem [ref=e418]:
+            - link "Cursor" [ref=e419] [cursor=pointer]:
+              - /url: /developers
+      - generic [ref=e427]:
+        - generic [ref=e428]:
+          - paragraph [ref=e429]: Proof, not promises
+          - generic [ref=e433]:
+            - heading "We don’t print logos we don’t have." [level=2] [ref=e434]
+            - paragraph [ref=e435]:
+              - text: Every record is confirmed by both companies — including ours. Browse the
+              - link "labelled demo" [ref=e436] [cursor=pointer]:
+                - /url: /demo
+              - text: to see what a buyer sees.
+        - generic [ref=e437]:
+          - article [ref=e439]:
+            - generic [ref=e440]:
+              - generic [ref=e441]:
+                - paragraph [ref=e442]: Architecture & engineering
+                - paragraph [ref=e443]: Show the delivery network behind every project — each firm confirmed by the other side.
+              - generic [ref=e444]:
+                - paragraph [ref=e445]: Shared case studies appear on both profiles.
+                - link "Create your free profile" [ref=e446] [cursor=pointer]:
+                  - /url: /onboarding
+            - img "Architectural plans, hard hat, and tools on a project desk" [ref=e450]
+          - article [ref=e452]:
+            - generic [ref=e453]:
+              - generic [ref=e454]:
+                - paragraph [ref=e455]: Construction & contracting
+                - paragraph [ref=e456]: Subcontractors appear confirmed on the lead firm’s page — visible to clients who already trust that network.
+              - generic [ref=e457]:
+                - paragraph [ref=e458]: One record, published on both sides.
+                - link "See a live example" [ref=e459] [cursor=pointer]:
+                  - /url: /demo
+            - img "Contractor on a construction site in front of a modern concrete building" [ref=e463]
+          - article [ref=e465]:
+            - generic [ref=e466]:
+              - generic [ref=e467]:
+                - paragraph [ref=e468]: Agencies & consultancies
+                - paragraph [ref=e469]: One link in the proposal. The buyer sees confirmed clients and partners before the first meeting.
+              - generic [ref=e470]:
+                - paragraph [ref=e471]: Same confirmed records on a one-pager, for every bid.
+                - link "Create your free profile" [ref=e472] [cursor=pointer]:
+                  - /url: /onboarding
+            - img "Delivery team reviewing a shared project brief" [ref=e476]
+      - generic [ref=e478]:
+        - generic [ref=e479]:
+          - paragraph [ref=e480]: The share moment
+          - heading "Send one link. Bring the whole team." [level=2] [ref=e484]
+        - generic [ref=e485]:
+          - paragraph [ref=e486]: Confirmed partners and projects travel with every proposal, pitch, and introduction — the same facts, wherever you send them.
+          - generic [ref=e488]:
+            - button "Drag to rearrange" [ref=e489]
+            - button "Drag to rearrange" [ref=e490]
+            - button "Drag to rearrange" [ref=e491]
+            - paragraph: Drag to rearrange
+      - generic [ref=e493]:
+        - paragraph [ref=e494]: On your site
+        - generic [ref=e498]:
+          - heading "Your proof, rendered on your own page." [level=2] [ref=e499]
+          - paragraph [ref=e500]:
+            - text: Same confirmed records as your Hansala profile — one paste, then it stays current.
+            - link "Embed docs" [ref=e501] [cursor=pointer]:
+              - /url: /developers
+            - text: .
+        - generic [ref=e502]:
+          - img "A partner opening a confirmed company page on site" [ref=e503]
+          - generic [ref=e505]:
+            - link "Hansala Verified" [ref=e506] [cursor=pointer]:
+              - /url: https://hansala.com/demo
+              - generic [ref=e513]:
+                - generic [ref=e514]: Hansala
+                - generic [ref=e515]: Verified
+            - paragraph [ref=e516]: Your network travels with every share.
+            - paragraph [ref=e517]: Embeds and profile links — confirmed facts only.
+      - generic [ref=e519]:
+        - generic [ref=e520]:
+          - generic [ref=e521]:
+            - paragraph [ref=e522]: Plans
+            - heading "The record is free. Pro is reach." [level=2] [ref=e526]
+            - paragraph [ref=e527]:
+              - text: Free keeps the record. Pro puts it in front of people — on your own site, in proposals, and through the API. Full comparison on
+              - link "Pricing" [ref=e528] [cursor=pointer]:
+                - /url: /pricing
+              - text: .
+          - generic [ref=e530]:
+            - generic [ref=e537]:
+              - generic [ref=e538]: Hansala
+              - generic [ref=e539]: Verified
+            - generic [ref=e541]:
+              - paragraph [ref=e542]: Earned, not bought
+              - paragraph [ref=e543]: On both plans. No price buys the mark.
+        - generic [ref=e544]:
+          - article [ref=e545]:
+            - paragraph [ref=e547]: Free
+            - paragraph [ref=e548]: €0
+            - paragraph [ref=e549]: Confirmed records stay free. The badge is earned, not bought.
+            - list [ref=e550]:
+              - listitem [ref=e551]: Company profile with domain verification badge
+              - listitem [ref=e553]: Unlimited mutual confirmations (partners, references, projects)
+              - listitem [ref=e555]: Verified mark and logo-free trust bars on your site
+              - listitem [ref=e557]: 1 team seat (owner)
+            - paragraph [ref=e559]: Distribution — embeds, analytics and the API — is what Pro adds.
+            - link "Create your free profile" [ref=e561] [cursor=pointer]:
+              - /url: /onboarding
+          - article [ref=e563]:
+            - generic [ref=e564]:
+              - paragraph [ref=e565]: Pro
+              - generic [ref=e566]: Most teams
+            - paragraph [ref=e567]: €79 / month
+            - paragraph [ref=e568]: Everything in Free, plus testimonials and partner logos on your site.
+            - list [ref=e569]:
+              - listitem [ref=e570]: Testimonials widget on your website
+              - listitem [ref=e572]: Partner logo widgets (logo wall, rotate, footer)
+              - listitem [ref=e574]: Widget studio — layouts, theme, placements
+              - listitem [ref=e576]: Full profile analytics
+              - listitem [ref=e578]: Agent API and webhooks
+              - listitem [ref=e580]: Branded one-pager for proposals
+              - listitem [ref=e582]: Up to 25 team seats
+            - link "Start with Pro" [ref=e585] [cursor=pointer]:
+              - /url: /onboarding?plan=pro
+        - paragraph [ref=e587]: The mark is domain proof and mutual confirmation. There is no price that buys it, and no plan that prints a tier beside it on your visitor’s screen.
+      - generic [ref=e594]:
+        - generic [ref=e595]:
+          - generic [ref=e596]:
+            - paragraph [ref=e597]: Trust
+            - heading "The record protects both sides." [level=2] [ref=e601]
+            - paragraph [ref=e602]: Policies and company identity are public — the same standard we ask of every profile on Hansala.
+          - generic [ref=e603]:
+            - generic [ref=e604]:
+              - term [ref=e605]: Two confirmations, or private
+              - definition [ref=e606]: Nothing about another company goes public until that company confirms it. Pending stays visible only to you.
+            - generic [ref=e607]:
+              - term [ref=e608]: Verification is domain proof
+              - definition [ref=e609]: Verified means the company controls its business domain or approved identity — not that Hansala guarantees service quality.
+            - generic [ref=e610]:
+              - term [ref=e611]: Author text is locked
+              - definition [ref=e612]: What a client writes cannot be edited by the company that receives it — not from the dashboard, not through the API.
+            - generic [ref=e613]:
+              - term [ref=e614]: Disputes come off the record
+              - definition [ref=e615]: A disputed record leaves public view while both sides resolve it privately. Nothing negative is ever published.
+        - navigation "Trust pages" [ref=e616]:
+          - list [ref=e617]:
+            - listitem [ref=e618]:
+              - link "About" [ref=e619] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e620]:
+              - link "Company" [ref=e621] [cursor=pointer]:
+                - /url: /company
+            - listitem [ref=e622]:
+              - link "Security" [ref=e623] [cursor=pointer]:
+                - /url: /security
+            - listitem [ref=e624]:
+              - link "Privacy" [ref=e625] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e626]:
+              - link "Terms" [ref=e627] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e628]:
+              - link "Contact" [ref=e629] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=e630]:
+              - link "Data deletion" [ref=e631] [cursor=pointer]:
+                - /url: /data-deletion
+            - listitem [ref=e632]:
+              - link "Subprocessors" [ref=e633] [cursor=pointer]:
+                - /url: /subprocessors
+            - listitem [ref=e634]:
+              - link "Disclosure" [ref=e635] [cursor=pointer]:
+                - /url: /disclosure
+      - generic [ref=e637]:
+        - generic [ref=e638]:
+          - generic [ref=e639]:
+            - paragraph [ref=e640]: FAQ
+            - heading "The rules, in plain language." [level=2] [ref=e644]
+          - paragraph [ref=e645]: Confirmation, visibility, the badge, and what stays free.
+        - generic [ref=e646]:
+          - group [ref=e647]:
+            - generic "How does mutual confirmation work?" [ref=e648] [cursor=pointer]
+          - group [ref=e653]:
+            - generic "Who can see my partnerships?" [ref=e654] [cursor=pointer]
+          - group [ref=e659]:
+            - generic "What does “Verified” mean?" [ref=e660] [cursor=pointer]
+          - group [ref=e665]:
+            - generic "Is it free?" [ref=e666] [cursor=pointer]
+      - generic [ref=e674]:
+        - heading "See if a company already has a file." [level=2] [ref=e675]
+        - paragraph [ref=e676]: Search any company. You will find confirmed records, or nothing at all — and nothing is not a mark against anyone.
+        - link "Look up a company" [ref=e677] [cursor=pointer]:
+          - /url: /search
+      - generic [ref=e684]:
+        - generic [ref=e689]:
+          - generic [ref=e690]:
+            - paragraph [ref=e696]: Start
+            - heading "Put your confirmed network on the record." [level=2] [ref=e697]
+            - paragraph [ref=e698]: Create your company profile. Invite partners. Publish only what both sides confirm.
+          - generic [ref=e699]:
+            - link "Create your free profile" [ref=e700] [cursor=pointer]:
+              - /url: /onboarding
+            - link "See a live example" [ref=e702] [cursor=pointer]:
+              - /url: /demo
+        - paragraph [ref=e704]:
+          - text: Agency or studio? See the
+          - link "developer partner program" [ref=e705] [cursor=pointer]:
+            - /url: /developers/partners
+          - text: . Building on the API?
+          - link "Developer docs" [ref=e706] [cursor=pointer]:
+            - /url: /developers
+          - text: .
+    - contentinfo [ref=e707]:
+      - generic [ref=e708]:
+        - generic [ref=e709]:
+          - link "Hansala Verified" [ref=e710] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e717]:
+              - generic [ref=e718]: Hansala
+              - generic [ref=e719]: Verified
+          - paragraph [ref=e720]: Company profiles, case studies, and partners — public only after both sides confirm.
+          - list [ref=e721]:
+            - listitem [ref=e722]:
+              - link "Hansala’s own record" [ref=e723] [cursor=pointer]:
+                - /url: /c/hansala
+            - listitem [ref=e731]:
+              - link "LinkedIn" [ref=e732] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/hansala/
+            - listitem [ref=e736]:
+              - link "Instagram" [ref=e737] [cursor=pointer]:
+                - /url: https://www.instagram.com/hansala.verified
+            - listitem [ref=e741]:
+              - link "YouTube" [ref=e742] [cursor=pointer]:
+                - /url: https://www.youtube.com/@Hansala-verified
+            - listitem [ref=e746]:
+              - link "TikTok" [ref=e747] [cursor=pointer]:
+                - /url: https://www.tiktok.com/@hansala.verified
+        - generic [ref=e753]:
+          - navigation "Product" [ref=e754]:
+            - paragraph [ref=e755]: Product
+            - list [ref=e756]:
+              - listitem [ref=e757]:
+                - link "Search companies" [ref=e758] [cursor=pointer]:
+                  - /url: /search
+              - listitem [ref=e759]:
+                - link "Pricing" [ref=e760] [cursor=pointer]:
+                  - /url: /pricing
+              - listitem [ref=e761]:
+                - link "Use cases" [ref=e762] [cursor=pointer]:
+                  - /url: /use-cases
+              - listitem [ref=e763]:
+                - link "Demo" [ref=e764] [cursor=pointer]:
+                  - /url: /demo
+              - listitem [ref=e765]:
+                - link "Sign in" [ref=e766] [cursor=pointer]:
+                  - /url: /login
+          - navigation "Company" [ref=e767]:
+            - paragraph [ref=e768]: Company
+            - list [ref=e769]:
+              - listitem [ref=e770]:
+                - link "About" [ref=e771] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e772]:
+                - link "Contact" [ref=e773] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e774]:
+                - link "Security" [ref=e775] [cursor=pointer]:
+                  - /url: /security
+              - listitem [ref=e776]:
+                - link "Company information" [ref=e777] [cursor=pointer]:
+                  - /url: /company
+          - navigation "Resources" [ref=e778]:
+            - paragraph [ref=e779]: Resources
+            - list [ref=e780]:
+              - listitem [ref=e781]:
+                - link "Developers" [ref=e782] [cursor=pointer]:
+                  - /url: /developers
+              - listitem [ref=e783]:
+                - link "Changelog" [ref=e784] [cursor=pointer]:
+                  - /url: /changelog
+              - listitem [ref=e785]:
+                - link "Status" [ref=e786] [cursor=pointer]:
+                  - /url: /status
+          - navigation "Legal" [ref=e787]:
+            - paragraph [ref=e788]: Legal
+            - list [ref=e789]:
+              - listitem [ref=e790]:
+                - link "Privacy" [ref=e791] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e792]:
+                - link "Terms" [ref=e793] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e794]:
+                - link "Cookies" [ref=e795] [cursor=pointer]:
+                  - /url: /cookies
+              - listitem [ref=e796]:
+                - link "Data deletion" [ref=e797] [cursor=pointer]:
+                  - /url: /data-deletion
+              - listitem [ref=e798]:
+                - link "Subprocessors" [ref=e799] [cursor=pointer]:
+                  - /url: /subprocessors
+              - listitem [ref=e800]:
+                - link "Disclosure" [ref=e801] [cursor=pointer]:
+                  - /url: /disclosure
+      - generic [ref=e803]:
+        - paragraph [ref=e804]:
+          - generic [ref=e805]: © 2026 Hansala. All rights reserved.
+          - generic [ref=e806]:
+            - generic [aria-hidden] [ref=e807]: ·
+            - link "A Vera IT product" [ref=e808] [cursor=pointer]:
+              - /url: https://verait.de
+        - paragraph [ref=e809]:
+          - link "info@hansala.com" [ref=e810] [cursor=pointer]:
+            - /url: /contact
+  - button "Open Next.js Dev Tools" [ref=e816] [cursor=pointer]

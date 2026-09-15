@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { HomeHeroSearch } from "@/components/marketing/home-hero-search";
 import { HomeLookUpFrame } from "@/components/marketing/home-look-up-frame";
 import { HomeSection } from "@/components/marketing/home-section";
 
@@ -61,23 +61,20 @@ const SIZES = "(max-width: 1024px) 45vw, 280px";
 
 export function HomeLookUp() {
   return (
-    <HomeSection tone="mute" className="!py-14">
+    <HomeSection className="!py-6 sm:!py-10">
       <div className="mx-auto max-w-6xl">
-        <div className="grid items-center gap-10 rounded-hero px-0 py-0 sm:px-0 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
+        <div className="grid items-center gap-10 rounded-hero bg-surface p-6 ring-1 ring-line/70 sm:p-10 lg:grid-cols-[1fr_1.05fr] lg:gap-14 lg:p-12">
           <div>
             <h2 className="font-display text-[clamp(1.7rem,3vw,2.2rem)] leading-[1.1] font-medium tracking-[-0.035em] text-ink text-balance">
               See if a company already has a file.
             </h2>
-            <p className="mt-3 max-w-[38ch] text-[15px] leading-relaxed text-muted">
+            <p className="mt-3 max-w-[38ch] text-[15px] leading-relaxed text-ink-soft">
               Search any company. You will find confirmed records, or nothing at
               all — and nothing is not a mark against anyone.
             </p>
-            <Link
-              href="/search"
-              className="mt-6 inline-flex h-11 items-center rounded-full bg-navy px-5 text-[13px] font-semibold text-on-navy transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
-            >
-              Look up a company
-            </Link>
+            <div className="mt-7">
+              <HomeHeroSearch tone="light" />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

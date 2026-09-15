@@ -9,11 +9,11 @@ type Props = { backPath: string };
 export function GroupCreateEmpty({ backPath }: Props) {
   return (
     <section>
-      <GroupSection
-        title="Create your group"
-        description="Think of a group as the holding name for your country branches. Each branch keeps its own profile and evidence."
-      />
       <WorkspaceCard>
+        <GroupSection
+          title="Create your group"
+          description="Think of a group as the holding name for your country branches. Each branch keeps its own profile and evidence."
+        />
         <form action={createGroup} className="grid gap-3">
           <input type="hidden" name="back" value={backPath} />
           <label className="block">
@@ -41,7 +41,7 @@ export function GroupCreateEmpty({ backPath }: Props) {
             After you create the group, add a subsidiary (new country firm) or
             invite a company that already has a Hansala profile.
           </p>
-          <Button type="submit" className="h-10 w-fit px-4">
+          <Button type="submit" className="h-10 w-fit rounded-xl px-5">
             Create group
           </Button>
         </form>

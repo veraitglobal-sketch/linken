@@ -32,14 +32,14 @@ export function ProfileSectionNav(props: Props) {
   return (
     <nav
       aria-label="Sections on this page"
-      className="sticky top-[60px] z-30 mt-6 border-y border-line bg-mute/95 backdrop-blur"
+      className="sticky top-[76px] z-30 mt-10 px-4"
     >
-      <ul className="mx-auto flex max-w-6xl gap-6 overflow-x-auto px-4 py-3 text-[13px] font-medium whitespace-nowrap text-ink-soft">
+      <ul className="mx-auto flex w-fit max-w-full gap-1 overflow-x-auto rounded-full bg-surface/90 p-1.5 whitespace-nowrap shadow-[0_10px_30px_-18px_rgba(14,31,28,0.35)] ring-1 ring-line/70 backdrop-blur">
         {items.map((item) => (
           <li key={item.href}>
             <a
               href={item.href}
-              className="transition-colors hover:text-ink"
+              className="inline-flex h-10 items-center rounded-full px-4 text-[14px] font-semibold text-ink-soft transition-colors hover:bg-lime hover:text-navy"
             >
               {item.label}
             </a>

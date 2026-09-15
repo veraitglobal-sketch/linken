@@ -94,7 +94,7 @@ export default async function DashboardMapPage() {
         companySlug={company.slug}
         emptyHref={`/c/${company.slug}?add=1#add-partner`}
         emptyLabel="Add partners on Company"
-        subtitle={groupSlug ? "Group map" : "Your map"}
+        subtitle={groupSlug ? "Group network" : "Partner network"}
       />
     </div>
   );

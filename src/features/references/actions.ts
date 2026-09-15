@@ -10,6 +10,7 @@ import { sendReferenceConfirmEmail } from "@/lib/email";
 import { getOperatorActiveCompany } from "@/features/workspace/require-operator";
 import { requireOperatorForCompanySlug } from "@/features/workspace/require-operator-slug";
 import { setWorkspacePreference } from "@/features/workspace/set-preference";
+import { safeAppBack, withBackQuery } from "@/lib/safe-back";
 
 export async function addReference(formData: FormData) {
   const clientName = String(formData.get("client_name") ?? "").trim();
@@ -23,10 +24,12 @@ export async function addReference(formData: FormData) {
   const website = String(formData.get("website") ?? "").trim();
   const companySlug = String(formData.get("company_slug") ?? "").trim();
 
-  const { supabase, company, back } = await resolveOperatorCompany(
+  const fallback = companySlug ? `/c/${companySlug}` : "/dashboard";
+  const { supabase, company, back: profileBack } = await resolveOperatorCompany(
     companySlug,
-    companySlug ? `/c/${companySlug}` : "/dashboard",
+    fallback,
   );
+  const back = safeAppBack(String(formData.get("back") ?? ""), profileBack);
 
   const result = await createReferenceCore(supabase, {
     companyId: company.id,
@@ -42,7 +45,7 @@ export async function addReference(formData: FormData) {
   });
 
   if (!result.ok) {
-    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
+    redirect(withBackQuery(back, { error: result.error }));
   }
 
   const { logActivationEvent } = await import("@/features/activation/events");
@@ -52,7 +55,7 @@ export async function addReference(formData: FormData) {
     );
     const quota = await assertInviteEmailDailyQuota(supabase, company.id);
     if (!quota.ok) {
-      redirect(`${back}?error=${encodeURIComponent(quota.error)}`);
+      redirect(withBackQuery(back, { error: quota.error }));
     }
     void logActivationEvent(company.id, "first_invitation_started");
     const sent = await sendReferenceConfirmEmail({
@@ -65,7 +68,9 @@ export async function addReference(formData: FormData) {
     });
     if (!sent.ok) {
       redirect(
-        `${back}?error=${encodeURIComponent(sent.error ?? "Could not send confirmation email.")}`,
+        withBackQuery(back, {
+          error: sent.error ?? "Could not send confirmation email.",
+        }),
       );
     }
   }
@@ -81,7 +86,7 @@ export async function addReference(formData: FormData) {
 
   await setWorkspacePreference("company", company.id);
   revalidatePath(back);
-  redirect(`${back}?refAdded=1`);
+  redirect(withBackQuery(back, { refAdded: "1" }));
 }
 
 export async function deleteReference(formData: FormData) {

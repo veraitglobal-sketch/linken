@@ -79,6 +79,9 @@ export function SiteHeaderAuth() {
           className="mr-1 hidden items-center gap-4 md:flex"
           aria-label="Account"
         >
+          <Link href="/search" className={focusableLinkClass()}>
+            Search companies
+          </Link>
           {slug ? (
             <>
               <Link href={`/c/${slug}`} className={focusableLinkClass()}>

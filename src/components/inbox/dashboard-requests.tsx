@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Button } from "@/components/ui/button";
+import { InboxCoOwnerRequests } from "@/components/inbox/inbox-co-owner-requests";
+import { InboxRequestRow } from "@/components/inbox/inbox-request-row";
 import { confirmCaseStudyPartnerRole } from "@/features/case-studies/actions";
 import type { PendingCaseStudyConfirmation } from "@/features/case-studies/pending-confirmations";
 import { respondGroupMembership, respondGroupParent } from "@/features/groups/actions";
@@ -8,7 +10,6 @@ import type {
   PendingGroupInvite,
   PendingParentProposal,
 } from "@/features/groups/types";
-import { confirmCoOwnership, declineCoOwnership } from "@/features/network/co-ownership";
 import type { CoOwnerProposal } from "@/features/network/co-ownership-queries";
 
 type Props = {
@@ -19,22 +20,6 @@ type Props = {
   viewerCompanyId: string | null;
 };
 
-function Row({
-  text,
-  children,
-}: {
-  text: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <li className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5">
-      <p className="text-[13px] text-ink">{text}</p>
-      <div className="flex shrink-0 gap-2">{children}</div>
-    </li>
-  );
-}
-
-/** Everything waiting on the viewer across group invites, ownership, and case studies — one place. */
 export function DashboardRequests({
   groupInvites,
   parentProposals,
@@ -63,12 +48,13 @@ export function DashboardRequests({
         <WorkspaceCard padded={false}>
           <ul className="divide-y divide-line">
             {groupInvites.map((invite) => (
-              <Row
+              <InboxRequestRow
                 key={`${invite.groupId}-${invite.companyId}`}
                 text={
                   <>
                     <span className="font-semibold">{invite.groupName}</span>{" "}
-                    invited <span className="font-semibold">{invite.companyName}</span>{" "}
+                    invited{" "}
+                    <span className="font-semibold">{invite.companyName}</span>{" "}
                     to join their group.
                   </>
                 }
@@ -89,7 +75,7 @@ export function DashboardRequests({
                     Decline
                   </Button>
                 </form>
-              </Row>
+              </InboxRequestRow>
             ))}
           </ul>
         </WorkspaceCard>
@@ -99,7 +85,7 @@ export function DashboardRequests({
         <WorkspaceCard padded={false}>
           <ul className="divide-y divide-line">
             {parentProposals.map((p) => (
-              <Row
+              <InboxRequestRow
                 key={`${p.groupId}-${p.companyId}`}
                 text={
                   <>
@@ -126,55 +112,22 @@ export function DashboardRequests({
                     Decline
                   </Button>
                 </form>
-              </Row>
+              </InboxRequestRow>
             ))}
           </ul>
         </WorkspaceCard>
       ) : null}
 
-      {coOwnerProposals.length > 0 ? (
-        <WorkspaceCard padded={false}>
-          <ul className="divide-y divide-line">
-            {coOwnerProposals.map((p) => {
-              const iAmCoParent = p.coParentCompanyId === viewerCompanyId;
-              const otherName = iAmCoParent ? p.childName : p.coParentName;
-              return (
-                <Row
-                  key={p.id}
-                  text={
-                    <>
-                      <span className="font-semibold">{otherName}</span>{" "}
-                      proposes shared ownership of{" "}
-                      <span className="font-semibold">{p.childName}</span>.
-                    </>
-                  }
-                >
-                  <form action={confirmCoOwnership}>
-                    <input type="hidden" name="edge_id" value={p.id} />
-                    <input type="hidden" name="back" value="/dashboard/inbox?tab=requests" />
-                    <Button type="submit" variant="primary" className="h-8 px-3 text-[11px]">
-                      Confirm
-                    </Button>
-                  </form>
-                  <form action={declineCoOwnership}>
-                    <input type="hidden" name="edge_id" value={p.id} />
-                    <input type="hidden" name="back" value="/dashboard/inbox?tab=requests" />
-                    <Button type="submit" variant="secondary" className="h-8 px-3 text-[11px]">
-                      Decline
-                    </Button>
-                  </form>
-                </Row>
-              );
-            })}
-          </ul>
-        </WorkspaceCard>
-      ) : null}
+      <InboxCoOwnerRequests
+        proposals={coOwnerProposals}
+        viewerCompanyId={viewerCompanyId}
+      />
 
       {caseStudyConfirmations.length > 0 ? (
         <WorkspaceCard padded={false}>
           <ul className="divide-y divide-line">
             {caseStudyConfirmations.map((c) => (
-              <Row
+              <InboxRequestRow
                 key={c.caseStudyId}
                 text={
                   <>
@@ -197,7 +150,7 @@ export function DashboardRequests({
                     Confirm
                   </Button>
                 </form>
-              </Row>
+              </InboxRequestRow>
             ))}
           </ul>
         </WorkspaceCard>

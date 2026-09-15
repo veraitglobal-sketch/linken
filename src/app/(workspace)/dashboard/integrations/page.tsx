@@ -8,6 +8,7 @@ import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notic
 import { getSchedulingForActiveCompany } from "@/features/scheduling/queries";
 import { completeSlackPendingAction } from "@/features/slack/actions";
 import { getCompanySlackStatus } from "@/features/slack/queries";
+import { canUseAgentApi } from "@/features/plan/access";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 
 export const metadata: Metadata = {
@@ -96,10 +97,23 @@ export default async function DashboardIntegrationsPage({
     getCompanySlackStatus(company.id),
   ]);
 
+  const bookingProvider =
+    scheduling.provider && scheduling.url
+      ? scheduling.provider === "calcom"
+        ? "Cal.com"
+        : "Calendly"
+      : null;
+
   return (
     <WorkspacePage
+      wide
       title="Integrations"
       description="Bookings and Slack."
+      stats={[
+        { label: "Connected", value: (slack ? 1 : 0) + (bookingProvider ? 1 : 0) },
+        { label: "Slack", value: slack ? "On" : "Off" },
+        { label: "Bookings", value: bookingProvider ?? "Off" },
+      ]}
     >
       <IntegrationsFlash
         error={params.error}
@@ -109,6 +123,7 @@ export default async function DashboardIntegrationsPage({
       />
       <IntegrationsGrid
         companyName={company.name}
+        hasApiAccess={canUseAgentApi(company.plan)}
         slack={slack}
         scheduling={scheduling}
       />

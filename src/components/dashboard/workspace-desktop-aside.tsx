@@ -2,10 +2,14 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { WorkspaceAsideFooter } from "@/components/dashboard/workspace-aside-footer";
+import { WorkspaceAccountMenu } from "@/components/dashboard/workspace-account-menu";
+import {
+  IconExternal,
+  IconSettings,
+} from "@/components/dashboard/workspace-icons";
+import { useNavCollapsed } from "@/components/dashboard/use-nav-collapsed";
 import { WorkspaceNav } from "@/components/dashboard/workspace-nav";
-import { WorkspaceSwitcher } from "@/components/dashboard/workspace-switcher";
-import { NetworkMark } from "@/components/marketing/network-mark";
+import { cn } from "@/lib/cn";
 import type { WorkspaceSection } from "@/features/workspace/sections";
 import type { WorkspaceContext } from "@/features/workspace/types";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -26,77 +30,93 @@ type Props = {
  */
 export function WorkspaceDesktopAside({
   active,
-  contexts,
-  verified,
   allowedSections = null,
   showDeveloperNav = false,
   signedIn = true,
   footer,
 }: Props) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const { collapsed } = useNavCollapsed();
   if (!isDesktop) return null;
 
+  /* Open by default: every destination named. The top-bar toggle collapses
+     it to an icon rail, where names move to hover labels. */
   return (
-    <aside className="flex w-[240px] shrink-0 flex-col border-r border-line/55 bg-surface">
-      <div className="flex h-14 items-center gap-2.5 px-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2.5 text-ink transition-opacity hover:opacity-75"
-        >
-          <NetworkMark size={19} className="text-navy" />
-          <span className="font-display text-[15px] font-semibold tracking-[-0.045em]">
-            Hansala
-          </span>
-        </Link>
+    <aside
+      className={cn(
+        "flex shrink-0 flex-col border-r border-line/55 bg-surface py-4 transition-[width] duration-200",
+        collapsed ? "w-[76px] items-center" : "w-[248px] px-3",
+      )}
+    >
+      <div className="min-h-0 w-full flex-1 overflow-y-auto overflow-x-visible [scrollbar-width:none]">
+        {signedIn ? (
+          <WorkspaceNav
+            companySlug={active?.type === "company" ? active.slug : null}
+            groupSlug={active?.type === "group" ? active.slug : null}
+            contextType={active?.type ?? null}
+            allowedSections={allowedSections}
+            showDeveloperNav={showDeveloperNav}
+            compact={collapsed}
+          />
+        ) : null}
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col px-3 pb-3">
-        {!signedIn ? (
-          <div className="mb-5 rounded-2xl border border-dashed border-line bg-paper/50 px-3.5 py-3">
-            <p className="text-[12px] font-semibold text-ink">Not signed in</p>
-            <Link
-              href="/login?next=/dashboard"
-              className="mt-1 inline-block text-[11px] font-semibold text-blue underline-offset-2 hover:underline"
-            >
-              Sign in →
-            </Link>
-          </div>
-        ) : active ? (
-          <div className="mb-5 rounded-2xl border border-line/65 bg-paper/70 px-0.5 py-0.5">
-            <WorkspaceSwitcher
-              active={active}
-              contexts={contexts}
-              verified={verified}
-            />
-          </div>
-        ) : (
-          <div className="mb-5 rounded-2xl border border-dashed border-line bg-paper/50 px-3.5 py-3">
-            <p className="text-[12px] font-semibold text-ink">No company</p>
-            <Link
-              href="/onboarding"
-              className="mt-1 inline-block text-[11px] font-semibold text-blue underline-offset-2 hover:underline"
-            >
-              Create company →
-            </Link>
-          </div>
-        )}
-
-        <div className="min-h-0 flex-1 overflow-y-auto px-0.5">
-          {signedIn ? (
-            <WorkspaceNav
-              companySlug={active?.type === "company" ? active.slug : null}
-              groupSlug={active?.type === "group" ? active.slug : null}
-              contextType={active?.type ?? null}
-              allowedSections={allowedSections}
-              showDeveloperNav={showDeveloperNav}
-            />
+      {footer ?? (
+        <div
+          className={cn(
+            "mt-3 flex flex-col gap-1.5 border-t border-line/55 pt-3",
+            collapsed ? "items-center" : "items-stretch",
+          )}
+        >
+          {active?.type === "company" ? (
+            <RailLink href={`/c/${active.slug}/edit`} label="Edit company" expanded={!collapsed}>
+              <IconSettings />
+            </RailLink>
+          ) : null}
+          <RailLink href="/" label="Back to site" expanded={!collapsed}>
+            <IconExternal />
+          </RailLink>
+          {signedIn && active ? (
+            <div className={collapsed ? "mt-1.5" : ""}>
+              <WorkspaceAccountMenu active={active} compact={collapsed} />
+            </div>
           ) : null}
         </div>
-
-        {footer ?? (
-          <WorkspaceAsideFooter active={active} signedIn={signedIn} />
-        )}
-      </div>
+      )}
     </aside>
+  );
+}
+
+function RailLink({
+  href,
+  label,
+  expanded = false,
+  children,
+}: {
+  href: string;
+  label: string;
+  expanded?: boolean;
+  children: ReactNode;
+}) {
+  if (expanded) {
+    return (
+      <Link
+        href={href}
+        className="flex h-10 items-center gap-3 rounded-xl px-3 text-[14px] font-medium text-ink/70 transition-colors hover:bg-mute hover:text-ink"
+      >
+        <span className="shrink-0 text-ink/55">{children}</span>
+        {label}
+      </Link>
+    );
+  }
+  return (
+    <Link
+      href={href}
+      title={label}
+      className="grid size-11 place-items-center rounded-xl text-ink/55 transition-colors hover:bg-mute hover:text-ink"
+    >
+      {children}
+      <span className="sr-only">{label}</span>
+    </Link>
   );
 }

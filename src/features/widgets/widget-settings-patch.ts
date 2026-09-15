@@ -92,6 +92,7 @@ function patchFromLogoWallObject(
     limit?: unknown;
     motion?: unknown;
     size?: unknown;
+    tone?: unknown;
     overrides?: Record<string, Partial<LogoWallOverride> | null>;
   };
 } | { ok: false; error: string } {
@@ -102,6 +103,7 @@ function patchFromLogoWallObject(
     limit?: unknown;
     motion?: unknown;
     size?: unknown;
+    tone?: unknown;
     overrides?: Record<string, Partial<LogoWallOverride> | null>;
   } = {};
 
@@ -125,6 +127,7 @@ function patchFromLogoWallObject(
   if ("limit" in o) patch.limit = o.limit;
   if ("motion" in o) patch.motion = o.motion;
   if ("size" in o) patch.size = o.size;
+  if ("tone" in o) patch.tone = o.tone;
 
   if ("overrides" in o) {
     if (!o.overrides || typeof o.overrides !== "object" || Array.isArray(o.overrides)) {

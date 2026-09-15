@@ -8,22 +8,19 @@ export function toFlowEdge(
   editable = false,
   positions?: Map<string, { x: number; y: number }>,
   nodesById?: Map<string, NetworkNode>,
+  routing?: { direction?: "vertical" | "horizontal"; hubId?: string | null },
 ): Edge {
   const isOwns = e.type === "subsidiary";
   const isCoOwner = e.type === "co_owner";
   const isOwnership = isOwns || isCoOwner;
   const isStructure = isOwns || e.type === "member_of";
-  const isPartner = e.type === "partner" || e.type === "client";
 
-  const stroke = selected
-    ? "var(--blue)"
-    : isOwnership
-      ? "var(--navy)"
-      : "var(--muted)";
+  // Quiet grey lines like an org chart; the selected company's links turn ink.
+  const stroke = selected ? "var(--navy)" : isOwnership ? "#9aa59f" : "#cdd3cf";
 
   const handles =
     positions && nodesById
-      ? pickEdgeHandles(e.source, e.target, positions, nodesById)
+      ? pickEdgeHandles(e.source, e.target, positions, nodesById, routing)
       : {};
 
   return {
@@ -40,22 +37,20 @@ export function toFlowEdge(
     ...handles,
     style: {
       stroke,
-      strokeWidth: selected ? 1.75 : isOwnership ? 1.25 : 1,
-      strokeDasharray: isCoOwner
-        ? "6 5"
-        : isPartner
-          ? "3 7"
-          : undefined,
+      strokeWidth: selected ? 1.75 : 1.25,
+      // Confirmed partnerships are solid; a client link and proposed shared
+      // ownership are dashed so the kinds read apart without colour.
+      strokeDasharray: isCoOwner ? "6 5" : e.type === "client" ? "5 5" : undefined,
       strokeLinecap: "round" as const,
-      opacity: selected ? 1 : isPartner ? 0.9 : 0.95,
+      opacity: 1,
     },
     animated: false,
     markerEnd: isOwnership
       ? {
           type: MarkerType.ArrowClosed,
           color: stroke,
-          width: 8,
-          height: 8,
+          width: 7,
+          height: 7,
         }
       : undefined,
   };

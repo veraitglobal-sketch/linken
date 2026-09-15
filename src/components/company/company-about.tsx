@@ -8,41 +8,42 @@ export function CompanyAbout({ company }: Props) {
   const place = [company.city, company.country].filter(Boolean).join(", ");
   const website = company.website?.trim();
 
+  const facts = [
+    company.category ? { label: "Industry", value: company.category } : null,
+    place ? { label: "Location", value: place } : null,
+  ].filter(Boolean) as { label: string; value: string }[];
+
   return (
-    <section className="rounded-chapter border border-line bg-surface px-6 py-8 sm:px-9 sm:py-9">
-      <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-start">
+    <section className="rounded-3xl bg-surface px-6 py-9 sm:px-12 sm:py-12">
+      <div className="grid gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-start md:gap-14">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
+          <span className="inline-flex h-8 items-center rounded-full bg-lime px-3.5 text-[12px] font-semibold text-navy">
             Overview
-          </p>
-          <h2 className="mt-3 font-display text-section text-ink">
-            What this firm
-            <span className="mt-1 block text-ink/35">stands behind.</span>
+          </span>
+          <h2 className="mt-5 font-display text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.05] font-semibold tracking-[-0.035em] text-ink text-balance">
+            What this firm stands behind.
           </h2>
-          <dl className="mt-6 space-y-2 text-[13px] text-ink-soft">
-            {company.category ? (
-              <div>
-                <dt className="inline font-semibold text-muted">Industry · </dt>
-                <dd className="inline text-ink">{company.category}</dd>
+          <dl className="mt-7 flex flex-wrap gap-2">
+            {facts.map((f) => (
+              <div
+                key={f.label}
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-mute px-4 text-[14px]"
+              >
+                <dt className="text-muted">{f.label}</dt>
+                <dd className="font-semibold text-ink">{f.value}</dd>
               </div>
-            ) : null}
-            {place ? (
-              <div>
-                <dt className="inline font-semibold text-muted">Location · </dt>
-                <dd className="inline text-ink">{place}</dd>
-              </div>
-            ) : null}
+            ))}
             {website ? (
-              <div>
-                <dt className="inline font-semibold text-muted">Website · </dt>
-                <dd className="inline">
+              <div className="inline-flex h-10 items-center gap-2 rounded-full bg-mute px-4 text-[14px]">
+                <dt className="text-muted">Website</dt>
+                <dd>
                   <a
                     href={website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-ink underline-offset-2 hover:underline"
+                    className="font-semibold text-ink underline-offset-2 hover:underline"
                   >
-                    {website.replace(/^https?:\/\//i, "")}
+                    {website.replace(/^https?:\/\//i, "").replace(/\/$/, "")}
                   </a>
                 </dd>
               </div>
@@ -50,25 +51,23 @@ export function CompanyAbout({ company }: Props) {
           </dl>
         </div>
         <div>
-          <p className="text-[15px] leading-relaxed text-ink-soft sm:text-[16px]">
-            {company.description}
-          </p>
+          {company.description ? (
+            <p className="text-[17px] leading-relaxed text-ink-soft">
+              {company.description}
+            </p>
+          ) : null}
           {company.services.length ? (
-            <div className="mt-6 border-t border-line pt-5">
-              <p className="text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">
+            <div className={company.description ? "mt-8" : ""}>
+              <p className="text-[12px] font-semibold tracking-[0.14em] text-muted uppercase">
                 Services on record
               </p>
-              <ul className="mt-3 space-y-2">
+              <ul className="mt-4 flex list-none flex-wrap gap-2.5 p-0">
                 {company.services.map((service) => (
                   <li
                     key={service}
-                    className="flex items-baseline gap-2.5 text-[14px] text-ink"
+                    className="inline-flex h-11 items-center rounded-full bg-lime-soft px-5 text-[15px] font-medium text-ink"
                   >
-                    <span
-                      className="h-1 w-1 shrink-0 translate-y-[-2px] rounded-full bg-ink/30"
-                      aria-hidden
-                    />
-                    <span>{service}</span>
+                    {service}
                   </li>
                 ))}
               </ul>
@@ -79,4 +78,3 @@ export function CompanyAbout({ company }: Props) {
     </section>
   );
 }
-

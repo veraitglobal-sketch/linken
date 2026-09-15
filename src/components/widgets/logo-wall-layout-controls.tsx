@@ -11,20 +11,31 @@ import {
   saveLogoWallLimit,
   saveLogoWallMotion,
   saveLogoWallSize,
+  saveLogoWallTone,
 } from "@/features/widgets/logo-wall-studio-actions";
+import type { LogoWallTone } from "@/features/widgets/settings";
 import { cn } from "@/lib/cn";
 
 type Props = {
   limit: number;
   motion: LogoMotion;
   size: LogoSize;
+  tone: LogoWallTone;
   includedCount: number;
 };
+
+const TONES: { id: LogoWallTone; name: string; hint: string }[] = [
+  { id: "auto", name: "Match background", hint: "Dark logos on a light page, white on a dark one." },
+  { id: "original", name: "Original colours", hint: "Each partner's own brand colours." },
+  { id: "ink", name: "All dark", hint: "Every logo in one dark tone." },
+  { id: "white", name: "All white", hint: "Every logo in white — for dark or photo backgrounds." },
+];
 
 export function LogoWallLayoutControls({
   limit,
   motion,
   size,
+  tone,
   includedCount,
 }: Props) {
   const router = useRouter();
@@ -80,6 +91,26 @@ export function LogoWallLayoutControls({
             )}
           >
             {m.name}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="mr-1 text-[11px] text-muted">Logo colour</span>
+        {TONES.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            title={t.hint}
+            disabled={pending}
+            onClick={() => run(() => saveLogoWallTone(t.id))}
+            className={cn(
+              "rounded-lg border px-2 py-1 text-[10px] font-semibold",
+              tone === t.id
+                ? "border-ink bg-ink text-white"
+                : "border-line bg-paper text-ink hover:bg-surface",
+            )}
+          >
+            {t.name}
           </button>
         ))}
       </div>

@@ -33,7 +33,7 @@ export function CompanyHeroActions({
   bookingLabel = "Book a call",
 }: Props) {
   return (
-    <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
+    <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center [&_a]:!rounded-full [&_button]:!rounded-full">
       {bookingUrl ? (
         <BookCallButton companySlug={slug} label={bookingLabel} />
       ) : null}
@@ -54,7 +54,7 @@ export function CompanyHeroActions({
         </Button>
       ) : null}
       {showOnePager ? (
-        <Button href={`/c/${slug}/one-pager`} variant="onDark" className="h-10 px-4">
+        <Button href={`/c/${slug}/one-pager`} variant="onDark" className="h-11 px-5">
           One-pager
         </Button>
       ) : null}
@@ -62,7 +62,7 @@ export function CompanyHeroActions({
         <EmbedSnippetButton companySlug={slug} siteUrl={siteUrl} />
       ) : null}
       {website ? (
-        <Button href={website} variant="onDark" className="h-10 px-4">
+        <Button href={website} variant="onDark" className="h-11 px-5">
           Website
           {websiteLinked ? (
             <span className="ml-1 text-[10px] font-semibold tracking-[0.08em] opacity-80 uppercase">

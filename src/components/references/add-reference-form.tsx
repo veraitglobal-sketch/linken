@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input";
 
 type Props = {
   companySlug: string;
+  startOpen?: boolean;
+  back?: string;
 };
 
-export function AddReferenceForm({ companySlug }: Props) {
-  const [open, setOpen] = useState(false);
+export function AddReferenceForm({ companySlug, startOpen = false, back }: Props) {
+  const [open, setOpen] = useState(startOpen);
   const [ongoing, setOngoing] = useState(true);
 
   if (!open) {
@@ -27,6 +29,7 @@ export function AddReferenceForm({ companySlug }: Props) {
       className="rounded-none border border-line bg-[#f7f8fa] px-4 py-5 sm:px-5"
     >
       <input type="hidden" name="company_slug" value={companySlug} />
+      {back ? <input type="hidden" name="back" value={back} /> : null}
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
         New reference
       </p>
@@ -81,9 +84,11 @@ export function AddReferenceForm({ companySlug }: Props) {
         <Button type="submit" className="h-10">
           Save reference
         </Button>
-        <Button type="button" variant="ghost" className="h-10" onClick={() => setOpen(false)}>
-          Cancel
-        </Button>
+        {startOpen ? null : (
+          <Button type="button" variant="ghost" className="h-10" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
+        )}
       </div>
     </form>
   );

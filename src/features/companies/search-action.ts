@@ -12,6 +12,10 @@ export type CompanySearchHit = {
   logoUrl: string | null;
   logoInitials: string;
   claimed: boolean;
+  /** Domain verified — public. */
+  verified: boolean;
+  /** Accepted partnerships only; pending never counts. */
+  confirmedPartnerCount: number;
 };
 
 export type CategorySearchHit = {
@@ -29,6 +33,8 @@ function toHit(c: Company): CompanySearchHit {
     logoUrl: c.logoUrl ?? null,
     logoInitials: c.logoInitials,
     claimed: c.claimed !== false,
+    verified: Boolean(c.verified && c.claimed !== false),
+    confirmedPartnerCount: c.confirmedPartnerCount ?? 0,
   };
 }
 

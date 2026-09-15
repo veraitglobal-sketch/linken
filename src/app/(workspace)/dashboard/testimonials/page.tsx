@@ -97,6 +97,11 @@ export default async function DashboardTestimonialsPage() {
       title="Testimonials"
       description="Written by clients on Hansala. Putting them on your own site is Pro."
       wide
+      stats={[
+        { label: "Published", value: publishedCount },
+        { label: "On widget", value: entries.filter((e) => e.included).length },
+        { label: "Waiting", value: pending.length, attention: pending.length > 0 },
+      ]}
       action={
         <div className="flex flex-wrap gap-2">
           <Link

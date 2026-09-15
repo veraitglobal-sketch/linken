@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { confirmDomainVerificationToken } from "@/features/verification/email-verification-actions";
+import { confirmDomainVerificationToken } from "@/features/verification/email-verification-confirm";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {

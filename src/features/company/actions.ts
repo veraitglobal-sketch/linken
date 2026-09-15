@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { parseOrganizationKind } from "@/features/company/organization-kind";
+import { getAuthSiteUrl } from "@/lib/site";
 import { redirect } from "next/navigation";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
 import {
@@ -71,18 +73,74 @@ export async function setAllowLogoInPartnerWidgets(formData: FormData) {
   redirect(`${safeBack}?logoOpt=${allow ? "on" : "off"}`);
 }
 
+/**
+ * Onboarding for someone without an account: one form collects the person,
+ * the account (work email + password) and the company. The company is kept
+ * as a draft, the account is created, and the confirmation email brings them
+ * back to /onboarding, where the draft is waiting to be finished in one click.
+ * Nothing about the company is created before the email is confirmed.
+ */
+export async function startOnboarding(formData: FormData) {
+  const get = (k: string) => String(formData.get(k) ?? "").trim();
+  const email = get("email");
+  const password = String(formData.get("password") ?? "");
+  const displayName = get("display_name");
+  const organizationKind =
+    parseOrganizationKind(get("organization_kind")) ?? "company";
+  const next =
+    organizationKind === "developer_partner"
+      ? "/onboarding?kind=developer_partner"
+      : "/onboarding";
+
+  if (!displayName) {
+    redirect(`${next}${next.includes("?") ? "&" : "?"}error=${encodeURIComponent("Your name is required")}`);
+  }
+  if (!email || password.length < 6) {
+    redirect(`${next}${next.includes("?") ? "&" : "?"}error=${encodeURIComponent("Enter your work email and a password of at least 6 characters")}`);
+  }
+
+  await saveOnboardingDraft({
+    name: get("name"),
+    organizationKind,
+    category: get("category"),
+    city: get("city"),
+    website: get("website"),
+    description: get("description"),
+    displayName,
+    displayTitle: get("display_title"),
+  });
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: `${getAuthSiteUrl()}/auth/callback?next=${encodeURIComponent(next)}` },
+  });
+  if (error) {
+    redirect(`${next}${next.includes("?") ? "&" : "?"}error=${encodeURIComponent(error.message)}`);
+  }
+
+  const { logActivationEvent } = await import("@/features/activation/events");
+  void logActivationEvent(null, "signup_completed");
+
+  /* Email confirmation off (local / some projects): the session exists now,
+     so go straight back and finish. */
+  if (data.session) {
+    redirect(next);
+  }
+  redirect(`/onboarding/check-email?email=${encodeURIComponent(email)}`);
+}
+
 export async function createCompany(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const category = String(formData.get("category") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
   const website = String(formData.get("website") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
-  const { parseOrganizationKind } = await import(
-    "@/features/company/organization-kind"
-  );
-  const organizationKind =
-    parseOrganizationKind(String(formData.get("organization_kind") ?? "")) ??
-    "company";
+  const organizationKindRaw = String(formData.get("organization_kind") ?? "");
+  const organizationKind = parseOrganizationKind(organizationKindRaw) ?? "company";
+  const displayName = String(formData.get("display_name") ?? "").trim();
+  const displayTitle = String(formData.get("display_title") ?? "").trim();
   const baseSlug = toSlug(name);
 
   if (!name || !baseSlug) {
@@ -105,6 +163,8 @@ export async function createCompany(formData: FormData) {
       city,
       website,
       description,
+      displayName,
+      displayTitle,
     });
     const next =
       organizationKind === "developer_partner"
@@ -154,6 +214,19 @@ export async function createCompany(formData: FormData) {
   }
 
   await clearOnboardingDraft();
+
+  /* Who registered, on their own membership row (self-update is granted on
+     display_name / display_title). Public visibility stays as it was. */
+  if (displayName || displayTitle) {
+    await supabase
+      .from("company_members")
+      .update({
+        ...(displayName ? { display_name: displayName } : {}),
+        ...(displayTitle ? { display_title: displayTitle } : {}),
+      })
+      .eq("company_id", created.id)
+      .eq("user_id", user.id);
+  }
 
   // Automatic email-domain verification when website matches work email
   let autoVerified = false;

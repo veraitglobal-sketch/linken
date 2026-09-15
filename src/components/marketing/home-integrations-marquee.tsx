@@ -63,7 +63,12 @@ function Face({
  * Five in a row. Odd columns start as name, even as logo — then they swap
  * vertically so the row is never all-logo or all-text at once.
  */
-export function HomeIntegrationsMarquee() {
+export function HomeIntegrationsMarquee({
+  className = "grid-cols-2 sm:grid-cols-5 sm:gap-x-6",
+}: {
+  /** Column count — the banner tray is narrower than the old full row. */
+  className?: string;
+} = {}) {
   const [tick, setTick] = useState(false);
   const [reduced, setReduced] = useState(false);
 
@@ -82,7 +87,7 @@ export function HomeIntegrationsMarquee() {
   }, [reduced]);
 
   return (
-    <ul className="m-0 grid list-none grid-cols-2 gap-x-8 gap-y-8 p-0 sm:grid-cols-5 sm:gap-x-6">
+    <ul className={`m-0 grid list-none gap-x-8 gap-y-8 p-0 ${className}`}>
       {HOME_INTEGRATIONS.map((item, i) => (
         <li key={item.id}>
           <Column item={item} nameUp={tick ? i % 2 === 0 : i % 2 === 1} />

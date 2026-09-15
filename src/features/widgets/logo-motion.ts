@@ -5,7 +5,10 @@ export type LogoMotion =
   | "fade"
   | "grid"
   | "swap-batch"
-  | "swap-random";
+  | "swap-random"
+  | "bar"
+  | "bar-slide"
+  | "tiles";
 
 /** Logo mark height — studio + embed `size` param. */
 export type LogoSize = "sm" | "md" | "lg" | "xl";
@@ -25,6 +28,21 @@ export const LOGO_MOTION_OPTIONS: {
   name: string;
   hint: string;
 }[] = [
+  {
+    id: "tiles",
+    name: "Tiles",
+    hint: "Equal cells, no background — every logo the same size.",
+  },
+  {
+    id: "bar",
+    name: "Trust bar",
+    hint: "Your verified mark left, partner logos in one line with dividers — recoloured to match the page.",
+  },
+  {
+    id: "bar-slide",
+    name: "Trust bar · moving",
+    hint: "The trust bar with logos drifting — for long partner lists.",
+  },
   {
     id: "row",
     name: "Row slide",
@@ -64,6 +82,9 @@ export function parseLogoMotion(raw: string | undefined): LogoMotion {
     raw === "grid" ||
     raw === "swap-batch" ||
     raw === "swap-random" ||
+    raw === "bar" ||
+    raw === "bar-slide" ||
+    raw === "tiles" ||
     raw === "row"
   ) {
     return raw;
@@ -81,6 +102,12 @@ export function logoWallHeight(motion: LogoMotion, size: LogoSize): number {
   const logo = LOGO_SIZE_PX[size];
   const label = 48; // Hansala Verified lockup
   switch (motion) {
+    case "tiles":
+      return 56 + 104 * 2 + 16;
+    case "bar":
+    case "bar-slide":
+      // One line on a wide page; the iframe resizer grows it when it stacks.
+      return logo + 44;
     case "grid":
     case "swap-batch":
     case "swap-random":

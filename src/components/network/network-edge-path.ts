@@ -1,11 +1,7 @@
-import {
-  getBezierPath,
-  getSmoothStepPath,
-  type EdgeProps,
-} from "@xyflow/react";
+import { getBezierPath, type EdgeProps } from "@xyflow/react";
 import type { NetworkEdge } from "@/features/network/types";
 
-/** Structure = orthogonal. Partner/client = soft bezier. */
+/** Soft curves between handle dots, like a flow builder. */
 export function buildEdgePath(
   props: Pick<
     EdgeProps,
@@ -16,25 +12,16 @@ export function buildEdgePath(
     | "sourcePosition"
     | "targetPosition"
   >,
-  edgeType?: NetworkEdge["type"],
-) {
-  const base = {
+  _edgeType?: NetworkEdge["type"],
+): [string, number, number] {
+  const [path, labelX, labelY] = getBezierPath({
     sourceX: props.sourceX,
     sourceY: props.sourceY,
     sourcePosition: props.sourcePosition,
     targetX: props.targetX,
     targetY: props.targetY,
     targetPosition: props.targetPosition,
-  };
-
-  const structure =
-    edgeType === "subsidiary" ||
-    edgeType === "member_of" ||
-    edgeType === "co_owner";
-
-  if (structure) {
-    return getSmoothStepPath({ ...base, borderRadius: 20, offset: 4 });
-  }
-
-  return getBezierPath({ ...base, curvature: 0.22 });
+    curvature: 0.35,
+  });
+  return [path, labelX, labelY];
 }
