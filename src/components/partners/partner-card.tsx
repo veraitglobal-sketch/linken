@@ -27,7 +27,7 @@ export function PartnerCard({
   const primaryHref = recordHref ?? `/c/${partner.slug}?src=partner`;
 
   return (
-    <div className="rounded-xl bg-[#f7f8fa] px-3 py-2.5 transition-colors hover:bg-paper">
+    <div className="rounded-none bg-[#f7f8fa] px-3 py-2 transition-colors hover:bg-paper">
       {/* The mark leads.
           It used to sit at the far right of the row — 196px into a 254px card —
           which made the company's own logo the last thing read and the first
@@ -54,29 +54,28 @@ export function PartnerCard({
             {/* Only when the partner actually is. Never inferred, never shown
                 for a company that has not proved its domain or identity. */}
             {partner.verified ? (
-              <span className="inline-flex shrink-0 items-center rounded-md border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.06em] text-[#1a5c51] uppercase">
+              <span className="inline-flex shrink-0 items-center rounded-none border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.06em] text-[#1a5c51] uppercase">
                 Verified
               </span>
             ) : null}
             {partner.liveOnSite ? (
-              <span className="inline-flex shrink-0 items-center rounded-md border border-line bg-white px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.06em] text-muted uppercase">
+              <span className="inline-flex shrink-0 items-center rounded-none border border-line bg-white px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.06em] text-muted uppercase">
                 Live on their site
               </span>
             ) : null}
           </div>
           {/* The industry, not "the industry company". `category` already reads
-              as a trade — "Cleaning services company" was a word too many. */}
-          <p className="mt-0.5 truncate text-[13px] text-muted">
+              as a trade — "Cleaning services company" was a word too many.
+              Confirmed status and shared-case count fold onto this same line
+              rather than stacking their own — one dense row instead of up to
+              four thin ones. */}
+          <p className="mt-0.5 truncate text-[12.5px] text-muted">
             {partner.category}
+            {recordHref ? (
+              <span className="font-semibold text-ink"> · Confirmed</span>
+            ) : null}
+            {partner.sharedProjects > 0 ? <span> · {casesLabel}</span> : null}
           </p>
-          {partner.sharedProjects > 0 ? (
-            <p className="mt-1 text-[12px] text-muted">{casesLabel}</p>
-          ) : null}
-          {recordHref ? (
-            <p className="mt-1 text-[12px] font-semibold text-ink">
-              Confirmed record
-            </p>
-          ) : null}
         </Link>
         {recordHref ? (
           <Link

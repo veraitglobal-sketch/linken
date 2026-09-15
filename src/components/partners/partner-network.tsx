@@ -14,7 +14,7 @@ export function PartnerNetwork({ company, partners }: Props) {
   return (
     <div className="pb-10">
       <section className="px-4 pt-3">
-        <div className="mesh-stage relative mx-auto max-w-6xl overflow-hidden rounded-[28px] px-6 py-8 text-white sm:px-9 sm:py-10">
+        <div className="mesh-stage relative mx-auto max-w-6xl overflow-hidden rounded-none px-6 py-8 text-white sm:px-9 sm:py-10">
           <div className="stage-grain absolute inset-0" />
           <div className="relative z-10">
             <Link
@@ -63,7 +63,7 @@ export function PartnerNetwork({ company, partners }: Props) {
         </div>
 
         {partners.length === 0 ? (
-          <div className="rounded-[24px] border border-line bg-surface px-5 py-10 text-sm text-muted">
+          <div className="rounded-none border border-line bg-surface px-5 py-10 text-sm text-muted">
             No confirmed partners yet.
           </div>
         ) : (

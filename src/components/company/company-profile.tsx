@@ -3,6 +3,7 @@ import { NextStepStrip } from "@/components/activation/next-step-strip";
 import { CompanyHeroBand } from "@/components/company/company-hero-band";
 import { CompanyProfileBody } from "@/components/company/company-profile-body";
 import { CompanySignal } from "@/components/company/company-signal";
+import { ProfileSectionNav } from "@/components/company/profile-section-nav";
 import { ProfileProvenance } from "@/components/company/profile-provenance";
 import { UnclaimedBanner } from "@/components/company/unclaimed-banner";
 import type { PublicTeamMember } from "@/features/team/types";
@@ -88,6 +89,12 @@ export function CompanyProfile({
   const isUnclaimed = company.claimed === false;
   const confirmedRefs = references.filter((r) => r.status === "confirmed").length;
 
+  const showTeam = teamMembers.length > 0 || (editable && !isUnclaimed);
+  const showRefs = references.length > 0 || editable;
+  const showCases = caseStudies.length > 0 || editable;
+  const showPartners = partners.length > 0 || editable;
+  const showMap = networkMap !== null;
+
   return (
     /* A tinted ground, so the profile's cards can be white and sit on it.
        Measured on the live page: every section card was `bg-surface` behind a
@@ -98,7 +105,7 @@ export function CompanyProfile({
        tint belongs to the canvas. Tinting the cards instead was tried there and
        measured — `#f0f2f0` against `#ffffff` is a six per cent step and it did
        not read at all. */
-    <div className="bg-mute pb-10">
+    <div className="profile-flat-corners bg-mute pb-10">
       <CompanyHeroBand
         company={company}
         trustLevel={trust.level}
@@ -118,7 +125,7 @@ export function CompanyProfile({
       {inquirySent ? <InquirySentBanner companyName={company.name} /> : null}
       {domainVerifiedJustNow ? (
         <div className="mx-auto mt-4 max-w-6xl px-4">
-          <p className="rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
+          <p className="rounded-none border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
             Domain verified — your email matches your website. The Verified badge
             is live on this profile.
           </p>
@@ -126,7 +133,7 @@ export function CompanyProfile({
       ) : null}
       {partnerConfirmedJustNow ? (
         <div className="mx-auto mt-4 max-w-6xl px-4">
-          <p className="rounded-2xl border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
+          <p className="rounded-none border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
             Partnership confirmed. Your company is claimed and the link is live
             on the map.
           </p>
@@ -141,7 +148,7 @@ export function CompanyProfile({
         />
       ) : error ? (
         <div className="mx-auto mt-4 max-w-6xl px-4">
-          <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+          <p className="rounded-none border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
             {error}
           </p>
         </div>
@@ -162,6 +169,14 @@ export function CompanyProfile({
         />
       )}
 
+      <ProfileSectionNav
+        showTeam={showTeam}
+        showRefs={showRefs}
+        showCases={showCases}
+        showPartners={showPartners}
+        showMap={showMap}
+      />
+
       <CompanyProfileBody
         company={company}
         partners={partners}
@@ -175,11 +190,11 @@ export function CompanyProfile({
         teamMembers={teamMembers}
         editable={editable}
         isUnclaimed={isUnclaimed}
-        showTeam={teamMembers.length > 0 || (editable && !isUnclaimed)}
-        showRefs={references.length > 0 || editable}
+        showTeam={showTeam}
+        showRefs={showRefs}
         showProviders={providers.length > 0}
-        showCases={caseStudies.length > 0 || editable}
-        showPartners={partners.length > 0 || editable}
+        showCases={showCases}
+        showPartners={showPartners}
         showTestimonials={testimonials.length > 0 || (editable && !isUnclaimed)}
         showWhyPublic={trust.points > 0}
         showOwnerProgress={editable && !isUnclaimed}

@@ -15,7 +15,7 @@ export async function getAdminCompanyDetail(
   const { data: c } = await admin
     .from("companies")
     .select(
-      "id, name, slug, website, category, city, country, claimed, verified, plan, radar, owner_id, created_at",
+      "id, name, slug, website, category, city, country, claimed, verified, plan, radar, owner_id, created_at, staff_hidden_at",
     )
     .eq("id", id)
     .maybeSingle();
@@ -135,5 +135,6 @@ export async function getAdminCompanyDetail(
     testimonialsCount: testimonials.count ?? 0,
     casesCount: cases.count ?? 0,
     placementsCount: placements.count ?? 0,
+    staffHiddenAt: (c.staff_hidden_at as string | null) ?? null,
   };
 }

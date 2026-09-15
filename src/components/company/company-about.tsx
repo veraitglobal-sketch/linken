@@ -59,14 +59,15 @@ export function CompanyAbout({ company }: Props) {
                 Services on record
               </p>
               <ul className="mt-3 space-y-2">
-                {company.services.map((service, index) => (
+                {company.services.map((service) => (
                   <li
                     key={service}
-                    className="flex items-baseline gap-3 text-[14px] text-ink"
+                    className="flex items-baseline gap-2.5 text-[14px] text-ink"
                   >
-                    <span className="font-display text-[13px] text-muted">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
+                    <span
+                      className="h-1 w-1 shrink-0 translate-y-[-2px] rounded-full bg-ink/30"
+                      aria-hidden
+                    />
                     <span>{service}</span>
                   </li>
                 ))}

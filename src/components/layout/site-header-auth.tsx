@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { focusableLinkClass } from "@/components/a11y/focus";
+import { SiteHeaderAnon } from "@/components/layout/site-header-anon";
+import { isStaffLoginNext } from "@/features/auth/login-intent";
 import { signOut } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { PRODUCT } from "@/lib/product-model";
@@ -14,9 +16,15 @@ type AuthState =
 
 export function SiteHeaderAuth() {
   const [auth, setAuth] = useState<AuthState>({ status: "loading" });
+  const [staffLogin, setStaffLogin] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    const url = new URL(window.location.href);
+    setStaffLogin(
+      url.pathname === "/login" &&
+        isStaffLoginNext(url.searchParams.get("next") ?? undefined),
+    );
 
     async function load() {
       try {
@@ -117,29 +125,5 @@ export function SiteHeaderAuth() {
     );
   }
 
-  return (
-    <div className="flex items-center gap-1 sm:gap-2">
-      <nav className="mr-1 hidden items-center gap-4 md:flex" aria-label="Site">
-        <Link href="/pricing" className={focusableLinkClass()}>
-          Pricing
-        </Link>
-        <Link href="/dashboard" className={focusableLinkClass()}>
-          Workspace
-        </Link>
-      </nav>
-      <Button variant="ghost" href="/login" className="h-11 px-3 text-[12px]">
-        Sign in
-      </Button>
-      {/* Two labels, because the full one does not fit a phone.
-          Measured at 375px: this button ended 56px past the viewport, and
-          because `Button` is `shrink-0` it could not give the space back — the
-          whole page scrolled sideways as a result. Same device-width pattern
-          the site header already uses for "Search" / "Search companies", so
-          this is the established fix rather than a new one. */}
-      <Button href="/onboarding" className="h-11 px-4 text-[12px]">
-        <span className="sm:hidden">Create</span>
-        <span className="hidden sm:inline">Create company</span>
-      </Button>
-    </div>
-  );
+  return <SiteHeaderAnon staff={staffLogin} />;
 }

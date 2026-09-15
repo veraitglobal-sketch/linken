@@ -76,7 +76,7 @@ export function PartnerRailList({
                 setLimit(Number(e.target.value));
                 setDirty(true);
               }}
-              className="h-7 rounded-lg border border-line bg-surface px-1.5 text-[11px] font-semibold text-ink"
+              className="h-7 rounded-none border border-line bg-surface px-1.5 text-[11px] font-semibold text-ink"
             >
               {PARTNER_RAIL_LIMIT_OPTIONS.map((n) => (
                 <option key={n} value={n}>
@@ -94,7 +94,7 @@ export function PartnerRailList({
               <input type="hidden" name="sort_ids" value={order.join(",")} />
               <button
                 type="submit"
-                className="h-7 rounded-lg bg-navy px-2.5 text-[11px] font-semibold text-white"
+                className="h-7 rounded-none bg-navy px-2.5 text-[11px] font-semibold text-white"
               >
                 Save display
               </button>
@@ -110,8 +110,8 @@ export function PartnerRailList({
       <div
         className={
           expanded && ordered.length > limit
-            ? "max-h-[min(70vh,36rem)] space-y-2 overflow-y-auto px-3.5 py-3.5"
-            : "space-y-2 px-3.5 py-3.5"
+            ? "max-h-[min(70vh,36rem)] space-y-1.5 overflow-y-auto px-3.5 py-3"
+            : "space-y-1.5 px-3.5 py-3"
         }
       >
         {visible.map((partner) => (
@@ -122,7 +122,7 @@ export function PartnerRailList({
                   type="button"
                   aria-label={`Move ${partner.name} up`}
                   onClick={() => move(partner.id, -1)}
-                  className="flex h-5 w-5 items-center justify-center rounded bg-surface/90 text-[10px] text-muted shadow-sm hover:text-ink"
+                  className="flex h-5 w-5 items-center justify-center rounded-none bg-surface/90 text-[10px] text-muted shadow-sm hover:text-ink"
                 >
                   ↑
                 </button>
@@ -130,7 +130,7 @@ export function PartnerRailList({
                   type="button"
                   aria-label={`Move ${partner.name} down`}
                   onClick={() => move(partner.id, 1)}
-                  className="flex h-5 w-5 items-center justify-center rounded bg-surface/90 text-[10px] text-muted shadow-sm hover:text-ink"
+                  className="flex h-5 w-5 items-center justify-center rounded-none bg-surface/90 text-[10px] text-muted shadow-sm hover:text-ink"
                 >
                   ↓
                 </button>

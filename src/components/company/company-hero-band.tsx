@@ -42,7 +42,7 @@ export async function CompanyHeroBand({
 
   return (
     <section className="px-4 pt-3">
-      <div className="relative mx-auto grid max-w-6xl overflow-hidden rounded-[32px] bg-[#0e1f1c] lg:min-h-[560px] lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="relative mx-auto grid max-w-6xl overflow-hidden rounded-none bg-[#0e1f1c] lg:min-h-[560px] lg:grid-cols-[1.15fr_0.85fr]">
         <div className="relative z-10 flex flex-col justify-between px-6 py-8 text-white sm:px-10 sm:py-11">
           <div className="animate-rise flex flex-wrap items-center gap-x-3 gap-y-2">
             <span
@@ -89,8 +89,8 @@ export async function CompanyHeroBand({
                 size="lg"
                 className={
                   company.logoUrl
-                    ? "rounded-xl border-white/20"
-                    : "rounded-xl border-white/20 bg-white/10 text-white"
+                    ? "rounded-none border-white/20"
+                    : "rounded-none border-white/20 bg-white/10 text-white"
                 }
               />
               <h1 className="font-display text-[clamp(2.4rem,5.5vw,4rem)] leading-[0.94] font-medium tracking-[-0.045em]">
@@ -127,7 +127,7 @@ export async function CompanyHeroBand({
           </div>
 
           <div className="animate-rise-late space-y-4">
-            <div className="rounded-2xl border border-white/12 bg-black/25 px-4 py-3 backdrop-blur-md">
+            <div className="rounded-none border border-white/12 bg-black/25 px-4 py-3 backdrop-blur-md">
               <p className="text-[10px] font-semibold tracking-[0.14em] text-white/40 uppercase">
                 Shareable address
               </p>
@@ -163,7 +163,7 @@ export async function CompanyHeroBand({
             sizes="(max-width: 1024px) 100vw, 42vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10 lg:bg-gradient-to-l lg:from-transparent lg:via-transparent lg:to-[rgba(10,20,18,0.5)]" />
-          <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/15 bg-black/40 px-4 py-3.5 backdrop-blur-md">
+          <div className="absolute inset-x-5 bottom-5 rounded-none border border-white/15 bg-black/40 px-4 py-3.5 backdrop-blur-md">
             <p className="text-[11px] font-semibold tracking-[0.12em] text-[#7eb8a4] uppercase">
               Hansala
             </p>

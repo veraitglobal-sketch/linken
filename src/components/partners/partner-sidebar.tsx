@@ -46,25 +46,27 @@ export function PartnerSidebar({
        it in the same column. It was there for `position: sticky`, which in a
        column does not depend on `align-self` at all. */
     <aside id="partners" className="w-full scroll-mt-24 lg:sticky lg:top-20">
-      <div className="overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
-        <div className="mesh-stage relative px-5 py-6 text-white">
+      <div className="overflow-hidden rounded-none border border-line bg-surface shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
+        <div className="mesh-stage relative px-5 py-3.5 text-white">
           <div className="stage-grain absolute inset-0 opacity-60" />
-          <div className="relative z-10 flex items-start justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-semibold tracking-[0.14em] text-white/55 uppercase">
-                Partners{partners.length > 0 ? ` · ${partners.length}` : ""}
-              </p>
-              <h2 className="mt-2 font-display text-[1.45rem] font-medium tracking-[-0.03em]">
+          <div className="relative z-10 flex items-center justify-between gap-3">
+            <div className="flex items-baseline gap-2">
+              <h2 className="font-display text-[1.1rem] font-medium tracking-[-0.03em]">
                 Verified partners
               </h2>
-              <p className="mt-2 max-w-[240px] text-[12px] leading-relaxed text-white/60">
-                {PRODUCT.partners.job}
+              <p className="text-[11px] font-semibold tracking-[0.1em] text-white/50 uppercase">
+                {partners.length}
               </p>
             </div>
             {editable ? (
               <AddPartnerButton companySlug={companySlug} tone="onDark" />
             ) : null}
           </div>
+          {editable ? (
+            <p className="relative z-10 mt-1.5 text-[12px] leading-relaxed text-white/55">
+              {PRODUCT.partners.job}
+            </p>
+          ) : null}
         </div>
 
         {partners.length > 0 ? (

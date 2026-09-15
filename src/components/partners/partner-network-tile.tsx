@@ -16,7 +16,7 @@ export function PartnerNetworkTile({ partner, companySlug }: Props) {
   const recordHref = companyWithPath(companySlug, partner.slug);
 
   return (
-    <article className="flex h-full flex-col rounded-[24px] border border-line bg-surface p-5 transition-colors hover:border-navy/20 hover:bg-white">
+    <article className="flex h-full flex-col rounded-none border border-line bg-surface p-5 transition-colors hover:border-navy/20 hover:bg-white">
       <Link href={recordHref} className="group flex min-h-11 flex-1 flex-col">
         <div className="flex items-start justify-between gap-3">
           <PartnerMark
@@ -27,8 +27,8 @@ export function PartnerNetworkTile({ partner, companySlug }: Props) {
           <span
             className={
               partner.verified
-                ? "rounded-lg border border-blue/25 bg-blue/10 px-2 py-1 text-[9px] font-semibold tracking-[0.08em] text-blue uppercase"
-                : "rounded-lg border border-line bg-mute px-2 py-1 text-[9px] font-semibold tracking-[0.08em] text-muted uppercase"
+                ? "rounded-none border border-blue/25 bg-blue/10 px-2 py-1 text-[9px] font-semibold tracking-[0.08em] text-blue uppercase"
+                : "rounded-none border border-line bg-mute px-2 py-1 text-[9px] font-semibold tracking-[0.08em] text-muted uppercase"
             }
           >
             {partner.verified ? "Verified partner" : "Partner"}

@@ -15,7 +15,7 @@ export function ConfirmedProvidersSection({ providers }: Props) {
   if (providers.length === 0) return null;
 
   return (
-    <section className="rounded-[28px] border border-line bg-surface px-5 py-6 sm:px-7 sm:py-7">
+    <section className="rounded-none border border-line bg-surface px-5 py-6 sm:px-7 sm:py-7">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
         Verified work
       </p>
@@ -30,7 +30,7 @@ export function ConfirmedProvidersSection({ providers }: Props) {
         {providers.map((p) => (
           <li
             key={p.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-paper/40 px-4 py-3"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-none border border-line bg-paper/40 px-4 py-3"
           >
             <div className="flex min-w-0 items-center gap-3">
               {p.clientSlug ? (

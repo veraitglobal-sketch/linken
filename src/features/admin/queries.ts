@@ -5,6 +5,7 @@ import type {
   AdminStats,
   AdminTestimonialRow,
 } from "@/features/admin/types";
+import { mapAdminCompanyRow } from "@/features/admin/companies-list";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 function weekAgoIso() {
@@ -84,20 +85,13 @@ export async function getAdminRecentCompanies(
 
   const { data } = await admin
     .from("companies")
-    .select("id, name, slug, claimed, verified, plan, website, created_at")
+    .select(
+      "id, name, slug, claimed, verified, plan, website, created_at, staff_hidden_at",
+    )
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  return (data ?? []).map((r) => ({
-    id: r.id as string,
-    name: r.name as string,
-    slug: r.slug as string,
-    claimed: Boolean(r.claimed),
-    verified: Boolean(r.verified),
-    plan: (r.plan as string | null) ?? null,
-    website: (r.website as string | null) ?? null,
-    createdAt: r.created_at as string,
-  }));
+  return (data ?? []).map(mapAdminCompanyRow);
 }
 
 export async function getAdminRecentTestimonials(

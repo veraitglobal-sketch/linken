@@ -52,7 +52,7 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
         Embed
       </Button>
       {open ? (
-        <div className="absolute left-0 z-20 mt-2 w-[min(100vw-2rem,22rem)] rounded-2xl border border-line bg-white p-4 shadow-[0_18px_50px_rgba(10,20,18,0.12)] sm:left-auto sm:right-0">
+        <div className="absolute left-0 z-20 mt-2 w-[min(100vw-2rem,22rem)] rounded-none border border-line bg-white p-4 shadow-[0_18px_50px_rgba(10,20,18,0.12)] sm:left-auto sm:right-0">
           <p className="text-[13px] font-medium text-ink">
             Embed on your website
           </p>
@@ -61,7 +61,7 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
             for themes, sizes, and every variant.
           </p>
 
-          <div className="mt-3 overflow-hidden rounded-xl border border-line bg-[#f7f8fa]">
+          <div className="mt-3 overflow-hidden rounded-none border border-line bg-[#f7f8fa]">
             <iframe
               src={previewSrc}
               title="Micro embed preview"
@@ -82,7 +82,7 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
 
           <Link
             href="/dashboard/widgets"
-            className="mt-3 flex h-10 items-center justify-center rounded-xl bg-[#0e1f1c] text-[13px] font-semibold text-white transition-colors hover:bg-[#081412]"
+            className="mt-3 flex h-10 items-center justify-center rounded-none bg-[#0e1f1c] text-[13px] font-semibold text-white transition-colors hover:bg-[#081412]"
             onClick={() => setOpen(false)}
           >
             Open Widget studio →

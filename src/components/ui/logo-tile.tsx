@@ -27,6 +27,10 @@ type Props = {
   shape?: "tile" | "circle";
   className?: string;
   muted?: boolean;
+  /** Solid navy tile with white initials instead of a bordered white box,
+   * for when there is no logo yet. Never used in embeds — those stay
+   * neutral on the host's own page. */
+  colorFallback?: boolean;
 };
 
 const BOX: Record<LogoTileSize, string> = {
@@ -67,6 +71,7 @@ export function LogoTile({
   shape = "tile",
   className,
   muted = false,
+  colorFallback = false,
 }: Props) {
   const candidates = useMemo(() => {
     const list: string[] = [];
@@ -104,15 +109,18 @@ export function LogoTile({
     >
       <span
         className={cn(
-          "inline-flex shrink-0 items-center justify-center overflow-hidden bg-white",
+          "inline-flex shrink-0 items-center justify-center overflow-hidden",
+          colorFallback && !src ? "bg-navy" : "bg-white",
           BOX[size],
           PAD[size],
           shape === "circle" ? "rounded-full" : RADIUS[size],
           shape === "circle"
             ? "border-0"
-            : frameTone === "dark"
-              ? "border border-black/15 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
-              : "border border-line",
+            : colorFallback && !src
+              ? "border-0"
+              : frameTone === "dark"
+                ? "border border-black/15 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
+                : "border border-line",
         )}
         aria-hidden
       >
@@ -134,7 +142,8 @@ export function LogoTile({
           ) : (
             <span
               className={cn(
-                "font-semibold tracking-[0.06em] text-ink",
+                "font-semibold tracking-[0.06em]",
+                colorFallback ? "text-[#7eb8a4]" : "text-ink",
                 INITIALS[size],
               )}
             >

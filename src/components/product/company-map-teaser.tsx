@@ -7,7 +7,7 @@ type Props = { companySlug: string };
 export function CompanyMapTeaser({ companySlug }: Props) {
   return (
     <section className="mx-auto mt-5 max-w-6xl scroll-mt-28 px-4">
-      <div className="rounded-[28px] border border-line bg-surface px-5 py-8 sm:px-7">
+      <div className="rounded-none border border-line bg-surface px-5 py-8 sm:px-7">
         <p className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">
           {PRODUCT.map.label}
         </p>
@@ -20,13 +20,13 @@ export function CompanyMapTeaser({ companySlug }: Props) {
         <div className="mt-5 flex flex-wrap gap-2">
           <Link
             href={`/c/${companySlug}?add=1#partners`}
-            className="inline-flex h-9 items-center rounded-xl bg-navy px-3.5 text-[12px] font-semibold text-white"
+            className="inline-flex h-9 items-center rounded-none bg-navy px-3.5 text-[12px] font-semibold text-white"
           >
             Add partner
           </Link>
           <Link
             href="/dashboard"
-            className="inline-flex h-9 items-center rounded-xl border border-line px-3.5 text-[12px] font-semibold text-ink"
+            className="inline-flex h-9 items-center rounded-none border border-line px-3.5 text-[12px] font-semibold text-ink"
           >
             Open {PRODUCT.map.label}
           </Link>

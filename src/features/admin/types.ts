@@ -19,6 +19,7 @@ export type AdminCompanyRow = {
   plan: string | null;
   website: string | null;
   createdAt: string;
+  staffHiddenAt: string | null;
 };
 
 export type AdminTestimonialRow = {
@@ -69,4 +70,5 @@ export type AdminCompanyDetail = {
   testimonialsCount: number;
   casesCount: number;
   placementsCount: number;
+  staffHiddenAt: string | null;
 };

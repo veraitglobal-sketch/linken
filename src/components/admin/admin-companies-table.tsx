@@ -43,6 +43,7 @@ export function AdminCompaniesTable({ rows, title = "Recent companies" }: Props)
                 <td className="px-4 py-3 text-ink-soft">
                   {row.claimed ? "Claimed" : "Unclaimed"}
                   {row.verified ? " · Verified" : ""}
+                  {row.staffHiddenAt ? " · Hidden" : ""}
                 </td>
                 <td className="px-4 py-3 text-ink-soft">{row.plan ?? "free"}</td>
                 <td className="px-4 py-3 text-ink-soft">

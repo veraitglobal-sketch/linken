@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminCompanyCreditsPanel } from "@/components/admin/admin-company-credits-panel";
+import { AdminCompanyVisibility } from "@/components/admin/admin-company-visibility";
 import { AdminFactTiles } from "@/components/admin/admin-fact-tiles";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { getAdminCompanyDetail } from "@/features/admin/company-detail";
@@ -22,6 +23,7 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
   if (!detail) notFound();
 
   const canWrite = roleMeetsMinimum(role, "admin");
+  const canRemove = roleMeetsMinimum(role, "owner");
   const lastCheck = detail.verification?.lastCheck
     ? new Date(detail.verification.lastCheck).toLocaleDateString("en-GB")
     : "—";
@@ -55,7 +57,10 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
 
       <AdminFactTiles
         items={[
-          ["Status", `${detail.claimed ? "Claimed" : "Unclaimed"}${detail.verified ? " · Verified" : ""}`],
+          [
+            "Status",
+            `${detail.claimed ? "Claimed" : "Unclaimed"}${detail.verified ? " · Verified" : ""}${detail.staffHiddenAt ? " · Hidden" : ""}`,
+          ],
           ["Plan", detail.plan ?? "free"],
           ["Credits", String(detail.creditsBalance)],
           ["Radar", detail.radar ? "On" : "Off"],
@@ -67,6 +72,19 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
+        <section className="rounded-card border border-line bg-surface p-5">
+          <h2 className="text-[13px] font-semibold text-ink">Public profile</h2>
+          <div className="mt-3">
+            <AdminCompanyVisibility
+              companyId={detail.id}
+              companyName={detail.name}
+              hiddenAt={detail.staffHiddenAt}
+              partnersCount={detail.partnersCount}
+              canHide={canWrite}
+              canRemove={canRemove}
+            />
+          </div>
+        </section>
         <section className="rounded-card border border-line bg-surface p-5">
           <h2 className="text-[13px] font-semibold text-ink">Credits & plan</h2>
           <div className="mt-3">

@@ -17,7 +17,7 @@ export function AddPartnerButton({
     <Button
       href={`/c/${companySlug}?add=1#add-partner`}
       variant={tone === "onDark" ? "onDark" : "plus"}
-      className="h-9 w-9 shrink-0 rounded-xl px-0 text-xl font-normal leading-none"
+      className="h-9 w-9 shrink-0 rounded-none px-0 text-xl font-normal leading-none"
       aria-label="Add partner"
       title="Invite a partner on this page"
     >

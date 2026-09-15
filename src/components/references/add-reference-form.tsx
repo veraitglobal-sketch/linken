@@ -24,7 +24,7 @@ export function AddReferenceForm({ companySlug }: Props) {
   return (
     <form
       action={addReference}
-      className="rounded-[24px] border border-line bg-[#f7f8fa] px-4 py-5 sm:px-5"
+      className="rounded-none border border-line bg-[#f7f8fa] px-4 py-5 sm:px-5"
     >
       <input type="hidden" name="company_slug" value={companySlug} />
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
@@ -52,7 +52,7 @@ export function AddReferenceForm({ companySlug }: Props) {
             type="checkbox"
             checked={ongoing}
             onChange={(e) => setOngoing(e.target.checked)}
-            className="size-4 rounded border-line"
+            className="size-4 rounded-none border-line"
           />
           Ongoing
           <input type="hidden" name="ongoing" value={ongoing ? "true" : "false"} />

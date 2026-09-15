@@ -27,6 +27,7 @@ export function PartnerMark({
          more partners visible before anyone scrolls. 36px still carries a real
          logo legibly — below that a wordmark starts to mush. */
       size="sm"
+      colorFallback
       className={cn("shrink-0", className)}
     />
   );

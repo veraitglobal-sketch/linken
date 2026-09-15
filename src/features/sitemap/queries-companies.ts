@@ -2,6 +2,7 @@ import "server-only";
 
 import type { SitemapCompanyRow } from "@/features/sitemap/types";
 import { SITEMAP_CHUNK_SIZE } from "@/features/sitemap/types";
+import { listedCompanies } from "@/features/companies/listed";
 import { getSitemapDb } from "@/features/sitemap/client";
 import {
   countCaseStudiesBySlug,
@@ -12,11 +13,12 @@ export async function countSitemapCompanies(): Promise<number> {
   const supabase = await getSitemapDb();
   if (!supabase) return 0;
 
-  const { count, error } = await supabase
-    .from("companies")
-    /* No `claimed` filter: unclaimed profiles are indexable now, and a page
-       Google is never told about is a page Google does not index. */
-    .select("id", { count: "exact", head: true });
+  const { count, error } = await listedCompanies(
+    supabase
+      .from("companies")
+      /* Unclaimed profiles stay indexable; hidden/merged rows do not. */
+      .select("id", { count: "exact", head: true }),
+  );
 
   if (error) {
     console.error("[sitemap] count companies", error.message);
@@ -32,14 +34,16 @@ export async function listSitemapCompanies(
   const supabase = await getSitemapDb();
   if (!supabase) return [];
 
-  const { data, error } = await supabase
-    .from("companies")
-    .select(
-      "slug, verified, updated_at, logo_url, website, scheduling_url",
-    )
-    .order("verified", { ascending: false })
-    .order("updated_at", { ascending: false })
-    .range(offset, offset + limit - 1);
+  const { data, error } = await listedCompanies(
+    supabase
+      .from("companies")
+      .select(
+        "slug, verified, updated_at, logo_url, website, scheduling_url",
+      )
+      .order("verified", { ascending: false })
+      .order("updated_at", { ascending: false })
+      .range(offset, offset + limit - 1),
+  );
 
   if (error) {
     console.error("[sitemap] companies", error.message);

@@ -56,7 +56,7 @@ export function CaseStudyList({
           ))}
         </div>
       ) : editable ? (
-        <div className="rounded-[24px] border border-dashed border-line bg-surface/80 px-5 py-6">
+        <div className="rounded-none border border-dashed border-line bg-surface/80 px-5 py-6">
           <p className="text-[13px] font-semibold text-ink">No case studies yet</p>
           <p className="mt-1.5 text-[13px] text-ink-soft">
             Create one in the dashboard — we email the client for confirmation

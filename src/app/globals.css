@@ -80,6 +80,15 @@
   --elev-hero: 0 28px 90px rgba(8, 20, 18, 0.28);
 }
 
+/* Flat corners scoped to the company profile page only — everywhere else
+   keeps the rounded shape scale above. See CompanyProfile's root wrapper. */
+.profile-flat-corners {
+  --r-tile: 0px;
+  --r-card: 0px;
+  --r-chapter: 0px;
+  --r-hero: 0px;
+}
+
 @theme inline {
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);

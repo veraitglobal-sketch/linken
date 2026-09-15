@@ -20,12 +20,12 @@ export function ProfilePartnerFlashes({
   return (
     <div className="mx-auto mt-4 max-w-6xl space-y-2 px-4">
       {error ? (
-        <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+        <p className="rounded-none border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
           {error}
         </p>
       ) : null}
       {invited ? (
-        <p className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink">
+        <p className="rounded-none border border-line bg-surface px-4 py-3 text-sm text-ink">
           Request sent to{" "}
           <Link
             href={`/c/${invited}`}
@@ -43,7 +43,7 @@ export function ProfilePartnerFlashes({
         </p>
       ) : null}
       {created ? (
-        <p className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink">
+        <p className="rounded-none border border-line bg-surface px-4 py-3 text-sm text-ink">
           Draft invite created for{" "}
           <Link
             href={`/c/${created}`}

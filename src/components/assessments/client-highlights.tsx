@@ -14,7 +14,7 @@ export function ClientHighlights({ summary }: Props) {
   }
 
   return (
-    <section className="rounded-[28px] border border-line bg-surface px-5 py-6 sm:px-7 sm:py-7">
+    <section className="rounded-none border border-line bg-surface px-5 py-6 sm:px-7 sm:py-7">
       <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
         Client signals
       </p>

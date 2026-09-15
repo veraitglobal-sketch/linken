@@ -25,7 +25,7 @@ export function ProfileProvenance({ company, editable = false }: Props) {
 
   return (
     <section className="mx-auto mt-8 max-w-6xl px-4">
-      <div className="rounded-2xl border border-line bg-surface/80 px-5 py-4 text-[13px] text-ink-soft sm:flex sm:items-center sm:justify-between sm:gap-6">
+      <div className="rounded-none border border-line bg-surface/80 px-5 py-4 text-[13px] text-ink-soft sm:flex sm:items-center sm:justify-between sm:gap-6">
         <div className="space-y-1">
           {updated ? (
             <p>

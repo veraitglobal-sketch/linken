@@ -31,7 +31,7 @@ export function ReferenceCard({
   return (
     <article
       className={cn(
-        "rounded-[22px] border px-4 py-4 sm:px-5",
+        "rounded-none border px-4 py-4 sm:px-5",
         confirmed
           ? "border-[#1a5c51]/25 bg-[linear-gradient(135deg,rgba(31,107,92,0.08),rgba(255,255,255,0.9))]"
           : "border-line bg-[#f7f8fa]",
@@ -60,17 +60,17 @@ export function ReferenceCard({
         </div>
         {confirmed ? (
           <div className="flex shrink-0 flex-col items-end gap-1">
-            <Badge tone="success" className="rounded-lg uppercase tracking-[0.08em]">
+            <Badge tone="success" className="rounded-none uppercase tracking-[0.08em]">
               Confirmed
             </Badge>
             {depth ? (
-              <Badge tone="neutral" className="rounded-lg tracking-[0.04em]">
+              <Badge tone="neutral" className="rounded-none tracking-[0.04em]">
                 {depth}
               </Badge>
             ) : null}
           </div>
         ) : (
-          <Badge tone="neutral" className="shrink-0 rounded-lg uppercase tracking-[0.06em]">
+          <Badge tone="neutral" className="shrink-0 rounded-none uppercase tracking-[0.06em]">
             Awaiting confirmation
           </Badge>
         )}
