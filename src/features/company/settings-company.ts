@@ -5,8 +5,10 @@ export type SettingsCompany = {
   description: string;
   organizationKind: string;
   category: string;
+  categorySlug: string | null;
   city: string;
   country: string;
+  countryCode: string | null;
   website: string;
   linkedinUrl: string;
   facebookUrl: string;
@@ -24,8 +26,10 @@ type Row = {
   description: string | null;
   organization_kind?: string | null;
   category: string | null;
+  category_slug?: string | null;
   city: string | null;
   country: string | null;
+  country_code?: string | null;
   website: string | null;
   linkedin_url: string | null;
   facebook_url: string | null;
@@ -60,8 +64,10 @@ export function toSettingsCompany(row: Row, publicHost: string): SettingsCompany
     description: row.description ?? "",
     organizationKind: row.organization_kind ?? "company",
     category: row.category ?? "",
+    categorySlug: row.category_slug ?? null,
     city: row.city ?? "",
     country: row.country ?? "Germany",
+    countryCode: row.country_code ?? null,
     website: row.website ?? "",
     linkedinUrl: row.linkedin_url ?? "",
     facebookUrl: row.facebook_url ?? "",

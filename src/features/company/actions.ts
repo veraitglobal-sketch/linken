@@ -15,6 +15,8 @@ import { requireOperatorActiveCompany } from "@/features/workspace/require-opera
 import { setWorkspacePreference } from "@/features/workspace/set-preference";
 import { applyReferralAttribution } from "@/features/growth/apply-referral";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
+import { resolveCategoryWrite, resolveCountryWrite } from "@/features/categories/apply";
+import { recordCategoryUnmatched } from "@/features/categories/unmatched";
 import { createClient } from "@/lib/supabase/server";
 import { toSlug } from "@/lib/slug";
 
@@ -133,7 +135,12 @@ export async function startOnboarding(formData: FormData) {
 
 export async function createCompany(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
-  const category = String(formData.get("category") ?? "").trim();
+  const cat = resolveCategoryWrite(String(formData.get("category") ?? ""));
+  const geo = resolveCountryWrite(
+    String(formData.get("country_code") ?? ""),
+    String(formData.get("country") ?? ""),
+  );
+  const category = cat.category;
   const city = String(formData.get("city") ?? "").trim();
   const website = String(formData.get("website") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
@@ -189,7 +196,10 @@ export async function createCompany(formData: FormData) {
         slug,
         organization_kind: organizationKind,
         category,
+        category_slug: cat.category_slug,
         city,
+        country: geo.country || "Germany",
+        country_code: geo.country_code,
         website,
         description,
         tagline: description.slice(0, 120),
@@ -212,6 +222,8 @@ export async function createCompany(formData: FormData) {
       `/onboarding?error=${encodeURIComponent(lastError ?? "Could not create company.")}`,
     );
   }
+
+  if (cat.unmatched) void recordCategoryUnmatched(category);
 
   await clearOnboardingDraft();
 

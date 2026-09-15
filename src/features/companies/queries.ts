@@ -123,6 +123,7 @@ export type SearchFilters = {
   hasCaseStudies?: boolean;
   /** When true, include unclaimed draft profiles (default: claimed only). */
   includeUnclaimed?: boolean;
+  categorySlug?: string;
 };
 
 /** Verified + claimed profiles first, then claimed, then unclaimed drafts. */
@@ -154,6 +155,10 @@ export async function searchCompanies(
 
     if (filters.verifiedOnly) {
       req = req.eq("verified", true).eq("claimed", true);
+    }
+
+    if (filters.categorySlug) {
+      req = req.eq("category_slug", filters.categorySlug);
     }
 
     if (q) {

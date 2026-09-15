@@ -1,6 +1,8 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { resolveCategoryWrite, resolveCountryWrite } from "@/features/categories/apply";
+import { recordCategoryUnmatched } from "@/features/categories/unmatched";
 import {
   COMPANY_PATCH_ALLOWLIST,
   type CompanyPatchField,
@@ -38,10 +40,24 @@ export async function updateCompanyAgentCore(
     }
   }
 
+  let countryCode: string | null | undefined;
+  if ("country" in base && typeof base.country === "string") {
+    const geo = resolveCountryWrite("", base.country);
+    base.country = geo.country;
+    countryCode = geo.country_code;
+  }
+
   if (Object.keys(base).length > 0) {
     const baseResult = await updateCompanyProfileCore(supabase, companyId, base);
     if (!baseResult.ok) return baseResult;
     updated.push(...baseResult.data.updated);
+    if (countryCode !== undefined) {
+      const { error } = await supabase
+        .from("companies")
+        .update({ country_code: countryCode })
+        .eq("id", companyId);
+      if (error) return { ok: false, error: error.message };
+    }
   }
 
   if ("name" in extra) {
@@ -58,12 +74,13 @@ export async function updateCompanyAgentCore(
   }
 
   if ("category" in extra) {
-    const category = String(extra.category ?? "").trim().slice(0, 80);
+    const cat = resolveCategoryWrite(String(extra.category ?? ""));
     const { error } = await supabase
       .from("companies")
-      .update({ category })
+      .update({ category: cat.category, category_slug: cat.category_slug })
       .eq("id", companyId);
     if (error) return { ok: false, error: error.message };
+    if (cat.unmatched) void recordCategoryUnmatched(cat.category);
     updated.push("category");
   }
 

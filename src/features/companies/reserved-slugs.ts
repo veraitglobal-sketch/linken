@@ -8,6 +8,7 @@ const RESERVED = [
   "admin",
   "api",
   "auth",
+  "best",
   "book",
   "c",
   "changelog",

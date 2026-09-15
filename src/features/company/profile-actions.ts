@@ -10,6 +10,7 @@ import {
 import { uploadLogoCore } from "@/features/logo/core";
 import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { requireOperatorActiveCompany } from "@/features/workspace/require-operator";
+import { recordCategoryUnmatched } from "@/features/categories/unmatched";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 function safeBack(raw: string, slug: string) {
@@ -64,8 +65,10 @@ export async function updateCompanyProfile(formData: FormData) {
       description: next.description,
       organization_kind: next.organization_kind,
       category: next.category,
+      category_slug: next.category_slug,
       city: next.city,
       country: next.country,
+      country_code: next.country_code,
       website: next.website,
       linkedin_url: next.linkedin_url,
       facebook_url: next.facebook_url,
@@ -83,6 +86,10 @@ export async function updateCompanyProfile(formData: FormData) {
         error: "Could not save profile — check you still have edit access.",
       }),
     );
+  }
+
+  if (!next.category_slug && next.category) {
+    void recordCategoryUnmatched(next.category);
   }
 
   if (domainShift) {

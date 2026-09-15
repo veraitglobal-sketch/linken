@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { SettingsCompany } from "@/features/company/settings-company";
 import { ORGANIZATION_KIND_META } from "@/features/company/organization-kind";
 import { SettingsField } from "@/components/company/settings-field";
+import { CategoryField } from "@/components/categories/category-field";
+import { CountrySelect } from "@/components/geo/country-select";
 import { Input } from "@/components/ui/input";
 
 export function CompanySettingsDetails({
@@ -30,13 +32,21 @@ export function CompanySettingsDetails({
           </select>
         </SettingsField>
         <SettingsField label="Sector">
-          <Input name="category" defaultValue={company.category} maxLength={80} />
+          <CategoryField
+            defaultValue={company.category}
+            defaultSlug={company.categorySlug}
+            className="h-11 w-full rounded-xl border border-line bg-white px-3.5 text-sm text-ink outline-none focus:border-navy/40 focus:ring-2 focus:ring-navy/10"
+          />
         </SettingsField>
         <SettingsField label="City">
           <Input name="city" defaultValue={company.city} maxLength={80} />
         </SettingsField>
         <SettingsField label="Country">
-          <Input name="country" defaultValue={company.country} maxLength={80} />
+          <CountrySelect
+            defaultCode={company.countryCode}
+            defaultName={company.country}
+            className="h-11 w-full rounded-xl border border-line bg-white px-3.5 text-sm text-ink outline-none focus:border-navy/40 focus:ring-2 focus:ring-navy/10"
+          />
         </SettingsField>
         <SettingsField
           label="Website"

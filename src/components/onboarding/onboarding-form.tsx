@@ -6,6 +6,8 @@ import { StatusMessage } from "@/components/a11y/status-message";
 import { LegalConsent } from "@/components/legal/legal-consent";
 import { NetworkMark } from "@/components/marketing/network-mark";
 import { OrganizationKindField } from "@/components/onboarding/organization-kind-field";
+import { CategoryField } from "@/components/categories/category-field";
+import { CountrySelect } from "@/components/geo/country-select";
 import { createCompany, startOnboarding } from "@/features/company/actions";
 import type { OnboardingDraft } from "@/features/company/onboarding-draft";
 import { parseOrganizationKind } from "@/features/company/organization-kind";
@@ -231,9 +233,7 @@ export function OnboardingForm({
             >
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label={<>Sector<Req /></>}>
-                  <input
-                    name="category"
-                    placeholder="Architecture, software…"
+                  <CategoryField
                     required
                     defaultValue={draft?.category ?? ""}
                     className={FIELD}
@@ -248,6 +248,9 @@ export function OnboardingForm({
                     defaultValue={draft?.city ?? ""}
                     className={FIELD}
                   />
+                </Field>
+                <Field label={<>Country<Req /></>}>
+                  <CountrySelect required className={FIELD} />
                 </Field>
               </div>
               <Field label={<>Short description<Req /></>}>

@@ -1,4 +1,5 @@
 import { parseOrganizationKind } from "@/features/company/organization-kind";
+import { resolveCategoryWrite, resolveCountryWrite } from "@/features/categories/apply";
 import { extractDomain } from "@/features/verification/domain";
 
 /** Rejected even if present in FormData — defense in depth beyond UI. */
@@ -59,8 +60,10 @@ export type ParsedProfile = {
   description: string;
   organization_kind: string;
   category: string;
+  category_slug: string | null;
   city: string;
   country: string;
+  country_code: string | null;
   website: string;
   linkedin_url: string | null;
   facebook_url: string | null;
@@ -106,6 +109,12 @@ export function parseSettingsFormData(
     return { ok: false, error: "Facebook URL must be a facebook.com link." };
   }
 
+  const cat = resolveCategoryWrite(String(formData.get("category") ?? ""));
+  const geo = resolveCountryWrite(
+    String(formData.get("country_code") ?? ""),
+    String(formData.get("country") ?? ""),
+  );
+
   return {
     ok: true,
     data: {
@@ -113,9 +122,11 @@ export function parseSettingsFormData(
       tagline: String(formData.get("tagline") ?? "").trim().slice(0, 160),
       description: String(formData.get("description") ?? "").trim().slice(0, 4000),
       organization_kind: organizationKind,
-      category: String(formData.get("category") ?? "").trim().slice(0, 80),
+      category: cat.category,
+      category_slug: cat.category_slug,
       city: String(formData.get("city") ?? "").trim().slice(0, 80),
-      country: String(formData.get("country") ?? "").trim().slice(0, 80) || "Germany",
+      country: geo.country || "Germany",
+      country_code: geo.country_code,
       website,
       linkedin_url: linkedin,
       facebook_url: facebook,
