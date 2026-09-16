@@ -1,15 +1,13 @@
-/** Cookiebot detail tab — toggles, lists, scroll chrome. */
+/** Consent tab stays clean; toggles live under Details. */
+#CybotCookiebotDialogBodyLevelWrapper {
+  display: none !important;
+}
+
 #CybotCookiebotDialogBodyLevelButtons,
 #CybotCookiebotDialogBodyLevelButtonsTable,
 #CybotCookiebotDialogBodyLevelButtonsRow {
   width: 100% !important;
   border: none !important;
-}
-
-#CybotCookiebotDialogBodyLevelButtons {
-  margin-top: 1rem !important;
-  padding-top: 0 !important;
-  border-top: none !important;
 }
 
 .CybotCookiebotDialogBodyLevelButtonWrapper {
@@ -41,8 +39,7 @@
 
 .CybotCookiebotDialogDetailBodyContentCookieContainerHeader,
 .CybotCookiebotDialogDetailBodyContentCookieGroup,
-.CybotCookiebotDialogDetailBodyContentCookieTypeIntro,
-.CybotCookiebotDialogDetailBodyContentCookieLink {
+.CybotCookiebotDialogDetailBodyContentCookieTypeIntro {
   border-color: var(--line) !important;
   color: var(--ink-soft) !important;
 }
@@ -67,14 +64,10 @@
 }
 
 .CybotCookiebotDialogDetailBodyContentTabsItemSelected {
-  color: var(--ink) !important;
-  border-color: var(--navy) !important;
+  color: var(--navy) !important;
+  border-color: var(--signal) !important;
 }
 
 .CybotCookiebotFader {
-  display: none !important;
-}
-
-#CybotCookiebotDialogPoweredByText {
   display: none !important;
 }

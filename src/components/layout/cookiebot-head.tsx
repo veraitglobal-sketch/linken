@@ -12,6 +12,10 @@ export function CookiebotHead() {
       strategy="beforeInteractive"
       data-cbid={id}
       data-blockingmode="auto"
+      data-widget-enabled="true"
+      data-widget-position="bottom-left"
+      data-widget-distance-vertical="12"
+      data-widget-distance-horizontal="12"
       suppressHydrationWarning
     />
   );
