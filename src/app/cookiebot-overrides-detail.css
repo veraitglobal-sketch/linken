@@ -1,0 +1,80 @@
+/** Cookiebot detail tab — toggles, lists, scroll chrome. */
+#CybotCookiebotDialogBodyLevelButtons,
+#CybotCookiebotDialogBodyLevelButtonsTable,
+#CybotCookiebotDialogBodyLevelButtonsRow {
+  width: 100% !important;
+  border: none !important;
+}
+
+#CybotCookiebotDialogBodyLevelButtons {
+  margin-top: 1rem !important;
+  padding-top: 0 !important;
+  border-top: none !important;
+}
+
+.CybotCookiebotDialogBodyLevelButtonWrapper {
+  border-bottom: 1px solid var(--line) !important;
+  padding: 0.75rem 0 !important;
+}
+
+.CybotCookiebotDialogBodyLevelButtonLabel {
+  color: var(--ink) !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+.CybotCookiebotDialogBodyLevelButtonDescription {
+  color: var(--muted) !important;
+  font-size: 0.8125rem !important;
+}
+
+#CybotCookiebotDialog .CybotCookiebotDialogBodyLevelButtonSlider,
+#CybotCookiebotDialogDetail .CybotCookiebotDialogBodyLevelButtonSlider {
+  background: var(--line) !important;
+  border-radius: 0 !important;
+}
+
+#CybotCookiebotDialog input:checked + .CybotCookiebotDialogBodyLevelButtonSlider,
+#CybotCookiebotDialogDetail input:checked + .CybotCookiebotDialogBodyLevelButtonSlider {
+  background: var(--signal) !important;
+}
+
+.CybotCookiebotDialogDetailBodyContentCookieContainerHeader,
+.CybotCookiebotDialogDetailBodyContentCookieGroup,
+.CybotCookiebotDialogDetailBodyContentCookieTypeIntro,
+.CybotCookiebotDialogDetailBodyContentCookieLink {
+  border-color: var(--line) !important;
+  color: var(--ink-soft) !important;
+}
+
+.CybotCookiebotDialogDetailBodyContentCookieContainerButton {
+  color: var(--ink) !important;
+  font-weight: 600 !important;
+  border-radius: 0 !important;
+}
+
+.CybotCookiebotDialogDetailBodyContentCookieLink {
+  color: var(--signal) !important;
+}
+
+.CybotCookiebotDialogDetailBodyContentTabsItem {
+  font-size: 0.6875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  border-radius: 0 !important;
+}
+
+.CybotCookiebotDialogDetailBodyContentTabsItemSelected {
+  color: var(--ink) !important;
+  border-color: var(--navy) !important;
+}
+
+.CybotCookiebotFader {
+  display: none !important;
+}
+
+#CybotCookiebotDialogPoweredByText {
+  display: none !important;
+}

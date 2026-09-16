@@ -5,6 +5,7 @@ import { StyleRescue } from "@/components/layout/style-rescue";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 import "./cookiebot-overrides.css";
+import "./cookiebot-overrides-detail.css";
 
 /* Newsreader is not loaded here. Widgets use Geist from this layout; a host
    that wants a different face sets it in the testimonial studio. */
