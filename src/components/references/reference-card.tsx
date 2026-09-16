@@ -31,10 +31,8 @@ export function ReferenceCard({
   return (
     <article
       className={cn(
-        "rounded-none border px-4 py-4 sm:px-5",
-        confirmed
-          ? "border-[#1a5c51]/25 bg-[linear-gradient(135deg,rgba(31,107,92,0.08),rgba(255,255,255,0.9))]"
-          : "border-line bg-[#f7f8fa]",
+        "rounded-2xl px-4 py-3.5 sm:px-5",
+        confirmed ? "bg-wash" : "bg-surface ring-1 ring-line/70",
       )}
     >
       <div className="flex items-start justify-between gap-3">
@@ -42,12 +40,12 @@ export function ReferenceCard({
           {view.clientSlug ? (
             <Link
               href={`/c/${view.clientSlug}?src=partner`}
-              className="font-display text-[1.1rem] font-medium tracking-[-0.03em] text-ink hover:underline"
+              className="font-display text-[16px] font-semibold tracking-[-0.025em] text-ink hover:underline"
             >
               {view.clientName}
             </Link>
           ) : (
-            <p className="font-display text-[1.1rem] font-medium tracking-[-0.03em] text-ink">
+            <p className="font-display text-[16px] font-semibold tracking-[-0.025em] text-ink">
               {view.clientName}
             </p>
           )}
@@ -60,17 +58,17 @@ export function ReferenceCard({
         </div>
         {confirmed ? (
           <div className="flex shrink-0 flex-col items-end gap-1">
-            <Badge tone="success" className="rounded-none uppercase tracking-[0.08em]">
+            <Badge tone="success" className="rounded-full uppercase tracking-[0.08em]">
               Confirmed
             </Badge>
             {depth ? (
-              <Badge tone="neutral" className="rounded-none tracking-[0.04em]">
+              <Badge tone="neutral" className="rounded-full tracking-[0.04em]">
                 {depth}
               </Badge>
             ) : null}
           </div>
         ) : (
-          <Badge tone="neutral" className="shrink-0 rounded-none uppercase tracking-[0.06em]">
+          <Badge tone="neutral" className="shrink-0 rounded-full uppercase tracking-[0.06em]">
             Awaiting confirmation
           </Badge>
         )}

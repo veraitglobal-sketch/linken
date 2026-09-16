@@ -1,5 +1,11 @@
 "use server";
 
+import {
+  categoryName,
+  matchCategory,
+  normalizeCategoryText,
+} from "@/features/categories/match";
+import { suggestCategories } from "@/features/categories/suggest";
 import { searchCompanies } from "@/features/companies/queries";
 import type { Company } from "@/types/company";
 
@@ -9,6 +15,8 @@ export type CompanySearchHit = {
   name: string;
   category: string;
   city: string;
+  country: string;
+  summary: string;
   logoUrl: string | null;
   logoInitials: string;
   claimed: boolean;
@@ -16,12 +24,20 @@ export type CompanySearchHit = {
   verified: boolean;
   /** Accepted partnerships only; pending never counts. */
   confirmedPartnerCount: number;
+  createdAt: string | null;
 };
 
 export type CategorySearchHit = {
   label: string;
+  slug: string;
   count: number;
 };
+
+function summarize(tagline: string, description: string) {
+  const text = (tagline || description || "").trim();
+  if (!text) return "";
+  return text.length > 140 ? `${text.slice(0, 137).trimEnd()}…` : text;
+}
 
 function toHit(c: Company): CompanySearchHit {
   return {
@@ -30,11 +46,14 @@ function toHit(c: Company): CompanySearchHit {
     name: c.name,
     category: c.category,
     city: c.city,
+    country: c.country ?? "",
+    summary: summarize(c.tagline ?? "", c.description ?? ""),
     logoUrl: c.logoUrl ?? null,
     logoInitials: c.logoInitials,
     claimed: c.claimed !== false,
     verified: Boolean(c.verified && c.claimed !== false),
     confirmedPartnerCount: c.confirmedPartnerCount ?? 0,
+    createdAt: c.createdAt ?? null,
   };
 }
 
@@ -53,7 +72,7 @@ export async function searchCompaniesForGraph(
   return rows.slice(0, 20).map(toHit);
 }
 
-/** Homepage typeahead — companies and categories that actually exist. */
+/** Homepage typeahead — companies and sectors the visitor can open. */
 export async function searchPublicDirectory(query: string): Promise<{
   companies: CompanySearchHit[];
   categories: CategorySearchHit[];
@@ -62,20 +81,44 @@ export async function searchPublicDirectory(query: string): Promise<{
   if (!q) return { companies: [], categories: [] };
 
   const rows = await searchCompanies(q, { includeUnclaimed: true });
-  const needle = q.toLowerCase();
-  const counts = new Map<string, number>();
+  const bySlug = new Map<string, CategorySearchHit>();
+  const nq = normalizeCategoryText(q);
+
+  const addSector = (slug: string, label: string, count = 0) => {
+    const prev = bySlug.get(slug);
+    bySlug.set(slug, {
+      label,
+      slug,
+      count: (prev?.count ?? 0) + count,
+    });
+  };
+
+  const taxonomy = matchCategory(q);
+  if (taxonomy) {
+    addSector(taxonomy.slug, categoryName(taxonomy.slug) ?? q);
+  }
+
+  for (const cat of suggestCategories(q, 5)) {
+    if (!bySlug.has(cat.slug)) addSector(cat.slug, cat.name);
+  }
+
   for (const c of rows) {
-    const cat = c.category.trim();
-    if (cat && cat.toLowerCase().includes(needle)) {
-      counts.set(cat, (counts.get(cat) ?? 0) + 1);
-    }
+    const raw = c.category.trim().split("·")[0]?.trim() ?? "";
+    if (!raw) continue;
+    const hit = matchCategory(raw);
+    if (!hit) continue;
+    addSector(hit.slug, categoryName(hit.slug) ?? raw, 1);
   }
 
   return {
     companies: rows.slice(0, 8).map(toHit),
-    categories: [...counts]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([label, count]) => ({ label, count })),
+    categories: [...bySlug.values()]
+      .sort((a, b) => {
+        const aExact = normalizeCategoryText(a.label) === nq ? 1 : 0;
+        const bExact = normalizeCategoryText(b.label) === nq ? 1 : 0;
+        if (aExact !== bExact) return bExact - aExact;
+        return b.count - a.count || a.label.localeCompare(b.label);
+      })
+      .slice(0, 5),
   };
 }

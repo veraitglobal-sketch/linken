@@ -46,24 +46,28 @@ export function PartnerSidebar({
        it in the same column. It was there for `position: sticky`, which in a
        column does not depend on `align-self` at all. */
     <aside id="partners" className="w-full scroll-mt-24 lg:sticky lg:top-20">
-      <div className="overflow-hidden rounded-none border border-line bg-surface shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
-        <div className="mesh-stage relative px-5 py-3.5 text-white">
-          <div className="stage-grain absolute inset-0 opacity-60" />
-          <div className="relative z-10 flex items-center justify-between gap-3">
-            <div className="flex items-baseline gap-2">
-              <h2 className="font-display text-[1.1rem] font-medium tracking-[-0.03em]">
+      <div className="overflow-hidden rounded-[24px] bg-surface ring-1 ring-line/70">
+        <div className="px-4 pt-4 pb-3 sm:px-5 sm:pt-5">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-full bg-lime-soft text-navy">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+                  <circle cx="3.8" cy="8" r="2" />
+                  <circle cx="12.2" cy="8" r="2" />
+                  <path d="M5.8 8h4.4" />
+                </svg>
+              </span>
+              <h2 className="font-display text-[16px] leading-tight font-semibold tracking-[-0.03em] text-ink">
                 Verified partners
               </h2>
-              <p className="text-[11px] font-semibold tracking-[0.1em] text-white/50 uppercase">
+              <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-wash px-2 text-[12px] font-semibold text-ink tabular-nums">
                 {partners.length}
-              </p>
+              </span>
             </div>
-            {editable ? (
-              <AddPartnerButton companySlug={companySlug} tone="onDark" />
-            ) : null}
+            {editable ? <AddPartnerButton companySlug={companySlug} /> : null}
           </div>
           {editable ? (
-            <p className="relative z-10 mt-1.5 text-[12px] leading-relaxed text-white/55">
+            <p className="mt-2 text-[12.5px] leading-relaxed text-muted">
               {PRODUCT.partners.job}
             </p>
           ) : null}
@@ -100,7 +104,7 @@ export function PartnerSidebar({
         ) : null}
 
         {partners.length > 0 ? (
-          <div className="border-t border-line px-5 py-4">
+          <div className="border-t border-line/70 px-4 py-3.5 sm:px-5">
             <Link
               href={`/c/${companySlug}#network-map`}
               className="text-[13px] font-semibold text-ink underline-offset-4 hover:underline"

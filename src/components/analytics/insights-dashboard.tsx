@@ -73,9 +73,9 @@ export function InsightsDashboard({ analytics, plan }: Props) {
     <WorkspacePage
       wide
       title="Insights"
-      description="How your public profile performs — visits, inquiries, and traffic sources."
+      description="Unique visits to your public profile, inquiries, and where they came from."
       stats={[
-        { label: "Profile views", value: analytics.profileViews },
+        { label: "Visits", value: analytics.profileViews },
         { label: "Widget views", value: analytics.embedViews },
         { label: "Widget clicks", value: analytics.embedClicks },
         { label: "Inquiries", value: analytics.inquiries, attention: analytics.inquiries > 0 },
@@ -92,11 +92,7 @@ export function InsightsDashboard({ analytics, plan }: Props) {
           visitTotal={visitTotal}
           inquiryTotal={inquiryTotal}
           inquiryRate={inquiryRate}
-          channelTotal={
-            analytics.profileViews +
-            analytics.onePagerViews +
-            analytics.embedViews
-          }
+          sourceCount={sourceSegments.length}
         />
 
         {full ? (

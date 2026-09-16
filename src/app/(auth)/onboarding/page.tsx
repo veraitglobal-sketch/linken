@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { OnboardingWorkspace } from "@/components/onboarding/onboarding-workspace";
+import { isPlatformStaffUser } from "@/features/admin/is-platform-staff";
 import { readOnboardingDraft } from "@/features/company/onboarding-draft";
 import { captureReferralFromRefParam } from "@/features/growth/capture-referral";
 import { createClient } from "@/lib/supabase/server";
@@ -36,6 +38,10 @@ export default async function OnboardingPage({ searchParams }: Props) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (user && (await isPlatformStaffUser(user.id, user.email))) {
+    redirect("/admin");
+  }
 
   return (
     <OnboardingWorkspace

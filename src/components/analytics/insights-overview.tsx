@@ -11,7 +11,7 @@ type Props = {
   visitTotal: number;
   inquiryTotal: number;
   inquiryRate: string;
-  channelTotal: number;
+  sourceCount: number;
 };
 
 export function InsightsOverview({
@@ -19,7 +19,7 @@ export function InsightsOverview({
   visitTotal,
   inquiryTotal,
   inquiryRate,
-  channelTotal,
+  sourceCount,
 }: Props) {
   const engagement =
     visitTotal > 0
@@ -34,7 +34,7 @@ export function InsightsOverview({
             Overview
           </h2>
           <p className="mt-1 text-[12px] leading-relaxed text-muted">
-            Profile visits and inquiry conversion.
+            Unique profile visits and inquiry conversion.
           </p>
         </div>
       </header>
@@ -43,7 +43,7 @@ export function InsightsOverview({
         <div className="grid gap-0 lg:grid-cols-[1.1fr_1.4fr]">
           <div className="border-b border-line p-5 lg:border-r lg:border-b-0">
             <p className="text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
-              Profile visits
+              Unique visits
             </p>
             <p className="mt-2 font-display text-[28px] font-semibold tracking-[-0.03em] text-ink">
               {visitTotal}
@@ -66,7 +66,7 @@ export function InsightsOverview({
             </p>
             <div className="mt-5 grid grid-cols-2 gap-2.5">
               <MiniStat label="Inquiry rate" value={`${inquiryRate}%`} />
-              <MiniStat label="Channels" value={String(channelTotal)} />
+              <MiniStat label="Sources" value={String(sourceCount)} />
             </div>
           </div>
 

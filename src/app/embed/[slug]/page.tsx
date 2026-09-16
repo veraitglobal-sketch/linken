@@ -4,7 +4,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { parseEmbedTheme } from "@/components/embed/embed-theme";
 import { EmbedForeignNote } from "@/components/embed/embed-foreign-note";
 import { embedWrapTransparent } from "@/components/embed/render-embed-variant";
-import { logProfileEvent } from "@/features/analytics/log";
+import { recordVisit } from "@/features/analytics/record-visit";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import { getEntitlements } from "@/features/plan/entitlements";
@@ -91,7 +91,7 @@ export default async function EmbedBadgePage({ params, searchParams }: Props) {
   }
 
   if (!isPreview) {
-    await logProfileEvent(company.slug, "embed_view", "embed");
+    await recordVisit(company.slug, "embed_view", "embed");
   }
 
   return renderTrustedEmbed({

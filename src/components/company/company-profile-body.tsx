@@ -84,14 +84,15 @@ export function CompanyProfileBody({
   const showSidebar = showWhyPublic || showOwnerProgress || showPartners;
 
   return (
-    /* Full width when there is no rail — a fixed 320px column with nothing in
-       it left the cards two-thirds wide beside an empty strip. */
+    /* Full width when there is no rail — a fixed column with nothing in it
+       left the cards two-thirds wide beside an empty strip. Same 1280 column
+       and gutters as the header card above, so the edges line up. */
     <div
-      className={`mx-auto mt-12 grid max-w-[1280px] gap-5 px-4 sm:px-[18px] lg:px-10 ${
-        showSidebar ? "lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-6" : ""
+      className={`mx-auto mt-4 grid max-w-[calc(1280px+2.25rem)] gap-4 px-4 sm:px-[18px] ${
+        showSidebar ? "lg:grid-cols-[minmax(0,1fr)_340px]" : ""
       }`}
     >
-      <div className="flex flex-col gap-5">
+      <div className="flex min-w-0 flex-col gap-4">
         <CompanyAbout company={company} />
         {showTeam ? (
           <CompanyTeamSection
@@ -129,7 +130,7 @@ export function CompanyProfileBody({
       </div>
 
       {showSidebar ? (
-        <div className="flex flex-col gap-5 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        <div className="flex flex-col gap-4 lg:col-start-2 lg:row-span-2 lg:row-start-1">
           {showWhyPublic ? <TrustWhyCard trust={trust} /> : null}
           {showOwnerProgress ? <TrustProgressCard trust={trust} /> : null}
           {showPartners ? (

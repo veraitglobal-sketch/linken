@@ -84,7 +84,7 @@ export function HomeBento() {
           <Card
             tone="bg-lime"
             title="In the tools you use"
-            body="Bookings from Calendly or Cal.com, alerts in Slack, and the same record driven from Cursor or Claude."
+            body="Bookings from Calendly or Cal.com, alerts in Slack, and the same record driven from Cursor, Claude, or Codex."
           >
             <div className="-mx-7 w-[calc(100%+3.5rem)]">
               <ArtTools />

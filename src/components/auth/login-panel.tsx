@@ -1,17 +1,16 @@
 "use client";
 
-import { useId, useState } from "react";
-import { signIn, signUp } from "@/features/auth/actions";
+import { useId } from "react";
+import Link from "next/link";
+import { signIn } from "@/features/auth/actions";
 import { StatusMessage } from "@/components/a11y/status-message";
-import { LoginModeTab } from "@/components/auth/login-mode-tab";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { LoginVerifyNotice } from "@/components/auth/login-verify-notice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordField } from "@/components/auth/password-field";
 import { LegalConsent } from "@/components/legal/legal-consent";
-import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
-
-type Mode = "sign-in" | "create";
+import { publicAuthError } from "@/features/company/signup-error";
 
 type Props = {
   error?: string;
@@ -19,7 +18,6 @@ type Props = {
   email?: string;
   resent?: string;
   next?: string;
-  intent?: "company" | "staff";
 };
 
 export function LoginPanel({
@@ -28,136 +26,90 @@ export function LoginPanel({
   email,
   resent,
   next = "/dashboard",
-  intent = "company",
 }: Props) {
-  const staff = intent === "staff";
-  const [mode, setMode] = useState<Mode>("sign-in");
-  const isCreate = !staff && mode === "create";
   const showVerify = verify === "1";
   const nextPath =
     next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
   const errorId = useId();
-  const tabId = useId();
+  const notice = publicAuthError(error);
 
   return (
     <div className="relative flex flex-col justify-center bg-surface px-6 py-10 sm:px-10">
       <div className="mx-auto w-full max-w-[420px]">
-      {isCreate ? (
-        <PageViewBeacon event="signup_started" page="/login" />
-      ) : null}
-      {showVerify ? (
-        <LoginVerifyNotice email={email} resent={resent} nextPath={nextPath} />
-      ) : null}
-      <div className="animate-rise">
-        <h1 className="font-display text-[34px] leading-tight font-semibold tracking-[-0.035em] text-ink">
-          {staff ? "Staff sign in" : isCreate ? "Create your account" : "Welcome back"}
-        </h1>
-        <p className="mt-2 max-w-md text-[15px] leading-relaxed text-ink-soft">
-          {staff
-            ? "Use a staff account. Company logins cannot open this."
-            : isCreate
-              ? "Start here. Next you register the company profile and publish your link."
-              : "Enter with the account that owns your company profile."}
-        </p>
-      </div>
-
-      {staff ? null : (
-        <div
-          className="animate-rise-delay mt-7 grid grid-cols-2 gap-1 rounded-full bg-mute p-1"
-          role="tablist"
-          aria-label="Account mode"
-        >
-          <LoginModeTab
-            id={`${tabId}-signin`}
-            active={!isCreate}
-            onClick={() => setMode("sign-in")}
-            label="Sign in"
+        {showVerify ? (
+          <LoginVerifyNotice
+            email={email}
+            resent={resent}
+            nextPath={nextPath}
+            error={notice ?? undefined}
           />
-          <LoginModeTab
-            id={`${tabId}-create`}
-            active={isCreate}
-            onClick={() => setMode("create")}
-            label="Create account"
-          />
+        ) : null}
+        <div className="animate-rise">
+          <h1 className="font-display text-[34px] leading-tight font-semibold tracking-[-0.035em] text-ink">
+            Welcome back
+          </h1>
+          <p className="mt-2 max-w-md text-[15px] leading-relaxed text-ink-soft">
+            Enter with the account that owns your company profile.
+          </p>
         </div>
-      )}
 
-      {error ? (
-        <StatusMessage id={errorId} tone="alert" className="mt-4">
-          {error}
-        </StatusMessage>
-      ) : null}
+        <div className="animate-rise-delay mt-7 grid grid-cols-2 gap-1 rounded-full bg-mute p-1">
+          <span className="grid h-11 place-items-center rounded-full bg-surface text-[14px] font-semibold text-ink shadow-[0_4px_12px_-6px_rgba(14,31,28,0.3)]">
+            Sign in
+          </span>
+          <Link
+            href="/onboarding"
+            className="grid h-11 place-items-center rounded-full text-[14px] font-semibold text-ink-soft hover:text-ink"
+          >
+            Create account
+          </Link>
+        </div>
 
-      <div className="animate-rise-late mt-6 space-y-4">
+        {!showVerify && notice ? (
+          <StatusMessage id={errorId} tone="alert" className="mt-4">
+            {notice}
+          </StatusMessage>
+        ) : null}
+
         <form
-          action={isCreate ? signUp : signIn}
-          className="flex flex-col gap-4"
-          aria-describedby={error ? errorId : undefined}
+          action={signIn}
+          className="animate-rise-late mt-6 flex flex-col gap-4"
+          aria-describedby={notice && !showVerify ? errorId : undefined}
         >
           <input type="hidden" name="next" value={nextPath} />
           <label className="block">
-            <span className="mb-2 block text-[14px] font-semibold text-ink">
-              Email
-            </span>
+            <span className="mb-2 block text-[14px] font-semibold text-ink">Email</span>
             <Input
               type="email"
               name="email"
               autoComplete="email"
-              placeholder={staff ? "Email" : "you@company.com"}
+              placeholder="you@company.com"
               required
-              aria-invalid={error ? true : undefined}
+              aria-invalid={notice ? true : undefined}
             />
           </label>
-          <label className="block">
-            <span className="mb-2 block text-[14px] font-semibold text-ink">
-              Password
-            </span>
-            <Input
-              type="password"
-              name="password"
-              autoComplete={isCreate ? "new-password" : "current-password"}
-              placeholder="At least 6 characters"
-              required
-              minLength={6}
-              aria-invalid={error ? true : undefined}
-            />
-          </label>
+          <PasswordField
+            name="password"
+            autoComplete="current-password"
+            placeholder="At least 6 characters"
+            required
+            minLength={6}
+            forgotHref="/login/forgot"
+            aria-invalid={notice ? true : undefined}
+          />
           <Button type="submit" className="mt-2 h-12 w-full !rounded-full !bg-navy text-[15px] hover:!bg-navy-deep">
-            {isCreate ? "Create account" : "Sign in"}
+            Sign in
           </Button>
-          <LegalConsent action={isCreate ? "create" : "continue"} />
+          <LegalConsent action="continue" />
         </form>
 
-        {staff ? null : <OAuthButtons next={nextPath} />}
-
-        {staff ? null : (
-          <p className="text-center text-[13px] text-ink-soft">
-            {isCreate ? (
-              <>
-                Already registered?{" "}
-                <button
-                  type="button"
-                  onClick={() => setMode("sign-in")}
-                  className="min-h-11 font-semibold text-ink underline-offset-2 hover:underline"
-                >
-                  Sign in
-                </button>
-              </>
-            ) : (
-              <>
-                New to Hansala?{" "}
-                <button
-                  type="button"
-                  onClick={() => setMode("create")}
-                  className="min-h-11 font-semibold text-ink underline-offset-2 hover:underline"
-                >
-                  Create an account
-                </button>
-              </>
-            )}
-          </p>
-        )}
-      </div>
+        <OAuthButtons next={nextPath} />
+        <p className="mt-4 text-center text-[13px] text-ink-soft">
+          New to Hansala?{" "}
+          <Link href="/onboarding" className="font-semibold text-ink underline-offset-2 hover:underline">
+            Create an account
+          </Link>
+        </p>
       </div>
     </div>
   );

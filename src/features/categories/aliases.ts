@@ -1,5 +1,9 @@
+import { CATEGORY_ALIASES_EXTRA } from "@/features/categories/aliases-extra";
+import { CATEGORY_ALIASES_EXTRA_B } from "@/features/categories/aliases-extra-b";
+import { CATEGORY_ALIASES_EXTRA_C } from "@/features/categories/aliases-extra-c";
+
 /** Lowercased alias → slug. Canonical names are indexed in match.ts. */
-export const CATEGORY_ALIASES: Record<string, string> = {
+const CATEGORY_ALIASES_BASE: Record<string, string> = {
   architekt: "architecture",
   architekturburo: "architecture",
   architektur: "architecture",
@@ -73,6 +77,9 @@ export const CATEGORY_ALIASES: Record<string, string> = {
   software: "software-development",
   "it - software": "software-development",
   "it-software": "software-development",
+  "it software": "software-development",
+  "it softver": "software-development",
+  softver: "software-development",
   softwareentwicklung: "software-development",
   programiranje: "software-development",
   "software company": "software-development",
@@ -132,8 +139,7 @@ export const CATEGORY_ALIASES: Record<string, string> = {
   veleprodaja: "wholesale",
   produktion: "manufacturing",
   proizvodnja: "manufacturing",
-  "school furniture": "manufacturing",
-  furniture: "manufacturing",
+  furniture: "furniture-manufacturing",
   maschinenbau: "machinery",
   elektronik: "electronics",
   automobil: "automotive",
@@ -161,11 +167,14 @@ export const CATEGORY_ALIASES: Record<string, string> = {
   agrar: "agriculture",
   "call centre": "call-center",
   "call center": "call-center",
+  "call centar": "call-center",
+  callcentar: "call-center",
   "call-center": "call-center",
   "call-centre": "call-center",
   "call centre and bpo": "call-center",
   callcenter: "call-center",
   "kontakt center": "call-center",
+  "kontakt centar": "call-center",
   "contact center": "call-center",
   "contact centre": "call-center",
   bpo: "call-center",
@@ -180,4 +189,11 @@ export const CATEGORY_ALIASES: Record<string, string> = {
   video: "photography-video",
   druckerei: "printing",
   stamparija: "printing",
+};
+
+export const CATEGORY_ALIASES: Record<string, string> = {
+  ...CATEGORY_ALIASES_BASE,
+  ...CATEGORY_ALIASES_EXTRA,
+  ...CATEGORY_ALIASES_EXTRA_B,
+  ...CATEGORY_ALIASES_EXTRA_C,
 };

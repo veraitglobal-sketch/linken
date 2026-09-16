@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AdminCompanyCreditsPanel } from "@/components/admin/admin-company-credits-panel";
-import { AdminCompanyVisibility } from "@/components/admin/admin-company-visibility";
+import { AdminCompanyOps } from "@/components/admin/admin-company-ops";
 import { AdminFactTiles } from "@/components/admin/admin-fact-tiles";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { getAdminCompanyDetail } from "@/features/admin/company-detail";
+import type { DuplicateCandidate } from "@/features/admin/duplicates";
+import { isPlatformStaffUser } from "@/features/admin/is-platform-staff";
 import { requirePlatformStaff } from "@/features/admin/require-platform-admin";
 import { roleMeetsMinimum } from "@/features/admin/roles";
+import { listSameDomainPeers } from "@/features/admin/same-domain-peers";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -27,6 +29,27 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
   const lastCheck = detail.verification?.lastCheck
     ? new Date(detail.verification.lastCheck).toLocaleDateString("en-GB")
     : "—";
+
+  const sameDomain = await listSameDomainPeers(detail.id, detail.website);
+  const mergeCompanies: DuplicateCandidate[] | null = sameDomain
+    ? [
+        {
+          id: detail.id,
+          name: detail.name,
+          slug: detail.slug,
+          website: detail.website,
+          claimed: detail.claimed,
+          verified: detail.verified,
+          createdAt: detail.createdAt,
+        },
+        ...sameDomain.peers,
+      ]
+    : null;
+
+  const ownerIsStaff =
+    detail.ownerId && detail.ownerEmail
+      ? await isPlatformStaffUser(detail.ownerId, detail.ownerEmail)
+      : false;
 
   return (
     <div className="space-y-8">
@@ -61,7 +84,10 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
             "Status",
             `${detail.claimed ? "Claimed" : "Unclaimed"}${detail.verified ? " · Verified" : ""}${detail.staffHiddenAt ? " · Hidden" : ""}`,
           ],
-          ["Plan", detail.plan ?? "free"],
+          [
+            "Plan",
+            `${detail.plan ?? "free"}${detail.staffPlanLock ? " · locked" : ""}`,
+          ],
           ["Credits", String(detail.creditsBalance)],
           ["Radar", detail.radar ? "On" : "Off"],
           ["Owner", detail.ownerEmail ?? "—"],
@@ -71,71 +97,15 @@ export default async function AdminCompanyDetailPage({ params }: Props) {
         ]}
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-card border border-line bg-surface p-5">
-          <h2 className="text-[13px] font-semibold text-ink">Public profile</h2>
-          <div className="mt-3">
-            <AdminCompanyVisibility
-              companyId={detail.id}
-              companyName={detail.name}
-              hiddenAt={detail.staffHiddenAt}
-              partnersCount={detail.partnersCount}
-              canHide={canWrite}
-              canRemove={canRemove}
-            />
-          </div>
-        </section>
-        <section className="rounded-card border border-line bg-surface p-5">
-          <h2 className="text-[13px] font-semibold text-ink">Credits & plan</h2>
-          <div className="mt-3">
-            <AdminCompanyCreditsPanel
-              companyId={detail.id}
-              companyName={detail.name}
-              radar={detail.radar}
-              plan={detail.plan ?? "free"}
-              canWrite={canWrite}
-            />
-          </div>
-        </section>
-
-        <section className="space-y-4">
-          <section className="rounded-card border border-line bg-surface p-5">
-            <h2 className="text-[13px] font-semibold text-ink">Billing</h2>
-            <p className="mt-2 text-[13px] text-ink-soft">
-              {detail.billing
-                ? `${detail.billing.status ?? "—"} · sub ${detail.billing.subscriptionId ?? "none"}`
-                : "No Stripe billing row."}
-            </p>
-            {detail.billing?.cancelAtPeriodEnd ? (
-              <p className="mt-1 text-[12px] text-muted">Cancel at period end.</p>
-            ) : null}
-          </section>
-          <section className="rounded-card border border-line bg-surface p-5">
-            <h2 className="text-[13px] font-semibold text-ink">Verification</h2>
-            <p className="mt-2 text-[13px] text-ink-soft">
-              {detail.verification
-                ? `${detail.verification.method ?? "—"} · last check ${lastCheck}`
-                : "No verification row."}
-            </p>
-          </section>
-          <section className="rounded-card border border-line bg-surface p-5">
-            <h2 className="text-[13px] font-semibold text-ink">Credit ledger</h2>
-            <ul className="mt-2 space-y-1 text-[12px] text-ink-soft">
-              {detail.creditLedger.length === 0 ? (
-                <li>No ledger entries.</li>
-              ) : (
-                detail.creditLedger.slice(0, 10).map((row, i) => (
-                  <li key={`${row.createdAt}-${i}`}>
-                    {row.delta > 0 ? "+" : ""}
-                    {row.delta} · {row.reason} ·{" "}
-                    {new Date(row.createdAt).toLocaleDateString("en-GB")}
-                  </li>
-                ))
-              )}
-            </ul>
-          </section>
-        </section>
-      </div>
+      <AdminCompanyOps
+        detail={detail}
+        canWrite={canWrite}
+        canRemove={canRemove}
+        lastCheck={lastCheck}
+        ownerIsStaff={Boolean(ownerIsStaff)}
+        sameDomain={sameDomain}
+        mergeCompanies={mergeCompanies}
+      />
     </div>
   );
 }

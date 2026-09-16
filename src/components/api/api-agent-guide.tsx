@@ -11,7 +11,7 @@ const STEPS = [
 export function ApiAgentGuide() {
   return (
     <ApiSection
-      title="Cursor & Claude"
+      title="Cursor, Claude & Codex"
       description="Same hs_ key. No second secret."
       action={
         <Link

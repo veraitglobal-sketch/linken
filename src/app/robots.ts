@@ -53,7 +53,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         disallow: PRIVATE,
       })),
     ],
-    sitemap: [`${siteUrl}/sitemap.xml`, `${siteUrl}/sitemap/0.xml`],
+    sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl.replace(/^https?:\/\//, ""),
   };
 }

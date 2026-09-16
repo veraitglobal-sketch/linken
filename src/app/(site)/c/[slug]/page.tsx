@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
+import { ProfileViewBeacon } from "@/components/analytics/profile-view-beacon";
 import { CompanyProfile } from "@/components/company/company-profile";
+import { CompanyProfileNetworkSlot } from "@/components/company/company-profile-network-slot";
 import { RelationshipConfirmBanner } from "@/components/company/relationship-confirm-banner";
 import { NetworkMapSection } from "@/components/network/network-map-section";
 import { CommonPartnersSlot } from "@/components/partners/common-partners-slot";
+import { PostPartnershipPromo } from "@/components/partners/post-partnership-promo";
 import { CompanyMapTeaser } from "@/components/product/company-map-teaser";
 import { CompanyPageLd } from "@/components/seo/company-page-ld";
-import { trackProfileArrival } from "@/features/analytics/track-arrival";
 import { loadPublicCompanyProfile } from "@/features/companies/load-public-profile";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
@@ -32,6 +34,7 @@ type Props = {
     add?: string;
     q?: string;
     mode?: string;
+    with?: string;
   }>;
 };
 
@@ -75,7 +78,6 @@ export default async function CompanyPage({ params, searchParams }: Props) {
 
   const {
     company,
-    isOwner,
     editable,
     showAdd,
     addMode,
@@ -103,13 +105,18 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     trust.breakdown.ongoingReferences +
     (groupBadge ? 1 : 0);
 
-  if (!isOwner && company.claimed !== false) {
-    await trackProfileArrival({
-      companySlug: company.slug,
-      src: sp.src,
-      via: sp.via,
-      relationship,
-    });
+  if (!editable && company.claimed !== false) {
+    const viaHost = (sp.via ?? "").trim().toLowerCase().slice(0, 253);
+    if (viaHost && relationship) {
+      const { recordWidgetPlacementThrottled } = await import(
+        "@/features/widgets/record-placement"
+      );
+      await recordWidgetPlacementThrottled({
+        companyId: relationship.other.id,
+        host: viaHost,
+        variant: "logo-wall",
+      });
+    }
   }
 
   const networkMap =
@@ -125,6 +132,9 @@ export default async function CompanyPage({ params, searchParams }: Props) {
 
   return (
     <>
+      {!editable && company.claimed !== false ? (
+        <ProfileViewBeacon slug={company.slug} src={sp.src} />
+      ) : null}
       <CompanyPageLd company={company} partners={partners} siteUrl={siteUrl} />
       {relationship ? (
         <RelationshipConfirmBanner
@@ -134,6 +144,14 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         />
       ) : null}
       <CommonPartnersSlot companyId={company.id} theirs={partners} />
+      {sp.partnerConfirmed === "1" ? (
+        <PostPartnershipPromo
+          companySlug={company.slug}
+          companyName={company.name}
+          siteUrl={siteUrl}
+          partnerSlug={sp.with ?? null}
+        />
+      ) : null}
       <CompanyProfile
         company={company}
         partners={partners}
@@ -153,7 +171,6 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         partnerCreated={sp.created}
         siteUrl={siteUrl}
         domainVerifiedJustNow={sp.domainVerified === "1"}
-        partnerConfirmedJustNow={sp.partnerConfirmed === "1"}
         groupBadge={groupBadge}
         teamMembers={teamMembers}
         nextActivationStep={checklist?.next ?? null}
@@ -165,6 +182,13 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         addPartnerMode={addMode}
         networkMap={networkMap}
       />
+      {company.claimed !== false ? (
+        <CompanyProfileNetworkSlot
+          companySlug={company.slug}
+          companyName={company.name}
+          partners={partners}
+        />
+      ) : null}
     </>
   );
 }

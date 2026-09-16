@@ -61,12 +61,12 @@ export default async function Image({ params }: Props) {
             fontFamily: "system-ui, sans-serif",
           }}
         >
-          Mutual confirmation
+          Confirmed on Hansala
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div
             style={{
-              fontSize: 52,
+              fontSize: 48,
               lineHeight: 1.08,
               letterSpacing: "-0.04em",
               fontWeight: 500,
@@ -76,16 +76,17 @@ export default async function Image({ params }: Props) {
           </div>
           <div
             style={{
-              fontSize: 22,
-              color: "rgba(255,255,255,0.45)",
+              fontSize: 28,
+              color: "#7eb8a4",
               fontFamily: "system-ui, sans-serif",
+              letterSpacing: "0.04em",
             }}
           >
-            and
+            ↔
           </div>
           <div
             style={{
-              fontSize: 52,
+              fontSize: 48,
               lineHeight: 1.08,
               letterSpacing: "-0.04em",
               fontWeight: 500,
@@ -99,7 +100,7 @@ export default async function Image({ params }: Props) {
             display: "flex",
             justifyContent: "space-between",
             fontFamily: "system-ui, sans-serif",
-            fontSize: 22,
+            fontSize: 20,
             color: "rgba(255,255,255,0.5)",
           }}
         >

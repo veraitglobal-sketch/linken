@@ -14,7 +14,8 @@ export type WidgetVariant =
   | "references"
   | "assessment"
   | "logo-wall"
-  | "case-stamp";
+  | "case-stamp"
+  | "network";
 
 export type WidgetTheme = "light" | "dark";
 export type WidgetSection = "placement" | "essential" | "proof" | "signature";

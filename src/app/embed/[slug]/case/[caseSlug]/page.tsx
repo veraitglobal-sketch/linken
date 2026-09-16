@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { notFound, permanentRedirect } from "next/navigation";
 import { parseEmbedTheme } from "@/components/embed/embed-theme";
 import { EmbedCaseStamp } from "@/components/embed/embed-case-stamp";
-import { logProfileEvent } from "@/features/analytics/log";
+import { recordVisit } from "@/features/analytics/record-visit";
 import { getCaseStudyForPage } from "@/features/case-studies/queries";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
@@ -83,7 +83,7 @@ export default async function EmbedCaseStampPage({
   }
 
   if (!isPreview) {
-    await logProfileEvent(company.slug, "embed_view", "embed");
+    await recordVisit(company.slug, "embed_view", "embed");
   }
 
   const undisclosed = isUndisclosedPublic(conf.disclosure);

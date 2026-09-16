@@ -1,22 +1,26 @@
-import { listSitemapIds } from "@/features/sitemap/build";
-import { getSiteUrl } from "@/lib/site";
+import {
+  buildSitemapForId,
+  listSitemapIds,
+} from "@/features/sitemap/build";
+import { sitemapEntriesToXml } from "@/features/sitemap/xml";
 
 export const revalidate = 3600;
 
-/** Sitemap index for GSC — served at `/sitemap.xml` via rewrite. */
+/**
+ * Full urlset at `/sitemap.xml` (via rewrite).
+ *
+ * A sitemap *index* with child chunks is fine at scale, but with a small
+ * catalogue GSC often shows Success + 0 discovered pages while children are
+ * still pending — and apex→www redirects on the submitted URL fail as
+ * "Sitemap could not be read". One flat urlset is the reliable default.
+ */
 export async function GET() {
-  const siteUrl = getSiteUrl();
   const ids = await listSitemapIds();
-  const body = [
-    `<?xml version="1.0" encoding="UTF-8"?>`,
-    `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
-    ...ids.map(
-      ({ id }) =>
-        `  <sitemap><loc>${siteUrl}/sitemap/${id}.xml</loc></sitemap>`,
-    ),
-    `</sitemapindex>`,
-    ``,
-  ].join("\n");
+  const chunks = await Promise.all(
+    ids.map(({ id }) => buildSitemapForId(id)),
+  );
+  const entries = chunks.flat();
+  const body = sitemapEntriesToXml(entries);
 
   return new Response(body, {
     headers: {

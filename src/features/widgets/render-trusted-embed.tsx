@@ -18,6 +18,7 @@ import {
   isPlacementVariant,
   renderPlacementEmbed,
 } from "@/features/widgets/render-placement-embed";
+import { renderNetworkEmbed } from "@/features/widgets/render-network-embed";
 import { wrapEmbed } from "@/features/widgets/wrap-embed";
 import { getSiteUrl } from "@/lib/site";
 
@@ -44,6 +45,10 @@ export async function renderTrustedEmbed(input: {
   });
 
   const normalized = normalizeEmbedVariant(resolved.variant);
+
+  if (normalized === "network") {
+    return renderNetworkEmbed({ company, theme, w });
+  }
 
   if (isPlacementVariant(normalized)) {
     const [trust] = await Promise.all([

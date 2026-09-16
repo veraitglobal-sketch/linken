@@ -37,7 +37,17 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${siteUrl}${next}`);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { isPlatformStaffUser, resolvePostLoginPath } = await import(
+        "@/features/admin/is-platform-staff"
+      );
+      const staff = user
+        ? await isPlatformStaffUser(user.id, user.email)
+        : false;
+      const dest = resolvePostLoginPath(staff, next);
+      return NextResponse.redirect(`${siteUrl}${dest}`);
     }
   }
 

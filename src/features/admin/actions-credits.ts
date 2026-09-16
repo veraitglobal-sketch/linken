@@ -105,24 +105,28 @@ export async function adminSetPlan(formData: FormData) {
 
   const { data: before } = await admin
     .from("companies")
-    .select("plan, slug")
+    .select("plan, slug, staff_plan_lock")
     .eq("id", companyId)
     .maybeSingle();
+
+  const lock = plan !== "free";
 
   const result = await runAdminAction({
     actor,
     action: "plan.set",
     target: { type: "company", id: companyId },
     reason,
-    before: { plan: before?.plan ?? null },
+    before: {
+      plan: before?.plan ?? null,
+      staffPlanLock: Boolean(before?.staff_plan_lock),
+    },
     run: async () => {
-      // Conflict: Stripe webhooks remain source of truth and can overwrite.
       const { error } = await admin
         .from("companies")
-        .update({ plan })
+        .update({ plan, staff_plan_lock: lock })
         .eq("id", companyId);
       if (error) throw new Error(error.message);
-      return { result: true, after: { plan } };
+      return { result: true, after: { plan, staffPlanLock: lock } };
     },
   });
 

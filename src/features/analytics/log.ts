@@ -6,6 +6,7 @@ export async function logProfileEvent(
   companySlug: string,
   eventType: ProfileEventType,
   source: ProfileSource = "direct",
+  visitorHash?: string | null,
 ): Promise<void> {
   if (!companySlug) return;
   try {
@@ -14,6 +15,7 @@ export async function logProfileEvent(
       p_company_slug: companySlug,
       p_event_type: eventType,
       p_source: source,
+      p_visitor_hash: visitorHash ?? null,
     });
   } catch {
     // Analytics must never break product flows

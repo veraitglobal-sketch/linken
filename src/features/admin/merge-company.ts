@@ -10,6 +10,7 @@ export type MergeMoved = {
   caseStudyConfirmConfirmed: number;
   testimonialsCompany: number;
   testimonialsAuthor: number;
+  caseStudies: number;
   slugHistory: number;
   loserSlugRedirected: boolean;
 };
@@ -100,6 +101,13 @@ export async function mergeCompanies(
     else testimonialsMoved += 1;
   }
 
+  const { data: caseStudies, error: caseStudiesErr } = await admin
+    .from("case_studies")
+    .update({ company_id: winnerId })
+    .eq("company_id", loserId)
+    .select("id");
+  if (caseStudiesErr) conflicts.push(`case studies: ${caseStudiesErr.message}`);
+
   const { data: slugHistory, error: slugHistoryErr } = await admin
     .from("company_slug_history")
     .update({ company_id: winnerId })
@@ -122,7 +130,9 @@ export async function mergeCompanies(
     p_winner_id: winnerId,
     p_merged_slug: mergedSlug,
   });
-  if (markErr) conflicts.push(`soft-mark loser: ${markErr.message}`);
+  if (markErr) {
+    throw new Error(`Could not close the duplicate profile: ${markErr.message}`);
+  }
 
   return {
     moved: {
@@ -133,6 +143,7 @@ export async function mergeCompanies(
       caseStudyConfirmConfirmed: csConfirmed.data?.length ?? 0,
       testimonialsCompany: testimonialsMoved,
       testimonialsAuthor: testAuthor.data?.length ?? 0,
+      caseStudies: caseStudies?.length ?? 0,
       slugHistory: slugHistory?.length ?? 0,
       loserSlugRedirected,
     },

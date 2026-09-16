@@ -1,4 +1,5 @@
 import { signIn, signUp } from "@/features/auth/actions";
+import { PasswordField } from "@/components/auth/password-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -37,12 +38,13 @@ export function InviteAuth({
           placeholder="Email"
           defaultValue={invitedEmail}
         />
-        <Input
-          type="password"
+        <PasswordField
           name="password"
+          autoComplete="current-password"
           required
           minLength={6}
           placeholder="Password"
+          forgotHref="/login/forgot"
         />
         <Button type="submit" className="h-11">
           Sign in
@@ -62,12 +64,13 @@ export function InviteAuth({
           placeholder="Email"
           defaultValue={invitedEmail}
         />
-        <Input
-          type="password"
+        <PasswordField
           name="password"
+          autoComplete="new-password"
           required
           minLength={6}
           placeholder="Password (min 6)"
+          forgotHref="/login/forgot"
         />
         <Button type="submit" variant="secondary" className="h-11">
           Create account

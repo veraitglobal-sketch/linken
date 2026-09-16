@@ -15,7 +15,7 @@ export async function getAdminCompanyDetail(
   const { data: c } = await admin
     .from("companies")
     .select(
-      "id, name, slug, website, category, city, country, claimed, verified, plan, radar, owner_id, created_at, staff_hidden_at",
+      "id, name, slug, website, category, city, country, claimed, verified, plan, radar, owner_id, created_at, staff_hidden_at, staff_plan_lock",
     )
     .eq("id", id)
     .maybeSingle();
@@ -102,6 +102,7 @@ export async function getAdminCompanyDetail(
     verified: Boolean(c.verified),
     plan: (c.plan as string | null) ?? null,
     radar: Boolean(c.radar),
+    staffPlanLock: Boolean(c.staff_plan_lock),
     ownerId: (c.owner_id as string | null) ?? null,
     ownerEmail: c.owner_id ? (emails.get(c.owner_id as string) ?? null) : null,
     createdAt: c.created_at as string,

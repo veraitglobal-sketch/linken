@@ -5,7 +5,9 @@ export function isExistingAccountError(message: string) {
   );
 }
 
-/** Human line for a failed sign-up. Auth sometimes returns `msg` with no `message`. */
+const JUNK = /^(?:\{\}|\[object Object\])$/;
+
+/** Human line for a failed sign-up. Auth 500s arrive as `{}` from the client. */
 export function signupErrorMessage(error: {
   message?: string | null;
   msg?: string | null;
@@ -15,12 +17,20 @@ export function signupErrorMessage(error: {
 }): string {
   const text = String(error.message ?? error.msg ?? "").trim();
   const mailFailed =
+    JUNK.test(text) ||
     /confirmation email/i.test(text) ||
     error.code === "unexpected_failure" ||
     error.name === "AuthRetryableFetchError";
   if (mailFailed) {
     return "We could not send the confirmation email. Try again in a minute.";
   }
-  if (text && text !== "{}" && text !== "[object Object]") return text;
+  if (text) return text;
   return "Could not create the account. Try again.";
+}
+
+/** Query-string errors: never show `{}` on the form. */
+export function publicAuthError(raw: string | null | undefined): string | null {
+  const text = (raw ?? "").trim();
+  if (!text) return null;
+  return signupErrorMessage({ message: text });
 }

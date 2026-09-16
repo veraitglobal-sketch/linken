@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { LoadingState } from "@/components/ui/loading-state";
 import type { NetworkGraph } from "@/features/network/types";
 
 const NetworkMap = dynamic(
@@ -9,9 +10,11 @@ const NetworkMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full items-center justify-center bg-[#f4f5f3] text-[13px] text-muted">
-        Loading network…
-      </div>
+      <LoadingState
+        compact
+        label="Loading network…"
+        className="h-full min-h-[12rem] bg-[#f4f5f3]"
+      />
     ),
   },
 );

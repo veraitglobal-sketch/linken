@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { registerAndSendConfirm } from "@/features/auth/send-signup-confirm";
 import { createClient } from "@/lib/supabase/server";
 import { getAuthSiteUrl } from "@/lib/site";
 
@@ -70,26 +71,21 @@ export async function continueWithPassword(formData: FormData) {
     redirect(next);
   }
 
-  const created = await supabase.auth.signUp({
-    email,
-    password,
-    options: { emailRedirectTo: authCallbackUrl(next) },
-  });
-
-  if (created.error) {
-    const msg = created.error.message;
-    if (/already|registered|exists/i.test(msg)) {
+  const created = await registerAndSendConfirm({ email, password, next });
+  if (!created.ok) {
+    if ("existing" in created && created.existing) {
       redirect(
         withQuery(next, {
-          error: "That email already has an account. Use the correct password, or email a confirm link.",
+          error:
+            "That email already has an account. Use the correct password, or enter the code from your email.",
         }),
       );
     }
-    redirect(withQuery(next, { error: msg }));
-  }
-
-  if (created.data.session) {
-    redirect(next);
+    redirect(
+      withQuery(next, {
+        error: "error" in created ? created.error : "Could not create the account. Try again.",
+      }),
+    );
   }
 
   redirect(withQuery(next, { checkEmail: "1", email }));

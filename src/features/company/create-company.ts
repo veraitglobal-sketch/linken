@@ -12,6 +12,7 @@ import {
 import { parseOrganizationKind } from "@/features/company/organization-kind";
 import { applyReferralAttribution } from "@/features/growth/apply-referral";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import { scheduleCompanyIndexNow } from "@/features/seo/indexnow-schedule";
 import { uniqueCompanySlug } from "@/features/partners/unique-slug";
 import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { tryEmailDomainVerificationAfterOnboarding } from "@/features/verification/actions";
@@ -56,6 +57,11 @@ export async function createCompany(formData: FormData) {
         ? "/onboarding?kind=developer_partner"
         : "/onboarding";
     redirect(`/login?next=${encodeURIComponent(next)}`);
+  }
+
+  const { isPlatformStaffUser } = await import("@/features/admin/is-platform-staff");
+  if (await isPlatformStaffUser(user.id, user.email)) {
+    redirect("/admin");
   }
 
   let slug = await uniqueCompanySlug(supabase, name);
@@ -126,6 +132,7 @@ export async function createCompany(formData: FormData) {
   }
 
   if (website) scheduleCompanyLogoFetch(created.id);
+  scheduleCompanyIndexNow(created.slug);
   void matchCompanyToSearches(created.id, "new_company");
   if (autoVerified) void matchCompanyToSearches(created.id, "became_verified");
 

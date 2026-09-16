@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 import { NextStepStrip } from "@/components/activation/next-step-strip";
-import { CompanyHeroBand } from "@/components/company/company-hero-band";
 import { CompanyProfileBody } from "@/components/company/company-profile-body";
-import { CompanySignal } from "@/components/company/company-signal";
-import { ProfileSectionNav } from "@/components/company/profile-section-nav";
+import { ProfileHeader, type ProfileTab } from "@/components/company/profile-header";
 import { ProfileProvenance } from "@/components/company/profile-provenance";
 import { UnclaimedBanner } from "@/components/company/unclaimed-banner";
 import type { PublicTeamMember } from "@/features/team/types";
@@ -42,7 +40,6 @@ type Props = {
   groupBadge?: ConfirmedGroupBadge | null;
   networkMap?: ReactNode;
   domainVerifiedJustNow?: boolean;
-  partnerConfirmedJustNow?: boolean;
   teamMembers?: PublicTeamMember[];
   nextActivationStep?: ActivationStep | null;
   showAddPartner?: boolean;
@@ -75,7 +72,6 @@ export function CompanyProfile({
   groupBadge = null,
   networkMap = null,
   domainVerifiedJustNow = false,
-  partnerConfirmedJustNow = false,
   teamMembers = [],
   nextActivationStep = null,
   showAddPartner = false,
@@ -93,22 +89,35 @@ export function CompanyProfile({
   const showRefs = references.length > 0 || editable;
   const showCases = caseStudies.length > 0 || editable;
   const showPartners = partners.length > 0 || editable;
+  const showTestimonials = testimonials.length > 0 || (editable && !isUnclaimed);
   const showMap = networkMap !== null;
 
+  const tabs: ProfileTab[] = [
+    { href: "#overview", label: "Overview" },
+    showTeam ? { href: "#team", label: "Team" } : null,
+    showRefs ? { href: "#references", label: "References" } : null,
+    showCases ? { href: "#case-studies", label: "Case studies" } : null,
+    showTestimonials ? { href: "#testimonials", label: "Testimonials" } : null,
+    showPartners ? { href: "#partners", label: "Partners" } : null,
+    showMap ? { href: "#network-map", label: "Map" } : null,
+  ].filter(Boolean) as ProfileTab[];
+
+  const flash =
+    "rounded-2xl bg-lime-soft px-4 py-3 text-[14px] text-ink ring-1 ring-lime";
+
   return (
-    /* A tinted ground, so the profile's cards can be white and sit on it.
-       Measured on the live page: every section card was `bg-surface` behind a
-       hairline, on a page that is also `#ffffff`. White on white leaves the
-       border doing all the work, which is why the profile read as a stack of
-       outlined boxes rather than as documents on a desk.
-       Same correction as the workspace board, and in the same direction: the
-       tint belongs to the canvas. Tinting the cards instead was tried there and
-       measured — `#f0f2f0` against `#ffffff` is a six per cent step and it did
-       not read at all. */
+    /* Wash ground, white record cards on it — the profile reads as one
+       product surface rather than a marketing page stacked from bands. */
     <div className="bg-wash pb-16">
-      <CompanyHeroBand
+      <ProfileHeader
         company={company}
-        trustLevel={trust.level}
+        trust={trust}
+        counts={{
+          partners: partners.length,
+          clients: confirmedRefs,
+          caseStudies: caseStudies.length,
+        }}
+        tabs={tabs}
         showContact={!isUnclaimed}
         showOnePager={editable && !isUnclaimed}
         showEmbed={editable && !isUnclaimed}
@@ -124,18 +133,10 @@ export function CompanyProfile({
       ) : null}
       {inquirySent ? <InquirySentBanner companyName={company.name} /> : null}
       {domainVerifiedJustNow ? (
-        <div className="mx-auto mt-4 max-w-6xl px-4">
-          <p className="rounded-none border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
+        <div className="mx-auto mt-4 max-w-[1280px] px-4 sm:px-[18px]">
+          <p className={flash}>
             Domain verified — your email matches your website. The Verified badge
             is live on this profile.
-          </p>
-        </div>
-      ) : null}
-      {partnerConfirmedJustNow ? (
-        <div className="mx-auto mt-4 max-w-6xl px-4">
-          <p className="rounded-none border border-[#1a5c51]/30 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
-            Partnership confirmed. Your company is claimed and the link is live
-            on the map.
           </p>
         </div>
       ) : null}
@@ -147,8 +148,8 @@ export function CompanyProfile({
           created={partnerCreated}
         />
       ) : error ? (
-        <div className="mx-auto mt-4 max-w-6xl px-4">
-          <p className="rounded-none border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+        <div className="mx-auto mt-4 max-w-[1280px] px-4 sm:px-[18px]">
+          <p className="rounded-2xl bg-surface px-4 py-3 text-[14px] text-ink ring-1 ring-line">
             {error}
           </p>
         </div>
@@ -159,23 +160,7 @@ export function CompanyProfile({
           claimSent={claimSent}
           claimError={claimError}
         />
-      ) : (
-        <CompanySignal
-          partnerCount={partners.length}
-          caseStudyCount={caseStudies.length}
-          referenceCount={confirmedRefs}
-          city={company.city}
-          category={company.category}
-        />
-      )}
-
-      <ProfileSectionNav
-        showTeam={showTeam}
-        showRefs={showRefs}
-        showCases={showCases}
-        showPartners={showPartners}
-        showMap={showMap}
-      />
+      ) : null}
 
       <CompanyProfileBody
         company={company}
@@ -195,7 +180,7 @@ export function CompanyProfile({
         showProviders={providers.length > 0}
         showCases={showCases}
         showPartners={showPartners}
-        showTestimonials={testimonials.length > 0 || (editable && !isUnclaimed)}
+        showTestimonials={showTestimonials}
         showWhyPublic={trust.points > 0}
         showOwnerProgress={editable && !isUnclaimed}
         showAddPartner={showAddPartner}

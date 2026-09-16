@@ -5,7 +5,8 @@ export type IntegrationId =
   | "calcom"
   | "slack"
   | "claude"
-  | "cursor";
+  | "cursor"
+  | "codex";
 
 export type IntegrationTile = {
   id: IntegrationId;
@@ -52,5 +53,12 @@ export const HOME_INTEGRATIONS: IntegrationTile[] = [
     href: "/developers",
     kind: "MCP",
     color: "#0D1210",
+  },
+  {
+    id: "codex",
+    name: "Codex",
+    href: "/developers",
+    kind: "MCP",
+    color: "#000000",
   },
 ];

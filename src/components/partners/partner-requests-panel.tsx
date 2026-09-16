@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { PostConfirmEmbedCta } from "@/components/confirm/post-confirm-embed-cta";
 import { PostConfirmTestimonial } from "@/components/confirm/post-confirm-testimonial";
 import { respondPartnership } from "@/features/network/actions";
 import type { PartnershipRow } from "@/features/partners/inbox";
@@ -36,9 +37,10 @@ export function PartnerRequestsPanel({
         <Status
           title="Partnership confirmed"
           body="You’re official partners. The link appears on both public profiles and the network map."
-          href="/dashboard"
-          cta="Open network map"
+          href={`/c/${companySlug}?partnerConfirmed=1`}
+          cta="Open your profile"
         />
+        <PostConfirmEmbedCta companySlug={companySlug} />
         <PostConfirmTestimonial
           requesterName={requesterName?.trim() || "Your partner"}
           testimonialUrl={testimonialUrl ?? null}

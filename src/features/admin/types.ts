@@ -48,6 +48,7 @@ export type AdminCompanyDetail = {
   verified: boolean;
   plan: string | null;
   radar: boolean;
+  staffPlanLock: boolean;
   ownerId: string | null;
   ownerEmail: string | null;
   createdAt: string;

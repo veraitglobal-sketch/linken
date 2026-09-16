@@ -28,14 +28,21 @@ function isExistingAccountError(message) {
 function signupErrorMessage(error) {
   const text = String(error.message ?? error.msg ?? "").trim();
   const mailFailed =
+    /^(?:\{\}|\[object Object\])$/.test(text) ||
     /confirmation email/i.test(text) ||
     error.code === "unexpected_failure" ||
     error.name === "AuthRetryableFetchError";
   if (mailFailed) {
     return "We could not send the confirmation email. Try again in a minute.";
   }
-  if (text && text !== "{}" && text !== "[object Object]") return text;
+  if (text) return text;
   return "Could not create the account. Try again.";
+}
+
+function publicAuthError(raw) {
+  const text = (raw ?? "").trim();
+  if (!text) return null;
+  return signupErrorMessage({ message: text });
 }
 
 test("draftFromFormData keeps company fields from the last step", () => {
@@ -68,9 +75,7 @@ test("signupErrorMessage is specific when confirmation email fails", () => {
     code: "unexpected_failure",
   });
   assert.equal(/confirmation email/i.test(text), true);
-  assert.equal(signupErrorMessage({ message: "{}" }), "Could not create the account. Try again.");
-  assert.match(
-    signupErrorMessage({ message: "{}", name: "AuthRetryableFetchError", status: 500 }),
-    /confirmation email/i,
-  );
+  assert.match(signupErrorMessage({ message: "{}" }), /confirmation email/i);
+  assert.match(publicAuthError("{}") ?? "", /confirmation email/i);
+  assert.equal(publicAuthError(""), null);
 });

@@ -11,24 +11,24 @@ export function TrustProgressCard({ trust }: Props) {
 
   if (!nextStep.nextLevel) {
     return (
-      <aside className="rounded-none border border-[#0e1f1c]/15 bg-[#0e1f1c] px-5 py-5 text-white shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
-        <p className="text-[11px] font-semibold tracking-[0.14em] text-white/50 uppercase">
+      <aside className="rounded-[24px] bg-navy p-4 text-on-navy sm:p-5">
+        <p className="text-[11px] font-semibold tracking-[0.16em] text-lime uppercase">
           Your progress
         </p>
-        <p className="mt-2 font-display text-lg tracking-[-0.03em]">
+        <p className="mt-2 font-display text-[18px] font-semibold tracking-[-0.03em]">
           Pillar · {points} points
         </p>
-        <p className="mt-1.5 text-[13px] text-white/65">{nextStep.hint}</p>
+        <p className="mt-1.5 text-[13px] text-on-navy-soft">{nextStep.hint}</p>
       </aside>
     );
   }
 
   return (
-    <aside className="rounded-none border border-line bg-[#f7f8fa] px-5 py-5 shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+    <aside className="rounded-[24px] bg-lime-soft p-4 ring-1 ring-lime sm:p-5">
+      <p className="text-[11px] font-semibold tracking-[0.16em] text-navy/70 uppercase">
         Your progress
       </p>
-      <p className="mt-2 font-display text-lg font-medium tracking-[-0.03em] text-ink">
+      <p className="mt-2 font-display text-[18px] font-semibold tracking-[-0.03em] text-ink">
         {nextStep.pointsNeeded} point{nextStep.pointsNeeded === 1 ? "" : "s"} to{" "}
         {nextStep.nextLevel}
       </p>
@@ -38,7 +38,7 @@ export function TrustProgressCard({ trust }: Props) {
       </p>
       <Link
         href={nextStep.href}
-        className="mt-4 inline-block text-[13px] font-semibold text-ink underline-offset-4 hover:underline"
+        className="mt-4 inline-flex h-9 items-center rounded-full bg-navy px-4 text-[13px] font-semibold text-on-navy transition-colors hover:bg-navy-deep"
       >
         Take the next step
       </Link>

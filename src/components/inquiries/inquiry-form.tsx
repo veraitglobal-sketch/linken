@@ -23,6 +23,9 @@ type Props = {
   /** Optional routing hint — written into service_interest / message prefix. */
   forMember?: ForMember;
   onCancel?: () => void;
+  /** Overrides for the closed button — the light profile header uses lime. */
+  triggerLabel?: string;
+  triggerVariant?: "primary" | "light" | "lime" | "secondary";
 };
 
 function forLabel(m: ForMember) {
@@ -40,6 +43,8 @@ export function InquiryForm({
   back,
   forMember,
   onCancel,
+  triggerLabel,
+  triggerVariant,
 }: Props) {
   const [open, setOpen] = useState(defaultOpen);
   const panel = appearance === "panel";
@@ -49,11 +54,11 @@ export function InquiryForm({
     return (
       <Button
         type="button"
-        variant={panel ? "primary" : "light"}
+        variant={triggerVariant ?? (panel ? "primary" : "light")}
         className="h-11 min-w-[150px] px-5"
         onClick={() => setOpen(true)}
       >
-        {panel ? `Contact ${companyName}` : "Request a quote"}
+        {triggerLabel ?? (panel ? `Contact ${companyName}` : "Request a quote")}
       </Button>
     );
   }

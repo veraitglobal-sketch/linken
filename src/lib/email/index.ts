@@ -1,5 +1,7 @@
 export { sendBrandedEmail } from "@/lib/email/send";
 export { sendDomainVerificationEmail } from "@/lib/email/domain-verification";
+export { sendSignupConfirmEmail } from "@/lib/email/signup-confirm";
+export { sendPasswordResetEmail } from "@/lib/email/password-reset";
 export {
   sendClientConfirmationEmail,
   sendReferenceConfirmEmail,
@@ -25,3 +27,4 @@ export {
   sendProjectResponseBuyerEmail,
 } from "@/lib/email/radar-notify";
 export { sendPartnerIntroEmail } from "@/lib/email/partner-intro";
+export { sendNetworkDigestEmail } from "@/lib/email/network-digest";

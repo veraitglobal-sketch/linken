@@ -9,8 +9,6 @@ import {
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
 import { getCompanyForPage } from "@/features/companies/queries";
 import { hasPublishedTestimonialForCase } from "@/features/testimonials/queries";
-import { logProfileEvent } from "@/features/analytics/log";
-import { parseProfileSource } from "@/features/analytics/sources";
 import {
   buildCaseStudyArticleLd,
   buildCaseStudyBreadcrumbLd,
@@ -83,7 +81,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CaseStudyPage({ params, searchParams }: Props) {
   const { slug, caseSlug } = await params;
-  const { error, requested, src } = await searchParams;
+  const { error, requested } = await searchParams;
 
   const company = await getCompanyForPage(slug);
   if (!company) {
@@ -107,14 +105,6 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
 
   const hideCompanyQuote = await hasPublishedTestimonialForCase(caseStudy.id);
   const siteUrl = getSiteUrl();
-
-  if (!editable && company.claimed !== false) {
-    await logProfileEvent(
-      company.slug,
-      "profile_view",
-      parseProfileSource(src),
-    );
-  }
 
   const confirmer = caseStudy.clientConfirmation?.confirmedBy;
   const undisclosed =

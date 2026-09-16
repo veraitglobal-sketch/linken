@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { ChartPoint } from "@/components/analytics/chart-types";
+import { LoadingState } from "@/components/ui/loading-state";
 
 const IntertwinedActivityChart = dynamic(
   () =>
@@ -11,12 +12,7 @@ const IntertwinedActivityChart = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div
-        className="flex h-[200px] items-center justify-center text-[13px] text-muted"
-        role="status"
-      >
-        Loading chart…
-      </div>
+      <LoadingState compact label="Loading chart…" className="h-[200px]" />
     ),
   },
 );

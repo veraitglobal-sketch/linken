@@ -1,3 +1,5 @@
+import { aliasProfileSource } from "@/features/analytics/visitor";
+
 export const PROFILE_SOURCES = [
   "direct",
   "search",
@@ -22,8 +24,10 @@ export type ProfileEventType = (typeof PROFILE_EVENT_TYPES)[number];
 
 export function parseProfileSource(raw: string | undefined | null): ProfileSource {
   const value = (raw ?? "").trim().toLowerCase();
-  if ((PROFILE_SOURCES as readonly string[]).includes(value)) {
-    return value as ProfileSource;
+  if (!value) return "direct";
+  const mapped = aliasProfileSource(value);
+  if ((PROFILE_SOURCES as readonly string[]).includes(mapped)) {
+    return mapped as ProfileSource;
   }
-  return "direct";
+  return "external";
 }

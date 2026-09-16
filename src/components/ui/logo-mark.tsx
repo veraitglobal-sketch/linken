@@ -21,12 +21,6 @@ const sizes = {
 
 const sizePx = { sm: 36, md: 44, lg: 56 } as const;
 
-const imgPad = {
-  sm: "p-1",
-  md: "p-1.5",
-  lg: "p-2",
-};
-
 export function LogoMark({
   initials,
   logoUrl,
@@ -58,7 +52,7 @@ export function LogoMark({
     <div
       className={cn(
         "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-sm border border-line font-medium tracking-[0.08em] text-ink",
-        showImg ? cn("bg-white", imgPad[size]) : "bg-paper",
+        showImg ? "bg-white" : "bg-paper",
         sizes[size],
         className,
       )}

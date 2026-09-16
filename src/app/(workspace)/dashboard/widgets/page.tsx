@@ -105,6 +105,7 @@ export default async function DashboardWidgetsPage() {
     assessment: assessment.wouldWorkAgainTotal >= 3,
     "logo-wall": hasWall,
     "case-stamp": false,
+    network: hasWall,
   };
 
   return (

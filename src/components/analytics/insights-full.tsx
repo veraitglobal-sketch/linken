@@ -53,7 +53,7 @@ export function InsightsFull({
               Traffic sources
             </h2>
             <p className="mt-1 text-[12px] leading-relaxed text-muted">
-              Where profile events came from.
+              Where unique profile visits came from.
             </p>
           </header>
           <WorkspaceCard>
@@ -73,7 +73,7 @@ export function InsightsFull({
               Channel mix
             </h2>
             <p className="mt-1 text-[12px] leading-relaxed text-muted">
-              Profile · one-pager · embed · inquiries.
+              Unique visits, widget views, one-pagers, and inquiries — counted separately.
             </p>
           </header>
           <WorkspaceCard>

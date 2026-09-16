@@ -14,7 +14,9 @@ import { useOnboardingForm } from "@/components/onboarding/use-onboarding-form";
 import { createCompany } from "@/features/company/create-company";
 import { startOnboarding } from "@/features/company/start-onboarding";
 import type { OnboardingDraft } from "@/features/company/onboarding-draft";
+import { publicAuthError } from "@/features/company/signup-error";
 import { cn } from "@/lib/cn";
+import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
 
 type Props = {
   error?: string;
@@ -31,6 +33,7 @@ export function OnboardingForm({
 }: Props) {
   const flow = useOnboardingForm(draft, partnerMode, accountEmail);
   const current = STEPS[flow.step]!;
+  const notice = publicAuthError(error) || flow.localError;
 
   return (
     <div className="relative flex min-h-dvh flex-col bg-surface px-6 py-6 sm:px-10">
@@ -48,6 +51,7 @@ export function OnboardingForm({
 
       <div className="flex flex-1 items-center justify-center py-10">
         <div className="w-full max-w-[420px]">
+          <PageViewBeacon event="signup_started" page="/onboarding" />
           <h1 className="font-display text-[30px] leading-tight font-semibold tracking-[-0.03em] text-ink">
             {flow.resumeLast && flow.step === 2
               ? "Finish your company profile"
@@ -56,9 +60,9 @@ export function OnboardingForm({
                 : current.title}
           </h1>
           <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">{current.lead}</p>
-          {(error || flow.localError) ? (
+          {notice ? (
             <StatusMessage tone="alert" className="mt-5">
-              {error || flow.localError}
+              {notice}
             </StatusMessage>
           ) : null}
 

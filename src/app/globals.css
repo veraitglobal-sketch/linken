@@ -185,6 +185,59 @@ body:has(.home-wash) {
   background: var(--wash);
 }
 
+/* Halftone on the lime hero band — option G. One 18px grid, the dots growing
+   towards the lower right and absent from the upper left, where the claim
+   sits. Three layers of the same grid at rising radius, each masked in further
+   along the diagonal, so the eye reads one field of swelling dots rather than
+   three patterns. The dot is lime deepened with the signal green: no new
+   colour enters the palette. Opaque dots, so stacked layers never darken. */
+.lime-halftone,
+.lime-halftone::before,
+.lime-halftone::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-size: 18px 18px;
+  background-position: right bottom;
+  --dot: color-mix(in oklab, var(--lime) 80%, var(--signal));
+}
+.lime-halftone {
+  background-image: radial-gradient(circle, var(--dot) 1.1px, transparent 1.7px);
+  -webkit-mask-image: linear-gradient(to bottom right, transparent 38%, #000 70%);
+  mask-image: linear-gradient(to bottom right, transparent 38%, #000 70%);
+}
+.lime-halftone::before {
+  content: "";
+  background-image: radial-gradient(circle, var(--dot) 2.2px, transparent 2.8px);
+  -webkit-mask-image: linear-gradient(to bottom right, transparent 58%, #000 86%);
+  mask-image: linear-gradient(to bottom right, transparent 58%, #000 86%);
+}
+.lime-halftone::after {
+  content: "";
+  background-image: radial-gradient(circle, var(--dot) 3.4px, transparent 4px);
+  -webkit-mask-image: linear-gradient(to bottom right, transparent 76%, #000 100%);
+  mask-image: linear-gradient(to bottom right, transparent 76%, #000 100%);
+}
+
+/* A phone's band is tall and narrow, so the same diagonal runs behind the
+   claim and the buttons. There the field starts lower and stays in the lower
+   corner, under the call to action. */
+@media (max-width: 639px) {
+  .lime-halftone {
+    -webkit-mask-image: linear-gradient(to bottom right, transparent 62%, #000 86%);
+    mask-image: linear-gradient(to bottom right, transparent 62%, #000 86%);
+  }
+  .lime-halftone::before {
+    -webkit-mask-image: linear-gradient(to bottom right, transparent 76%, #000 94%);
+    mask-image: linear-gradient(to bottom right, transparent 76%, #000 94%);
+  }
+  .lime-halftone::after {
+    -webkit-mask-image: linear-gradient(to bottom right, transparent 88%, #000 100%);
+    mask-image: linear-gradient(to bottom right, transparent 88%, #000 100%);
+  }
+}
+
 /* Homepage colour — one green, run from its mint to its deep value.
    `.grad-mint` is light enough for ink; `.grad-teal` carries white type. */
 .grad-mint {
@@ -1082,6 +1135,90 @@ dd {
 
   .net-bead {
     display: none;
+  }
+}
+
+/* Hansala spinner — confirmation forming, not a circle spinning. */
+@keyframes hs-confirm-link {
+  0%,
+  12% {
+    stroke-dashoffset: 28;
+    opacity: 0.25;
+  }
+  40%,
+  62% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  88%,
+  100% {
+    stroke-dashoffset: 28;
+    opacity: 0.25;
+  }
+}
+
+@keyframes hs-confirm-node {
+  0%,
+  10% {
+    opacity: 0.2;
+    transform: scale(0.55);
+  }
+  38%,
+  68% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  92%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.55);
+  }
+}
+
+@keyframes hs-confirm-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--lime) 0%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--lime) 28%, transparent);
+  }
+}
+
+.hs-spinner-plate {
+  animation: hs-confirm-glow 1.8s ease-in-out infinite;
+}
+
+.hs-spinner-link {
+  stroke-dasharray: 28;
+  animation: hs-confirm-link 1.8s ease-in-out infinite;
+}
+
+.hs-spinner-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hs-confirm-node 1.8s ease-in-out infinite;
+}
+
+.hs-spinner-node-b {
+  animation-delay: 0.12s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-spinner-plate,
+  .hs-spinner-link,
+  .hs-spinner-node {
+    animation: none !important;
+  }
+
+  .hs-spinner-link {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  .hs-spinner-node {
+    opacity: 1;
+    transform: none;
   }
 }
 

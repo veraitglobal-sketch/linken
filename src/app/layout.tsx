@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { geist, geistMono, inter } from "@/app/fonts";
+import { CookiebotHead } from "@/components/layout/cookiebot-head";
 import { StyleRescue } from "@/components/layout/style-rescue";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
+import "./cookiebot-overrides.css";
 
 /* Newsreader is not loaded here. Widgets use Geist from this layout; a host
    that wants a different face sets it in the testimonial studio. */
@@ -79,6 +81,9 @@ export default function RootLayout({
       lang="en"
       className={`${geist.variable} ${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <CookiebotHead />
+      </head>
       <body className="flex min-h-full flex-col font-sans">
         <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
         <script

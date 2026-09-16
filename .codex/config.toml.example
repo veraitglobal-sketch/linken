@@ -1,0 +1,11 @@
+# Optional project-scoped Codex MCP (trusted projects only).
+# User-level config: ~/.codex/config.toml
+# Docs: https://developers.openai.com/codex/mcp/
+
+[mcp_servers.hansala]
+url = "https://www.hansala.com/api/mcp"
+bearer_token_env_var = "HANSALA_AGENT_API_KEY"
+
+# Or without a key — then run: codex mcp login hansala
+# [mcp_servers.hansala]
+# url = "https://www.hansala.com/api/mcp"

@@ -4,6 +4,7 @@ import { after } from "next/server";
 import { revalidatePath } from "next/cache";
 import { hashDomainVerificationToken } from "@/features/verification/email-token";
 import { scheduleCompanyLogoFetch } from "@/features/logo/schedule";
+import { scheduleCompanyIndexNow } from "@/features/seo/indexnow-schedule";
 import { matchCompanyToSearches } from "@/features/radar-leads/match";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -12,6 +13,7 @@ type ConfirmErr = { ok: false; error: string };
 
 function succeed(companyId: string, slug: string | null): ConfirmOk {
   scheduleCompanyLogoFetch(companyId);
+  if (slug) scheduleCompanyIndexNow(slug);
   after(() => {
     void matchCompanyToSearches(companyId, "became_verified");
     revalidatePath("/dashboard");

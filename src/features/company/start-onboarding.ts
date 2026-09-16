@@ -1,19 +1,17 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createCompany } from "@/features/company/create-company";
+import { registerAndSendConfirm } from "@/features/auth/send-signup-confirm";
 import {
   draftFromFormData,
   saveOnboardingDraft,
 } from "@/features/company/onboarding-draft";
 import { parseOrganizationKind } from "@/features/company/organization-kind";
-import { isExistingAccountError, signupErrorMessage } from "@/features/company/signup-error";
-import { getAuthSiteUrl } from "@/lib/site";
-import { createClient } from "@/lib/supabase/server";
+import { isExistingAccountError } from "@/features/company/signup-error";
 
 /**
  * Unsigned onboarding: save the company as a draft, create the account, then
- * either finish now (session already present) or wait for the email link.
+ * wait for the confirmation email. The profile is created after they click.
  */
 export async function startOnboarding(formData: FormData) {
   const get = (k: string) => String(formData.get(k) ?? "").trim();
@@ -38,18 +36,25 @@ export async function startOnboarding(formData: FormData) {
     fail("Enter your work email and a password of at least 6 characters");
   }
 
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
+  const { isPlatformAdminEmail } = await import("@/features/admin/config");
+  if (isPlatformAdminEmail(email)) {
+    fail("This email is reserved for platform access. Use a company email.");
+  }
+
+  const registered = await registerAndSendConfirm({
     email,
     password,
-    options: {
-      emailRedirectTo: `${getAuthSiteUrl()}/auth/callback?next=${encodeURIComponent(next)}`,
-    },
+    next,
   });
-  if (error) {
-    const message = signupErrorMessage(error);
-    console.error("[onboarding] signup", error.message || error.code);
-    if (isExistingAccountError(message) || isExistingAccountError(error.message ?? "")) {
+  if (!registered.ok) {
+    if ("existing" in registered && registered.existing) {
+      redirect(
+        `/login?next=${encodeURIComponent(next)}&error=${encodeURIComponent("That email already has an account. Sign in to finish.")}`,
+      );
+    }
+    const message = "error" in registered ? registered.error : "Could not create the account. Try again.";
+    console.error("[onboarding] signup", message);
+    if (isExistingAccountError(message)) {
       redirect(
         `/login?next=${encodeURIComponent(next)}&error=${encodeURIComponent("That email already has an account. Sign in to finish.")}`,
       );
@@ -59,9 +64,5 @@ export async function startOnboarding(formData: FormData) {
 
   const { logActivationEvent } = await import("@/features/activation/events");
   void logActivationEvent(null, "signup_completed");
-
-  if (data.session) {
-    await createCompany(formData);
-  }
   redirect(`/onboarding/check-email?email=${encodeURIComponent(email)}`);
 }

@@ -26,17 +26,23 @@ export async function NetworkMapSection({
   return (
     <section
       id="network-map"
-      className="mx-auto mt-5 max-w-6xl scroll-mt-28 px-4"
+      className="mx-auto mt-4 max-w-[calc(1280px+2.25rem)] scroll-mt-28 px-4 sm:px-[18px]"
     >
-      <div className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
-        <div className="border-b border-line/70 px-5 py-5 sm:px-7">
-          <p className="text-[11px] font-semibold tracking-[0.16em] text-plus uppercase">
-            {PRODUCT.map.label}
-          </p>
-          <h2 className="mt-1.5 font-display text-section text-ink">
+      <div className="overflow-hidden rounded-[24px] bg-surface ring-1 ring-line/70">
+        <div className="flex items-start gap-3 border-b border-line/70 px-5 py-5 sm:px-7">
+          <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-lime-soft text-navy">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="3.5" cy="4" r="1.8" />
+              <circle cx="12.5" cy="5" r="1.8" />
+              <circle cx="8" cy="12" r="1.8" />
+              <path d="M5.2 4.4 10.7 4.8M4.4 5.6l2.7 4.8M11.7 6.6 9 10.4" />
+            </svg>
+          </span>
+          <div className="min-w-0">
+          <h2 className="font-display text-[20px] leading-tight font-semibold tracking-[-0.03em] text-ink">
             {title}
           </h2>
-          <p className="mt-2 max-w-[40rem] text-[13px] leading-relaxed text-muted">
+          <p className="mt-1 max-w-[40rem] text-[14px] leading-relaxed text-muted">
             {PRODUCT.map.job}
           </p>
           {graph.summary.companies +
@@ -44,7 +50,7 @@ export async function NetworkMapSection({
             graph.summary.partners +
             graph.summary.clients >
           0 ? (
-            <p className="mt-2 text-[12px] text-muted">
+            <p className="mt-1.5 text-[12.5px] text-muted">
               {[
                 graph.summary.companies
                   ? `${graph.summary.companies} companies`
@@ -63,6 +69,7 @@ export async function NetworkMapSection({
                 .join(" · ")}
             </p>
           ) : null}
+          </div>
         </div>
 
         {/* Mobile: compact list */}

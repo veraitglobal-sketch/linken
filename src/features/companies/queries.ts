@@ -1,6 +1,5 @@
 import { cache } from "react";
 import { parsePlan } from "@/features/plan/entitlements";
-import { createClient } from "@/lib/supabase/server";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { Company } from "@/types/company";
 
@@ -33,6 +32,7 @@ function mapRow(row: {
   accepting_clients?: boolean | null;
   plan?: string | null;
   updated_at?: string | null;
+  created_at?: string | null;
   invite_email?: string | null;
   created_by?: { slug: string; name: string } | { slug: string; name: string }[] | null;
 }): Company {
@@ -61,6 +61,7 @@ function mapRow(row: {
     coverImageUrl: row.cover_image_url ?? null,
     claimed: row.claimed !== false,
     updatedAt: row.updated_at ?? null,
+    createdAt: row.created_at ?? null,
     acceptingClients: row.accepting_clients !== false,
     plan: parsePlan(row.plan),
     inviteEmail: row.invite_email ?? null,
@@ -144,7 +145,7 @@ export async function searchCompanies(
     let req = supabase
       .from("companies")
       .select(
-        "id, slug, name, tagline, description, category, city, country, website, logo_url, linkedin_url, facebook_url, services, verified, claimed, accepting_clients, plan",
+        "id, slug, name, tagline, description, category, city, country, website, logo_url, linkedin_url, facebook_url, services, verified, claimed, accepting_clients, plan, created_at",
       )
       .order("name")
       .limit(60);
@@ -162,10 +163,12 @@ export async function searchCompanies(
     }
 
     if (q) {
-      // Include slug so dashboard partner search works with public URLs / slugs.
-      req = req.or(
-        `name.ilike.%${q}%,slug.ilike.%${q}%,category.ilike.%${q}%,city.ilike.%${q}%`,
-      );
+      // Short tokens like “it” must not match furn*it*ure via category/city ilike.
+      const fields =
+        q.length <= 3
+          ? `name.ilike.%${q}%,slug.ilike.%${q}%`
+          : `name.ilike.%${q}%,slug.ilike.%${q}%,category.ilike.%${q}%,city.ilike.%${q}%`;
+      req = req.or(fields);
     }
 
     const { data, error } = await req;

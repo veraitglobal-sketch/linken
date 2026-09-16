@@ -1,10 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import {
-  CHECKOUT_BRANDING,
-  CHECKOUT_CUSTOM_TEXT,
-} from "@/features/billing/checkout-branding";
+import { createProCheckoutSession } from "@/features/billing/checkout-session";
 import { proPriceId } from "@/features/billing/config";
 import { billingBack } from "@/features/billing/paths";
 import { ensureStripeCustomer } from "@/features/billing/sync";
@@ -36,36 +33,33 @@ export async function startProCheckout() {
     redirect(billingBack("error=stripe_not_configured"));
   }
 
-  const customerId = await ensureStripeCustomer(admin, {
-    companyId: company.id,
-    companyName: company.name,
-    companySlug: company.slug,
-    ownerEmail: user.email,
-  });
+  let customerId: string | null = null;
+  try {
+    customerId = await ensureStripeCustomer(admin, {
+      companyId: company.id,
+      companyName: company.name,
+      companySlug: company.slug,
+      ownerEmail: user.email,
+    });
+  } catch (err) {
+    console.error("[billing] ensureStripeCustomer failed", err);
+  }
   if (!customerId) redirect(billingBack("error=checkout_failed"));
 
   const site = getSiteUrl();
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    customer: customerId,
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${site}${billingBack("success=1")}`,
-    cancel_url: `${site}${billingBack("canceled=1")}`,
-    custom_text: CHECKOUT_CUSTOM_TEXT,
-    branding_settings: CHECKOUT_BRANDING,
+  const session = await createProCheckoutSession({
+    stripe,
+    customerId,
+    priceId,
+    successUrl: `${site}${billingBack("success=1")}`,
+    cancelUrl: `${site}${billingBack("canceled=1")}`,
     metadata: {
       company_id: company.id,
       company_slug: company.slug,
     },
-    subscription_data: {
-      metadata: {
-        company_id: company.id,
-        company_slug: company.slug,
-      },
-    },
-  } as Parameters<typeof stripe.checkout.sessions.create>[0]);
+  });
 
-  if (!session.url) redirect(billingBack("error=checkout_failed"));
+  if (!session?.url) redirect(billingBack("error=checkout_failed"));
 
   const { trackLifecycle } = await import(
     "@/features/product-analytics/helpers"
@@ -103,10 +97,16 @@ export async function openBillingPortal() {
   }
 
   const site = getSiteUrl();
-  const portal = await stripe.billingPortal.sessions.create({
-    customer: billing.stripe_customer_id,
-    return_url: `${site}${billingBack()}`,
-  });
-
-  redirect(portal.url);
+  let portalUrl: string | null = null;
+  try {
+    const portal = await stripe.billingPortal.sessions.create({
+      customer: billing.stripe_customer_id,
+      return_url: `${site}${billingBack()}`,
+    });
+    portalUrl = portal.url;
+  } catch (err) {
+    console.error("[billing] portal failed", err);
+  }
+  if (!portalUrl) redirect(billingBack("error=checkout_failed"));
+  redirect(portalUrl);
 }

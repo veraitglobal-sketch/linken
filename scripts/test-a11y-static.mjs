@@ -65,6 +65,9 @@ test("login errors use live region / alert", () => {
   const login = read("src/components/auth/login-panel.tsx");
   assert.match(login, /StatusMessage/);
   assert.match(login, /autoComplete/);
-  const tab = read("src/components/auth/login-mode-tab.tsx");
-  assert.match(tab, /aria-selected/);
+  assert.match(login, /href="\/onboarding"/);
+  assert.match(login, /forgotHref="\/login\/forgot"/);
+  const password = read("src/components/auth/password-field.tsx");
+  assert.match(password, /Show password/);
+  assert.match(password, /Forgot password\?/);
 });

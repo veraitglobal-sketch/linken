@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { focusableLinkClass } from "@/components/a11y/focus";
 import { SiteHeaderAnon } from "@/components/layout/site-header-anon";
-import { isStaffLoginNext } from "@/features/auth/login-intent";
 import { signOut } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
+import { HansalaSpinner } from "@/components/ui/hansala-spinner";
 import { PRODUCT } from "@/lib/product-model";
 
 type AuthState =
@@ -16,15 +16,9 @@ type AuthState =
 
 export function SiteHeaderAuth() {
   const [auth, setAuth] = useState<AuthState>({ status: "loading" });
-  const [staffLogin, setStaffLogin] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    const url = new URL(window.location.href);
-    setStaffLogin(
-      url.pathname === "/login" &&
-        isStaffLoginNext(url.searchParams.get("next") ?? undefined),
-    );
 
     async function load() {
       try {
@@ -61,12 +55,12 @@ export function SiteHeaderAuth() {
   if (auth.status === "loading") {
     return (
       <div
-        className="h-11 w-[7.5rem]"
+        className="grid h-11 w-11 place-items-center"
         role="status"
         aria-live="polite"
         aria-busy="true"
       >
-        <span className="sr-only">Loading account</span>
+        <HansalaSpinner size={28} label="Loading account" />
       </div>
     );
   }
@@ -128,5 +122,5 @@ export function SiteHeaderAuth() {
     );
   }
 
-  return <SiteHeaderAnon staff={staffLogin} />;
+  return <SiteHeaderAnon />;
 }

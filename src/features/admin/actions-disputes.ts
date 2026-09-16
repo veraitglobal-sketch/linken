@@ -94,7 +94,9 @@ export async function adminResolveDispute(formData: FormData) {
 
   const { data: dispute } = await admin
     .from("trust_disputes")
-    .select("record_type, record_id, prior_public_state, status")
+    .select(
+      "record_type, record_id, prior_public_state, status, claimant_company_id, counterparty_company_id",
+    )
     .eq("id", disputeId)
     .maybeSingle();
   if (!dispute || dispute.status !== "open") {

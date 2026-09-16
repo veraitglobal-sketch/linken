@@ -12,6 +12,7 @@ type Props = {
   companyName: string;
   radar: boolean;
   plan: string;
+  staffPlanLock: boolean;
   canWrite: boolean;
 };
 
@@ -39,6 +40,10 @@ export function AdminCompanyCreditsPanel(props: Props) {
       if (res.ok) form.reset();
     });
   }
+
+  const planHint = props.staffPlanLock
+    ? "Staff lock on — Stripe will not change this plan until you set Free."
+    : "Setting Pro or founding locks the plan against Stripe webhooks. Free clears the lock.";
 
   return (
     <div className="space-y-4">
@@ -70,8 +75,8 @@ export function AdminCompanyCreditsPanel(props: Props) {
       </ActionForm>
 
       <ActionForm
-        title={`Change plan (current: ${props.plan})`}
-        hint="Stripe remains source of truth — webhooks can overwrite this."
+        title={`Change plan (current: ${props.plan}${props.staffPlanLock ? ", locked" : ""})`}
+        hint={planHint}
         pending={pending}
         submitLabel="Set plan"
         onSubmit={(form) => {

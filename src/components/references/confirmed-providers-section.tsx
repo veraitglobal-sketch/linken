@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ProfileIcons, ProfileSection } from "@/components/company/profile-section";
 import { LogoTile } from "@/components/ui/logo-tile";
 import type { ServiceReference } from "@/types/service-reference";
 import { initialsFromName } from "@/features/team/types";
@@ -15,22 +16,16 @@ export function ConfirmedProvidersSection({ providers }: Props) {
   if (providers.length === 0) return null;
 
   return (
-    <section className="rounded-none border border-line bg-surface px-5 py-6 sm:px-7 sm:py-7">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
-        Verified work
-      </p>
-      <h2 className="mt-2 font-display text-[clamp(1.45rem,2.4vw,1.85rem)] font-medium tracking-[-0.035em] text-ink">
-        Companies we work with
-      </h2>
-      <p className="mt-2 max-w-xl text-[13px] text-ink-soft">
-        Confirmed by both sides. This firm is listed as the client on these
-        relationships.
-      </p>
-      <ul className="mt-5 flex flex-col gap-2.5">
+    <ProfileSection
+      icon={ProfileIcons.providers}
+      title="Companies we work with"
+      description="Confirmed by both sides. This firm is listed as the client on these relationships."
+    >
+      <ul className="flex list-none flex-col gap-2.5 p-0">
         {providers.map((p) => (
           <li
             key={p.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-none border border-line bg-paper/40 px-4 py-3"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-wash px-4 py-3"
           >
             <div className="flex min-w-0 items-center gap-3">
               {p.clientSlug ? (
@@ -70,6 +65,6 @@ export function ConfirmedProvidersSection({ providers }: Props) {
           </li>
         ))}
       </ul>
-    </section>
+    </ProfileSection>
   );
 }

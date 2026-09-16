@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
 import { OperatorBranchBanner } from "@/components/dashboard/operator-branch-banner";
 import { WorkspaceShell } from "@/components/dashboard/workspace-shell";
 import { getActivationChecklist } from "@/features/activation/checklist";
+import { isPlatformStaffUser } from "@/features/admin/is-platform-staff";
 import { companyHasReferrals } from "@/features/commissions/queries";
 import { getDashboardSession } from "@/features/dashboard/session";
 import { getCompanyVerification } from "@/features/verification/queries";
@@ -14,6 +16,10 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   const { user, active, contexts, company } = await getDashboardSession();
+
+  if (user && (await isPlatformStaffUser(user.id, user.email))) {
+    redirect("/admin");
+  }
 
   let verified = false;
   let checklist = null;

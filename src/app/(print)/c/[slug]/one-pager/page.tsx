@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { OnePagerDocument } from "@/components/one-pager/one-pager-document";
 import { PrintButton } from "@/components/one-pager/print-button";
-import { logProfileEvent } from "@/features/analytics/log";
+import { recordVisit } from "@/features/analytics/record-visit";
 import { isCompanyOwnerSlug } from "@/features/case-studies/queries";
 import { getOnePagerData } from "@/features/one-pager/queries";
 import { resolveCompanySlugRedirect } from "@/features/companies/slug-redirect";
@@ -37,7 +37,7 @@ export default async function OnePagerPage({ params }: Props) {
 
   const isOwner = await isCompanyOwnerSlug(slug);
   if (!isOwner) {
-    await logProfileEvent(data.company.slug, "one_pager_view", "one_pager");
+    await recordVisit(data.company.slug, "one_pager_view", "one_pager");
   } else {
     const { trackEngagement } = await import(
       "@/features/product-analytics/helpers"

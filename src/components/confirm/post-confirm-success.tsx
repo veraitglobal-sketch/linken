@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { PostConfirmEmbedCta } from "@/components/confirm/post-confirm-embed-cta";
 import { PostConfirmLogoFix } from "@/components/confirm/post-confirm-logo-fix";
 import { PostConfirmListings } from "@/components/confirm/post-confirm-listings";
 import { seedOnboardingFromConfirm } from "@/features/acquisition/actions";
@@ -65,6 +66,13 @@ export function PostConfirmSuccess({
           />
         </div>
       </div>
+
+      {subject.claimed && subject.companySlug ? (
+        <PostConfirmEmbedCta
+          companySlug={subject.companySlug}
+          requesterSlug={subject.requesterSlug}
+        />
+      ) : null}
 
       <div className="rounded-[24px] border border-line bg-surface px-5 py-7 sm:px-7">
         <PostConfirmListings listings={listings} />

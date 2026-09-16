@@ -550,10 +550,23 @@ export default function DevelopersPage() {
 
             <div id="agent-mcp" className="mt-10 scroll-mt-28 space-y-4">
               <h3 className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
-                Cursor & Claude (MCP)
+                Cursor, Claude & Codex (MCP)
               </h3>
               <div className="rounded-2xl border border-line bg-[#fafbfc] px-5 py-4 text-[13px] text-ink-soft">
-                <p className="font-semibold text-ink">Public MCP (no key)</p>
+                <p className="font-semibold text-ink">Remote connector</p>
+                <p className="mt-1">
+                  Streamable HTTP:{" "}
+                  <code className="text-[12px]">https://www.hansala.com/api/mcp</code>.
+                  Claude uses Connectors; Cursor uses MCP JSON; Codex uses{" "}
+                  <code className="text-[12px]">Settings → MCP servers</code> or{" "}
+                  <code className="text-[12px]">codex mcp add hansala --url …</code>{" "}
+                  then <code className="text-[12px]">codex mcp login hansala</code>.
+                  With a key, set{" "}
+                  <code className="text-[12px]">HANSALA_AGENT_API_KEY</code> and{" "}
+                  <code className="text-[12px]">bearer_token_env_var</code> in{" "}
+                  <code className="text-[12px]">~/.codex/config.toml</code>.
+                </p>
+                <p className="mt-4 font-semibold text-ink">Public MCP (no key)</p>
                 <p className="mt-1">
                   Anyone can install{" "}
                   <code className="text-[12px]">npx hansala-mcp-public</code> —

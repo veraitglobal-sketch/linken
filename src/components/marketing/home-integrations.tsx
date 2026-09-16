@@ -27,7 +27,7 @@ export function HomeIntegrations() {
           <p className="mt-4 max-w-[46ch] text-[14.5px] leading-relaxed text-ink-soft">
             Bookings via Calendly or Cal.com on your profile. Alerts in your
             Slack — partnership requests can be accepted from the channel. Drive
-            the same record from Cursor or Claude over MCP.
+            the same record from Cursor, Claude, or Codex over MCP.
           </p>
           <Link
             href="/dashboard/integrations"

@@ -24,8 +24,8 @@ export function ProfileProvenance({ company, editable = false }: Props) {
   const isUnclaimed = company.claimed === false;
 
   return (
-    <section className="mx-auto mt-10 max-w-[1280px] px-4 sm:px-[18px] lg:px-10">
-      <div className="border-t border-ink/10 px-1 pt-6 text-[14px] text-ink-soft sm:flex sm:items-center sm:justify-between sm:gap-6">
+    <section className="mx-auto mt-4 max-w-[calc(1280px+2.25rem)] px-4 sm:px-[18px]">
+      <div className="rounded-[24px] bg-surface px-5 py-5 text-[14px] text-ink-soft ring-1 ring-line/70 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:px-7">
         <div className="space-y-1">
           {updated ? (
             <p>
@@ -44,28 +44,38 @@ export function ProfileProvenance({ company, editable = false }: Props) {
           {isUnclaimed ? (
             <Link
               href={`/c/${company.slug}#claim`}
-              className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-ink/15 transition-colors hover:bg-surface"
+              className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-line transition-colors hover:bg-wash"
             >
               Claim this profile
             </Link>
-          ) : editable ? (
-            <Link
-              href={`/c/${company.slug}/edit`}
-              className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-ink/15 transition-colors hover:bg-surface"
-            >
-              Edit profile
-            </Link>
           ) : (
-            <Link
-              href="/login"
-              className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-ink/15 transition-colors hover:bg-surface"
-            >
-              Sign in to edit
-            </Link>
+            <>
+              {editable ? (
+                <Link
+                  href={`/c/${company.slug}/edit`}
+                  className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-line transition-colors hover:bg-wash"
+                >
+                  Edit profile
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-line transition-colors hover:bg-wash"
+                >
+                  Sign in to edit
+                </Link>
+              )}
+              <Link
+                href={`/c/${company.slug}/press`}
+                className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-line transition-colors hover:bg-wash"
+              >
+                Press kit
+              </Link>
+            </>
           )}
           <Link
             href={companyReportPath(company.slug)}
-            className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-ink/15 transition-colors hover:bg-surface"
+            className="inline-flex h-10 items-center rounded-full px-4 font-semibold text-ink ring-1 ring-line transition-colors hover:bg-wash"
           >
             Report incorrect information
           </Link>

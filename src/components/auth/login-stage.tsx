@@ -2,15 +2,11 @@ import Link from "next/link";
 import { AuthNetworkField } from "@/components/auth/auth-network-field";
 import { NetworkMark } from "@/components/marketing/network-mark";
 
-type Props = { intent?: "company" | "staff" };
-
 /**
  * Left half of the sign-in screen: the mark, large and centred, over a quiet
- * drawing of a confirmed network on deep navy. The centre is kept clear so
- * the network frames the mark rather than crossing it.
+ * drawing of a confirmed network on deep navy.
  */
-export function LoginStage({ intent = "company" }: Props) {
-  const staff = intent === "staff";
+export function LoginStage() {
   const year = new Date().getFullYear();
 
   return (
@@ -35,14 +31,10 @@ export function LoginStage({ intent = "company" }: Props) {
           Hansala
         </p>
         <p className="animate-rise-delay mt-5 max-w-sm text-[17px] leading-relaxed text-on-navy">
-          {staff
-            ? "Staff accounts only."
-            : "A record of who works with whom, confirmed by both sides."}
+          A record of who works with whom, confirmed by both sides.
         </p>
         <p className="animate-rise-late mt-3 max-w-xs text-[14px] leading-relaxed text-on-navy-soft">
-          {staff
-            ? "A company login cannot open this."
-            : "Profile, partners and proof of work in one place."}
+          Profile, partners and proof of work in one place.
         </p>
       </div>
 

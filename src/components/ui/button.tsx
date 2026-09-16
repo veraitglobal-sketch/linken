@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-type Variant = "primary" | "secondary" | "ghost" | "plus" | "light" | "onDark";
+type Variant = "primary" | "secondary" | "ghost" | "plus" | "light" | "onDark" | "lime";
 
 const styles: Record<Variant, string> = {
   primary: "border border-transparent bg-signal hover:bg-signal-hover",
@@ -11,6 +11,7 @@ const styles: Record<Variant, string> = {
   light: "border border-transparent bg-white hover:bg-[#f2f4f2]",
   onDark:
     "border border-white/28 bg-white/[0.08] hover:border-white/48 hover:bg-white/[0.16]",
+  lime: "border border-transparent bg-lime hover:bg-[#bfe56c]",
 };
 
 const textColor: Record<Variant, string> = {
@@ -20,6 +21,7 @@ const textColor: Record<Variant, string> = {
   plus: "#66706b",
   light: "#0d1210",
   onDark: "#ffffff",
+  lime: "#0e1f1c",
 };
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {

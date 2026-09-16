@@ -12,10 +12,11 @@ import { trackEmbedCreated } from "@/features/product-analytics/embed-actions";
 type Props = {
   companySlug: string;
   siteUrl: string;
+  variant?: "onDark" | "secondary";
 };
 
 /** Quick compact copy + link into Widget studio (full configurator). */
-export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
+export function EmbedSnippetButton({ companySlug, siteUrl, variant = "onDark" }: Props) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -45,7 +46,7 @@ export function EmbedSnippetButton({ companySlug, siteUrl }: Props) {
     <div className="relative">
       <Button
         type="button"
-        variant="onDark"
+        variant={variant}
         className="h-10 px-4"
         onClick={() => setOpen((v) => !v)}
       >

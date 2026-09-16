@@ -105,7 +105,21 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     // `/sitemap.xml` was swallowed by `(site)/[slug]` → company 404.
-    return [{ source: "/sitemap.xml", destination: "/api/sitemap-index" }];
+    // IndexNow classic key file: `/{INDEXNOW_KEY}.txt`
+    const indexNowKey = process.env.INDEXNOW_KEY?.trim().toLowerCase();
+    const indexNowRewrite =
+      indexNowKey && /^[a-f0-9]{8,128}$/.test(indexNowKey)
+        ? [
+            {
+              source: `/${indexNowKey}.txt`,
+              destination: "/api/indexnow/key",
+            },
+          ]
+        : [];
+    return [
+      { source: "/sitemap.xml", destination: "/api/sitemap-index" },
+      ...indexNowRewrite,
+    ];
   },
 };
 

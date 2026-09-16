@@ -58,6 +58,13 @@ export function companySitemapEntries(
       });
     }
 
+    out.push({
+      url: sitemapUrl(siteUrl, `/c/${row.slug}/press`),
+      lastModified,
+      changeFrequency: "monthly",
+      priority: Math.max(0.3, profilePriority - 0.15),
+    });
+
     if (row.hasBooking) {
       out.push({
         url: sitemapUrl(siteUrl, `/c/${row.slug}/book`),

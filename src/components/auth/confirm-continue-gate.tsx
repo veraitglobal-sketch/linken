@@ -2,6 +2,7 @@ import {
   continueWithPassword,
   sendConfirmMagicLink,
 } from "@/features/auth/confirm-continue-actions";
+import { PasswordField } from "@/components/auth/password-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -102,12 +103,13 @@ export function ConfirmContinueGate({
           placeholder="Work email"
           defaultValue={invitedEmail}
         />
-        <Input
-          type="password"
+        <PasswordField
           name="password"
+          autoComplete="current-password"
           required
           minLength={6}
           placeholder="Password (min 6)"
+          forgotHref="/login/forgot"
         />
         <Button type="submit" variant="secondary" className="h-11">
           Continue

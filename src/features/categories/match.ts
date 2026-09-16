@@ -2,6 +2,7 @@ import {
   CANONICAL_CATEGORIES,
   CATEGORY_ALIASES,
 } from "@/features/categories/taxonomy";
+import { applyCategorySpelling } from "@/features/categories/spelling";
 
 const LEGAL_SUFFIXES = new Set([
   "gmbh",
@@ -58,7 +59,7 @@ function stripSuffixes(normalized: string) {
 }
 
 export function normalizeCategoryText(text: string) {
-  return stripSuffixes(fold(text));
+  return applyCategorySpelling(stripSuffixes(fold(text)));
 }
 
 function aliasIndex() {

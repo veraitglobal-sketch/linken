@@ -24,26 +24,32 @@ export function TrustWhyCard({ trust }: Props) {
   if (lines.length === 0) return null;
 
   return (
-    <aside className="rounded-none border border-line bg-surface px-5 py-5 shadow-[0_18px_50px_rgba(10,20,18,0.06)]">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
-        Why this level
-      </p>
-      <p className="mt-2 font-display text-xl font-medium tracking-[-0.03em] text-ink">
-        Hansala {trust.level}
-      </p>
-      <p className="mt-1 text-[13px] text-ink-soft">
-        {trust.points} point{trust.points === 1 ? "" : "s"} from confirmed
-        evidence only.
-      </p>
-      <ul className="mt-4 space-y-2.5 border-t border-line pt-4">
+    <aside className="rounded-[24px] bg-surface p-4 ring-1 ring-line/70 sm:p-5">
+      <div className="flex items-center gap-3">
+        <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-full bg-lime-soft text-navy">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 2.2 13 4v3.8c0 3-2.1 5.1-5 6-2.9-.9-5-3-5-6V4l5-1.8Z" />
+            <path d="m5.8 8 1.6 1.6 2.9-3" />
+          </svg>
+        </span>
+        <div className="min-w-0">
+          <p className="font-display text-[16px] leading-tight font-semibold tracking-[-0.03em] text-ink">
+            Hansala {trust.level}
+          </p>
+          <p className="mt-0.5 text-[12.5px] text-muted">
+            {trust.points} point{trust.points === 1 ? "" : "s"} from confirmed evidence only
+          </p>
+        </div>
+      </div>
+      <ul className="mt-4 list-none space-y-1 border-t border-line/70 p-0 pt-3">
         {lines.map((line) => (
           <li key={line.key}>
             <a
               href={ANCHORS[line.key]}
-              className="flex items-baseline justify-between gap-3 text-[13px] text-ink transition-colors hover:text-[#1a5c51]"
+              className="flex items-baseline justify-between gap-3 rounded-xl px-2 py-1.5 text-[13.5px] text-ink transition-colors hover:bg-wash"
             >
               <span>{line.label}</span>
-              <span className="shrink-0 text-[12px] text-muted">
+              <span className="shrink-0 text-[12.5px] font-semibold text-ink tabular-nums">
                 +{line.points}
               </span>
             </a>

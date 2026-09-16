@@ -22,7 +22,7 @@ export function OnboardingWorkspace({
   return (
     <div className="grid min-h-dvh flex-1 lg:grid-cols-2">
       <div className="hidden lg:block">
-        <LoginStage intent="company" />
+        <LoginStage />
       </div>
       <OnboardingForm
         error={error}

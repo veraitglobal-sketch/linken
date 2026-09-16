@@ -59,6 +59,18 @@ export const WIDGET_CATALOG: WidgetDefinition[] = [
     unavailableCtaLabel: "Invite clients",
   },
   {
+    id: "network",
+    name: "Confirmed network",
+    description:
+      "Footer strip — up to five confirmed partner logos linking to Hansala.",
+    section: "essential",
+    recommended: true,
+    height: 72,
+    requirementHint: "Requires at least one confirmed partner.",
+    unavailableCtaHref: "/dashboard/partners",
+    unavailableCtaLabel: "Confirm partners",
+  },
+  {
     id: "verified",
     name: "Verified",
     description: "Minimal Hansala Verified lockup for footers.",

@@ -31,38 +31,19 @@ function planFromSubscription(status: Stripe.Subscription.Status): CompanyPlan {
   return "free";
 }
 
-/** Webhook + checkout — service_role only. */
-export async function applySubscription(
+function planIsStaffProtected(company: {
+  plan?: string | null;
+  staff_plan_lock?: boolean | null;
+}) {
+  return company.plan === "founding" || Boolean(company.staff_plan_lock);
+}
+
+async function upsertBilling(
   admin: SupabaseClient,
   companyId: string,
   subscription: Stripe.Subscription,
   customerId: string,
 ) {
-  const { data: company } = await admin
-    .from("companies")
-    .select("plan")
-    .eq("id", companyId)
-    .maybeSingle();
-
-  if (company?.plan === "founding") {
-    await admin.from("company_billing").upsert({
-      company_id: companyId,
-      stripe_customer_id: customerId,
-      stripe_subscription_id: subscription.id,
-      billing_status: subscription.status,
-      plan_period_end: new Date(
-        subscription.current_period_end * 1000,
-      ).toISOString(),
-      cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
-      updated_at: new Date().toISOString(),
-    });
-    return;
-  }
-
-  const nextPlan = planFromSubscription(subscription.status);
-
-  await admin.from("companies").update({ plan: nextPlan }).eq("id", companyId);
-
   await admin.from("company_billing").upsert({
     company_id: companyId,
     stripe_customer_id: customerId,
@@ -76,14 +57,37 @@ export async function applySubscription(
   });
 }
 
-export async function downgradeToFree(admin: SupabaseClient, companyId: string) {
+/** Webhook + checkout — service_role only. */
+export async function applySubscription(
+  admin: SupabaseClient,
+  companyId: string,
+  subscription: Stripe.Subscription,
+  customerId: string,
+) {
   const { data: company } = await admin
     .from("companies")
-    .select("plan")
+    .select("plan, staff_plan_lock")
     .eq("id", companyId)
     .maybeSingle();
 
-  if (company?.plan !== "founding") {
+  if (planIsStaffProtected(company ?? {})) {
+    await upsertBilling(admin, companyId, subscription, customerId);
+    return;
+  }
+
+  const nextPlan = planFromSubscription(subscription.status);
+  await admin.from("companies").update({ plan: nextPlan }).eq("id", companyId);
+  await upsertBilling(admin, companyId, subscription, customerId);
+}
+
+export async function downgradeToFree(admin: SupabaseClient, companyId: string) {
+  const { data: company } = await admin
+    .from("companies")
+    .select("plan, staff_plan_lock")
+    .eq("id", companyId)
+    .maybeSingle();
+
+  if (!planIsStaffProtected(company ?? {})) {
     await admin.from("companies").update({ plan: "free" }).eq("id", companyId);
   }
 

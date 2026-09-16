@@ -5,6 +5,7 @@ import {
   CalcomIcon,
   CalendlyIcon,
   ClaudeIcon,
+  CodexIcon,
   CursorIcon,
   SlackIcon,
 } from "@/components/marketing/home-integration-icons";
@@ -21,6 +22,7 @@ const MARK: Record<IntegrationId, string> = {
   slack: "h-[31px] w-auto",
   claude: "h-[33px] w-auto",
   cursor: "h-[34px] w-auto",
+  codex: "h-[32px] w-auto",
 };
 
 function Mark({ id }: { id: IntegrationId }) {
@@ -29,6 +31,7 @@ function Mark({ id }: { id: IntegrationId }) {
   if (id === "calcom") return <CalcomIcon className={c} />;
   if (id === "slack") return <SlackIcon className={c} />;
   if (id === "claude") return <ClaudeIcon className={c} />;
+  if (id === "codex") return <CodexIcon className={c} />;
   return <CursorIcon className={c} />;
 }
 
@@ -60,11 +63,11 @@ function Face({
 }
 
 /**
- * Five in a row. Odd columns start as name, even as logo — then they swap
- * vertically so the row is never all-logo or all-text at once.
+ * Six in a row on wide screens. Odd columns start as name, even as logo —
+ * then they swap vertically so the row is never all-logo or all-text at once.
  */
 export function HomeIntegrationsMarquee({
-  className = "grid-cols-2 sm:grid-cols-5 sm:gap-x-6",
+  className = "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 sm:gap-x-6",
 }: {
   /** Column count — the banner tray is narrower than the old full row. */
   className?: string;

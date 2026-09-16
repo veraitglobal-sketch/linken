@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ProfileIcons, ProfileSection } from "@/components/company/profile-section";
 import { ProfileTestimonialCard } from "@/components/testimonials/profile-testimonial-card";
 import type { PublicTestimonial } from "@/features/testimonials/types";
 import { DotGrid } from "@/components/marketing/dot-grid";
@@ -18,20 +19,14 @@ export function ProfileTestimonialsSection({
   if (visible.length === 0 && !editable) return null;
 
   return (
-    <section id="testimonials" className="scroll-mt-24 rounded-chapter border border-line bg-surface px-6 py-8 sm:px-9 sm:py-9">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-blue uppercase">
-        Testimonials
-      </p>
-      <h2 className="mt-2 font-display text-section text-ink">
-        In their own words
-      </h2>
-      <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-ink-soft">
-        Written by clients — this company cannot edit the text. Each line states
-        how it was confirmed.
-      </p>
-
+    <ProfileSection
+      id="testimonials"
+      icon={ProfileIcons.testimonials}
+      title="In their own words"
+      description="Written by clients — this company cannot edit the text. Each line states how it was confirmed."
+    >
       {visible.length > 0 ? (
-        <ul className="relative mt-8 flex flex-col gap-8">
+        <ul className="relative flex list-none flex-col gap-8 p-0">
           {/* The same ground the marketing wall stands on.
               Using our own widget's look on our own profile is the point: if
               this page does not show what the embed looks like, nobody has a
@@ -44,7 +39,7 @@ export function ProfileTestimonialsSection({
           ))}
         </ul>
       ) : (
-        <p className="mt-8 border border-dashed border-line px-4 py-6 text-[14px] text-ink-soft">
+        <p className="rounded-2xl border border-dashed border-ink/15 px-5 py-6 text-[14px] text-ink-soft">
           No published testimonials yet. After a client confirms, they can write
           one — it appears here automatically.
         </p>
@@ -68,6 +63,6 @@ export function ProfileTestimonialsSection({
           Showing {PROFILE_LIMIT} of {testimonials.length}.
         </p>
       ) : null}
-    </section>
+    </ProfileSection>
   );
 }

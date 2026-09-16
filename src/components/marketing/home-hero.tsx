@@ -26,7 +26,9 @@ export function HomeHero() {
       <div
         aria-hidden
         className="absolute inset-x-0 top-0 bottom-[22%] rounded-b-[48px] bg-lime sm:bottom-[30%] sm:rounded-b-[120px]"
-      />
+      >
+        <div className="lime-halftone" />
+      </div>
       <div className="relative mx-auto max-w-6xl">
         <div className="mx-auto flex max-w-[1200px] flex-col items-center text-center">
           <h1 className="animate-rise font-display text-[clamp(2.4rem,4.3vw,3.875rem)] leading-[1.05] font-semibold tracking-[-0.04em] text-ink text-balance xl:whitespace-nowrap">

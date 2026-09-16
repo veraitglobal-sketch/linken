@@ -29,8 +29,11 @@ function one<T>(value: Embedded<T>): T | null {
   return value ?? null;
 }
 
+const CASE_SELECT =
+  "case_study_id, confirmed_at, disclosure, confirmer:companies!confirmed_by_company_id(name, slug), case_studies!inner(slug, title, summary, year, location, cover_image_url, owner:companies!company_id(id, slug, name, logo_url, website))";
+
 /**
- * Projects whose client confirmed them, for a set of companies.
+ * Projects whose client confirmed them.
  *
  * Only `confirmed` rows are readable here by policy, so nothing pending can
  * reach this list. A client who confirmed without allowing their name shows as
@@ -43,80 +46,94 @@ export async function getConfirmedCasesForCompanies(
 ): Promise<ConfirmedCaseCard[]> {
   const ids = [...new Set(companyIds.filter(Boolean))];
   if (ids.length === 0) return [];
+  return fetchConfirmedCases(limit, ids);
+}
 
+/** Recent confirmed projects across the directory, newest first. */
+export async function getRecentConfirmedCases(limit = 12): Promise<ConfirmedCaseCard[]> {
+  return fetchConfirmedCases(limit);
+}
+
+async function fetchConfirmedCases(
+  limit: number,
+  companyIds?: string[],
+): Promise<ConfirmedCaseCard[]> {
   try {
     const supabase = createPublicClient();
-    const { data, error } = await supabase
+    let query = supabase
       .from("case_study_client_confirmation_requests")
-      .select(
-        "case_study_id, confirmed_at, disclosure, confirmer:companies!confirmed_by_company_id(name, slug), case_studies!inner(slug, title, summary, year, location, cover_image_url, owner:companies!company_id(id, slug, name, logo_url, website))",
-      )
+      .select(CASE_SELECT)
       .eq("status", "confirmed")
-      .in("requested_by_company_id", ids)
       .order("confirmed_at", { ascending: false })
       .limit(limit * 3);
+    if (companyIds) query = query.in("requested_by_company_id", companyIds);
 
+    const { data, error } = await query;
     if (error) {
       console.error("[confirmed cases]", error.message);
       return [];
     }
-
-    const out: ConfirmedCaseCard[] = [];
-    const seen = new Set<string>();
-
-    for (const row of data ?? []) {
-      const caseId = row.case_study_id as string;
-      if (seen.has(caseId)) continue;
-      const study = one(
-        row.case_studies as Embedded<{
-          slug: string;
-          title: string;
-          summary: string | null;
-          year: string | null;
-          location: string | null;
-          cover_image_url: string | null;
-          owner: Embedded<{
-            id: string;
-            slug: string;
-            name: string;
-            logo_url: string | null;
-            website: string | null;
-          }>;
-        }>,
-      );
-      const owner = study ? one(study.owner) : null;
-      if (!study?.slug || !owner?.slug) continue;
-
-      const hidden = isUndisclosedPublic(parseDisclosure(row.disclosure));
-      const client = one(row.confirmer as Embedded<{ name: string; slug: string }>);
-      if (!hidden && !client?.name) continue;
-
-      seen.add(caseId);
-      out.push({
-        caseSlug: study.slug,
-        title: study.title,
-        summary: study.summary ?? "",
-        year: study.year ?? "",
-        location: study.location ?? "",
-        coverImageUrl: study.cover_image_url ?? null,
-        companySlug: owner.slug,
-        companyName: owner.name,
-        companyLogoUrl: companyDisplayLogoUrl({
-          logoUrl: owner.logo_url,
-          website: owner.website,
-          allowFavicon: false,
-        }),
-        companyInitials: initials(owner.name),
-        confirmedBy: hidden ? UNDISCLOSED_CLIENT_LABEL : client!.name,
-        confirmedBySlug: hidden ? null : (client?.slug ?? null),
-        confirmedAt: (row.confirmed_at as string | null) ?? null,
-      });
-      if (out.length >= limit) break;
-    }
-
-    return out;
+    return mapConfirmedCases(data ?? [], limit);
   } catch (err) {
     console.error("[confirmed cases]", err);
     return [];
   }
+}
+
+function mapConfirmedCases(data: unknown[], limit: number): ConfirmedCaseCard[] {
+  const out: ConfirmedCaseCard[] = [];
+  const seen = new Set<string>();
+
+  for (const item of data) {
+    const row = item as Record<string, unknown>;
+    const caseId = row.case_study_id as string;
+    if (seen.has(caseId)) continue;
+    const study = one(
+      row.case_studies as Embedded<{
+        slug: string;
+        title: string;
+        summary: string | null;
+        year: string | null;
+        location: string | null;
+        cover_image_url: string | null;
+        owner: Embedded<{
+          id: string;
+          slug: string;
+          name: string;
+          logo_url: string | null;
+          website: string | null;
+        }>;
+      }>,
+    );
+    const owner = study ? one(study.owner) : null;
+    if (!study?.slug || !owner?.slug) continue;
+
+    const hidden = isUndisclosedPublic(parseDisclosure(row.disclosure));
+    const client = one(row.confirmer as Embedded<{ name: string; slug: string }>);
+    if (!hidden && !client?.name) continue;
+
+    seen.add(caseId);
+    out.push({
+      caseSlug: study.slug,
+      title: study.title,
+      summary: study.summary ?? "",
+      year: study.year ?? "",
+      location: study.location ?? "",
+      coverImageUrl: study.cover_image_url ?? null,
+      companySlug: owner.slug,
+      companyName: owner.name,
+      companyLogoUrl: companyDisplayLogoUrl({
+        logoUrl: owner.logo_url,
+        website: owner.website,
+        allowFavicon: false,
+      }),
+      companyInitials: initials(owner.name),
+      confirmedBy: hidden ? UNDISCLOSED_CLIENT_LABEL : client!.name,
+      confirmedBySlug: hidden ? null : (client?.slug ?? null),
+      confirmedAt: (row.confirmed_at as string | null) ?? null,
+    });
+    if (out.length >= limit) break;
+  }
+
+  return out;
 }

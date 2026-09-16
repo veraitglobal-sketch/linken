@@ -1,82 +1,20 @@
 /** Canonical ranking categories — English names, one primary slug each. */
-export type CanonicalCategory = { slug: string; name: string };
-
+export type { CanonicalCategory } from "@/features/categories/taxonomy-types";
 export { CATEGORY_ALIASES } from "@/features/categories/aliases";
+export { CATEGORY_GROUPS } from "@/features/categories/groups";
+export type { CategoryGroup } from "@/features/categories/groups";
+
+import { TAXONOMY_BASE } from "@/features/categories/taxonomy-base";
+import { TAXONOMY_EXTRA } from "@/features/categories/taxonomy-extra";
+import { TAXONOMY_EXTRA_B } from "@/features/categories/taxonomy-extra-b";
+import { TAXONOMY_EXTRA_C } from "@/features/categories/taxonomy-extra-c";
+import type { CanonicalCategory } from "@/features/categories/taxonomy-types";
 
 export const CANONICAL_CATEGORIES: CanonicalCategory[] = [
-  { slug: "architecture", name: "Architecture" },
-  { slug: "interior-design", name: "Interior design" },
-  { slug: "landscape-architecture", name: "Landscape architecture" },
-  { slug: "urban-planning", name: "Urban planning" },
-  { slug: "surveying", name: "Surveying" },
-  { slug: "engineering", name: "Engineering" },
-  { slug: "civil-engineering", name: "Civil engineering" },
-  { slug: "structural-engineering", name: "Structural engineering" },
-  { slug: "mechanical-electrical", name: "Mechanical and electrical" },
-  { slug: "construction", name: "Construction" },
-  { slug: "specialist-contractors", name: "Specialist contractors" },
-  { slug: "electrical-contractors", name: "Electrical contractors" },
-  { slug: "plumbing-hvac", name: "Plumbing and HVAC" },
-  { slug: "roofing", name: "Roofing" },
-  { slug: "scaffolding", name: "Scaffolding" },
-  { slug: "steel-fabrication", name: "Steel fabrication" },
-  { slug: "glazing", name: "Glazing" },
-  { slug: "painting-finishing", name: "Painting and finishing" },
-  { slug: "flooring", name: "Flooring" },
-  { slug: "demolition", name: "Demolition" },
-  { slug: "carpentry", name: "Carpentry" },
-  { slug: "insulation", name: "Insulation" },
-  { slug: "fire-protection", name: "Fire protection" },
-  { slug: "locksmiths", name: "Locksmiths" },
-  { slug: "facility-management", name: "Facility management" },
-  { slug: "cleaning", name: "Cleaning" },
-  { slug: "security-services", name: "Security services" },
-  { slug: "waste-management", name: "Waste management" },
-  { slug: "pest-control", name: "Pest control" },
-  { slug: "catering", name: "Catering" },
-  { slug: "software-development", name: "Software development" },
-  { slug: "it-services", name: "IT services" },
-  { slug: "digital-agencies", name: "Digital agencies" },
-  { slug: "design-studios", name: "Design studios" },
-  { slug: "advertising", name: "Advertising" },
-  { slug: "marketing", name: "Marketing" },
-  { slug: "media", name: "Media" },
-  { slug: "consulting", name: "Consulting" },
-  { slug: "legal", name: "Legal" },
-  { slug: "notaries", name: "Notaries" },
-  { slug: "accounting", name: "Accounting" },
-  { slug: "insurance", name: "Insurance" },
-  { slug: "financial-services", name: "Financial services" },
-  { slug: "recruitment", name: "Recruitment" },
-  { slug: "education-training", name: "Education and training" },
-  { slug: "translation", name: "Translation" },
-  { slug: "logistics", name: "Logistics" },
-  { slug: "freight", name: "Freight" },
-  { slug: "shipping", name: "Shipping" },
-  { slug: "wholesale", name: "Wholesale" },
-  { slug: "manufacturing", name: "Manufacturing" },
-  { slug: "machinery", name: "Machinery" },
-  { slug: "electronics", name: "Electronics" },
-  { slug: "automotive", name: "Automotive" },
-  { slug: "food-production", name: "Food production" },
-  { slug: "chemicals", name: "Chemicals" },
-  { slug: "pharmaceuticals", name: "Pharmaceuticals" },
-  { slug: "packaging", name: "Packaging" },
-  { slug: "textiles", name: "Textiles" },
-  { slug: "real-estate", name: "Real estate" },
-  { slug: "property-development", name: "Property development" },
-  { slug: "energy", name: "Energy" },
-  { slug: "environmental-services", name: "Environmental services" },
-  { slug: "telecommunications", name: "Telecommunications" },
-  { slug: "healthcare", name: "Healthcare" },
-  { slug: "research-laboratories", name: "Research and laboratories" },
-  { slug: "agriculture", name: "Agriculture" },
-  { slug: "call-center", name: "Call center" },
-  { slug: "hospitality", name: "Hospitality" },
-  { slug: "events", name: "Events" },
-  { slug: "travel", name: "Travel" },
-  { slug: "photography-video", name: "Photography and video" },
-  { slug: "printing", name: "Printing" },
+  ...TAXONOMY_BASE,
+  ...TAXONOMY_EXTRA,
+  ...TAXONOMY_EXTRA_B,
+  ...TAXONOMY_EXTRA_C,
 ];
 
 /** Older slugs still in URLs or the database. */
@@ -87,4 +25,8 @@ const CATEGORY_SLUG_REDIRECTS: Record<string, string> = {
 export function canonicalCategorySlug(raw: string): string | null {
   const slug = CATEGORY_SLUG_REDIRECTS[raw] ?? raw;
   return CANONICAL_CATEGORIES.some((c) => c.slug === slug) ? slug : null;
+}
+
+export function categoryBySlug(slug: string): CanonicalCategory | undefined {
+  return CANONICAL_CATEGORIES.find((c) => c.slug === slug);
 }

@@ -12,12 +12,12 @@ type Props = {
 /** Public CTA — never exposes claim_token. Email match triggers a fresh invite. */
 export function UnclaimedBanner({ company, claimSent, claimError }: Props) {
   return (
-    <section id="claim" className="mx-auto mt-4 max-w-6xl scroll-mt-24 px-4">
-      <div className="rounded-none border border-ember/30 bg-[linear-gradient(135deg,rgba(196,120,58,0.12),rgba(14, 31, 28,0.04))] px-5 py-6 sm:px-8">
-        <p className="text-[11px] font-semibold tracking-[0.14em] text-ember uppercase">
+    <section id="claim" className="mx-auto mt-4 max-w-[calc(1280px+2.25rem)] scroll-mt-24 px-4 sm:px-[18px]">
+      <div className="rounded-[24px] bg-lime-soft px-5 py-6 ring-1 ring-lime sm:px-8">
+        <p className="text-[11px] font-semibold tracking-[0.16em] text-navy/70 uppercase">
           Unclaimed profile
         </p>
-        <h2 className="mt-2 font-display text-[clamp(1.4rem,2.5vw,1.85rem)] font-medium tracking-[-0.03em] text-ink">
+        <h2 className="mt-2 font-display text-[clamp(1.4rem,2.5vw,1.85rem)] font-semibold tracking-[-0.03em] text-ink">
           Is this your company?
         </h2>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-soft">
@@ -28,12 +28,12 @@ export function UnclaimedBanner({ company, claimSent, claimError }: Props) {
         </p>
 
         {claimSent ? (
-          <p className="mt-4 rounded-none border border-[#1a5c51]/25 bg-[#1a5c51]/10 px-4 py-3 text-sm text-ink">
+          <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-sm text-ink ring-1 ring-line/70">
             If that email matches the invite on file, we sent a claim link.
           </p>
         ) : null}
         {claimError ? (
-          <p className="mt-4 rounded-none border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
+          <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-sm text-ink ring-1 ring-line">
             {claimError}
           </p>
         ) : null}
@@ -55,7 +55,7 @@ export function UnclaimedBanner({ company, claimSent, claimError }: Props) {
                 placeholder="you@company.com"
               />
             </label>
-            <Button type="submit" className="h-12 shrink-0 px-5">
+            <Button type="submit" className="h-12 shrink-0 rounded-full! bg-navy! px-5 hover:bg-navy-deep!">
               Send claim link
             </Button>
           </form>

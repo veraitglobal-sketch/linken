@@ -166,6 +166,7 @@ export function embedWrapTransparent(variant: string): boolean {
     v === "footer-strip" ||
     v === "partners-rotate" ||
     v === "case-gallery" ||
-    v === "testimonials"
+    v === "testimonials" ||
+    v === "network"
   );
 }

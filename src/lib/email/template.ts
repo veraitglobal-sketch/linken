@@ -4,6 +4,7 @@ export type BrandedEmailContent = {
   eyebrow?: string;
   headline: string;
   paragraphs: string[];
+  code?: string;
   cta?: { label: string; href: string };
   finePrint?: string;
 };
@@ -18,6 +19,9 @@ export function escapeHtml(value: string) {
 
 export function renderPlainText(content: BrandedEmailContent) {
   const lines = [content.headline, "", ...content.paragraphs];
+  if (content.code) {
+    lines.push("", content.code);
+  }
   if (content.cta) {
     lines.push("", `${content.cta.label}:`, content.cta.href);
   }
@@ -36,6 +40,10 @@ export function renderBrandedEmail(siteUrl: string, content: BrandedEmailContent
         `<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#3a423e;">${escapeHtml(p)}</p>`,
     )
     .join("");
+
+  const code = content.code
+    ? `<p style="margin:8px 0 24px;font-size:36px;font-weight:600;letter-spacing:0.28em;color:#0e1f1c;">${escapeHtml(content.code)}</p>`
+    : "";
 
   const cta = content.cta
     ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0 8px;">
@@ -68,6 +76,7 @@ export function renderBrandedEmail(siteUrl: string, content: BrandedEmailContent
         <tr>
           <td style="padding:28px 32px 32px;">
             ${body}
+            ${code}
             ${cta}
             ${finePrint}
           </td>
