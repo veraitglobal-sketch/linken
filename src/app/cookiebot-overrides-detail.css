@@ -1,73 +1,85 @@
-/** Consent tab stays clean; toggles live under Details. */
+/** Details tab + widget popup on lime card. */
 #CybotCookiebotDialogBodyLevelWrapper {
   display: none !important;
 }
 
-#CybotCookiebotDialogBodyLevelButtons,
-#CybotCookiebotDialogBodyLevelButtonsTable,
-#CybotCookiebotDialogBodyLevelButtonsRow {
-  width: 100% !important;
-  border: none !important;
-}
-
-.CybotCookiebotDialogBodyLevelButtonWrapper {
-  border-bottom: 1px solid var(--line) !important;
-  padding: 0.75rem 0 !important;
-}
-
-.CybotCookiebotDialogBodyLevelButtonLabel {
-  color: var(--ink) !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-}
-
-.CybotCookiebotDialogBodyLevelButtonDescription {
-  color: var(--muted) !important;
-  font-size: 0.8125rem !important;
-}
-
 #CybotCookiebotDialog .CybotCookiebotDialogBodyLevelButtonSlider,
 #CybotCookiebotDialogDetail .CybotCookiebotDialogBodyLevelButtonSlider {
-  background: var(--line) !important;
+  background: rgba(14, 31, 28, 0.2) !important;
   border-radius: 0 !important;
 }
 
 #CybotCookiebotDialog input:checked + .CybotCookiebotDialogBodyLevelButtonSlider,
 #CybotCookiebotDialogDetail input:checked + .CybotCookiebotDialogBodyLevelButtonSlider {
-  background: var(--signal) !important;
+  background: var(--navy) !important;
 }
 
-.CybotCookiebotDialogDetailBodyContentCookieContainerHeader,
-.CybotCookiebotDialogDetailBodyContentCookieGroup,
-.CybotCookiebotDialogDetailBodyContentCookieTypeIntro {
-  border-color: var(--line) !important;
-  color: var(--ink-soft) !important;
-}
-
+.CybotCookiebotDialogBodyLevelButtonLabel,
 .CybotCookiebotDialogDetailBodyContentCookieContainerButton {
   color: var(--ink) !important;
   font-weight: 600 !important;
   border-radius: 0 !important;
 }
 
+.CybotCookiebotDialogBodyLevelButtonDescription,
+.CybotCookiebotDialogDetailBodyContentCookieTypeIntro {
+  color: var(--ink-soft) !important;
+}
+
+.CybotCookiebotDialogDetailBodyContentCookieContainerHeader,
+.CybotCookiebotDialogDetailBodyContentCookieGroup {
+  border-color: rgba(14, 31, 28, 0.14) !important;
+}
+
 .CybotCookiebotDialogDetailBodyContentCookieLink {
-  color: var(--signal) !important;
+  color: var(--navy) !important;
 }
 
 .CybotCookiebotDialogDetailBodyContentTabsItem {
-  font-size: 0.6875rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.1em !important;
-  text-transform: uppercase !important;
-  color: var(--muted) !important;
+  color: rgba(13, 18, 16, 0.55) !important;
   border-radius: 0 !important;
 }
 
 .CybotCookiebotDialogDetailBodyContentTabsItemSelected {
   color: var(--navy) !important;
-  border-color: var(--signal) !important;
+  border-color: var(--navy) !important;
 }
 
 .CybotCookiebotFader {
+  display: none !important;
+}
+
+#CookiebotWidget .CookiebotWidget-dialog,
+#CookiebotWidget [class*="Widget-dialog"] {
+  background: var(--lime) !important;
+  border: 1px solid rgba(14, 31, 28, 0.14) !important;
+  border-radius: 0 !important;
+  box-shadow:
+    0 4px 10px rgba(13, 19, 16, 0.06),
+    0 50px 90px -44px rgba(13, 19, 16, 0.4) !important;
+  color: var(--ink) !important;
+}
+
+#CookiebotWidget button,
+#CookiebotWidget a[role="button"] {
+  border-radius: 0 !important;
+  font-weight: 600 !important;
+}
+
+#CookiebotWidget button:last-child,
+#CookiebotWidget a[role="button"]:last-child {
+  background: var(--paper) !important;
+  color: var(--navy) !important;
+  border: 1px solid var(--paper) !important;
+}
+
+#CookiebotWidget button:first-of-type,
+#CookiebotWidget a[role="button"]:first-of-type {
+  background: transparent !important;
+  color: var(--navy) !important;
+  border: 1px solid var(--navy) !important;
+}
+
+#CookiebotWidget .CookiebotWidget-body .CookiebotWidget-main-logo {
   display: none !important;
 }
