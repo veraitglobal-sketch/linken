@@ -67,6 +67,7 @@ export async function respondPartnership(formData: FormData) {
   }
 
   const status = decision === "declined" ? "rejected" : "accepted";
+  const { refreshRank } = await import("@/features/ranking/refresh");
   const respondedAt = new Date().toISOString();
   const { error } = await supabase
     .from("partnerships")
@@ -76,6 +77,9 @@ export async function respondPartnership(formData: FormData) {
   if (error) {
     redirect(`${back}?error=${encodeURIComponent(error.message)}`);
   }
+
+  // Both sides move: a partnership is one record shared by two companies.
+  await refreshRank(row.requester_id as string, row.recipient_id as string);
 
   if (decision === "accepted") {
     const { emitWebhookEvent } = await import("@/features/webhooks/dispatch");

@@ -1,22 +1,26 @@
 import { GettingStartedCard } from "@/components/activation/getting-started-card";
 import { HomeCompleteness } from "@/components/dashboard/home/home-completeness";
 import { HomePerformance } from "@/components/dashboard/home/home-performance";
+import { HomePosition } from "@/components/dashboard/home/home-position";
 import { HomePrimaryCard } from "@/components/dashboard/home/home-primary-card";
 import { HomeQuickLinks } from "@/components/dashboard/home/home-quick-links";
 import { HomeStatsRow } from "@/components/dashboard/home/home-stats-row";
 import { HomeTips } from "@/components/dashboard/home/home-tips";
 import type { DashboardHomeModel } from "@/features/dashboard/home-data";
+import type { getCompanyPositions } from "@/features/ranking/queries-position";
 
 type Props = {
   companyId: string;
   companySlug: string;
   model: DashboardHomeModel;
+  position: Awaited<ReturnType<typeof getCompanyPositions>>;
 };
 
 export function HomeBoard({
   companyId,
   companySlug,
   model,
+  position,
 }: Props) {
   return (
     <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -39,6 +43,7 @@ export function HomeBoard({
         </div>
       </div>
       <aside className="space-y-5">
+        <HomePosition position={position} />
         <HomeQuickLinks
           companyId={companyId}
           companySlug={companySlug}

@@ -101,5 +101,11 @@ export async function updateCompanyAgentCore(
     return { ok: false, error: "No allowed fields to update." };
   }
 
+  if ("category" in extra || countryCode !== undefined) {
+    void import("@/features/ranking/refresh").then(({ refreshRank }) =>
+      refreshRank(companyId),
+    );
+  }
+
   return { ok: true, data: { updated, slug: newSlug } };
 }

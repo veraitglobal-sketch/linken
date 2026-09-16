@@ -124,4 +124,7 @@ export async function confirmPartnershipsAfterClaim(
       source: "partnership",
     });
   }
+
+  const { refreshRank } = await import("@/features/ranking/refresh");
+  await refreshRank(...firmIds);
 }

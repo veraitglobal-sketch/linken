@@ -21,6 +21,7 @@ import {
   listSitemapGroups,
 } from "@/features/sitemap/queries-content";
 import { buildStaticSitemap } from "@/features/sitemap/static-routes";
+import { rankingSitemapEntries } from "@/features/sitemap/queries-ranking";
 import {
   SITEMAP_CASE_STUDY_BASE_ID,
   SITEMAP_CHUNK_SIZE,
@@ -58,7 +59,10 @@ export async function buildSitemapForId(
 ): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
 
-  if (id === SITEMAP_STATIC_ID) return buildStaticSitemap(siteUrl);
+  if (id === SITEMAP_STATIC_ID) {
+    const ranking = await rankingSitemapEntries(siteUrl);
+    return [...buildStaticSitemap(siteUrl), ...ranking];
+  }
 
   if (id === SITEMAP_GROUP_ID) {
     const groups = await listSitemapGroups();

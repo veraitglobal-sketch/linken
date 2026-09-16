@@ -49,6 +49,12 @@ export async function submitTestimonialForm(formData: FormData) {
     redirect(`/testimonial/${token}?error=${encodeURIComponent(error.message)}`);
   }
 
+  // A published testimonial is evidence for the company it is about.
+  {
+    const { refreshRank } = await import("@/features/ranking/refresh");
+    await refreshRank(view.companyId, authorCompanyId ?? view.authorCompanyId);
+  }
+
   redirect(`/testimonial/${token}?done=published`);
 }
 
@@ -63,5 +69,11 @@ export async function withdrawTestimonialForm(formData: FormData) {
   if (error) {
     redirect(`/testimonial/${token}?error=${encodeURIComponent(error.message)}`);
   }
+  {
+    const view = await getTestimonialByToken(token);
+    const { refreshRank } = await import("@/features/ranking/refresh");
+    await refreshRank(view?.companyId, view?.authorCompanyId);
+  }
+
   redirect(`/testimonial/${token}?done=withdrawn`);
 }

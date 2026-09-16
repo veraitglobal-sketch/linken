@@ -1,12 +1,13 @@
 import Image from "next/image";
-import Link from "next/link";
 import { CompanyHeroActions } from "@/components/company/company-hero-actions";
+import { CompanyHeroChips } from "@/components/company/company-hero-chips";
 import { TrustLevelBadge } from "@/components/trust/trust-level-badge";
 import { LogoMark } from "@/components/ui/logo-mark";
 import { SocialIcons } from "@/components/ui/social-icons";
 import { VerifiedStatusNote } from "@/components/company/verified-status-note";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import type { ConfirmedGroupBadge } from "@/features/groups/types";
+import { getCompanyPositions } from "@/features/ranking/queries-position";
 import { getSchedulingForCompanyId } from "@/features/scheduling/queries";
 import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
@@ -40,6 +41,11 @@ export async function CompanyHeroBand({
       ? await getSchedulingForCompanyId(company.id)
       : null;
 
+  /* Where this company stands in its sector — only when it is ranked, and only
+     from confirmed records. A company with none simply has no badge. */
+  const position =
+    company.claimed === false ? null : await getCompanyPositions(company.slug);
+
   /* New site style: a rounded navy chapter with the lime lip beneath it (the
      homepage's "Two companies" shape), cover photo inset on the right.
      Every fact shown is the company's own record — nothing added. */
@@ -52,39 +58,13 @@ export async function CompanyHeroBand({
         />
         <div className="relative grid overflow-hidden rounded-[32px] bg-navy sm:rounded-[60px] lg:min-h-[600px] lg:grid-cols-[1.08fr_0.92fr]">
           <div className="relative z-10 flex flex-col justify-between gap-10 px-6 py-9 text-on-navy sm:px-12 sm:py-12 lg:pr-8 lg:pl-20 lg:py-16">
-            <div className="animate-rise flex flex-wrap items-center gap-2">
-              <span className="inline-flex h-8 items-center gap-2 rounded-full bg-white/[0.08] px-3.5 text-[12px] font-semibold text-on-navy ring-1 ring-white/15">
-                <span
-                  className={`size-1.5 rounded-full ${
-                    claimed && accepting ? "bg-lime" : "bg-white/40"
-                  }`}
-                />
-                {company.category} · {company.city}, {company.country}
-              </span>
-              {company.claimed === false ? (
-                <span className="inline-flex h-8 items-center rounded-full bg-white/[0.08] px-3.5 text-[12px] font-semibold text-on-navy-soft ring-1 ring-white/15">
-                  Unclaimed profile
-                </span>
-              ) : (
-                <span
-                  className={`inline-flex h-8 items-center rounded-full px-3.5 text-[12px] font-semibold ${
-                    accepting
-                      ? "bg-lime text-navy"
-                      : "bg-white/[0.08] text-on-navy-soft ring-1 ring-white/15"
-                  }`}
-                >
-                  {accepting ? "Accepting new clients" : "Fully booked"}
-                </span>
-              )}
-              {groupBadge ? (
-                <Link
-                  href={`/g/${groupBadge.slug}`}
-                  className="inline-flex h-8 items-center rounded-full bg-white/[0.08] px-3.5 text-[12px] font-semibold text-on-navy ring-1 ring-white/15 transition-colors hover:bg-white/15"
-                >
-                  Part of {groupBadge.name}
-                </Link>
-              ) : null}
-            </div>
+            <CompanyHeroChips
+              company={company}
+              claimed={claimed}
+              accepting={accepting}
+              position={position}
+              groupBadge={groupBadge}
+            />
 
             <div className="animate-rise-delay max-w-xl">
               <div className="flex flex-wrap items-center gap-4">

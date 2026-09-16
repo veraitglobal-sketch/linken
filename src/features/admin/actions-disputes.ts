@@ -21,6 +21,12 @@ function isRecordType(v: string): v is RecordType {
   return v in RECORD_TYPES;
 }
 
+function bumpRank(a: string, b: string | null) {
+  void import("@/features/ranking/refresh").then(({ refreshRank }) =>
+    refreshRank(a, b),
+  );
+}
+
 /** Hides a record immediately and stores its prior status for later resolution. */
 export async function adminOpenDispute(formData: FormData) {
   const actor = await requirePlatformStaff("admin");
@@ -66,7 +72,10 @@ export async function adminOpenDispute(formData: FormData) {
     },
   });
 
-  if (result.ok) revalidatePath("/admin/disputes");
+  if (result.ok) {
+    revalidatePath("/admin/disputes");
+    bumpRank(claimantCompanyId, counterpartyCompanyId);
+  }
   return result.ok ? { ok: true as const } : { ok: false as const, error: result.error };
 }
 
@@ -128,6 +137,12 @@ export async function adminResolveDispute(formData: FormData) {
     },
   });
 
-  if (result.ok) revalidatePath("/admin/disputes");
+  if (result.ok) {
+    revalidatePath("/admin/disputes");
+    bumpRank(
+      dispute.claimant_company_id as string,
+      (dispute.counterparty_company_id as string | null) ?? null,
+    );
+  }
   return result.ok ? { ok: true as const } : { ok: false as const, error: result.error };
 }

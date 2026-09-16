@@ -4,6 +4,7 @@ import { HomeBoard } from "@/components/dashboard/home/home-board";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { DashboardGroupPanel } from "@/components/groups/dashboard-group-panel";
 import { loadDashboardHome } from "@/features/dashboard/home-data";
+import { getCompanyPositions } from "@/features/ranking/queries-position";
 import { getDashboardSession } from "@/features/dashboard/session";
 import { getDashboardGroupById } from "@/features/groups/dashboard-group";
 import { PRODUCT } from "@/lib/product-model";
@@ -75,7 +76,10 @@ export default async function DashboardHomePage() {
     );
   }
 
-  const model = await loadDashboardHome(company);
+  const [model, position] = await Promise.all([
+    loadDashboardHome(company),
+    getCompanyPositions(company.slug),
+  ]);
 
   return (
     <WorkspacePage
@@ -95,6 +99,7 @@ export default async function DashboardHomePage() {
         companyId={company.id}
         companySlug={company.slug}
         model={model}
+        position={position}
       />
     </WorkspacePage>
   );

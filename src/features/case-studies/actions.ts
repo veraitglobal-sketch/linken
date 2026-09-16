@@ -254,6 +254,23 @@ async function respondClientRequest(
     redirect(withBackQuery(path, { error: error.message }));
   }
 
+  {
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const admin = createAdminClient();
+    const { data: row } = admin
+      ? await admin
+          .from("case_study_client_confirmation_requests")
+          .select("requested_by_company_id")
+          .eq("token", token)
+          .maybeSingle()
+      : { data: null };
+    const { refreshRank } = await import("@/features/ranking/refresh");
+    await refreshRank(
+      (row?.requested_by_company_id as string | undefined) ?? null,
+      company.id,
+    );
+  }
+
   if (response === "confirmed") {
     const { createAdminClient } = await import("@/lib/supabase/admin");
     const admin = createAdminClient();
@@ -329,6 +346,16 @@ export async function confirmCaseStudyPartnerRole(formData: FormData) {
 
   if (error) {
     redirect(withBackQuery(back, { error: error.message }));
+  }
+
+  {
+    const { data: owner } = await supabase
+      .from("case_studies")
+      .select("company_id")
+      .eq("id", caseStudyId)
+      .maybeSingle();
+    const { refreshRank } = await import("@/features/ranking/refresh");
+    await refreshRank((owner?.company_id as string | undefined) ?? null, company.id);
   }
 
   revalidatePath(back);

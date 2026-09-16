@@ -10,6 +10,8 @@ const NAMES = {
   construction: "Construction",
   "software-development": "Software development",
   consulting: "Consulting",
+  "call-center": "Call center",
+  agriculture: "Agriculture",
 };
 
 const ALIASES = {
@@ -28,6 +30,9 @@ const ALIASES = {
   "it software": "software-development",
   softwareentwicklung: "software-development",
   beratung: "consulting",
+  "call centre": "call-center",
+  "call center": "call-center",
+  agriculture: "agriculture",
 };
 
 function fold(text) {
@@ -113,4 +118,14 @@ test("token overlap still needs a real alias token", () => {
   const hit = matchCategory("cleaning services");
   assert.equal(hit?.slug, "cleaning");
   assert.equal(hit?.confidence, "token");
+});
+
+test("call center is the public name", () => {
+  assert.equal(matchCategory("call centre").slug, "call-center");
+  assert.equal(matchCategory("Call center").slug, "call-center");
+  assert.equal(NAMES["call-center"], "Call center");
+});
+
+test("agriculture alias is not unmatched", () => {
+  assert.equal(matchCategory("Agriculture").slug, "agriculture");
 });

@@ -109,6 +109,10 @@ export async function updateCompanyProfile(formData: FormData) {
     void matchCompanyToSearches(company.id, "accepting_clients");
   }
 
+  void import("@/features/ranking/refresh").then(({ refreshRank }) =>
+    refreshRank(company.id),
+  );
+
   revalidateCompany(company.slug);
   redirect(backWith(back, { saved: "1" }));
 }

@@ -259,10 +259,21 @@ export async function disconnectGraphEdge(input: {
     if (!input.partnershipId) {
       return { ok: false, error: "Missing partnership." };
     }
+    const { data: pair } = await supabase
+      .from("partnerships")
+      .select("requester_id, recipient_id")
+      .eq("id", input.partnershipId)
+      .maybeSingle();
     const { error } = await supabase.rpc("end_partnership", {
       p_partnership_id: input.partnershipId,
     });
     if (error) return { ok: false, error: error.message };
+
+    if (pair) {
+      void import("@/features/ranking/refresh").then(({ refreshRank }) =>
+        refreshRank(pair.requester_id as string, pair.recipient_id as string),
+      );
+    }
 
     const { resolveActiveWorkspace } = await import(
       "@/features/workspace/context"

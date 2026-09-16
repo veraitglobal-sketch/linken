@@ -9,10 +9,27 @@ export type OnboardingDraft = {
   city: string;
   website: string;
   description: string;
-  /** The person registering — stored on their company membership. */
   displayName?: string;
   displayTitle?: string;
+  countryCode?: string;
+  email?: string;
 };
+
+export function draftFromFormData(formData: FormData): OnboardingDraft {
+  const get = (k: string) => String(formData.get(k) ?? "").trim();
+  return {
+    name: get("name"),
+    organizationKind: get("organization_kind"),
+    category: get("category"),
+    city: get("city"),
+    website: get("website"),
+    description: get("description"),
+    displayName: get("display_name"),
+    displayTitle: get("display_title"),
+    countryCode: get("country_code"),
+    email: get("email"),
+  };
+}
 
 export async function saveOnboardingDraft(draft: OnboardingDraft) {
   const jar = await cookies();
@@ -41,6 +58,8 @@ export async function readOnboardingDraft(): Promise<OnboardingDraft | null> {
       description: parsed.description ?? "",
       displayName: parsed.displayName ?? "",
       displayTitle: parsed.displayTitle ?? "",
+      countryCode: parsed.countryCode ?? "",
+      email: parsed.email ?? "",
     };
   } catch {
     return null;

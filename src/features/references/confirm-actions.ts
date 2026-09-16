@@ -53,6 +53,14 @@ async function respondServiceReference(
     redirect(`${path}?error=${encodeURIComponent(message)}`);
   }
 
+  if (refRow) {
+    const providerRaw = Array.isArray(refRow) ? refRow[0] : refRow;
+    const providerId = (providerRaw as { provider_company_id?: string } | null)
+      ?.provider_company_id;
+    const { refreshRank } = await import("@/features/ranking/refresh");
+    await refreshRank(providerId, company.id);
+  }
+
   if (decision === "confirmed" && refRow) {
     const raw = Array.isArray(refRow) ? refRow[0] : refRow;
     const row = raw as {
