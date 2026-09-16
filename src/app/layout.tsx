@@ -81,10 +81,8 @@ export default function RootLayout({
       lang="en"
       className={`${geist.variable} ${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <CookiebotHead />
-      </head>
       <body className="flex min-h-full flex-col font-sans">
+        <CookiebotHead />
         <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
         <script
           type="application/ld+json"
