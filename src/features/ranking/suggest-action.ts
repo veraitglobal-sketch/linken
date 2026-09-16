@@ -14,7 +14,7 @@ export type CategorySuggestion = { slug: string; name: string; count: number };
  * worse than no suggestion.
  */
 export async function suggestCategories(query: string): Promise<CategorySuggestion[]> {
-  const ranked = await listRankedCategories();
+  const ranked = await listRankedCategories({ min: 1 });
   const q = normalizeCategoryText(query);
   if (!q) return ranked.slice(0, 8);
 

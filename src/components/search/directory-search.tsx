@@ -26,10 +26,13 @@ const FILTERS: { id: Filter; label: string; test: (h: CompanySearchHit) => boole
 export function DirectorySearch({
   initialQuery = "",
   header,
+  idle,
 }: {
   initialQuery?: string;
   /** Heading block; drawn on the lime band together with the field. */
   header: ReactNode;
+  /** Shown while nothing is typed — the field is empty, the page is not. */
+  idle?: ReactNode;
 }) {
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<CompanySearchHit[]>([]);
@@ -141,7 +144,12 @@ export function DirectorySearch({
 
       <div className="mx-auto mt-14 w-full max-w-[1180px] px-4 sm:mt-16 sm:px-[18px]" aria-live="polite">
         {!q ? (
-          <DirectoryLegend />
+          <>
+            {idle}
+            <div className={idle ? "mt-14 sm:mt-16" : undefined}>
+              <DirectoryLegend />
+            </div>
+          </>
         ) : !showing ? (
           <ResultSkeleton />
         ) : failed ? (

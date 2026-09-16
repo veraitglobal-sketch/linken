@@ -25,6 +25,19 @@ function isExistingAccountError(message) {
   );
 }
 
+function signupErrorMessage(error) {
+  const text = String(error.message ?? error.msg ?? "").trim();
+  const mailFailed =
+    /confirmation email/i.test(text) ||
+    error.code === "unexpected_failure" ||
+    error.name === "AuthRetryableFetchError";
+  if (mailFailed) {
+    return "We could not send the confirmation email. Try again in a minute.";
+  }
+  if (text && text !== "{}" && text !== "[object Object]") return text;
+  return "Could not create the account. Try again.";
+}
+
 test("draftFromFormData keeps company fields from the last step", () => {
   const fd = new FormData();
   fd.set("name", "Example Facilities");
@@ -47,4 +60,17 @@ test("draftFromFormData keeps company fields from the last step", () => {
 test("isExistingAccountError matches Supabase copy", () => {
   assert.equal(isExistingAccountError("User already registered"), true);
   assert.equal(isExistingAccountError("Invalid login credentials"), false);
+});
+
+test("signupErrorMessage is specific when confirmation email fails", () => {
+  const text = signupErrorMessage({
+    message: "Error sending confirmation email",
+    code: "unexpected_failure",
+  });
+  assert.equal(/confirmation email/i.test(text), true);
+  assert.equal(signupErrorMessage({ message: "{}" }), "Could not create the account. Try again.");
+  assert.match(
+    signupErrorMessage({ message: "{}", name: "AuthRetryableFetchError", status: 500 }),
+    /confirmation email/i,
+  );
 });

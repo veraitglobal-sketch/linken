@@ -36,10 +36,19 @@ export async function getRankedCountries(categorySlug: string): Promise<RankedCo
   }
 }
 
-/** Categories with enough ranked companies to be worth a page. */
-export async function listRankedCategories(): Promise<
-  { slug: string; name: string; count: number }[]
-> {
+/**
+ * Categories that have ranked companies.
+ *
+ * `min` is the difference between two questions. A sector gets a public page
+ * and a sitemap entry once it is a field — three companies, the default. A
+ * visitor searching sectors is asking something narrower: is there anything
+ * here at all? One real company is a truthful answer to that, so search passes
+ * `min: 1` and the list itself says it is not a field yet.
+ */
+export async function listRankedCategories(
+  opts: { min?: number } = {},
+): Promise<{ slug: string; name: string; count: number }[]> {
+  const min = Math.max(1, opts.min ?? MIN_RANKED_FOR_PAGE);
   try {
     const supabase = createPublicClient();
     const { data } = await supabase
@@ -57,7 +66,7 @@ export async function listRankedCategories(): Promise<
     }
 
     return [...counts.entries()]
-      .filter(([, count]) => count >= MIN_RANKED_FOR_PAGE)
+      .filter(([, count]) => count >= min)
       .map(([slug, count]) => {
         const canonical = canonicalCategorySlug(slug) ?? slug;
         return {

@@ -11,9 +11,20 @@ import {
 /**
  * Search by sector. A suggestion only appears if companies in that category
  * already have confirmed records — empty lists are not offered.
+ *
+ * A pick opens the list on this page, worldwide: the sector is the question, a
+ * country is a filter after it.
  */
-export function CategorySearch({ initialQuery = "" }: { initialQuery?: string }) {
+export function CategorySearch({
+  initialQuery = "",
+  selectedSlug = null,
+}: {
+  initialQuery?: string;
+  /** Sector already open below, so the default sector list stays out of the way. */
+  selectedSlug?: string | null;
+}) {
   const router = useRouter();
+  const hrefFor = (slug: string) => `/search?mode=categories&category=${slug}`;
   const [query, setQuery] = useState(initialQuery);
   const [hits, setHits] = useState<CategorySuggestion[]>([]);
   const [pending, start] = useTransition();
@@ -28,7 +39,11 @@ export function CategorySearch({ initialQuery = "" }: { initialQuery?: string })
     return () => window.clearTimeout(t);
   }, [query]);
 
+  const typed = query.trim().length > 0;
   const empty = query.trim().length >= 2 && !pending && hits.length === 0;
+  /* With a list already open below, an unprompted menu of other sectors would
+     push the answer off screen. */
+  const showHits = typed || !selectedSlug;
 
   return (
     <div className="relative mx-auto mt-10 w-full max-w-[680px]">
@@ -46,7 +61,7 @@ export function CategorySearch({ initialQuery = "" }: { initialQuery?: string })
           onKeyDown={(e) => {
             if (e.key === "Enter" && hits[0]) {
               e.preventDefault();
-              router.push(`/best/${hits[0].slug}`);
+              router.push(hrefFor(hits[0].slug));
             }
           }}
           style={{ outline: "none", boxShadow: "none" }}
@@ -57,16 +72,16 @@ export function CategorySearch({ initialQuery = "" }: { initialQuery?: string })
         {empty ? (
           <p className="text-center text-[15px] text-ink-soft">
             No category matches “{query.trim()}” yet.{" "}
-            <Link href="/search" className="font-semibold text-ink underline-offset-2 hover:underline">
+            <Link href="/search?mode=companies" className="font-semibold text-ink underline-offset-2 hover:underline">
               Search companies by name
             </Link>
           </p>
-        ) : (
+        ) : showHits ? (
           <ul className="grid list-none gap-2 p-0">
             {hits.map((c) => (
               <li key={c.slug}>
                 <Link
-                  href={`/best/${c.slug}`}
+                  href={hrefFor(c.slug)}
                   className="flex items-center justify-between rounded-[20px] bg-surface px-5 py-4 ring-1 ring-line/70 transition-colors hover:ring-ink/15"
                 >
                   <span className="font-display text-[17px] font-semibold tracking-[-0.025em] text-ink">
@@ -79,7 +94,7 @@ export function CategorySearch({ initialQuery = "" }: { initialQuery?: string })
               </li>
             ))}
           </ul>
-        )}
+        ) : null}
       </div>
     </div>
   );

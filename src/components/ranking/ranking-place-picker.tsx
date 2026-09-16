@@ -11,18 +11,25 @@ export function RankingPlacePicker({
   categorySlug,
   countries,
   active,
+  hrefFor,
 }: {
   categorySlug: string;
   countries: RankedCountry[];
   /** ISO code, or null for worldwide. */
   active: string | null;
+  /** Where a place links to. Defaults to the /best pages. */
+  hrefFor?: (countryCode: string | null) => string;
 }) {
+  const href =
+    hrefFor ??
+    ((code: string | null) =>
+      code ? `/best/${categorySlug}/${code.toLowerCase()}` : `/best/${categorySlug}`);
   const pill =
     "inline-flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-colors";
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Link
-        href={`/best/${categorySlug}`}
+        href={href(null)}
         aria-current={active === null ? "page" : undefined}
         className={cn(pill, active === null ? "bg-navy text-on-navy" : "bg-surface/70 text-ink ring-1 ring-ink/10 hover:bg-surface")}
       >
@@ -35,7 +42,7 @@ export function RankingPlacePicker({
       {countries.map((c) => (
         <Link
           key={c.code}
-          href={`/best/${categorySlug}/${c.code.toLowerCase()}`}
+          href={href(c.code)}
           aria-current={active === c.code ? "page" : undefined}
           className={cn(pill, active === c.code ? "bg-navy text-on-navy" : "bg-surface/70 text-ink ring-1 ring-ink/10 hover:bg-surface")}
         >

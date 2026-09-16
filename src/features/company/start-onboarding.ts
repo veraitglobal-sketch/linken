@@ -7,7 +7,7 @@ import {
   saveOnboardingDraft,
 } from "@/features/company/onboarding-draft";
 import { parseOrganizationKind } from "@/features/company/organization-kind";
-import { isExistingAccountError } from "@/features/company/signup-error";
+import { isExistingAccountError, signupErrorMessage } from "@/features/company/signup-error";
 import { getAuthSiteUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
@@ -47,12 +47,14 @@ export async function startOnboarding(formData: FormData) {
     },
   });
   if (error) {
-    if (isExistingAccountError(error.message)) {
+    const message = signupErrorMessage(error);
+    console.error("[onboarding] signup", error.message || error.code);
+    if (isExistingAccountError(message) || isExistingAccountError(error.message ?? "")) {
       redirect(
         `/login?next=${encodeURIComponent(next)}&error=${encodeURIComponent("That email already has an account. Sign in to finish.")}`,
       );
     }
-    fail(error.message);
+    fail(message);
   }
 
   const { logActivationEvent } = await import("@/features/activation/events");
