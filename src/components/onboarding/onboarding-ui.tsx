@@ -43,7 +43,7 @@ export function Field({
   );
 }
 
-/** Park inactive steps without display:none — Safari clears password fields that are hidden that way. */
+/** Park inactive steps without display:none or inert — both drop or wipe values on Create. */
 export function stepClass(active: boolean) {
   return cn(
     "m-0 border-0 p-0",

@@ -9,6 +9,7 @@ import {
   OrgStep,
   PersonStep,
 } from "@/components/onboarding/onboarding-steps";
+import { OnboardingSubmit } from "@/components/onboarding/onboarding-submit";
 import { STEPS } from "@/components/onboarding/onboarding-ui";
 import { createCompany } from "@/features/company/create-company";
 import { startOnboarding } from "@/features/company/start-onboarding";
@@ -47,25 +48,45 @@ export function OnboardingForm({
     sets.current[i] = el;
   };
 
+  const capturePassword = () => {
+    const pwd = sets.current[0]?.querySelector<HTMLInputElement>(
+      'input[name="password"]',
+    );
+    const value = pwd?.value || passwordRef.current;
+    if (value) {
+      passwordRef.current = value;
+      setPassword(value);
+    }
+    return value;
+  };
+
   const next = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const inputs = sets.current[step]?.querySelectorAll("input, select, textarea") ?? [];
     for (const el of inputs) {
       if (!(el as HTMLInputElement).reportValidity()) return;
     }
+    if (step === 0) capturePassword();
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   };
 
+  /* Validate the visible step only. A full-form checkValidity() sent people
+     back to step 1 whenever Safari had emptied the parked password field. */
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     const form = e.currentTarget;
     const pwd = form.querySelector<HTMLInputElement>('input[name="password"]');
-    if (pwd && passwordRef.current) pwd.value = passwordRef.current;
-    if (!form.checkValidity()) {
+    const value = capturePassword();
+    if (pwd && value) pwd.value = value;
+    const inputs = sets.current[step]?.querySelectorAll("input, select, textarea") ?? [];
+    for (const el of inputs) {
+      if (!(el as HTMLInputElement).reportValidity()) {
+        e.preventDefault();
+        return;
+      }
+    }
+    if (!signedIn && (value?.length ?? 0) < 6) {
       e.preventDefault();
-      const invalid = form.querySelector<HTMLInputElement>(":invalid");
-      const i = sets.current.findIndex((fs) => invalid && fs?.contains(invalid));
-      if (i >= 0) setStep(i);
-      invalid?.reportValidity();
+      setStep(0);
     }
   };
 
@@ -142,17 +163,7 @@ export function OnboardingForm({
                   Continue
                 </button>
               ) : (
-                <button
-                  key="submit"
-                  type="submit"
-                  className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-navy px-6 text-[15px] font-semibold text-on-navy transition-colors hover:bg-navy-deep"
-                >
-                  {signedIn
-                    ? partnerMode
-                      ? "Create partner workspace"
-                      : "Create company profile"
-                    : "Create account"}
-                </button>
+                <OnboardingSubmit signedIn={signedIn} partnerMode={partnerMode} />
               )}
             </div>
             {!signedIn && step === STEPS.length - 1 ? (

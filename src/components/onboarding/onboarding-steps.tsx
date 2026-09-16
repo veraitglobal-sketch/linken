@@ -28,12 +28,7 @@ export function PersonStep({
   onPassword,
 }: PersonProps) {
   return (
-    <fieldset
-      ref={bind(0)}
-      className={stepClass(active)}
-      aria-hidden={!active}
-      inert={!active || undefined}
-    >
+    <fieldset ref={bind(0)} className={stepClass(active)} aria-hidden={!active}>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label={<>Full name<Req /></>}>
           <input
@@ -82,17 +77,21 @@ export function PersonStep({
             />
           </Field>
           <Field label={<>Password<Req /></>}>
-            <input
-              type="password"
-              name="password"
-              autoComplete="new-password"
-              placeholder="At least 6 characters"
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => onPassword(e.target.value)}
-              className={FIELD}
-            />
+            {active ? (
+              <input
+                type="password"
+                name="password"
+                autoComplete="new-password"
+                placeholder="At least 6 characters"
+                required
+                minLength={6}
+                defaultValue={password}
+                onChange={(e) => onPassword(e.target.value)}
+                className={FIELD}
+              />
+            ) : (
+              <input type="hidden" name="password" value={password} />
+            )}
           </Field>
         </>
       )}
@@ -109,12 +108,7 @@ type OrgProps = {
 
 export function OrgStep({ active, bind, defaultKind, draft }: OrgProps) {
   return (
-    <fieldset
-      ref={bind(1)}
-      className={stepClass(active)}
-      aria-hidden={!active}
-      inert={!active || undefined}
-    >
+    <fieldset ref={bind(1)} className={stepClass(active)} aria-hidden={!active}>
       <OrganizationKindField defaultKind={defaultKind} />
       <Field label={<>Organization name<Req /></>}>
         <input
@@ -147,12 +141,7 @@ type DetailsProps = {
 
 export function DetailsStep({ active, bind, draft }: DetailsProps) {
   return (
-    <fieldset
-      ref={bind(2)}
-      className={stepClass(active)}
-      aria-hidden={!active}
-      inert={!active || undefined}
-    >
+    <fieldset ref={bind(2)} className={stepClass(active)} aria-hidden={!active}>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label={<>Sector<Req /></>}>
           <CategoryField required defaultValue={draft?.category ?? ""} className={FIELD} />
