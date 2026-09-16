@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { geist, geistMono, inter } from "@/app/fonts";
-import { CookiebotHead } from "@/components/layout/cookiebot-head";
+import { CookiebotStyleLoader } from "@/components/layout/cookiebot-style-loader";
 import { StyleRescue } from "@/components/layout/style-rescue";
+import { COOKIEBOT_OVERRIDE_CSS } from "@/lib/cookiebot-styles";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
-import "./cookiebot-overrides.css";
-import "./cookiebot-overrides-detail.css";
+
+const COOKIEBOT_ID = process.env.NEXT_PUBLIC_COOKIEBOT_ID?.trim();
 
 /* Newsreader is not loaded here. Widgets use Geist from this layout; a host
    that wants a different face sets it in the testimonial studio. */
@@ -80,10 +81,26 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geist.variable} ${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">
-        <CookiebotHead />
+      <head>
+        {COOKIEBOT_ID ? (
+          <script
+            id="Cookiebot"
+            src="https://consent.cookiebot.com/uc.js"
+            data-cbid={COOKIEBOT_ID}
+            data-blockingmode="auto"
+            data-widget-enabled="true"
+          />
+        ) : null}
+        <style
+          id="hansala-cookiebot-overrides"
+          dangerouslySetInnerHTML={{ __html: COOKIEBOT_OVERRIDE_CSS }}
+        />
+      </head>
+      <body suppressHydrationWarning className="flex min-h-full flex-col font-sans">
+        <CookiebotStyleLoader />
         <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
         <script
           type="application/ld+json"
