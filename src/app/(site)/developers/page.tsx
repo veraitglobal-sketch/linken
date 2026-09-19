@@ -231,7 +231,7 @@ export default function DevelopersPage() {
               index="03.3"
               path={`/api/v1/companies/{slug}/partners`}
               title="Partners"
-              description="Accepted mutual partnerships only — name, slug, verified. No emails or tokens."
+              description="Accepted mutual partnerships only — relation id, name, slug, verified, confirmed_at. No emails or tokens."
               fields={[
                 {
                   name: "partners",
@@ -239,6 +239,11 @@ export default function DevelopersPage() {
                   description: "Confirmed partners.",
                 },
                 { name: "count", type: "number", description: "Length of partners." },
+                {
+                  name: "partners[].id",
+                  type: "string",
+                  description: "Stable partnership UUID for external binding.",
+                },
                 {
                   name: "partners[].name",
                   type: "string",
@@ -254,10 +259,15 @@ export default function DevelopersPage() {
                   type: "boolean",
                   description: "Domain-verified partner.",
                 },
+                {
+                  name: "partners[].confirmed_at",
+                  type: "string",
+                  description: "ISO-8601 when the partnership was accepted.",
+                },
               ]}
               requestTabs={requestTabs(`${companyUrl}/partners`)}
               responseTabs={responseTab(
-                `{\n  "partners": [{ "name": "Nordwerk Holding", "slug": "nordwerk-holding", "verified": true }],\n  "count": 1\n}`,
+                `{\n  "partners": [{ "id": "11111111-1111-4111-8111-111111111111", "name": "Nordwerk Holding", "slug": "nordwerk-holding", "verified": true, "confirmed_at": "2024-11-02T09:14:00.000Z" }],\n  "count": 1\n}`,
               )}
             />
 
@@ -376,7 +386,7 @@ export default function DevelopersPage() {
             <DocsSectionHeading
               index="06"
               title="Agent API"
-              description="Pro plan. Authenticated write surface for AI agents acting as your company. Create keys in Workspace → API after upgrading."
+              description="Authenticated write surface for AI agents acting as your company. Create keys in Workspace → API — free on every plan. Website widgets on a customer site still need Pro."
             />
 
             <div
@@ -568,14 +578,21 @@ export default function DevelopersPage() {
                 </p>
                 <p className="mt-4 font-semibold text-ink">Public MCP (no key)</p>
                 <p className="mt-1">
-                  Anyone can install{" "}
-                  <code className="text-[12px]">npx hansala-mcp-public</code> —
-                  verify companies, pull confirmed proof, get shadcn + iframe
-                  snippets. See{" "}
+                  Hosted:{" "}
+                  <code className="text-[12px]">https://www.hansala.com/api/mcp/public</code>
+                  {" "}or <code className="text-[12px]">npx hansala-mcp-public</code>.
+                  Discovery:{" "}
+                  <code className="text-[12px]">/.well-known/mcp</code>
+                  {" "}and <code className="text-[12px]">/server-card</code>.
+                  Bind on{" "}
+                  <a href="/developers/evidence" className="font-semibold text-ink underline underline-offset-2">
+                    id + confirmed_at
+                  </a>
+                  . Cursor:{" "}
                   <code className="text-[12px]">.cursor/mcp.json.example</code>{" "}
                   → <code className="text-[12px]">hansala-public</code>.
                 </p>
-                <p className="mt-4 font-semibold text-ink">Agent MCP (Pro)</p>
+                <p className="mt-4 font-semibold text-ink">Agent MCP</p>
                 <p className="mt-1">
                   Local bridge for{" "}
                   <strong className="text-ink">your</strong> company — same{" "}

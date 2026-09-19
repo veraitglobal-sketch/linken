@@ -13,9 +13,9 @@ export function buildAgentOpenApi(siteUrl: string) {
     info: {
       title: "Hansala Agent API",
       version: "1.1.0",
-      summary: "Authenticated Agent API for Pro companies (Bearer hs_ keys).",
+      summary: "Authenticated Agent API (Bearer hs_ keys).",
       description:
-        "Pro plan. Bearer hs_ keys. PUT for image uploads (POST → 405). Agents invite only — never auto-confirm. Free keys → 403 plan_required.",
+        "Bearer hs_ keys on every plan. PUT for image uploads (POST → 405). Agents invite only — never auto-confirm. Website widgets on a customer site still require Pro.",
       termsOfService: OPENAPI_TERMS,
       contact: OPENAPI_CONTACT,
       license: OPENAPI_LICENSE,

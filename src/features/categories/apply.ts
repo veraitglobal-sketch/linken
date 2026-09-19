@@ -1,3 +1,4 @@
+import { asCompanySector } from "@/features/companies/sector";
 import { matchCategory } from "@/features/categories/match";
 import { matchCountry } from "@/features/geo/countries";
 
@@ -14,7 +15,7 @@ export type CountryWrite = {
 
 /** Hidden slug is ignored — matchCategory is the authority. */
 export function resolveCategoryWrite(raw: string): CategoryWrite {
-  const category = raw.trim().slice(0, 80);
+  const category = asCompanySector(raw).slice(0, 80);
   if (!category) return { category: "", category_slug: null, unmatched: false };
   const matched = matchCategory(category);
   return {

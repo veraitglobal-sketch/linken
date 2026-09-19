@@ -23,8 +23,8 @@ export default function ApiTermsPage() {
           use and cache headers apply.
         </li>
         <li>
-          <strong>Agent API</strong> — Bearer `hs_` key, Pro plan, scoped to one
-          company. Keys must be kept secret.
+          <strong>Agent API</strong> — Bearer `hs_` key on every plan, scoped to one
+          company. Keys must be kept secret. Premium website widgets still require Pro.
         </li>
         <li>
           Agents may invite and draft; they must never mark partnerships,

@@ -246,9 +246,9 @@ export function VisualSlot({
     <div
       aria-hidden
       className={cn(
-        "grid w-full place-items-center rounded-2xl border-2 border-dashed",
+        "grid w-full place-items-center border-2 border-dashed",
         onDark ? "border-white/25 text-on-navy-muted" : "border-ink/20 text-ink/45",
-        className,
+        className ?? "rounded-2xl",
       )}
     >
       <span className="flex flex-col items-center gap-1.5 px-4 text-center">

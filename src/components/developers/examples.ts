@@ -35,6 +35,7 @@ export function referencesExample() {
   return `{
   "references": [
     {
+      "id": "22222222-2222-4222-8222-222222222222",
       "client_name": "Nordwerk Holding",
       "client_slug": "nordwerk-holding",
       "service": "Shell construction",
@@ -46,6 +47,7 @@ export function referencesExample() {
       "disclosure": "named"
     },
     {
+      "id": "33333333-3333-4333-8333-333333333333",
       "client_name": "Undisclosed client",
       "client_slug": null,
       "service": "Electrical fit-out",
@@ -170,7 +172,13 @@ export function verifyExample(siteUrl: string) {
   "llm_md_url": "${siteUrl}/c/example-architecture/llm.md",
   "api_url": "${siteUrl}/api/v1/companies/example-architecture",
   "partners": [
-    { "name": "North Studio", "slug": "north-studio", "verified": true }
+    {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "name": "North Studio",
+      "slug": "north-studio",
+      "verified": true,
+      "confirmed_at": "2024-11-02T09:14:00.000Z"
+    }
   ],
   "generated_at": "2026-07-19T18:00:00.000Z"
 }`;

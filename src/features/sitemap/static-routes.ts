@@ -11,6 +11,7 @@ type StaticRoute = {
 const BASE: StaticRoute[] = [
   { path: "", changeFrequency: "weekly", priority: 1 },
   { path: "/search", changeFrequency: "daily", priority: 0.8 },
+  { path: "/companies", changeFrequency: "daily", priority: 0.85 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/pricing", changeFrequency: "weekly", priority: 0.85 },
   { path: "/use-cases", changeFrequency: "monthly", priority: 0.8 },
@@ -19,6 +20,7 @@ const BASE: StaticRoute[] = [
   { path: "/contact", changeFrequency: "monthly", priority: 0.55 },
   { path: "/developers", changeFrequency: "weekly", priority: 0.9 },
   { path: "/developers/webhooks", changeFrequency: "monthly", priority: 0.55 },
+  { path: "/developers/evidence", changeFrequency: "monthly", priority: 0.55 },
   { path: "/developers/api-terms", changeFrequency: "yearly", priority: 0.4 },
   { path: "/changelog", changeFrequency: "weekly", priority: 0.65 },
   { path: "/status", changeFrequency: "daily", priority: 0.5 },
@@ -30,6 +32,7 @@ const BASE: StaticRoute[] = [
   { path: "/terms", changeFrequency: "yearly", priority: 0.35 },
   { path: "/cookies", changeFrequency: "yearly", priority: 0.3 },
   { path: "/llms.txt", changeFrequency: "weekly", priority: 0.45 },
+  { path: "/llms-full.txt", changeFrequency: "daily", priority: 0.5 },
 ];
 
 const ROUTES: StaticRoute[] = [

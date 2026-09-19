@@ -65,7 +65,8 @@ export default function PrivacyPage() {
           To send transactional email (magic links, invites, confirmations).
         </li>
         <li>
-          To expose Public and Agent APIs according to your settings and plan.
+          To expose Public and Agent APIs according to your settings. Premium
+          website widgets and outbound webhooks follow your plan.
         </li>
         <li>We do not sell personal data.</li>
       </ul>

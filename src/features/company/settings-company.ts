@@ -1,3 +1,5 @@
+import { asCompanySector } from "@/features/companies/sector";
+
 export type SettingsCompany = {
   name: string;
   slug: string;
@@ -57,14 +59,15 @@ function asServices(value: unknown): string[] {
 }
 
 export function toSettingsCompany(row: Row, publicHost: string): SettingsCompany {
+  const category = asCompanySector(row.category);
   return {
     name: row.name,
     slug: row.slug,
     tagline: row.tagline ?? "",
     description: row.description ?? "",
     organizationKind: row.organization_kind ?? "company",
-    category: row.category ?? "",
-    categorySlug: row.category_slug ?? null,
+    category,
+    categorySlug: category ? row.category_slug ?? null : null,
     city: row.city ?? "",
     country: row.country ?? "Germany",
     countryCode: row.country_code ?? null,

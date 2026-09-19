@@ -1,3 +1,4 @@
+import { extractDomain } from "@/features/verification/domain";
 import { absoluteUrl, companyPath } from "@/features/seo/paths";
 
 type CompanyLdInput = {
@@ -38,12 +39,14 @@ export function buildCompanyOrganizationLd(input: CompanyLdInput) {
   const desc =
     (input.description || input.tagline || "").trim() || undefined;
   const logo = resolveAssetUrl(input.siteUrl, input.logoUrl);
+  const aliases = nameAliases(input.name, input.website);
 
   return {
     "@context": "https://schema.org",
     "@type": types.length === 1 ? types[0] : [...types],
     "@id": `${url}#organization`,
     name: input.name,
+    ...(aliases ? { alternateName: aliases } : {}),
     url,
     ...(desc ? { description: desc } : {}),
     ...(input.website?.trim()
@@ -80,6 +83,17 @@ export function buildCompanyOrganizationLd(input: CompanyLdInput) {
         }
       : {}),
   };
+}
+
+function nameAliases(name: string, website?: string): string[] | undefined {
+  const host = extractDomain(website ?? "");
+  if (!host) return undefined;
+  const label = host.split(".")[0] ?? "";
+  const out = [host];
+  if (label && label.toLowerCase() !== name.trim().toLowerCase()) {
+    out.push(label);
+  }
+  return out;
 }
 
 function resolveAssetUrl(siteUrl: string, raw?: string | null) {

@@ -2,17 +2,21 @@ import { PostConfirmSuccess } from "@/components/confirm/post-confirm-success";
 import { PostConfirmTestimonial } from "@/components/confirm/post-confirm-testimonial";
 import { PostConfirmAssessment } from "@/components/assessments/post-confirm-assessment";
 import { ConfirmAuth } from "@/components/confirm/confirm-auth";
-import { ConfirmCompanyForm } from "@/components/confirm/confirm-company-form";
 import { ConfirmDecision } from "@/components/confirm/confirm-decision";
+import {
+  ConfirmErrorNote,
+  ConfirmStatus,
+  ConfirmSwitchAccount,
+} from "@/components/confirm/confirm-status";
 import type { ListingCompany } from "@/features/acquisition/listing-companies";
+import {
+  confirmResponderGate,
+  suggestedConfirmCompanyName,
+} from "@/features/confirm/gate";
 import type { PostConfirmSubject } from "@/features/confirm/post-confirm-subject";
 import type { ClientConfirmationView } from "@/types/client-confirmation";
 
-type ViewerCompany = {
-  id: string;
-  name: string;
-  slug: string;
-} | null;
+type ViewerCompany = { id: string; name: string; slug: string } | null;
 
 type Props = {
   view: ClientConfirmationView;
@@ -29,67 +33,21 @@ type Props = {
   alreadyAssessed?: boolean;
 };
 
-export function ConfirmPanel({
-  view,
-  userId,
-  company,
-  listings,
-  suggestedWebsite,
-  subject,
-  testimonialUrl,
-  error,
-  done,
-  assessed = false,
-  skipped = false,
-  alreadyAssessed = false,
-}: Props) {
+export function ConfirmPanel(props: Props) {
+  const { view, userId, company, error, done } = props;
   const next = `/confirm/${view.token}`;
   const confirmed = done === "confirmed" || view.status === "confirmed";
+  const asName = suggestedConfirmCompanyName(company?.name, view.email);
+  const gate = confirmResponderGate({
+    userId,
+    companyId: company?.id ?? null,
+    senderCompanyId: view.requestedByCompanyId,
+  });
 
-  if (confirmed) {
-    const suggestedName =
-      view.confirmerName?.trim() ||
-      company?.name ||
-      view.email.split("@")[0] ||
-      "Your company";
-
-    return (
-      <div className="space-y-4">
-        {error ? (
-          <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-            {error}
-          </p>
-        ) : null}
-        {subject ? (
-          <PostConfirmSuccess
-            subject={subject}
-            listings={listings}
-            suggestedName={suggestedName}
-            suggestedWebsite={suggestedWebsite}
-          />
-        ) : null}
-        <PostConfirmTestimonial
-          requesterName={view.requesterName}
-          testimonialUrl={testimonialUrl ?? null}
-        />
-        <PostConfirmAssessment
-          sourceType="confirmation"
-          sourceId={view.id}
-          providerName={view.requesterName}
-          providerSlug={view.requesterSlug}
-          returnTo={next}
-          alreadyAssessed={alreadyAssessed}
-          assessedJustNow={assessed}
-          skipped={skipped}
-          hideConfirmedBanner
-        />
-      </div>
-    );
-  }
-
+  if (confirmed) return <ConfirmedProject {...props} next={next} asName={asName} />;
   if (done === "declined" || view.status === "declined") {
     return (
-      <StatusCard
+      <ConfirmStatus
         title="Request declined"
         body="This confirmation request was declined."
       />
@@ -98,30 +56,67 @@ export function ConfirmPanel({
 
   return (
     <div className="space-y-4">
-      {error ? (
-        <p className="rounded-2xl border border-ember/35 bg-ember/10 px-4 py-3 text-sm text-ink">
-          {error}
-        </p>
-      ) : null}
-
-      {!userId ? (
+      {error ? <ConfirmErrorNote>{error}</ConfirmErrorNote> : null}
+      {gate === "auth" ? (
         <ConfirmAuth next={next} invitedEmail={view.email} />
-      ) : !company ? (
-        <ConfirmCompanyForm next={next} />
+      ) : gate === "sender" ? (
+        <ConfirmSwitchAccount
+          next={next}
+          title="Wrong account for this link"
+          body={`You’re signed in as the company that sent this. Sign out, then sign in as the client.`}
+        />
       ) : (
-        <ConfirmDecision view={view} companyName={company.name} />
+        <ConfirmDecision
+          view={view}
+          companyName={asName}
+          suggestedName={suggestedConfirmCompanyName(null, view.email)}
+        />
       )}
     </div>
   );
 }
 
-function StatusCard({ title, body }: { title: string; body: string }) {
+function ConfirmedProject({
+  view,
+  company,
+  listings,
+  suggestedWebsite,
+  subject,
+  testimonialUrl,
+  error,
+  assessed = false,
+  skipped = false,
+  alreadyAssessed = false,
+  next,
+  asName,
+}: Props & { next: string; asName: string }) {
+  const suggestedName = view.confirmerName?.trim() || asName;
   return (
-    <div className="rounded-[24px] border border-line bg-surface px-5 py-8 text-center sm:px-7">
-      <h2 className="font-display text-2xl font-medium tracking-[-0.03em] text-ink">
-        {title}
-      </h2>
-      <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-soft">{body}</p>
+    <div className="space-y-4">
+      {error ? <ConfirmErrorNote>{error}</ConfirmErrorNote> : null}
+      {subject ? (
+        <PostConfirmSuccess
+          subject={subject}
+          listings={listings}
+          suggestedName={suggestedName}
+          suggestedWebsite={suggestedWebsite}
+        />
+      ) : null}
+      <PostConfirmTestimonial
+        requesterName={view.requesterName}
+        testimonialUrl={testimonialUrl ?? null}
+      />
+      <PostConfirmAssessment
+        sourceType="confirmation"
+        sourceId={view.id}
+        providerName={view.requesterName}
+        providerSlug={view.requesterSlug}
+        returnTo={next}
+        alreadyAssessed={alreadyAssessed}
+        assessedJustNow={assessed}
+        skipped={skipped}
+        hideConfirmedBanner
+      />
     </div>
   );
 }

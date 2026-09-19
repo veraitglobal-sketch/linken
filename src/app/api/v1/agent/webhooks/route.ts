@@ -61,7 +61,12 @@ export async function POST(request: NextRequest) {
     if (!result.ok) {
       return {
         status: result.status ?? 422,
-        body: { error: { code: "invalid_request", message: result.error } },
+        body: {
+          error: {
+            code: result.status === 403 ? "plan_required" : "invalid_request",
+            message: result.error,
+          },
+        },
         auditAction: "webhooks.create",
         auditSummary: result.error,
       };

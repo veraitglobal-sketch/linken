@@ -125,6 +125,14 @@ export async function respondPartnership(formData: FormData) {
       },
       `partnership_${partnershipId}`,
     );
+    const { scheduleCompanyIndexNow, schedulePartnershipIndexNow } =
+      await import("@/features/seo/indexnow-schedule");
+    if (requester?.slug && recipient?.slug) {
+      schedulePartnershipIndexNow(requester.slug, recipient.slug);
+    } else {
+      if (requester?.slug) scheduleCompanyIndexNow(requester.slug);
+      if (recipient?.slug) scheduleCompanyIndexNow(recipient.slug);
+    }
 
     const {
       offerPartnershipTestimonial,
@@ -136,6 +144,7 @@ export async function respondPartnership(formData: FormData) {
     });
     revalidatePath(back);
     revalidatePath(`/c/${mine.slug}`);
+    revalidatePath("/companies", "layout");
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/partners");
     redirect(

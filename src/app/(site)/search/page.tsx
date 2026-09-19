@@ -45,7 +45,11 @@ export default async function SearchPage({ searchParams }: Props) {
         See who a company has really worked with.
       </h1>
       <p className="animate-rise-delay mt-6 max-w-[54ch] text-[17px] leading-[1.6] text-ink-soft sm:text-[18px]">
-        Search by name, sector or city. A profile lists a partner only after both companies confirmed it.
+        Search by name, sector or city. A profile lists a partner only after both companies confirmed it. Or{" "}
+        <a href="/companies" className="font-semibold text-navy hover:underline">
+          browse companies by name
+        </a>
+        .
       </p>
     </>
   );

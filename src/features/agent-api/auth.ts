@@ -6,7 +6,6 @@ import {
   checkAgentRateLimit,
 } from "@/features/agent-api/rate-limit";
 import type { AgentAuthContext, AgentScope } from "@/features/agent-api/types";
-import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const LAST_USED_THROTTLE_MS = 60_000;
@@ -118,21 +117,6 @@ export async function authenticateAgentRequest(
       status: 403,
       code: "insufficient_scope",
       message: `This key lacks the '${requiredScope}' scope.`,
-    };
-  }
-
-  const { data: company } = await admin
-    .from("companies")
-    .select("plan")
-    .eq("id", row.company_id)
-    .maybeSingle();
-
-  if (!getEntitlements(parsePlan(company?.plan)).agentApi) {
-    return {
-      ok: false,
-      status: 403,
-      code: "plan_required",
-      message: "Agent API requires Hansala Pro. Upgrade on Billing.",
     };
   }
 

@@ -64,6 +64,8 @@ export type ApiCompanyResponse = {
 };
 
 export type ApiReference = {
+  /** service_references.id — stable record UUID for external binding. */
+  id: string;
   client_name: string;
   /** Public slug when the client has a claimed Hansala profile. */
   client_slug: string | null;
@@ -87,9 +89,13 @@ export type ApiReferencesResponse = {
 
 /** GET /api/v1/companies/{slug}/partners — accepted mutual partnerships only. */
 export type ApiPartner = {
+  /** partnerships.id — stable relation UUID for external binding. */
+  id: string;
   name: string;
   slug: string;
   verified: boolean;
+  /** ISO-8601 when the partnership was accepted. */
+  confirmed_at: string;
 };
 
 export type ApiPartnersResponse = {

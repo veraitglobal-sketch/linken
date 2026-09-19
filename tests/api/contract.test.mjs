@@ -104,6 +104,7 @@ test("contract: references list rejects pending and secrets", () => {
     validateReferencesResponse({
       references: [
         {
+          id: "22222222-2222-4222-8222-222222222222",
           client_name: FIXTURES.client.name,
           service: "Architecture",
           confirmed_at: "2026-01-01T00:00:00.000Z",
@@ -221,7 +222,15 @@ test("verify oracle keeps existing keys and adds partners", () => {
     assessment: null,
     llm_md_url: null,
     api_url: null,
-    partners: [{ name: "North Studio", slug: "north-studio", verified: true }],
+    partners: [
+      {
+        id: "11111111-1111-4111-8111-111111111111",
+        name: "North Studio",
+        slug: "north-studio",
+        verified: true,
+        confirmed_at: "2024-11-02T09:14:00.000Z",
+      },
+    ],
     generated_at: new Date().toISOString(),
   };
   for (const key of [
@@ -239,4 +248,6 @@ test("verify oracle keeps existing keys and adds partners", () => {
   }
   assert.ok(Array.isArray(body.partners));
   assert.equal("status" in body.partners[0], false);
+  assert.ok("id" in body.partners[0]);
+  assert.ok("confirmed_at" in body.partners[0]);
 });

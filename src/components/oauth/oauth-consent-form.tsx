@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { allowMcpConsent, denyMcpConsent } from "@/features/oauth/actions";
 import type { AuthorizeQuery, ConsentCompany } from "@/features/oauth/types";
 import { Button } from "@/components/ui/button";
@@ -29,13 +28,9 @@ function HiddenQuery({ query }: { query: AuthorizeQuery }) {
 }
 
 export function OauthConsentForm({ clientName, companies, query, notice }: Props) {
-  const initial = useMemo(
-    () => companies.find((c) => c.agentApi)?.id ?? companies[0]?.id ?? "",
-    [companies],
-  );
+  const initial = useMemo(() => companies[0]?.id ?? "", [companies]);
   const [companyId, setCompanyId] = useState(initial);
   const selected = companies.find((c) => c.id === companyId);
-  const pro = Boolean(selected?.agentApi);
   const companyName = selected?.name ?? "your company";
 
   return (
@@ -55,7 +50,6 @@ export function OauthConsentForm({ clientName, companies, query, notice }: Props
           companies={companies}
           companyId={companyId}
           onCompany={setCompanyId}
-          pro={pro}
           query={query}
         />
       )}
@@ -67,13 +61,11 @@ function ConsentFields({
   companies,
   companyId,
   onCompany,
-  pro,
   query,
 }: {
   companies: ConsentCompany[];
   companyId: string;
   onCompany: (id: string) => void;
-  pro: boolean;
   query: AuthorizeQuery;
 }) {
   return (
@@ -99,41 +91,21 @@ function ConsentFields({
       <p className="mt-3 text-[13px] text-muted">
         You can disconnect any time in Dashboard → API.
       </p>
-      {pro ? (
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <form action={allowMcpConsent}>
-            <HiddenQuery query={query} />
-            <input type="hidden" name="company_id" value={companyId} />
-            <Button type="submit" className="h-11 px-6">
-              Allow
-            </Button>
-          </form>
-          <form action={denyMcpConsent}>
-            <HiddenQuery query={query} />
-            <Button type="submit" variant="secondary" className="h-11 px-6">
-              Cancel
-            </Button>
-          </form>
-        </div>
-      ) : (
-        <div className="mt-8">
-          <p className="text-[15px] leading-relaxed text-ink-soft">
-            Managing your company from Claude is part of Pro.
-          </p>
-          <Link
-            href="/dashboard/billing"
-            className="mt-3 inline-block text-[14px] font-semibold text-ink underline-offset-2 hover:underline"
-          >
-            Open billing
-          </Link>
-          <form action={denyMcpConsent} className="mt-6">
-            <HiddenQuery query={query} />
-            <Button type="submit" variant="secondary" className="h-11 px-6">
-              Cancel
-            </Button>
-          </form>
-        </div>
-      )}
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <form action={allowMcpConsent}>
+          <HiddenQuery query={query} />
+          <input type="hidden" name="company_id" value={companyId} />
+          <Button type="submit" className="h-11 px-6">
+            Allow
+          </Button>
+        </form>
+        <form action={denyMcpConsent}>
+          <HiddenQuery query={query} />
+          <Button type="submit" variant="secondary" className="h-11 px-6">
+            Cancel
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

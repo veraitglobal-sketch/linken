@@ -3,7 +3,7 @@ import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 import { Button } from "@/components/ui/button";
 import { InboxCoOwnerRequests } from "@/components/inbox/inbox-co-owner-requests";
 import { InboxRequestRow } from "@/components/inbox/inbox-request-row";
-import { confirmCaseStudyPartnerRole } from "@/features/case-studies/actions";
+import { confirmCaseStudyPartnerRole } from "@/features/case-studies/partner-role-actions";
 import type { PendingCaseStudyConfirmation } from "@/features/case-studies/pending-confirmations";
 import { respondGroupMembership, respondGroupParent } from "@/features/groups/actions";
 import type {

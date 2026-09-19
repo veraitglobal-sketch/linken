@@ -4,8 +4,8 @@ import { TOOLS as AGENT_TOOLS } from "../../../mcp/hansala/tools.mjs";
 import { handleTool as handlePublicTool } from "../../../mcp/hansala-public/handlers.mjs";
 import { TOOLS as PUBLIC_TOOLS } from "../../../mcp/hansala-public/tools.mjs";
 import { MCP_CORS } from "@/features/mcp/cors";
+import { MCP_PROTOCOL_VERSIONS } from "@/features/mcp/discovery";
 
-const SUPPORTED_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 const SERVER_INFO = { name: "hansala", title: "Hansala", version: "1.0.0" };
 
 type JsonRpcMessage = {
@@ -109,7 +109,9 @@ async function respond(msg: JsonRpcMessage, base: string, key: string | null) {
     case "initialize": {
       const asked = String(msg.params?.protocolVersion ?? "");
       return ok({
-        protocolVersion: SUPPORTED_VERSIONS.includes(asked) ? asked : SUPPORTED_VERSIONS[0],
+        protocolVersion: (MCP_PROTOCOL_VERSIONS as readonly string[]).includes(asked)
+          ? asked
+          : MCP_PROTOCOL_VERSIONS[0],
         capabilities: { tools: { listChanged: false } },
         serverInfo: SERVER_INFO,
         instructions: key
@@ -168,6 +170,10 @@ export function mcpGetInfo() {
       name: "Hansala MCP",
       transport: "streamable-http",
       docs: "https://www.hansala.com/developers#agent-mcp",
+      evidence: "https://www.hansala.com/developers/evidence",
+      discovery: "https://www.hansala.com/.well-known/mcp",
+      serverCard: "https://www.hansala.com/server-card",
+      publicUrl: "https://www.hansala.com/api/mcp/public",
     }),
     { status: 405, headers: { ...MCP_CORS, Allow: "POST", "Content-Type": "application/json" } },
   );

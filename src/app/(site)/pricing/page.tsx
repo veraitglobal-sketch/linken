@@ -23,7 +23,7 @@ import { isStripeConfigured } from "@/lib/stripe";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Hansala Free vs Pro — confirmed records stay free. Pro adds embeds, analytics, API, and team seats.",
+    "Hansala Free vs Pro — confirmed records stay free. Pro adds website widgets, analytics, and team seats.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -59,10 +59,14 @@ const ADDONS: readonly Addon[] = [
     icon: <Icon d="M4 20V10m5 10V4m5 16v-7m5 7V8" />,
   },
   {
-    title: "Agent API & webhooks",
-    body: "Drive the same record from your own tools.",
-    features: ["Agent API keys", "Webhooks on record changes", "Public API stays open on every plan"],
-    href: "/developers",
+    title: "Outbound webhooks",
+    body: "Signed POSTs when a confirmation lands — Slack or your own URL.",
+    features: [
+      "HMAC-signed event delivery",
+      "Slack Incoming Webhook URLs",
+      "Agent API stays free on every plan",
+    ],
+    href: "/developers/webhooks",
     cta: "Read the docs",
     icon: <Icon d="M8.5 7.5 4 12l4.5 4.5M15.5 7.5 20 12l-4.5 4.5" />,
   },

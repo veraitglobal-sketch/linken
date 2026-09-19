@@ -13,7 +13,7 @@ export default function WebhooksPage() {
       <p>
         Outbound webhooks push JSON to your HTTPS URL when confirmed events
         happen. Configure in{" "}
-        <Link href="/dashboard/api">Workspace → API</Link> (Pro) or via Agent
+        <Link href="/dashboard/api">Workspace → API</Link> (webhooks are Pro) or via Agent
         API scope <code>webhooks:manage</code>.
       </p>
 

@@ -21,6 +21,11 @@ import {
   listSitemapGroups,
 } from "@/features/sitemap/queries-content";
 import { buildStaticSitemap } from "@/features/sitemap/static-routes";
+import { directoryLetterSitemapEntries } from "@/features/sitemap/directory-entries";
+import {
+  listDirectoryCatalog,
+  type DirectoryCompany,
+} from "@/features/seo/directory-queries";
 import { rankingSitemapEntries } from "@/features/sitemap/queries-ranking";
 import {
   SITEMAP_CASE_STUDY_BASE_ID,
@@ -61,7 +66,17 @@ export async function buildSitemapForId(
 
   if (id === SITEMAP_STATIC_ID) {
     const ranking = await rankingSitemapEntries(siteUrl);
-    return [...buildStaticSitemap(siteUrl), ...ranking];
+    let directory: DirectoryCompany[] = [];
+    try {
+      directory = await listDirectoryCatalog();
+    } catch (err) {
+      console.error("[sitemap] directory", err);
+    }
+    return [
+      ...buildStaticSitemap(siteUrl),
+      ...ranking,
+      ...directoryLetterSitemapEntries(siteUrl, directory),
+    ];
   }
 
   if (id === SITEMAP_GROUP_ID) {

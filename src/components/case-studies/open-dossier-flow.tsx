@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { createCaseStudyWithConfirm } from "@/features/case-studies/actions";
+import { createCaseStudyWithConfirm } from "@/features/case-studies/create-with-confirm";
 
 type Props = {
   companySlug: string;

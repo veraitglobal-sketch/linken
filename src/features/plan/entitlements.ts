@@ -6,7 +6,7 @@ export type Entitlements = {
   onePagerBranding: boolean;
   /** Premium /embed variants + widgets studio unlock. */
   premiumEmbeds: boolean;
-  /** Agent API keys and programmatic access. */
+  /** Agent API keys, MCP, and programmatic access — free on every plan. */
   agentApi: boolean;
   /** Max team members including owner. Free = owner only. */
   maxTeamMembers: number;
@@ -20,7 +20,7 @@ const FREE: Omit<Entitlements, "radarInstantAlerts" | "radarCredits"> = {
   fullAnalytics: false,
   onePagerBranding: false,
   premiumEmbeds: false,
-  agentApi: false,
+  agentApi: true,
   maxTeamMembers: 1,
 };
 

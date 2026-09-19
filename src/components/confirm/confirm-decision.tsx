@@ -1,7 +1,7 @@
 import {
   confirmClientRequest,
   declineClientRequest,
-} from "@/features/case-studies/actions";
+} from "@/features/case-studies/confirm-actions";
 import { ConfirmDepthFields } from "@/components/confirm/confirm-depth-fields";
 import { Button } from "@/components/ui/button";
 import type { ClientConfirmationView } from "@/types/client-confirmation";
@@ -9,9 +9,14 @@ import type { ClientConfirmationView } from "@/types/client-confirmation";
 type Props = {
   view: ClientConfirmationView;
   companyName: string;
+  suggestedName?: string;
 };
 
-export function ConfirmDecision({ view, companyName }: Props) {
+export function ConfirmDecision({
+  view,
+  companyName,
+  suggestedName,
+}: Props) {
   return (
     <div className="rounded-[20px] border border-line/80 bg-surface px-4 py-5 shadow-[0_10px_28px_rgba(8,20,18,0.045)] sm:px-5">
       <p className="text-[10px] font-semibold tracking-[0.14em] text-ember-deep uppercase">
@@ -32,6 +37,7 @@ export function ConfirmDecision({ view, companyName }: Props) {
 
       <form action={confirmClientRequest} className="mt-4">
         <input type="hidden" name="token" value={view.token} />
+        <input type="hidden" name="suggested_name" value={suggestedName || companyName} />
         <ConfirmDepthFields />
         <Button type="submit" className="mt-4 h-10 w-full text-[13px]">
           Confirm project
@@ -39,6 +45,7 @@ export function ConfirmDecision({ view, companyName }: Props) {
       </form>
       <form action={declineClientRequest} className="mt-1.5">
         <input type="hidden" name="token" value={view.token} />
+        <input type="hidden" name="suggested_name" value={suggestedName || companyName} />
         <Button
           type="submit"
           variant="secondary"

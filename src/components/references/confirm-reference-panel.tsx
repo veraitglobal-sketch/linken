@@ -1,16 +1,17 @@
-import { PostConfirmSuccess } from "@/components/confirm/post-confirm-success";
-import { PostConfirmTestimonial } from "@/components/confirm/post-confirm-testimonial";
-import type { PostConfirmSubject } from "@/features/confirm/post-confirm-subject";
+import { ConfirmReferenceDone } from "@/components/references/confirm-reference-done";
 import { ConfirmDepthFields } from "@/components/confirm/confirm-depth-fields";
 import {
   ConfirmErrorNote,
   ConfirmStatus,
   ConfirmSwitchAccount,
 } from "@/components/confirm/confirm-status";
-import { PostConfirmAssessment } from "@/components/assessments/post-confirm-assessment";
 import { InviteAuth } from "@/components/auth/invite-auth";
-import { ConfirmCompanyForm } from "@/components/confirm/confirm-company-form";
 import type { ListingCompany } from "@/features/acquisition/listing-companies";
+import {
+  confirmResponderGate,
+  suggestedConfirmCompanyName,
+} from "@/features/confirm/gate";
+import type { PostConfirmSubject } from "@/features/confirm/post-confirm-subject";
 import {
   confirmServiceReference,
   declineServiceReference,
@@ -35,62 +36,20 @@ type Props = {
   alreadyAssessed?: boolean;
 };
 
-export function ConfirmReferencePanel({
-  preview,
-  token,
-  userId,
-  userEmail,
-  company,
-  listings,
-  suggestedWebsite,
-  subject,
-  testimonialUrl,
-  error,
-  done,
-  assessed = false,
-  skipped = false,
-  alreadyAssessed = false,
-}: Props) {
+export function ConfirmReferencePanel(props: Props) {
+  const { preview, token, userId, userEmail, company, error, done } = props;
   const next = `/confirm-reference/${token}`;
   const confirmed = done === "confirmed" || preview.status === "confirmed";
-  const isProvider = Boolean(company && company.id === preview.providerId);
   const invite = preview.inviteEmail?.trim().toLowerCase() || null;
   const signedIn = userEmail?.trim().toLowerCase() || null;
-  const wrongInbox = Boolean(
-    invite && signedIn && invite !== signedIn && (isProvider || Boolean(company)),
-  );
+  const asName = suggestedConfirmCompanyName(company?.name, preview.clientName);
+  const gate = confirmResponderGate({
+    userId,
+    companyId: company?.id ?? null,
+    senderCompanyId: preview.providerId,
+  });
 
-  if (confirmed) {
-    return (
-      <div className="space-y-4">
-        {error ? <ConfirmErrorNote>{error}</ConfirmErrorNote> : null}
-        {subject ? (
-          <PostConfirmSuccess
-            subject={subject}
-            listings={listings}
-            suggestedName={company?.name || preview.clientName}
-            suggestedWebsite={suggestedWebsite}
-          />
-        ) : null}
-        <PostConfirmTestimonial
-          requesterName={preview.providerName}
-          testimonialUrl={testimonialUrl ?? null}
-        />
-        <PostConfirmAssessment
-          sourceType="reference"
-          sourceId={preview.id}
-          providerName={preview.providerName}
-          providerSlug={preview.providerSlug}
-          returnTo={next}
-          alreadyAssessed={alreadyAssessed}
-          assessedJustNow={assessed}
-          skipped={skipped}
-          hideConfirmedBanner
-        />
-      </div>
-    );
-  }
-
+  if (confirmed) return <ConfirmReferenceDone {...props} next={next} />;
   if (done === "declined" || preview.status === "declined") {
     return (
       <ConfirmStatus
@@ -99,8 +58,7 @@ export function ConfirmReferencePanel({
       />
     );
   }
-
-  if (!userId) {
+  if (gate === "auth") {
     return (
       <InviteAuth
         next={next}
@@ -110,23 +68,14 @@ export function ConfirmReferencePanel({
       />
     );
   }
-
-  if (isProvider || wrongInbox) {
+  if (gate === "sender") {
     return (
       <ConfirmSwitchAccount
         next={next}
-        title={isProvider ? "Wrong account for this link" : "Sign in with the invite email"}
-        body={
-          isProvider
-            ? `You’re signed in as ${signedIn ?? company?.name} (the sender). This invite went to ${invite ?? preview.clientName}. Sign out, then sign in with that inbox.`
-            : `This invite was sent to ${invite}. You’re signed in as ${signedIn}. Switch accounts to confirm.`
-        }
+        title="Wrong account for this link"
+        body={`You’re signed in as ${signedIn ?? company?.name} (the sender). This invite went to ${invite ?? preview.clientName}. Sign out, then sign in with that inbox.`}
       />
     );
-  }
-
-  if (!company) {
-    return <ConfirmCompanyForm next={next} defaultName={preview.clientName} />;
   }
 
   return (
@@ -140,10 +89,16 @@ export function ConfirmReferencePanel({
         {preview.startedYear ? ` since ${preview.startedYear}` : ""}.
       </h2>
       <p className="mt-3 text-[14px] text-ink-soft">
-        Confirm as <span className="font-semibold text-ink">{company.name}</span>.
+        Confirm as <span className="font-semibold text-ink">{asName}</span>.
       </p>
+      {invite && signedIn && invite !== signedIn ? (
+        <p className="mt-2 text-[13px] text-muted">
+          Invite sent to {invite}. Confirming as {asName}.
+        </p>
+      ) : null}
       <form action={confirmServiceReference} className="mt-6">
         <input type="hidden" name="token" value={token} />
+        <input type="hidden" name="suggested_name" value={preview.clientName} />
         <ConfirmDepthFields />
         <div className="mt-6">
           <Button type="submit" className="h-11 w-full">
@@ -153,6 +108,7 @@ export function ConfirmReferencePanel({
       </form>
       <form action={declineServiceReference} className="mt-2">
         <input type="hidden" name="token" value={token} />
+        <input type="hidden" name="suggested_name" value={preview.clientName} />
         <Button type="submit" variant="secondary" className="h-11 w-full">
           Decline
         </Button>

@@ -1,4 +1,8 @@
 import { cache } from "react";
+import {
+  asCompanySector,
+  asPublicCompanyText,
+} from "@/features/companies/sector";
 import { parsePlan } from "@/features/plan/entitlements";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { Company } from "@/types/company";
@@ -44,9 +48,9 @@ function mapRow(row: {
     id: row.id,
     slug: row.slug,
     name: row.name,
-    tagline: row.tagline ?? "",
-    description: row.description ?? "",
-    category: row.category ?? "",
+    tagline: asPublicCompanyText("tagline", row.tagline),
+    description: asPublicCompanyText("description", row.description),
+    category: asCompanySector(row.category),
     city: row.city ?? "",
     country: row.country ?? "Germany",
     website: row.website ?? "",

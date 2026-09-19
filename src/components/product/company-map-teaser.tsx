@@ -1,37 +1,35 @@
 import Link from "next/link";
+import { ProfileIcons, ProfileSection } from "@/components/company/profile-section";
 import { PRODUCT } from "@/lib/product-model";
 
 type Props = { companySlug: string };
 
-/** When the graph is still empty — still show the Map as part of Company. */
+/** Empty map — same card as “In their own words”, same column width. */
 export function CompanyMapTeaser({ companySlug }: Props) {
   return (
-    <section className="mx-auto mt-5 max-w-6xl scroll-mt-28 px-4">
-      <div className="rounded-none border border-line bg-surface px-5 py-8 sm:px-7">
-        <p className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">
-          {PRODUCT.map.label}
-        </p>
-        <h2 className="mt-2 font-display text-[clamp(1.4rem,2.4vw,1.75rem)] font-medium tracking-[-0.035em] text-ink">
-          Your connections live here
-        </h2>
-        <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-muted">
-          {PRODUCT.map.job} Add partners on this page first.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Link
-            href={`/c/${companySlug}?add=1#partners`}
-            className="inline-flex h-9 items-center rounded-none bg-navy px-3.5 text-[12px] font-semibold text-white"
-          >
-            Add partner
-          </Link>
-          <Link
-            href="/dashboard"
-            className="inline-flex h-9 items-center rounded-none border border-line px-3.5 text-[12px] font-semibold text-ink"
-          >
-            Open {PRODUCT.map.label}
-          </Link>
-        </div>
+    <ProfileSection
+      id="network-map"
+      icon={ProfileIcons.partners}
+      title="Your connections live here"
+      description={`${PRODUCT.map.job} Add partners on this page first.`}
+    >
+      <p className="rounded-2xl border border-dashed border-ink/15 px-5 py-6 text-[14px] text-ink-soft">
+        The map draws itself after a partner confirms.
+      </p>
+      <div className="mt-5 flex flex-wrap gap-2">
+        <Link
+          href={`/c/${companySlug}?add=1#partners`}
+          className="inline-flex h-10 items-center rounded-full bg-navy px-4 text-[14px] font-semibold text-on-navy transition-colors hover:bg-navy-deep"
+        >
+          Add partner
+        </Link>
+        <Link
+          href="/dashboard"
+          className="inline-flex h-10 items-center rounded-full px-4 text-[14px] font-semibold text-ink ring-1 ring-line transition-colors hover:bg-wash"
+        >
+          Open {PRODUCT.map.label}
+        </Link>
       </div>
-    </section>
+    </ProfileSection>
   );
 }

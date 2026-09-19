@@ -8,7 +8,6 @@ import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notic
 import { getSchedulingForActiveCompany } from "@/features/scheduling/queries";
 import { completeSlackPendingAction } from "@/features/slack/actions";
 import { getCompanySlackStatus } from "@/features/slack/queries";
-import { canUseAgentApi } from "@/features/plan/access";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 
 export const metadata: Metadata = {
@@ -123,7 +122,6 @@ export default async function DashboardIntegrationsPage({
       />
       <IntegrationsGrid
         companyName={company.name}
-        hasApiAccess={canUseAgentApi(company.plan)}
         slack={slack}
         scheduling={scheduling}
       />

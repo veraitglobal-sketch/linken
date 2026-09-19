@@ -7,7 +7,10 @@ import { PartnerInboundNote } from "@/components/partners/partner-inbound-note";
 import { PartnershipInbox } from "@/components/partners/partnership-inbox";
 import { decorateAcceptedCredits } from "@/features/credits/queries";
 import { getPartnershipInbox } from "@/features/partners/inbox";
+import { buildConfirmedPartnersCsv } from "@/features/partners/csv-export";
 import { buildRfpPartnerText } from "@/features/partners/rfp-export";
+import { buildConfirmedReferencesCsv } from "@/features/references/csv-export";
+import { getReferencesForCompany } from "@/features/references/queries";
 import { dissolveSameOwnerPartnerLinks } from "@/features/partners/same-owner-guard";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { PRODUCT } from "@/lib/product-model";
@@ -71,8 +74,13 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
     await dissolveSameOwnerPartnerLinks(mine.id, user.id);
   }
 
-  const inbox = await getPartnershipInbox(mine.id);
+  const [inbox, references] = await Promise.all([
+    getPartnershipInbox(mine.id),
+    getReferencesForCompany(mine.id),
+  ]);
   const credits = await decorateAcceptedCredits(mine.id, inbox.accepted);
+  const partnerCsv = buildConfirmedPartnersCsv(mine.slug, inbox.accepted);
+  const referenceCsv = buildConfirmedReferencesCsv(references);
 
   return (
     <WorkspacePage
@@ -127,6 +135,8 @@ export default async function DashboardPartnersPage({ searchParams }: Props) {
           allSnippet={credits.allSnippet}
           companySlug={mine.slug}
           rfpText={buildRfpPartnerText(mine.name, mine.slug, inbox.accepted)}
+          partnerCsv={partnerCsv}
+          referenceCsv={referenceCsv}
         />
       </div>
     </WorkspacePage>

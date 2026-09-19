@@ -9,6 +9,15 @@ export const metadata: Metadata = {
 
 const ENTRIES = [
   {
+    date: "18 September 2026",
+    items: [
+      "Public API: stable relation UUIDs and confirmed_at on partners and references, for external evidence binding.",
+      "Crawlable company directory (/companies) and ProfilePage JSON-LD with the company name as mainEntity.",
+      "Email signature HTML (Widgets), CSV export of confirmed partners and references, /developers/evidence, hosted MCP discovery (/.well-known/mcp, /server-card).",
+      "Public URLs on www (sitemap/robots), directory by letter, llms-full.txt, llm.md in the sitemap, IndexNow on confirmed pair records.",
+    ],
+  },
+  {
     date: "26 July 2026",
     items: [
       "Outbound webhooks: HMAC-signed POSTs, dashboard + Agent API (`webhooks:manage`).",
@@ -31,7 +40,7 @@ const ENTRIES = [
 
 export default function ChangelogPage() {
   return (
-    <LegalDoc eyebrow="Developers" title="Changelog" updated="26 July 2026">
+    <LegalDoc eyebrow="Developers" title="Changelog" updated="18 September 2026">
       <p>
         Notable product and API changes. Breaking API changes will ship under a
         new version path. See also{" "}

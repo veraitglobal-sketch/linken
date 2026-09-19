@@ -18,6 +18,6 @@ export const FAQ_ITEMS = [
   {
     question: "Is it free?",
     answer:
-      "Yes. Your profile, confirmations, and case studies stay free. Pro unlocks premium embeds, full analytics, Agent API, branded one-pagers, and team seats.",
+      "Yes. Your profile, confirmations, case studies, Agent API, and MCP stay free. Pro unlocks premium website widgets, full analytics, branded one-pagers, outbound webhooks, and team seats.",
   },
 ] as const;

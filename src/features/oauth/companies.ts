@@ -1,5 +1,4 @@
 import "server-only";
-import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
 import type { ConsentCompany } from "@/features/oauth/types";
 import { createClient } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -21,7 +20,7 @@ export async function listConsentCompanies(userId: string): Promise<ConsentCompa
     out.push({
       id: company.id as string,
       name: (company.name as string) || "Company",
-      agentApi: getEntitlements(parsePlan(company.plan)).agentApi,
+      agentApi: true,
     });
   }
   return out;
@@ -40,14 +39,5 @@ export async function userCanIssueConnector(
     .maybeSingle();
   const role = member?.role as string | undefined;
   if (role !== "owner" && role !== "admin") return { ok: false, reason: "role" };
-
-  const { data: company } = await admin
-    .from("companies")
-    .select("plan")
-    .eq("id", companyId)
-    .maybeSingle();
-  if (!getEntitlements(parsePlan(company?.plan)).agentApi) {
-    return { ok: false, reason: "plan" };
-  }
   return { ok: true };
 }

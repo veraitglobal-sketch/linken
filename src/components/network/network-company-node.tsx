@@ -117,7 +117,7 @@ function NetworkCompanyNodeInner({ id, data, selected }: NodeProps) {
               website={d.website}
               allowFavicon
               size="xs"
-              className="rounded-full!"
+              shape="circle"
             />
           </span>
           <span className="min-w-0 flex-1">

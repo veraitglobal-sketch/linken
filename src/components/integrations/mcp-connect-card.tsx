@@ -21,7 +21,7 @@ const TABS: { id: McpClient; label: string }[] = [
  * Connect Hansala to Claude, Cursor, or Codex with one link. Without a key the
  * connector gets the public tools; with an API key it can also manage this company.
  */
-export function McpConnectCard({ hasApiAccess }: { hasApiAccess: boolean }) {
+export function McpConnectCard() {
   const [client, setClient] = useState<McpClient>("claude");
 
   return (
@@ -86,7 +86,7 @@ export function McpConnectCard({ hasApiAccess }: { hasApiAccess: boolean }) {
           href="/dashboard/api"
           className="inline-flex h-9 items-center rounded-xl px-3.5 font-semibold text-ink ring-1 ring-line transition-colors hover:bg-mute"
         >
-          {hasApiAccess ? "Create an API key" : "API keys (Pro)"}
+          Create an API key
         </Link>
         <Link
           href="/developers#agent-mcp"

@@ -12,10 +12,10 @@ export function buildPublicOpenApi(siteUrl: string) {
     openapi: "3.1.0",
     info: {
       title: "Hansala Public API",
-      version: "1.0.0",
+      version: "1.1.0",
       summary: "Read-only confirmed company evidence. No API key.",
       description:
-        "GET-only JSON. Confirmed facts only — never pending invites or private fields. Cache: public, s-maxage=300. Docs: https://www.hansala.com/developers",
+        "GET-only JSON. Confirmed facts only — never pending invites or private fields. Partners and references expose a stable UUID plus confirmed_at for external binding. Cache: public, s-maxage=300. Docs: https://www.hansala.com/developers",
       termsOfService: OPENAPI_TERMS,
       contact: OPENAPI_CONTACT,
       license: OPENAPI_LICENSE,

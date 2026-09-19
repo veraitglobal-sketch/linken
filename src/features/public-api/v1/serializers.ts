@@ -7,6 +7,7 @@ import type {
   ApiCaseStudy,
   ApiCompanyResponse,
   ApiCompanyStats,
+  ApiPartner,
   ApiReference,
   ApiReferencesResponse,
   ApiTestimonial,
@@ -15,6 +16,7 @@ import type {
 } from "@/features/public-api/v1/types";
 import type { TrustLevel } from "@/features/trust/score";
 import type { Company } from "@/types/company";
+import type { Partner } from "@/types/partner";
 import type { ServiceReference } from "@/types/service-reference";
 import { publicReferenceClient } from "@/features/confirmations/public-client";
 
@@ -75,10 +77,23 @@ export function serializeCompany(input: {
   };
 }
 
+export function serializePartner(p: Partner): ApiPartner | null {
+  const id = p.partnershipId?.trim();
+  if (!id) return null;
+  return {
+    id,
+    name: p.name,
+    slug: p.slug,
+    verified: Boolean(p.verified),
+    confirmed_at: p.confirmedAt ?? "",
+  };
+}
+
 export function serializeReference(ref: ServiceReference): ApiReference | null {
-  if (ref.status !== "confirmed") return null;
+  if (ref.status !== "confirmed" || !ref.id) return null;
   const view = publicReferenceClient(ref);
   return {
+    id: ref.id,
     client_name: view.clientName,
     client_slug: view.clientSlug,
     service: view.service,

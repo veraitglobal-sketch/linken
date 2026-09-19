@@ -26,7 +26,7 @@ OAuth metadata, registration or authorize endpoint.
   (`supabase/migrations/20260719232736_agent_api_keys.sql` + later scope migrations).
   Helpers: `generateApiKey()`, `hashApiKey()` in `src/features/agent-api/auth.ts`;
   scopes in `src/features/agent-api/types.ts` (`AGENT_SCOPES`, presets).
-- Agent API requires Pro: `getEntitlements(plan).agentApi`.
+- Agent API and MCP are free on every plan. Website widgets still need `premiumEmbeds`. Outbound webhooks stay Pro (`isPaidPlan`).
 - Login redirect: `/login?next=<path>` (`safeNext` accepts paths starting with `/`, not `//`).
 
 ## Design (follow exactly)

@@ -139,6 +139,7 @@ export async function createCompany(formData: FormData) {
   await setWorkspacePreference("company", created.id);
   revalidatePath("/dashboard", "layout");
   revalidatePath(`/c/${created.slug}`);
+  revalidatePath("/companies", "layout");
   revalidatePath("/dashboard");
 
   const { logActivationEvent } = await import("@/features/activation/events");

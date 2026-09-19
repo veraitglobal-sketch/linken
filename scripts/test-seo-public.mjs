@@ -43,6 +43,7 @@ const RESERVED = new Set([
   "g",
   "api",
   "admin",
+  "companies",
   "dashboard",
   "login",
   "onboarding",
@@ -215,6 +216,7 @@ test("reserved slugs cannot collide with product routes", () => {
   assert.equal(isReservedCompanySlug("use-cases"), true);
   assert.equal(isReservedCompanySlug("pricing"), true);
   assert.equal(isReservedCompanySlug("offer"), true);
+  assert.equal(isReservedCompanySlug("companies"), true);
   assert.equal(isReservedCompanySlug("acme-gmbh"), false);
   assert.equal(isReservedCompanySlug("foo.bar"), true);
 });
@@ -264,4 +266,30 @@ test("profile snippet names the first three confirmed partners", async () => {
   assert.match(src, /partnerNames/);
   assert.match(src, /Confirmed with \$\{names\.join/);
   assert.match(src, /slice\(0, 3\)/);
+});
+
+test("apex public origin rewrites to www", () => {
+  function asPublicOrigin(value) {
+    const origin = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+    const url = new URL(origin);
+    if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
+      return url.origin;
+    }
+    if (url.hostname === "hansala.com") {
+      url.hostname = "www.hansala.com";
+    }
+    return url.origin;
+  }
+  assert.equal(
+    asPublicOrigin("https://hansala.com"),
+    "https://www.hansala.com",
+  );
+  assert.equal(
+    asPublicOrigin("http://localhost:3000"),
+    "http://localhost:3000",
+  );
+  assert.equal(
+    asPublicOrigin("https://www.hansala.com"),
+    "https://www.hansala.com",
+  );
 });

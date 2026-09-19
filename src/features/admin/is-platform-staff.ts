@@ -23,7 +23,7 @@ export async function isPlatformStaffUser(
   return Boolean(parsePlatformStaffRole(data?.role as string | undefined));
 }
 
-/** Staff always go to /admin. Non-staff never stay on /admin. */
+/** Staff always go to /admin, except confirm/claim links they opened. */
 export function resolvePostLoginPath(
   isStaff: boolean,
   requestedNext: string,
@@ -32,8 +32,14 @@ export function resolvePostLoginPath(
     requestedNext.startsWith("/") && !requestedNext.startsWith("//")
       ? requestedNext
       : "/dashboard";
-  if (isStaff) return "/admin";
   const path = next.split("?")[0] ?? next;
+  const confirmFlow =
+    path === "/confirm" ||
+    path.startsWith("/confirm/") ||
+    path.startsWith("/confirm-reference/") ||
+    path.startsWith("/claim/") ||
+    path.startsWith("/join/");
+  if (isStaff && !confirmFlow) return "/admin";
   if (path === "/admin" || path.startsWith("/admin/")) return "/dashboard";
   return next;
 }

@@ -8,6 +8,7 @@ import { ConfirmedProvidersSection } from "@/components/references/confirmed-pro
 import { ProfileTestimonialsSection } from "@/components/testimonials/profile-testimonials-section";
 import { TrustProgressCard } from "@/components/trust/trust-progress-card";
 import { TrustWhyCard } from "@/components/trust/trust-why-card";
+import type { ReactNode } from "react";
 import type { ClientAssessmentSummary } from "@/features/assessments/queries";
 import type { PublicTeamMember } from "@/features/team/types";
 import type { TrustProfile } from "@/features/trust/queries";
@@ -49,6 +50,7 @@ type Props = {
   addPartnerStatus?: Map<string, string>;
   addPartnerMode: "search" | "draft";
   caseStudyBase?: string;
+  networkMap?: ReactNode;
 };
 
 /** Main profile grid — about column + partners rail. */
@@ -80,6 +82,7 @@ export function CompanyProfileBody({
   addPartnerStatus,
   addPartnerMode,
   caseStudyBase,
+  networkMap = null,
 }: Props) {
   const showSidebar = showWhyPublic || showOwnerProgress || showPartners;
 
@@ -127,6 +130,7 @@ export function CompanyProfileBody({
             editable={editable && !isUnclaimed}
           />
         ) : null}
+        {networkMap}
       </div>
 
       {showSidebar ? (

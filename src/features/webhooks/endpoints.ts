@@ -11,6 +11,7 @@ import {
   normalizeWebhookEvents,
   normalizeWebhookUrl,
 } from "@/features/webhooks/validate";
+import { isPaidPlan, parsePlan } from "@/features/plan/entitlements";
 
 export type CoreResult<T> =
   | { ok: true; data: T }
@@ -51,6 +52,15 @@ export async function createWebhookEndpointCore(
   if (!url.ok) return { ok: false, error: url.error, status: 422 };
   const events = normalizeWebhookEvents(input.events);
   if (!events.ok) return { ok: false, error: events.error, status: 422 };
+
+  const { data: company } = await db
+    .from("companies")
+    .select("plan")
+    .eq("id", companyId)
+    .maybeSingle();
+  if (!isPaidPlan(parsePlan(company?.plan))) {
+    return { ok: false, error: "Webhooks require Pro.", status: 403 };
+  }
 
   const { count } = await db
     .from("webhook_endpoints")

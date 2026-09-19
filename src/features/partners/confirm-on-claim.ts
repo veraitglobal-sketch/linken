@@ -127,4 +127,13 @@ export async function confirmPartnershipsAfterClaim(
 
   const { refreshRank } = await import("@/features/ranking/refresh");
   await refreshRank(...firmIds);
+
+  const { schedulePartnershipIndexNow } = await import(
+    "@/features/seo/indexnow-schedule"
+  );
+  for (const p of accept) {
+    const a = byId.get(p.requester_id as string)?.slug?.trim();
+    const b = byId.get(p.recipient_id as string)?.slug?.trim();
+    if (a && b) schedulePartnershipIndexNow(a, b);
+  }
 }

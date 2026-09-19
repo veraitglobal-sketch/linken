@@ -4,6 +4,7 @@ import {
   serializeAssessment,
   serializeCaseStudies,
   serializeCompany,
+  serializePartner,
   serializeReferences,
   serializeTestimonials,
   type PublicCaseStudyRow,
@@ -168,11 +169,9 @@ export async function getPublicPartnersApi(
   }
 
   const partners = await getPartnersForCompany(company.id);
-  const rows = partners.map((p) => ({
-    name: p.name,
-    slug: p.slug,
-    verified: Boolean(p.verified),
-  }));
+  const rows = partners
+    .map(serializePartner)
+    .filter((p): p is NonNullable<typeof p> => p !== null);
   return { partners: rows, count: rows.length };
 }
 
@@ -300,11 +299,8 @@ export async function getPublicVerifyByDomain(
     api_url: `${siteUrl}/api/v1/companies/${slug}`,
     partners: (await getPartnersForCompany(hit.id as string))
       .slice(0, 8)
-      .map((p) => ({
-        name: p.name,
-        slug: p.slug,
-        verified: Boolean(p.verified),
-      })),
+      .map(serializePartner)
+      .filter((p): p is NonNullable<typeof p> => p !== null),
     generated_at,
   };
 }

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { geist, geistMono, inter } from "@/app/fonts";
-import { CookiebotStyleLoader } from "@/components/layout/cookiebot-style-loader";
 import { StyleRescue } from "@/components/layout/style-rescue";
-import { COOKIEBOT_OVERRIDE_CSS } from "@/lib/cookiebot-styles";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -36,7 +35,7 @@ export const metadata: Metadata = {
   },
 };
 
-/** Organization + WebSite graph. No SearchAction — the directory is not public yet. */
+/** Organization + WebSite graph. SearchAction points at the public directory. */
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -55,6 +54,11 @@ const orgJsonLd = {
       description,
       publisher: { "@id": `${getSiteUrl()}/#organization` },
       inLanguage: "en",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${getSiteUrl()}/search?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
     },
   ],
 };
@@ -84,23 +88,20 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geist.variable} ${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
+      <body suppressHydrationWarning className="flex min-h-full flex-col font-sans">
         {COOKIEBOT_ID ? (
-          <script
+          <Script
             id="Cookiebot"
             src="https://consent.cookiebot.com/uc.js"
+            strategy="beforeInteractive"
             data-cbid={COOKIEBOT_ID}
             data-blockingmode="auto"
             data-widget-enabled="true"
+            data-widget-position="bottom-left"
+            data-widget-distance-vertical="8"
+            data-widget-distance-horizontal="16"
           />
         ) : null}
-        <style
-          id="hansala-cookiebot-overrides"
-          dangerouslySetInnerHTML={{ __html: COOKIEBOT_OVERRIDE_CSS }}
-        />
-      </head>
-      <body suppressHydrationWarning className="flex min-h-full flex-col font-sans">
-        <CookiebotStyleLoader />
         <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
         <script
           type="application/ld+json"

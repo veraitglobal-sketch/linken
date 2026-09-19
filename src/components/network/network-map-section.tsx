@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { NetworkMapLazy } from "@/components/network/network-map-lazy";
 import { getNetworkGraph } from "@/features/network/queries";
@@ -8,15 +9,20 @@ type Props = {
   scope: NetworkScope;
   title: string;
   minHeightClass?: string;
+  empty?: ReactNode;
+  /** Sit in the profile column — no second max-width or side padding. */
+  inset?: boolean;
 };
 
 export async function NetworkMapSection({
   scope,
   title,
   minHeightClass = "h-[70vh]",
+  empty = null,
+  inset = false,
 }: Props) {
   const graph = await getNetworkGraph(scope);
-  if (graph.nodes.length === 0) return null;
+  if (graph.nodes.length === 0) return empty;
 
   const fullMapHref =
     scope.type === "group"
@@ -26,7 +32,11 @@ export async function NetworkMapSection({
   return (
     <section
       id="network-map"
-      className="mx-auto mt-4 max-w-[calc(1280px+2.25rem)] scroll-mt-28 px-4 sm:px-[18px]"
+      className={
+        inset
+          ? "scroll-mt-28"
+          : "mx-auto mt-4 max-w-[calc(1280px+2.25rem)] scroll-mt-28 px-4 sm:px-[18px]"
+      }
     >
       <div className="overflow-hidden rounded-[24px] bg-surface ring-1 ring-line/70">
         <div className="flex items-start gap-3 border-b border-line/70 px-5 py-5 sm:px-7">

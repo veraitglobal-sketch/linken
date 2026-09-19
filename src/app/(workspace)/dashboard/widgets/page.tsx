@@ -4,7 +4,9 @@ import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
 import { WidgetAnalyticsSection } from "@/components/widgets/widget-analytics-section";
 import { LogoWallStudio } from "@/components/widgets/logo-wall-studio";
+import { EmailSignaturePanel } from "@/components/widgets/email-signature-panel";
 import { PlacementStudioControls } from "@/components/widgets/placement-studio-controls";
+import { TestimonialsWidgetNote } from "@/components/widgets/testimonials-widget-note";
 import { WidgetsStudio } from "@/components/widgets/widgets-studio";
 import { countPublishedTestimonials } from "@/features/testimonials/queries";
 import { getClientAssessmentSummary } from "@/features/assessments/queries";
@@ -13,6 +15,10 @@ import { getReferencesForCompany } from "@/features/references/queries";
 import { countConfirmedCases } from "@/features/widgets/case-gallery";
 import { getLogoWallConfirmedCandidates } from "@/features/widgets/logo-wall";
 import { parseWidgetSettings } from "@/features/widgets/settings";
+import {
+  buildEmailSignatureHtml,
+  buildEmailSignaturePlain,
+} from "@/features/widgets/email-signature";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 import { getSiteUrl } from "@/lib/site";
 
@@ -142,27 +148,27 @@ export default async function DashboardWidgetsPage() {
           size={wallSettings.size}
           tone={wallSettings.tone}
         />
-        <div className="rounded-2xl border border-line bg-surface px-5 py-4">
-          <p className="text-[11px] font-semibold tracking-[0.12em] text-plus uppercase">
-            Testimonials widget
-          </p>
-          <p className="mt-1 max-w-2xl text-[13px] text-muted">
-            Reorder, layout, and theme for client quotes live in Testimonials.
-            Embed snippets for your site are below once you have published quotes.
-          </p>
-          <Link
-            href="/dashboard/testimonials"
-            className="mt-3 inline-flex h-9 items-center rounded-full border border-line bg-paper px-3.5 text-[11px] font-semibold text-ink transition-colors hover:bg-surface"
-          >
-            Manage testimonials
-          </Link>
-        </div>
+        <TestimonialsWidgetNote />
         <PlacementStudioControls
           footerLimit={placements.footer.limit}
           partnersMotion={placements.partners.motion}
           partnersSize={placements.partners.size}
           partnersLimit={placements.partners.limit}
           casesLimit={placements.cases.limit}
+        />
+        <EmailSignaturePanel
+          html={buildEmailSignatureHtml({
+            name: company.name,
+            slug: company.slug,
+            hasConfirmed: hasWall || hasProof,
+            siteUrl,
+          })}
+          plain={buildEmailSignaturePlain({
+            name: company.name,
+            slug: company.slug,
+            hasConfirmed: hasWall || hasProof,
+            siteUrl,
+          })}
         />
         <WidgetsStudio
           siteUrl={siteUrl}

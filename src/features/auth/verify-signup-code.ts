@@ -43,5 +43,15 @@ export async function verifySignupCode(formData: FormData) {
     console.error("[signup-code] verifyOtp", error.message);
     return bounce("That code is no longer valid. Send a new one.");
   }
-  redirect(consumed.next);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { isPlatformStaffUser, resolvePostLoginPath } = await import(
+    "@/features/admin/is-platform-staff"
+  );
+  const staff = user
+    ? await isPlatformStaffUser(user.id, user.email)
+    : false;
+  redirect(resolvePostLoginPath(staff, consumed.next));
 }

@@ -14,7 +14,7 @@ import type {
   WebhookEventType,
 } from "@/features/webhooks/types";
 import { WEBHOOK_EVENTS } from "@/features/webhooks/types";
-import { getEntitlements, parsePlan } from "@/features/plan/entitlements";
+import { isPaidPlan, parsePlan } from "@/features/plan/entitlements";
 import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
 
 async function requireProOwner() {
@@ -22,7 +22,7 @@ async function requireProOwner() {
   if (!ctx.user || !ctx.company) {
     return { ok: false as const, error: "Sign in as a company owner." };
   }
-  if (!getEntitlements(parsePlan(ctx.company.plan)).agentApi) {
+  if (!isPaidPlan(parsePlan(ctx.company.plan))) {
     return {
       ok: false as const,
       error: "Webhooks require Pro. Upgrade on Billing first.",

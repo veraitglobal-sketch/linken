@@ -2,9 +2,11 @@ import Link from "next/link";
 import { focusableLinkClass } from "@/components/a11y/focus";
 import { NetworkMark } from "@/components/marketing/network-mark";
 import { SiteHeaderAuth } from "@/components/layout/site-header-auth";
+import { getHeaderAuth } from "@/features/auth/header-session";
 
-/** Static shell — auth loads via /api/auth/session (same cookies as the server). */
-export function SiteHeader() {
+/** Menu is in the HTML. Session is read on the server — no client spinner. */
+export async function SiteHeader() {
+  const auth = await getHeaderAuth();
   return (
     <header className="sticky top-0 z-50 px-4 pt-3">
       <div className="glass-nav relative mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 rounded-2xl pr-1.5 pl-4 sm:gap-4">
@@ -38,7 +40,7 @@ export function SiteHeader() {
             <span className="sm:hidden">Search</span>
             <span className="hidden sm:inline">Search companies</span>
           </Link>
-          <SiteHeaderAuth />
+          <SiteHeaderAuth auth={auth} />
         </div>
       </div>
     </header>

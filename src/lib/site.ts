@@ -1,44 +1,15 @@
-const CANONICAL_ORIGIN = "https://hansala.com";
+import {
+  AUTH_HOSTS,
+  CANONICAL_ORIGIN,
+  PUBLIC_HOST,
+  asOrigin,
+  asPublicOrigin,
+  authHost,
+  isDeployedRuntime,
+  isLocalhostOrigin,
+} from "@/lib/site-origin";
 
-const AUTH_HOSTS = new Set(["hansala.com", "www.hansala.com"]);
-
-function normalizeOrigin(value: string) {
-  return value.replace(/\/$/, "");
-}
-
-/** Always return an absolute origin (scheme + host), never a bare hostname. */
-function asOrigin(value: string): string {
-  const trimmed = normalizeOrigin(value.trim());
-  if (!trimmed) return CANONICAL_ORIGIN;
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
-  return `https://${trimmed}`;
-}
-
-function authHost(value: string): string | null {
-  try {
-    return new URL(asOrigin(value)).hostname.toLowerCase();
-  } catch {
-    return null;
-  }
-}
-
-function isLocalhostOrigin(value: string) {
-  try {
-    const host = new URL(asOrigin(value)).hostname;
-    return host === "localhost" || host === "127.0.0.1" || host === "[::1]";
-  } catch {
-    return false;
-  }
-}
-
-/** True on Vercel (production, preview, or CI build). */
-function isDeployedRuntime() {
-  return (
-    process.env.VERCEL === "1" ||
-    process.env.VERCEL_ENV === "production" ||
-    process.env.VERCEL_ENV === "preview"
-  );
-}
+export { CANONICAL_ORIGIN, asPublicOrigin };
 
 /**
  * Public origin for metadata / embeds.
@@ -77,7 +48,7 @@ export function getSiteUrl() {
   if (isDeployedRuntime() && isLocalhostOrigin(origin)) {
     return CANONICAL_ORIGIN;
   }
-  return asOrigin(origin);
+  return asPublicOrigin(origin);
 }
 
 /**
@@ -123,7 +94,7 @@ export function getEmailSiteUrl() {
   ) {
     return CANONICAL_ORIGIN;
   }
-  return origin;
+  return asPublicOrigin(origin);
 }
 
 /** Same as getSiteUrl — kept for /developers and docs call sites. */
@@ -131,8 +102,6 @@ export function getDocsSiteUrl() {
   const origin = getSiteUrl();
   return origin === "http://localhost:3000" ? CANONICAL_ORIGIN : origin;
 }
-
-export { CANONICAL_ORIGIN };
 
 /** Public company profile path — always /c/{slug}. */
 export function companyProfilePath(slug: string) {
@@ -152,6 +121,6 @@ export function getPublicHost() {
   try {
     return new URL(getSiteUrl()).host;
   } catch {
-    return "hansala.com";
+    return PUBLIC_HOST;
   }
 }

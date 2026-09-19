@@ -1,21 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { uniqueCompanySlug } from "@/features/partners/unique-slug";
-import { setWorkspacePreference } from "@/features/workspace/set-preference";
+import { insertMinimalOwnedCompany } from "@/features/company/create-minimal";
 import { createClient } from "@/lib/supabase/server";
-import { toSlug } from "@/lib/slug";
 
 /** Minimal company create for client-confirm flow (not full onboarding). */
 export async function createMinimalCompany(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const next = String(formData.get("next") ?? "/dashboard").trim();
   const safeNext = next.startsWith("/") ? next : "/dashboard";
-  const baseSlug = toSlug(name);
-
-  if (!name || !baseSlug) {
-    redirect(`${safeNext}?error=${encodeURIComponent("Company name is required.")}`);
-  }
 
   const supabase = await createClient();
   const {
@@ -33,42 +26,20 @@ export async function createMinimalCompany(formData: FormData) {
     const { error: uploadError } = await supabase.storage
       .from("company-logos")
       .upload(path, logo, { upsert: true });
-
     if (!uploadError) {
       const { data } = supabase.storage.from("company-logos").getPublicUrl(path);
       logoUrl = data.publicUrl;
     }
   }
 
-  const slug = await uniqueCompanySlug(supabase, name);
-
-  const { data: created, error } = await supabase
-    .from("companies")
-    .insert({
-      owner_id: user.id,
-      claimed: true,
-      claim_token: null,
-      name,
-      slug,
-      logo_url: logoUrl,
-      logo_source: logoUrl ? "manual" : null,
-      tagline: "",
-      description: "",
-      category: "Client",
-      city: "",
-      website: "",
-    })
-    .select("id")
-    .single();
-
-  if (error || !created) {
-    const raw = error?.message ?? "Could not create company.";
-    const message = /companies_slug_key|duplicate key/i.test(raw)
-      ? "That company name is taken. Try a slightly different name."
-      : raw;
-    redirect(`${safeNext}?error=${encodeURIComponent(message)}`);
+  const created = await insertMinimalOwnedCompany(
+    supabase,
+    user.id,
+    name,
+    logoUrl,
+  );
+  if (!created.ok) {
+    redirect(`${safeNext}?error=${encodeURIComponent(created.error)}`);
   }
-
-  await setWorkspacePreference("company", created.id);
   redirect(safeNext);
 }

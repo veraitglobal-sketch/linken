@@ -40,7 +40,7 @@ export function parseOfferId(raw: string): OfferId | null {
 export const OFFER_INCLUDED = [
   "Testimonials widget on your website",
   "Partner logo widgets",
-  "Analytics, Agent API, and team seats",
+  "Analytics, webhooks, and team seats",
 ] as const;
 
 export const OFFER_ASSURANCES = [
@@ -60,7 +60,7 @@ export const OFFER_FAQ = [
   },
   {
     q: "Is this the same Pro?",
-    a: "Yes — testimonials widget, logo widgets, analytics, Agent API, and team seats. The Verified mark is never sold.",
+    a: "Yes — testimonials widget, logo widgets, analytics, webhooks, and team seats. Agent API is free. The Verified mark is never sold.",
   },
   {
     q: "How do I cancel?",

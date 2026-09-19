@@ -4,6 +4,7 @@ import {
   buildCompanyOrganizationLd,
   buildCompanyPartnersLd,
 } from "@/features/seo/company-json-ld";
+import { buildCompanyWebPageLd } from "@/features/seo/company-webpage-ld";
 import type { Company } from "@/types/company";
 import type { Partner } from "@/types/partner";
 
@@ -14,23 +15,32 @@ type Props = {
 };
 
 export function CompanyPageLd({ company, partners, siteUrl }: Props) {
+  const organization = buildCompanyOrganizationLd({
+    name: company.name,
+    slug: company.slug,
+    description: company.description,
+    tagline: company.tagline,
+    website: company.website,
+    logoUrl: company.logoUrl,
+    city: company.city,
+    country: company.country,
+    category: company.category,
+    services: company.services,
+    verified: company.verified,
+    siteUrl,
+  });
   return (
     <JsonLd
       data={[
-        buildCompanyOrganizationLd({
+        buildCompanyWebPageLd({
           name: company.name,
           slug: company.slug,
           description: company.description,
           tagline: company.tagline,
-          website: company.website,
-          logoUrl: company.logoUrl,
-          city: company.city,
-          country: company.country,
-          category: company.category,
-          services: company.services,
-          verified: company.verified,
           siteUrl,
+          organization,
         }),
+        organization,
         buildCompanyBreadcrumbLd({
           name: company.name,
           slug: company.slug,

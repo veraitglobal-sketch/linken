@@ -14,7 +14,8 @@ export function GET() {
 
 ## Docs
 - [Developer partner program](${siteUrl}/developers/partners): 10% recurring commission on paid Pro invoices from referred companies.
-- [Developers](${siteUrl}/developers): Public API contract, Agent API (Pro), embeds, React registry, and error shapes.
+- [Developers](${siteUrl}/developers): Public API contract, Agent API, MCP, embeds, React registry, and error shapes.
+- [Evidence binding](${siteUrl}/developers/evidence): store \`id\` + \`confirmed_at\`; do not hash \`generated_at\`.
 - [OpenAPI index](${siteUrl}/api/v1/openapi): Public + Agent discovery.
 - [Public OpenAPI](${siteUrl}/api/v1/openapi/public) · [Agent OpenAPI](${siteUrl}/api/v1/openapi/agent)
 - [Changelog](${siteUrl}/changelog) · [Status](${siteUrl}/status) · [Security](${siteUrl}/security)
@@ -28,20 +29,24 @@ Installable Server Components — slug prop only, no API key. Not the iframe bad
 Docs: ${siteUrl}/developers#registry
 
 ## MCP (agents)
-- Public keyless: \`npx hansala-mcp-public\` — verify_company, get_company_proof, get_widget_snippet (no account).
-- Agent (Pro): local \`mcp/hansala\` with \`HANSALA_AGENT_API_KEY\` — write tools for your own company.
+- Hosted public (no key): POST ${siteUrl}/api/mcp/public — same tools as \`npx hansala-mcp-public\`.
+- Hosted agent: POST ${siteUrl}/api/mcp with Bearer \`hs_\` (or OAuth). Discovery: ${siteUrl}/.well-known/mcp · ${siteUrl}/server-card.
+- Public keyless local: \`npx hansala-mcp-public\` — verify_company, get_company_proof, get_widget_snippet (no account).
+- Agent (every plan): local \`mcp/hansala\` with \`HANSALA_AGENT_API_KEY\` — write tools for your own company. Website widgets on a customer site still require Pro.
 
 ## API
 - [Company](${siteUrl}/api/v1/companies/{slug}): Profile, trust level, confirmed stats, assessment aggregates (≥3 rule).
-- [References](${siteUrl}/api/v1/companies/{slug}/references): Confirmed client relationships only.
-- [Partners](${siteUrl}/api/v1/companies/{slug}/partners): Confirmed mutual partnerships only.
+- [References](${siteUrl}/api/v1/companies/{slug}/references): Confirmed client relationships only (record UUID + confirmed_at).
+- [Partners](${siteUrl}/api/v1/companies/{slug}/partners): Confirmed mutual partnerships only (relation UUID + confirmed_at).
 - [Case studies](${siteUrl}/api/v1/companies/{slug}/case-studies): Case studies with client or partner confirmation.
 - [Testimonials](${siteUrl}/api/v1/companies/{slug}/testimonials): Client-written quotes + theme tokens for any host site. Drop-in: ${siteUrl}/hs-testimonials.js
 - [Verify (trust oracle)](${siteUrl}/api/v1/verify?domain={domain}): Look up a claimed company by website domain before you work with them.
 
 ## Profiles
 - Human HTML: ${siteUrl}/c/{slug} (links \`rel="alternate" type="text/markdown"\` → llm.md)
+- [Company directory](${siteUrl}/companies): crawlable list of company names by letter.
 - LLM markdown snapshot (same confirmed facts as the API, including published testimonials): ${siteUrl}/c/{slug}/llm.md
+- [Full company catalog for AI](${siteUrl}/llms-full.txt): every listed name + llm.md URL.
 
 ## Trust model
 - **Verified** means the company proved control of its website domain (email domain match, DNS TXT, or meta/well-known) — not that Hansala audited their books.

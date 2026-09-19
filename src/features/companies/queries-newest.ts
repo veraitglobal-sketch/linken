@@ -1,5 +1,9 @@
 import "server-only";
 
+import {
+  asCompanySector,
+  asPublicCompanyText,
+} from "@/features/companies/sector";
 import { createPublicClient } from "@/lib/supabase/public";
 
 export type NewCompany = {
@@ -42,11 +46,14 @@ export async function getNewestCompanies(limit = 8): Promise<NewCompany[]> {
     // Newest last (corner): take the latest N, then oldest → newest.
     return [...(data ?? [])].reverse().map((row) => {
       const name = String(row.name ?? "");
-      const text = String(row.tagline || row.description || "").trim();
+      const text = (
+        asPublicCompanyText("tagline", row.tagline) ||
+        asPublicCompanyText("description", row.description)
+      ).trim();
       return {
         slug: String(row.slug),
         name,
-        category: String(row.category ?? "").trim(),
+        category: asCompanySector(row.category),
         summary: text.length > 140 ? `${text.slice(0, 137).trimEnd()}…` : text,
         place: [row.city, row.country].filter(Boolean).join(", "),
         logoUrl: (row.logo_url as string | null) ?? null,

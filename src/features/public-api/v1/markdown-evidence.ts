@@ -18,7 +18,7 @@ export function linesForReferences(
     const period = r.ongoing
       ? `${r.started_year || "?"}–present (ongoing)`
       : `${r.started_year || "?"}${r.ended_year ? `–${r.ended_year}` : ""}`;
-    lines.push(`- ${client} · ${r.service} · ${period}`);
+    lines.push(`- ${client} · ${r.service} · ${period} · ${r.id}`);
   }
   lines.push("");
   return lines;
@@ -31,7 +31,9 @@ export function linesForPartners(
   if (partners.length === 0) return [];
   const lines = [`## Confirmed partners (${partners.length})`];
   for (const p of partners) {
-    lines.push(`- [${p.name}](${siteUrl}/c/${p.slug})`);
+    lines.push(
+      `- [${p.name}](${siteUrl}/c/${p.slug})${p.partnershipId ? ` · ${p.partnershipId}` : ""}`,
+    );
   }
   lines.push("");
   return lines;

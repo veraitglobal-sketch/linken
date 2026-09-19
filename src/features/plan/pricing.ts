@@ -73,11 +73,11 @@ export const PRICING_COMPARE: PricingCompareRow[] = [
     free: "Basic profile signals",
     pro: "Full profile analytics",
   },
-  { feature: "Agent API", free: false, pro: proE.agentApi },
-  { feature: "Webhooks", free: false, pro: proE.agentApi },
+  { feature: "Agent API & MCP", free: true, pro: true },
+  { feature: "Webhooks", free: false, pro: true },
   {
     feature: "Data export",
-    free: "Public profile & Public API",
+    free: "Public API + Agent API",
     pro: "Public API + Agent API",
   },
   {
@@ -92,6 +92,7 @@ export const FREE_HIGHLIGHTS = [
   "Company profile with domain verification badge",
   "Unlimited mutual confirmations (partners, references, projects)",
   "Verified mark and logo-free trust bars on your site",
+  "Agent API, MCP, and hs_ keys",
   `${freeE.maxTeamMembers} team seat (owner)`,
 ] as const;
 
@@ -100,7 +101,7 @@ export const PRO_HIGHLIGHTS = [
   "Partner logo widgets (logo wall, rotate, footer)",
   "Widget studio — layouts, theme, placements",
   "Full profile analytics",
-  "Agent API and webhooks",
+  "Outbound webhooks",
   "Branded one-pager for proposals",
   `Up to ${proE.maxTeamMembers} team seats`,
 ] as const;

@@ -31,6 +31,7 @@ export function GraphPanelInspectProfile({ selected, context }: Props) {
           website={selected.website}
           allowFavicon
           size="md"
+          shape="circle"
         />
         <div className="min-w-0">
           <p className="text-[10px] font-semibold tracking-[0.1em] text-plus uppercase">

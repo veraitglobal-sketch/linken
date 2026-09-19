@@ -50,7 +50,7 @@ export function BillingPlanPanel({
           <p className="mt-2 text-[13px] text-muted">
             {isPro
               ? "Pro tools are active for this company."
-              : "Free includes the profile, confirmations, and the Verified mark. Upgrade for testimonials and partner logos on your site, analytics, Agent API, and team seats."}
+              : "Free includes the profile, confirmations, Agent API, MCP, and the Verified mark. Upgrade for testimonials and partner logos on your site, analytics, and team seats."}
           </p>
         )}
       </div>

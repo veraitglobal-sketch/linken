@@ -59,6 +59,13 @@ export function companySitemapEntries(
     }
 
     out.push({
+      url: sitemapUrl(siteUrl, `/c/${row.slug}/llm.md`),
+      lastModified,
+      changeFrequency: "weekly",
+      priority: Math.max(0.35, profilePriority - 0.25),
+    });
+
+    out.push({
       url: sitemapUrl(siteUrl, `/c/${row.slug}/press`),
       lastModified,
       changeFrequency: "monthly",

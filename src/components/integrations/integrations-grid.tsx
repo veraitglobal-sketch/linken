@@ -33,13 +33,11 @@ const CONNECT_CLASS =
 
 type Props = {
   companyName: string;
-  /** Plan includes Agent API keys. */
-  hasApiAccess?: boolean;
   slack: CompanySlackPublic | null;
   scheduling: CompanyScheduling;
 };
 
-export function IntegrationsGrid({ companyName, hasApiAccess = false, slack, scheduling }: Props) {
+export function IntegrationsGrid({ companyName, slack, scheduling }: Props) {
   const slackReady = slackOAuthConfigured();
   const connectedProvider =
     scheduling.provider && scheduling.url ? scheduling.provider : null;
@@ -48,7 +46,7 @@ export function IntegrationsGrid({ companyName, hasApiAccess = false, slack, sch
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="min-w-0 space-y-3">
         <p className="text-[12px] font-semibold tracking-[0.12em] text-muted uppercase">AI assistants</p>
-        <McpConnectCard hasApiAccess={hasApiAccess} />
+        <McpConnectCard />
 
         <p className="pt-4 text-[12px] font-semibold tracking-[0.12em] text-muted uppercase">Notifications</p>
         <IntegrationCard

@@ -23,17 +23,12 @@ function createPendingReference(input) {
   };
 }
 
-function confirmReference(ref, { asCompanyId, sessionEmail }) {
+function confirmReference(ref, { asCompanyId, providerId }) {
   if (ref.status !== "pending") {
     return { ok: false, error: "already_resolved" };
   }
-  if (
-    ref.inviteEmail &&
-    sessionEmail &&
-    ref.inviteEmail.toLowerCase() !== sessionEmail.toLowerCase()
-  ) {
-    // Soft check — production binds via ownership RPC; mirror intent.
-    return { ok: false, error: "email_mismatch" };
+  if (providerId && asCompanyId === providerId) {
+    return { ok: false, error: "sender" };
   }
   return {
     ok: true,
@@ -95,7 +90,7 @@ test("journey: confirmed relationship is public on both sides", () => {
   });
   const result = confirmReference(pending, {
     asCompanyId: FIXTURES.client.id,
-    sessionEmail: FIXTURES.client.email,
+    providerId: FIXTURES.provider.id,
   });
   assert.equal(result.ok, true);
   const refs = [result.ref];
@@ -119,14 +114,46 @@ test("journey: duplicate confirmation is rejected", () => {
   });
   const first = confirmReference(pending, {
     asCompanyId: FIXTURES.client.id,
-    sessionEmail: FIXTURES.client.email,
+    providerId: FIXTURES.provider.id,
   });
   const second = confirmReference(first.ref, {
     asCompanyId: FIXTURES.client.id,
-    sessionEmail: FIXTURES.client.email,
+    providerId: FIXTURES.provider.id,
   });
   assert.equal(second.ok, false);
   assert.equal(second.error, "already_resolved");
+});
+
+test("journey: token is the capability — inbox mismatch still confirms", () => {
+  const pending = createPendingReference({
+    providerId: FIXTURES.provider.id,
+    clientName: FIXTURES.client.name,
+    service: "Architecture",
+    token: FIXTURES.tokens.confirmReference,
+    inviteEmail: FIXTURES.client.email,
+  });
+  const result = confirmReference(pending, {
+    asCompanyId: FIXTURES.client.id,
+    providerId: FIXTURES.provider.id,
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.ref.clientCompanyId, FIXTURES.client.id);
+});
+
+test("journey: provider cannot confirm their own reference", () => {
+  const pending = createPendingReference({
+    providerId: FIXTURES.provider.id,
+    clientName: FIXTURES.client.name,
+    service: "Architecture",
+    token: FIXTURES.tokens.confirmReference,
+    inviteEmail: FIXTURES.client.email,
+  });
+  const result = confirmReference(pending, {
+    asCompanyId: FIXTURES.provider.id,
+    providerId: FIXTURES.provider.id,
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.error, "sender");
 });
 
 test("journey: claim requires invite email match", () => {
@@ -171,7 +198,7 @@ test("billing journey: cancel Pro returns free entitlements", () => {
   function entitlements(plan) {
     return plan === "pro"
       ? { agentApi: true, premiumEmbeds: true }
-      : { agentApi: false, premiumEmbeds: false };
+      : { agentApi: true, premiumEmbeds: false };
   }
   function afterCancel(status) {
     if (status === "canceled" || status === "unpaid") return "free";
@@ -179,6 +206,7 @@ test("billing journey: cancel Pro returns free entitlements", () => {
     return "free";
   }
   assert.equal(entitlements("pro").agentApi, true);
-  assert.equal(entitlements(afterCancel("canceled")).agentApi, false);
+  assert.equal(entitlements(afterCancel("canceled")).agentApi, true);
+  assert.equal(entitlements(afterCancel("canceled")).premiumEmbeds, false);
   assert.equal(entitlements(afterCancel("active")).premiumEmbeds, true);
 });

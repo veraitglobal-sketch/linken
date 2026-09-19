@@ -19,7 +19,7 @@ export const TOOLS = [
   {
     name: "get_company_proof",
     description:
-      "Pull the confirmed proof for a Hansala company: trust level, confirmed partners, confirmed client references, and the public profile URL. Use when you need evidence you can show a human — not marketing claims.",
+      "Pull the confirmed proof for a Hansala company: trust level, confirmed partners (relation UUID + confirmed_at), confirmed client references (record UUID + confirmed_at), and the public profile URL. Bind those ids as external evidence — not marketing claims.",
     inputSchema: {
       type: "object",
       properties: {

@@ -53,6 +53,8 @@ export async function getPartnersForCompany(
         status,
         requester_id,
         recipient_id,
+        responded_at,
+        created_at,
         requester:companies!requester_id(
           id, slug, name, category, city, verified, claimed, logo_url, website
         ),
@@ -97,6 +99,10 @@ export async function getPartnersForCompany(
         }),
         status: "accepted",
         partnershipId: row.id as string,
+        confirmedAt:
+          (row.responded_at as string | null) ||
+          (row.created_at as string | null) ||
+          null,
       });
     }
 

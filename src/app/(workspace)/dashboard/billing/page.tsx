@@ -28,7 +28,7 @@ export const metadata: Metadata = { title: "Billing" };
 
 const FLASH: Record<string, string> = {
   success:
-    "Welcome to Pro — premium embeds, analytics, Agent API, and team seats are active.",
+    "Welcome to Pro — premium embeds, analytics, and team seats are active.",
   canceled: "Checkout canceled. No charge was made.",
   canceled_sub:
     "Subscription canceled. You keep Pro until the end of the current period.",
@@ -133,7 +133,7 @@ export default async function BillingPage({ searchParams }: Props) {
   return (
     <WorkspacePage
       title="Billing"
-      description="Upgrade for premium embeds, full analytics, Agent API, and team seats."
+      description="Upgrade for premium embeds, full analytics, and team seats."
       wide
       stats={[
         { label: "Plan", value: isPro ? "Pro" : "Free" },

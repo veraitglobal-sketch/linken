@@ -300,7 +300,7 @@ Team invites (`invite_team_member`) are **not** metered — they are seats, not 
 Records, profile, category, position and the mark stay. These stop:
 contact button and inquiry form on the public profile, inbox delivery of inquiries, Radar
 intros, the booking link button, widgets on other sites (`/embed/*` returns the free variants
-only), analytics beyond the basics, Agent API keys, team seats above one, invites drop to the
+only), analytics beyond the basics, outbound webhooks, team seats above one, invites drop to the
 free monthly number. Put this in one place — `src/features/plan/access.ts` — as a single
 `lapsedCapabilities()` used by every call site, so it can never drift.
 

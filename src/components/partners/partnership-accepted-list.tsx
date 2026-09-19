@@ -3,6 +3,7 @@ import type { PartnerCreditFlags } from "@/features/credits/types";
 import { CheckCreditForm } from "@/components/partners/check-credit-form";
 import { CopyCreditButton } from "@/components/partners/copy-credit-button";
 import { AcceptedPartnerRow } from "@/components/partners/accepted-partner-row";
+import { CsvDownloadButton } from "@/components/partners/csv-download-button";
 import { RfpCopyButton } from "@/components/partners/rfp-copy-button";
 import { WorkspaceCard } from "@/components/dashboard/workspace-page";
 
@@ -17,6 +18,8 @@ type Props = {
   checkBack?: string;
   companySlug: string;
   rfpText?: string;
+  partnerCsv?: string;
+  referenceCsv?: string;
 };
 
 export function PartnershipAcceptedList({
@@ -25,6 +28,8 @@ export function PartnershipAcceptedList({
   checkBack = "/dashboard/partners",
   companySlug,
   rfpText = "",
+  partnerCsv = "",
+  referenceCsv = "",
 }: Props) {
   if (accepted.length === 0) return null;
 
@@ -36,11 +41,21 @@ export function PartnershipAcceptedList({
             Official partners
           </h2>
           <p className="mt-1 text-[12px] leading-relaxed text-muted">
-            Record, intro, and RFP list — both sides already confirmed.
+            Record, intro, RFP list, and CSV — both sides already confirmed.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <RfpCopyButton text={rfpText} />
+          <CsvDownloadButton
+            csv={partnerCsv}
+            filename="hansala-partners.csv"
+            label="Partners CSV"
+          />
+          <CsvDownloadButton
+            csv={referenceCsv}
+            filename="hansala-references.csv"
+            label="References CSV"
+          />
           {allSnippet ? (
             <CopyCreditButton snippet={allSnippet} label="Copy all credits" />
           ) : null}

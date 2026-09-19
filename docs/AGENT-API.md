@@ -1,6 +1,6 @@
 # Hansala Agent API
 
-**Requires Hansala Pro** (or Founding). Free plans cannot create keys; existing keys return `403 plan_required`.
+**Free on every plan.** Website widgets on a customer site still require Pro.
 
 Base URL: `https://hansala.com/api/v1/agent` (local: `http://localhost:3000/api/v1/agent`)
 
@@ -16,7 +16,7 @@ OpenAPI: `GET /api/v1/openapi` (index) · `GET /api/v1/openapi/agent` (full agen
 | `content:write` | PATCH profile, case studies, image uploads, references content |
 | `invites:send` | Reference / partner / client confirmation / testimonial invites (20/day) |
 | `verification:run` | Domain verification status, instructions, check |
-| `webhooks:manage` | Outbound webhook endpoints (create/list/update/delete/test) |
+| `webhooks:manage` | Outbound webhook endpoints — Pro (`create` returns `403 plan_required` on Free) |
 | `team:manage` | Team list, invitations, members, photos (**including GET /team**) |
 | `structure:manage` | Company groups, subsidiaries, parent proposals |
 | `settings:write` | Widgets catalog + widget-settings (**including GET /widgets**) |
@@ -220,6 +220,8 @@ MCP tools (settings:write): `hansala_list_widget_variants`, `hansala_list_widget
 `hansala_get_widget_snippet`.
 
 ## Webhooks (`webhooks:manage`)
+
+Requires Pro. Free keys receive `403 plan_required` on create.
 
 ```bash
 curl "$BASE/webhooks"

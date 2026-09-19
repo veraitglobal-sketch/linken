@@ -7,11 +7,11 @@ export function pricingFaq(stripeReady: boolean) {
   return [
     {
       q: "What is free forever?",
-      a: "Your company profile, domain verification, unlimited confirmed partners, references, and case studies, plus the Verified mark and logo-free trust bars on your site — on one owner seat.",
+      a: "Your company profile, domain verification, unlimited confirmed partners, references, and case studies, Agent API and MCP, plus the Verified mark and logo-free trust bars on your site — on one owner seat.",
     },
     {
       q: "What does Pro pay for?",
-      a: "Putting proof on your own website that sells the next job: the testimonials widget, partner logo widgets, the widget studio, analytics, Agent API, and team seats. The record on Hansala stays free.",
+      a: "Putting proof on your own website that sells the next job: the testimonials widget, partner logo widgets, the widget studio, analytics, webhooks, and team seats. Agent API and MCP stay free. The record on Hansala stays free.",
     },
     {
       q: "How is billing charged?",

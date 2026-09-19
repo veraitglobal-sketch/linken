@@ -190,11 +190,10 @@ export function CompanyProfile({
         addPartnerStatus={addPartnerStatus}
         addPartnerMode={addPartnerMode}
         caseStudyBase={caseStudyBase}
+        networkMap={networkMap}
       />
 
       <ProfileProvenance company={company} editable={editable} />
-
-      {networkMap}
     </div>
   );
 }

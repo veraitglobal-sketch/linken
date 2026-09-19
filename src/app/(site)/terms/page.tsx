@@ -62,7 +62,7 @@ export default function TermsPage() {
 
       <h2>Plans &amp; billing</h2>
       <p>
-        Some features (including Agent API) require a paid plan. Fees, if any,
+        Some features (including website widgets on your own site) require a paid plan. Fees, if any,
         are shown at purchase. Taxes may apply. Payments are processed by Stripe
         when you buy a plan.
       </p>

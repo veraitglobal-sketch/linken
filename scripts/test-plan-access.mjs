@@ -10,7 +10,7 @@ const FREE = {
   fullAnalytics: false,
   onePagerBranding: false,
   premiumEmbeds: false,
-  agentApi: false,
+  agentApi: true,
   maxTeamMembers: 1,
 };
 
@@ -49,7 +49,7 @@ function pricingCtaMode(stripeReady) {
 test("Free plan blocks premium features", () => {
   const e = getEntitlements("free");
   assert.equal(e.premiumEmbeds, false);
-  assert.equal(e.agentApi, false);
+  assert.equal(e.agentApi, true);
   assert.equal(e.fullAnalytics, false);
   assert.equal(e.onePagerBranding, false);
   assert.equal(e.maxTeamMembers, 1);

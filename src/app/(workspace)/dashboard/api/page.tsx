@@ -4,6 +4,7 @@ import { ApiAgentGuide } from "@/components/api/api-agent-guide";
 import { McpConnectCard } from "@/components/integrations/mcp-connect-card";
 import { ApiAuditList } from "@/components/api/api-audit-list";
 import { ApiKeysPanel } from "@/components/api/api-keys-panel";
+import { ApiWebhooksLock } from "@/components/api/api-webhooks-lock";
 import { ApiWebhooksPanel } from "@/components/api/api-webhooks-panel";
 import { WorkspacePage } from "@/components/dashboard/workspace-page";
 import { SwitchCompanyNotice } from "@/components/dashboard/switch-company-notice";
@@ -12,7 +13,7 @@ import {
   listWebhookDeliveries,
   listWebhookEndpoints,
 } from "@/features/webhooks/actions";
-import { getEntitlements } from "@/features/plan/entitlements";
+import { isPaidPlan } from "@/features/plan/entitlements";
 import { assertCompanySection } from "@/features/workspace/company-gate";
 
 export const metadata: Metadata = {
@@ -59,37 +60,12 @@ export default async function DashboardApiPage() {
     );
   }
 
-  const canAgentApi = getEntitlements(company.plan).agentApi;
-
-  if (!canAgentApi) {
-    return (
-      <WorkspacePage
-        title="API"
-        description="Keys act as your company."
-      >
-        <div className="rounded-2xl border border-line bg-paper/50 px-5 py-8 text-center">
-          <p className="font-display text-xl font-medium tracking-[-0.03em] text-ink">
-            Agent API is Pro
-          </p>
-          <p className="mx-auto mt-2 max-w-md text-[13px] text-muted">
-            Keys and MCP after you upgrade.
-          </p>
-          <Link
-            href="/dashboard/billing"
-            className="mt-5 inline-flex h-10 items-center rounded-xl bg-ink px-4 text-[13px] font-semibold text-white"
-          >
-            Upgrade on Billing
-          </Link>
-        </div>
-      </WorkspacePage>
-    );
-  }
-
+  const paid = isPaidPlan(company.plan);
   const [keys, audit, endpoints, deliveries] = await Promise.all([
     listApiKeys(),
     listRecentAudit(50),
-    listWebhookEndpoints(),
-    listWebhookDeliveries(30),
+    paid ? listWebhookEndpoints() : Promise.resolve([]),
+    paid ? listWebhookDeliveries(30) : Promise.resolve([]),
   ]);
 
   return (
@@ -112,10 +88,14 @@ export default async function DashboardApiPage() {
       }
     >
       <div className="space-y-10">
-        <McpConnectCard hasApiAccess={canAgentApi} />
+        <McpConnectCard />
         <ApiAgentGuide />
         <ApiKeysPanel keys={keys} />
-        <ApiWebhooksPanel endpoints={endpoints} deliveries={deliveries} />
+        {paid ? (
+          <ApiWebhooksPanel endpoints={endpoints} deliveries={deliveries} />
+        ) : (
+          <ApiWebhooksLock />
+        )}
         <ApiAuditList
           rows={audit.map((row) => ({
             id: row.id as string | number,

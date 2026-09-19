@@ -4,8 +4,10 @@ import { cn } from "@/lib/cn";
 type Props = {
   label?: string;
   className?: string;
-  /** Compact for panels; default fills a short page section. */
+  /** Compact for panels; default fills the viewport. */
   compact?: boolean;
+  /** `host` fills the parent (workspace chrome). Default is the viewport. */
+  fill?: "viewport" | "host";
 };
 
 /** Centred Hansala confirmation spinner for route and panel waits. */
@@ -13,12 +15,17 @@ export function LoadingState({
   label = "Loading…",
   className,
   compact = false,
+  fill = "viewport",
 }: Props) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center",
-        compact ? "min-h-[8rem] py-8" : "min-h-[70vh] py-16",
+        "grid w-full place-items-center",
+        compact
+          ? "min-h-[8rem] py-8"
+          : fill === "host"
+            ? "h-full min-h-0"
+            : "min-h-dvh",
         className,
       )}
     >

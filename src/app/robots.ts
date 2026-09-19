@@ -49,7 +49,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       },
       ...AI_AGENTS.map((userAgent) => ({
         userAgent,
-        allow: ["/", "/llms.txt", "/c/", "/g/", "/developers"],
+        allow: ["/", "/llms.txt", "/llms-full.txt", "/c/", "/g/", "/developers", "/companies"],
         disallow: PRIVATE,
       })),
     ],

@@ -2,7 +2,6 @@ import "server-only";
 
 import { redirect } from "next/navigation";
 import { resolveActiveWorkspace } from "@/features/workspace/context";
-import { requireActiveCompany } from "@/features/workspace/require-company";
 import { createClient } from "@/lib/supabase/server";
 
 const OWNED_SELECT =
@@ -21,33 +20,60 @@ export type OwnedCompanyRow = {
   plan: string | null;
 };
 
-/**
- * True owner of the active claimed company. Cookie is not authorization —
- * owner_id is re-checked. Use requireOperatorActiveCompany for operational
- * mutations that should also work on unclaimed branches.
- */
-export async function requireOwnedActiveCompany(opts: { loginNext: string }) {
-  const { company: active } = await requireActiveCompany({
-    ownerOnly: true,
-    loginNext: opts.loginNext,
-  });
+async function loadOwnedClaimed(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  preferredId?: string | null,
+): Promise<OwnedCompanyRow | null> {
+  if (preferredId) {
+    const { data } = await supabase
+      .from("companies")
+      .select(OWNED_SELECT)
+      .eq("id", preferredId)
+      .eq("owner_id", userId)
+      .eq("claimed", true)
+      .maybeSingle();
+    if (data) return data as OwnedCompanyRow;
+  }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect(`/login?next=${encodeURIComponent(opts.loginNext)}`);
-
-  const { data: company } = await supabase
+  const { data } = await supabase
     .from("companies")
     .select(OWNED_SELECT)
-    .eq("id", active.id)
-    .eq("owner_id", user.id)
+    .eq("owner_id", userId)
     .eq("claimed", true)
+    .order("created_at", { ascending: true })
+    .limit(1)
     .maybeSingle();
+  return (data as OwnedCompanyRow | null) ?? null;
+}
 
-  if (!company) redirect("/onboarding");
-  return { supabase, user, company: company as OwnedCompanyRow };
+function preferredOwnerId(
+  workspace: Awaited<ReturnType<typeof resolveActiveWorkspace>>,
+) {
+  if (
+    workspace?.company &&
+    workspace.active?.type === "company" &&
+    workspace.company.role === "owner"
+  ) {
+    return workspace.company.id;
+  }
+  return null;
+}
+
+/**
+ * True owner of a claimed company. Cookie is preference only — if it
+ * points at a group or is missing, fall back to the oldest owned firm.
+ */
+export async function requireOwnedActiveCompany(opts: { loginNext: string }) {
+  const { supabase, user, company } = await getOwnedActiveCompany();
+  if (!user) redirect(`/login?next=${encodeURIComponent(opts.loginNext)}`);
+  if (!company) {
+    const join = opts.loginNext.includes("?") ? "&" : "?";
+    redirect(
+      `${opts.loginNext}${join}error=${encodeURIComponent("Create a company profile on this page first.")}`,
+    );
+  }
+  return { supabase, user, company };
 }
 
 /** Soft variant — returns nulls instead of redirecting. */
@@ -56,28 +82,15 @@ export async function getOwnedActiveCompany() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, company: null as OwnedCompanyRow | null };
-
-  const workspace = await resolveActiveWorkspace();
-  if (
-    !workspace?.company ||
-    workspace.active?.type !== "company" ||
-    workspace.company.role !== "owner"
-  ) {
-    return { supabase, user, company: null };
+  if (!user) {
+    return { supabase, user: null, company: null as OwnedCompanyRow | null };
   }
 
-  const { data: company } = await supabase
-    .from("companies")
-    .select(OWNED_SELECT)
-    .eq("id", workspace.company.id)
-    .eq("owner_id", user.id)
-    .eq("claimed", true)
-    .maybeSingle();
-
-  return {
+  const workspace = await resolveActiveWorkspace();
+  const company = await loadOwnedClaimed(
     supabase,
-    user,
-    company: (company as OwnedCompanyRow | null) ?? null,
-  };
+    user.id,
+    preferredOwnerId(workspace),
+  );
+  return { supabase, user, company };
 }

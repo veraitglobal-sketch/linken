@@ -2,7 +2,7 @@ import { WidgetsFlash } from "@/components/widgets/widgets-flash";
 
 const FLASH: Record<string, string> = {
   success:
-    "Welcome to Pro. Embeds, analytics, Agent API, and team seats are active.",
+    "Welcome to Pro. Embeds, analytics, and team seats are active.",
   canceled: "Checkout canceled. No charge was made.",
   stripe_not_configured: "This offer is not available to buy yet.",
   owner_only: "Only the company owner can buy Pro.",

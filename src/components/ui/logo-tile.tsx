@@ -112,7 +112,7 @@ export function LogoTile({
           "inline-flex shrink-0 items-center justify-center overflow-hidden",
           colorFallback && !src ? "bg-navy" : "bg-white",
           BOX[size],
-          PAD[size],
+          shape === "circle" ? "p-0" : PAD[size],
           shape === "circle" ? "rounded-full" : RADIUS[size],
           shape === "circle"
             ? "border-0"
@@ -136,7 +136,10 @@ export function LogoTile({
               src={src}
               alt=""
               loading="lazy"
-              className="h-full w-full object-contain"
+              className={cn(
+                "h-full w-full",
+                shape === "circle" ? "object-cover" : "object-contain",
+              )}
               onError={() => setIndex((i) => i + 1)}
             />
           ) : (

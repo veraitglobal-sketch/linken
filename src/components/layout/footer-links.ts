@@ -29,6 +29,7 @@ export const FOOTER_GROUPS: ReadonlyArray<FooterGroup> = [
     heading: "Product",
     links: [
       { label: "Search companies", href: "/search" },
+      { label: "Company directory", href: "/companies" },
       { label: "Pricing", href: "/pricing" },
       { label: "Use cases", href: "/use-cases" },
       { label: "Demo", href: "/demo" },

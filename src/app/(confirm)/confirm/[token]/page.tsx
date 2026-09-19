@@ -7,10 +7,8 @@ import {
   suggestedWebsiteFromEmail,
 } from "@/features/acquisition/listing-companies";
 import { hasAssessmentForSource } from "@/features/assessments/queries";
-import {
-  getClientConfirmationByToken,
-  getViewerCompany,
-} from "@/features/case-studies/queries";
+import { getClientConfirmationByToken } from "@/features/case-studies/queries";
+import { getOwnedActiveCompany } from "@/features/workspace/require-owned";
 import { loadPostConfirmSubject } from "@/features/confirm/post-confirm-subject";
 import { ensureTestimonialAfterConfirm } from "@/features/testimonials/post-confirm";
 
@@ -33,7 +31,7 @@ export default async function ConfirmTokenPage({ params, searchParams }: Props) 
   const { token } = await params;
   const { error, done, assessed, skipped } = await searchParams;
   const view = await getClientConfirmationByToken(token);
-  const { user, company } = await getViewerCompany();
+  const { user, company } = await getOwnedActiveCompany();
 
   if (!view) {
     return (

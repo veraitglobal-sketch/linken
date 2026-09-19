@@ -2,6 +2,7 @@ import "server-only";
 
 import { matchCategory } from "@/features/categories/match";
 import { categoryBySlug, canonicalCategorySlug } from "@/features/categories/taxonomy";
+import { asCompanySector, asPublicCompanyText } from "@/features/companies/sector";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { DirectoryCardCompany } from "@/components/search/directory-company-card";
 
@@ -57,11 +58,14 @@ export async function listCompaniesInCategory(
       .slice(0, limit)
       .map((row) => {
         const name = String(row.name ?? "");
-        const text = String(row.tagline || row.description || "").trim();
+        const text = (
+          asPublicCompanyText("tagline", row.tagline) ||
+          asPublicCompanyText("description", row.description)
+        ).trim();
         return {
           slug: String(row.slug),
           name,
-          category: String(row.category ?? category.name).trim(),
+          category: asCompanySector(row.category) || category.name,
           summary: text.length > 140 ? `${text.slice(0, 137).trimEnd()}…` : text,
           place: [row.city, row.country].filter(Boolean).join(", "),
           logoUrl: (row.logo_url as string | null) ?? null,

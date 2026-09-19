@@ -119,16 +119,21 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     }
   }
 
+  const mapTeaser = editable ? (
+    <CompanyMapTeaser companySlug={company.slug} />
+  ) : null;
   const networkMap =
     confirmedLinks >= 2 ? (
       <NetworkMapSection
         scope={{ type: "company", slug: company.slug, expand: "full" }}
         title={PRODUCT.map.label}
         minHeightClass="h-[60vh]"
+        empty={mapTeaser}
+        inset
       />
-    ) : editable ? (
-      <CompanyMapTeaser companySlug={company.slug} />
-    ) : null;
+    ) : (
+      mapTeaser
+    );
 
   return (
     <>

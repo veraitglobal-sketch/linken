@@ -32,3 +32,29 @@ export function getUseCase(slug: string): UseCasePage | null {
 export function listUseCaseSlugs(): string[] {
   return PAGES.map((p) => p.slug);
 }
+
+const JOB_SLUGS = [
+  "verified-client-references",
+  "verified-project-portfolio",
+  "references-for-tenders",
+  "supplier-verification",
+] as const;
+
+const SECTOR_SLUGS = [
+  "contractor-qualification",
+  "architecture-firm-references",
+  "engineering-company-references",
+  "agency-case-study-verification",
+] as const;
+
+function bySlugs(slugs: readonly string[]): UseCasePage[] {
+  return slugs.map((slug) => getUseCase(slug)).filter((p): p is UseCasePage => p != null);
+}
+
+export function listUseCaseJobs(): UseCasePage[] {
+  return bySlugs(JOB_SLUGS);
+}
+
+export function listUseCaseSectors(): UseCasePage[] {
+  return bySlugs(SECTOR_SLUGS);
+}

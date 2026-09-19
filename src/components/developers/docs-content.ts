@@ -47,6 +47,7 @@ export const DOCS_LINKS = [
   { href: "/api/v1/openapi/public", label: "Public OpenAPI" },
   { href: "/api/v1/openapi/agent", label: "Agent OpenAPI" },
   { href: "/developers/webhooks", label: "Webhooks" },
+  { href: "/developers/evidence", label: "Evidence binding" },
   { href: "/developers/api-terms", label: "API Terms" },
   { href: "/changelog", label: "Changelog" },
   { href: "/status", label: "Status" },
@@ -162,6 +163,11 @@ export const COMPANY_FIELDS: FieldRow[] = [
 export const REFERENCE_FIELDS: FieldRow[] = [
   { name: "references", type: "ApiReference[]", description: "Confirmed only, max 50. Ongoing first." },
   { name: "count", type: "number", description: "Length of references." },
+  {
+    name: "references[].id",
+    type: "string",
+    description: "Stable record UUID for external binding.",
+  },
   { name: "references[].client_name", type: "string", description: "Client display name." },
   {
     name: "references[].client_slug",
@@ -363,7 +369,8 @@ export const VERIFY_FIELDS: FieldRow[] = [
   {
     name: "partners",
     type: "ApiPartner[]",
-    description: "Confirmed partners only, capped at 8. Empty when not found.",
+    description:
+      "Confirmed partners only, capped at 8. Each row has relation id + confirmed_at.",
   },
 ];
 
@@ -371,7 +378,7 @@ export const ERROR_FIELDS: FieldRow[] = [
   {
     name: "error.code",
     type: '"not_found" | "invalid_request" | "unauthorized" | "invalid_key" | "insufficient_scope" | "plan_required" | "rate_limited" | "service_unavailable" | "internal"',
-    description: "Machine-readable code. plan_required = Agent API needs Pro.",
+    description: "Machine-readable code. plan_required is for Pro-only surfaces (outbound webhooks) called on Free.",
   },
   { name: "error.message", type: "string", description: "Human-readable message." },
 ];
